@@ -37,7 +37,7 @@ HEX_EEPROM_FLAGS += --change-section-lma .eeprom=0 --no-change-warnings
 
 
 ## Include Directories
-INCLUDES = -I"Z:\Mercurial\Dual Strike Firmware\usbdrv" -I"Z:\Mercurial\Dual Strike Firmware\." 
+INCLUDES = -I"C:\Users\Michael\Subversion\dualstrike\Firmware\Trunk\usbdrv" -I"C:\Users\Michael\Subversion\dualstrike\Firmware\Trunk\." 
 
 ## Objects that must be built in order to link
 OBJECTS = ArcadeStick.o usbdrv.o usbdrvasm.o 
