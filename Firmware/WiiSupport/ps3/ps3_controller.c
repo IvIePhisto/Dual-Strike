@@ -117,7 +117,7 @@ PROGMEM char usbHidReportDescriptor[] = { // PC HID Report Descriptor
 
 /* ------------------------------------------------------------------------- */
 
-void ReadJoystick()
+void readJoystickPS3()
 {
 	resetReportBuffer();
 
@@ -251,7 +251,7 @@ void ps3_controller() {
                 }
             }
 
-            ReadJoystick();
+            readJoystickPS3();
             usbSetInterrupt((void *)&reportBuffer, 7*sizeof(uchar));
         }
     }
