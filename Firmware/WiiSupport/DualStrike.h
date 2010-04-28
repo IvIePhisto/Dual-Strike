@@ -17,41 +17,65 @@
 #include "pass-through/pass-through.h"
 #endif
 
-#define EEPROM_DEF 0xFF /* for uninitialized EEPROMs */
-
 /*
-config byte description by bits:
+config bytes description by bits:
 --------------------------------
-0:   default working mode (0 == Dual Strike; 1 == pass-through
-1:   Dual Strike left stick (0 == deactivated; 1 == activated)
-2:   Dual Strike digital pad (0 == deactivated; 1 == activated)
-3:   Dual Strike right stick (0 == deactivated; 1 == activated)
-4:   Start+Select=Home (0 == disabled, 1 == enabled)
-5-6: extra PINs mode
-     (00 == deactivated,
-	  10 == read Joystick mode switch,
-	  01 == emulate Joystick mode switch for pass-through,
-	  11 == inverted triggers for pass-through)
+[0]0-1: default working mode (00 == pass-through; 01 == PS3, 10 == Wii)
+[0]2:   Dual Strike left stick (0 == deactivated; 1 == activated)
+[0]3:   Dual Strike digital pad (0 == deactivated; 1 == activated)
+[0]4:   Dual Strike right stick (0 == deactivated; 1 == activated)
+[0]5:   Start+Select=Home (0 == disabled, 1 == enabled)
+[0]7:   0 (reserved for uninitialized EEPROM test)
+[1]1-2: extra PINs mode
+     	(00 == deactivated,
+		 10 == read Joystick mode switch,
+	     01 == emulate Joystick mode switch for pass-through,
+	  	 11 == inverted triggers for pass-through)
+[1]7:   0 (reserved for uninitialized EEPROM test)
 */
 
-#define CONFIG_DEF 0b00000100 /* default config */
+#define CONFIG_0_DEF 0b00000001 /* default config part 0 */
+#define CONFIG_1_DEF 0 /* default config part 1 */
+#define EEPROM_DEF 0xFF /* for uninitialized EEPROMs */
 
-// test configuration: default working mode == Dual Strike
-#define CFG_DEF_WORK_MODE_DS 	!(config & (1<<0))
+// test configuration: default working mode == pass-through
+#define CFG_DEF_WORK_MODE_PT 	( !(config[0] & (1<<0)) && !(config[0] & (1<<1)) ) 
+// test configuration: default working mode == PS3
+#define CFG_DEF_WORK_MODE_PS3 	(  (config[0] & (1<<0)) && !(config[0] & (1<<1)) )
+// test configuration: default working mode == Wii
+#define CFG_DEF_WORK_MODE_WII 	( !(config[0] & (1<<0)) &&  (config[0] & (1<<1)) )
 // test configuration:  Dual Strike left stick == enabled
-#define CFG_LEFT_STICK 			(config & (1<<1))
+#define CFG_LEFT_STICK 			(config[0] & (1<<2))
 // test configuration:  Dual Strike digital pad == enabled
-#define CFG_DIGITAL_PAD		    (config & (1<<2))
+#define CFG_DIGITAL_PAD		    (config[0] & (1<<3))
 // test configuration:  Dual Strike right stick == enabled
-#define CFG_RIGHT_STICK			(config & (1<<3))
+#define CFG_RIGHT_STICK			(config[0] & (1<<4))
 // test configuration: Start+Select=Home == enabled
-#define CFG_HOME_EMU		 	(config & (1<<4))
+#define CFG_HOME_EMU		 	(config[0] & (1<<5))
+// test configuration: extra PINs mode == disabled
+#define CFG_NO_EXTRA_PINS			( !(config[1] & (1<<0)) && !(config[1] & (1<<1)) )
 // test configuration: extra PINs mode == read Joystick mode switch
-#define CFG_JOYSTICK_SWITCH_READ	((config & (1<<5)) && !(config & (1<<6)))
+#define CFG_JOYSTICK_SWITCH_READ	(  (config[1] & (1<<0)) && !(config[1] & (1<<1)) )
 // test configuration: extra PINs mode == emulate Joystick mode switch for pass-through
-#define CFG_JOYSTICK_SWITCH_EMU		(!(config & (1<<5) && (config & (1<<6))))
+#define CFG_JOYSTICK_SWITCH_EMU		( !(config[1] & (1<<0)) &&  (config[1] & (1<<1)) )
 // test configuration: extra PINs mode == inverted triggers for pass-through
-#define CFG_INVERTED_TRIGGERS		((config & (1<<5)) && (config & (1<<6)))
+#define CFG_INVERTED_TRIGGERS		(  (config[1] & (1<<0)) &&  (config[1] & (1<<1)) )
+
+#define SET_CFG_DEF_WORK_MODE_PT		config[0] &= 0b11111100;
+#define SET_CFG_DEF_WORK_MODE_PS3 		config[0] |= (1<<0); config[0] &= ~(1<<1); 
+#define SET_CFG_DEF_WORK_MODE_WII		config[0] &= ~(1<<0); config[0] |= (1<<1);
+#define ENABLE_CFG_LEFT_STICK 			config[0] |= (1<<2);
+#define DISABLE_CFG_LEFT_STICK 			config[0] &= ~(1<<2);
+#define ENABLE_CFG_DIGITAL_PAD			config[0] |= (1<<3);
+#define DISABLE_CFG_DIGITAL_PAD			config[0] &= ~(1<<3);
+#define ENABLE_CFG_RIGHT_STICK			config[0] |= (1<<4);
+#define DISABLE_CFG_RIGHT_STICK			config[0] &= ~(1<<4);
+#define ENABLE_CFG_HOME_EMU		 		config[0] |= (1<<5);
+#define DISABLE_CFG_HOME_EMU			config[0] &= ~(1<<5);
+#define SET_CFG_NO_EXTRA_PINS			config[1] &= 0b11111100;
+#define SET_CFG_JOYSTICK_SWITCH_READ	config[1] &= ~(1<<0); config[1] |= (1<<1);
+#define SET_CFG_JOYSTICK_SWITCH_EMU		config[1] |= (1<<0); config[1] &= ~(1<<1); 
+#define SET_CFG_INVERTED_TRIGGERS		config[1] |= (1<<0); config[1] |= (1<<1);
 
 // set to 1 for SMD version of the Dual Strike
 #define DUAL_STRIKE_SMD 0
@@ -127,5 +151,7 @@ config byte description by bits:
 		#define Stick_Extra1		(PINC & (1<<4))
 	#endif
 #endif
+
+void readJoystickSwitch();
 
 #endif

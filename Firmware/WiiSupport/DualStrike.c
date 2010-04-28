@@ -4,8 +4,8 @@
 #include <avr/pgmspace.h>   /* required by usbdrv.h */
 #include "ps3/usbdrv/usbdrv.h"
 
-uint8_t config = EEPROM_DEF;
-uint8_t config_EEPROM EEMEM = CONFIG_DEF;
+uint8_t config[2] = {EEPROM_DEF, EEPROM_DEF};;
+uint8_t config_EEPROM[2] EEMEM = {CONFIG_0_DEF, CONFIG_1_DEF};
 
 /* ------------------------------------------------------------------------- */
 
@@ -28,7 +28,8 @@ Down  = activate digital pad additionallly to left or right analogue stick
 Default Working Mode:
 ---------------------
 Button: LK
-Left  = Dual Strike [default]
+Left  = Dual Strike PS3 [default]
+Up    = Dual Strike Wii
 Right = pass-through
 
 revert to defaults:
@@ -58,15 +59,21 @@ Down  = inverted triggers for pass-through
 int SwitchMode = -1;
 
 void configInit() {
-	uint8_t newConfig;
+	uint8_t newConfig[2];
 
-	config = eeprom_read_byte(&config_EEPROM); /* read config from EEPROM */
+	 // read config from EEPROM
+	config[0] = eeprom_read_byte(&config_EEPROM[0]);
+	config[1] = eeprom_read_byte(&config_EEPROM[1]);
 
-	if(config == EEPROM_DEF)
+	if(config[0] == EEPROM_DEF && config[1] == EEPROM_DEF) {
 		/* if EEPROM is unitialized set to default config */
-        newConfig = CONFIG_DEF;
-	else
-		newConfig = config;
+        newConfig[0] = CONFIG_0_DEF;
+        newConfig[1] = CONFIG_1_DEF;
+	}
+	else {
+		newConfig[0] = config[0];
+		newConfig[1] = config[1];
+	}
 
 	if(!Stick_Select) {
 		/* enter configuration modification mode */
@@ -74,83 +81,67 @@ void configInit() {
 
 		while(Stick_Start) {
 			if(!Stick_Up) {
-				// Dual Strike digital pad: enabled
-				newConfig |= (1<<2);
-				// Dual Strike left stick: disabled
-				newConfig &= ~(1<<1);
-				// Dual Strike right stick: disabled
-				newConfig &= ~(1<<3);
+				ENABLE_CFG_DIGITAL_PAD
+				DISABLE_CFG_LEFT_STICK
+				DISABLE_CFG_RIGHT_STICK
 			}
 			else if(!Stick_Left) {
-				// Dual Strike digital pad: disabled
-				newConfig &= ~(1<<2);
-				// Dual Strike left stick: enabled
-				newConfig |= (1<<1);
-				// Dual Strike right stick: disabled
-				newConfig &= ~(1<<3);
+				DISABLE_CFG_DIGITAL_PAD
+				ENABLE_CFG_LEFT_STICK
+				DISABLE_CFG_RIGHT_STICK
 			}
 			else if(!Stick_Right) {
-				// Dual Strike digital pad: disabled
-				newConfig &= ~(1<<2);
-				// Dual Strike left stick: disabled
-				newConfig &= ~(1<<1);
-				// Dual Strike right stick: enabled
-				newConfig |= (1<<3);
+				DISABLE_CFG_DIGITAL_PAD
+				DISABLE_CFG_LEFT_STICK
+				ENABLE_CFG_RIGHT_STICK
 			}
 			
 			if(!Stick_Down)
-				// Dual Strike digital pad: enabled
-				newConfig |= (1<<2);
+				ENABLE_CFG_DIGITAL_PAD
 
 			if(!Stick_Short) {
 #if USE_PS3
 				if(!Stick_Left)
-					// default working mode: Dual Strike
-					newConfig &= ~(1<<0);
+					SET_CFG_DEF_WORK_MODE_PS3
 #endif
 
 #if USE_PT
 				if(!Stick_Right)
-					// default working mode: pass-through
-					newConfig |= (1<<0);
+					SET_CFG_DEF_WORK_MODE_PT
+#endif
+
+#if USE_WII
+				if(!Stick_Up)
+					SET_CFG_DEF_WORK_MODE_WII
 #endif
 			}
 			
 			if(!Stick_Forward) {
 				// revert to defaults
-				newConfig = CONFIG_DEF;
+				newConfig[0] = CONFIG_0_DEF;
+				newConfig[1] = CONFIG_1_DEF;
 			}
 			
 			if(!Stick_Jab) {
 				if(!Stick_Left)
-					// Start+Select=Home: disabled
-					newConfig &= ~(1<<4);
+					DISABLE_CFG_HOME_EMU
 				
 				if(!Stick_Right)
-					// Start+Select=Home: enabled
-					newConfig |= (1<<4);
+					ENABLE_CFG_HOME_EMU
 			}
 
 			if(!Stick_Strong) {
 				if(!Stick_Up) {
-					// extra PINs mode: disabled
-					newConfig &= ~(1<<5);
-					newConfig &= ~(1<<6);
+					SET_CFG_NO_EXTRA_PINS
 				}
 				else if(!Stick_Left) {
-					// extra PINs mode: read Joystick mode switch
-					newConfig |= (1<<5);
-					newConfig &= ~(1<<6);
+					SET_CFG_JOYSTICK_SWITCH_READ
 				}
 				else if(!Stick_Right) {
-					// extra PINs mode: emulate Joystick mode switch for pass-through
-					newConfig &= ~(1<<5);
-					newConfig |= (1<<6);
+					SET_CFG_JOYSTICK_SWITCH_EMU
 				}
 				else if(!Stick_Down) {
-					// extra PINs mode: inverted triggers for pass-through
-					newConfig |= (1<<5);
-					newConfig |= (1<<6);
+					SET_CFG_INVERTED_TRIGGERS
 				}
 			}
 		}
@@ -158,8 +149,10 @@ void configInit() {
 
 	if(newConfig != config) {
 		/* if newConfig was changed update configuration */
-		eeprom_write_byte(&config_EEPROM, newConfig);
-		config = newConfig;
+		eeprom_write_byte(&config_EEPROM[0], newConfig[0]);
+		eeprom_write_byte(&config_EEPROM[1], newConfig[1]);
+		config[0] = newConfig[0];
+		config[1] = newConfig[1];
 	}
 }
 
@@ -206,9 +199,9 @@ If the Select button is pressed, then configuration mode is entered (see below).
 
 If the Start button is pressed, then firmware update mode is entered (see below).
 
-If any other Button except Home is pressed, then the non default working mode is entered.
-The working mode is either the Dual Strike acting as a controller (default) or pass-through (e.g.
-a XBox360 controller PCB).
+If the X/Cross button is pressed, then the Dual Strike PS3 working mode is activated.
+If the Y/Circle button is pressed, then the Dual Strike Wii working mode is activated.
+If the A/Squard button is pressed, then the pass-through working mode is activated.
 
 If the joystick is moved to the up direction, the joystick is acting as a digital pad
 when in Dual Strike working mode (default).
@@ -232,74 +225,89 @@ void HardwareInit() {
 
 	if(!Stick_Up) // [precedence]
 	{
-		// Dual Strike digital pad: enabled
-		config |= (1<<2);
-		// Dual Strike left stick: disabled
-		config &= ~(1<<1);
-		// Dual Strike right stick: disabled
-		config &= ~(1<<3);
+		ENABLE_CFG_DIGITAL_PAD
+		DISABLE_CFG_LEFT_STICK
+		DISABLE_CFG_RIGHT_STICK
 	}
 	else if(!Stick_Left) {
-		// Dual Strike digital pad: disabled
-		config &= ~(1<<2);
-		// Dual Strike left stick: enabled
-		config |= (1<<1);
-		// Dual Strike right stick: disabled
-		config &= ~(1<<3);
+		DISABLE_CFG_DIGITAL_PAD
+		ENABLE_CFG_LEFT_STICK
+		DISABLE_CFG_RIGHT_STICK
 	}
 	else if(!Stick_Right) {
-		// Dual Strike digital pad: disabled
-		config &= ~(1<<2);
-		// Dual Strike left stick: disabled
-		config &= ~(1<<1);
-		// Dual Strike right stick: enabled
-		config |= (1<<3);
+		DISABLE_CFG_DIGITAL_PAD
+		DISABLE_CFG_LEFT_STICK
+		ENABLE_CFG_RIGHT_STICK
 	}
-	
-	if (   (!Stick_Jab)
-		|| (!Stick_Strong) 
-		|| (!Stick_Fierce)
-		|| (!Stick_Short)
-		|| (!Stick_Forward)
-#ifdef EXTRA_BUTTONS
-		|| (!Stick_Extra0)
-#endif
-		) {
-		// if any punch or kick is held down, then set to non-default mode
-#if USE_PT
+
 #if USE_PS3
-		if(CFG_DEF_WORK_MODE_DS)
-			setModePT();
-		else
-			setModePS3();
-#else
-		setModePT();
-#endif
-#else
-#if USE_PS3
+	if(!Stick_Short) {
 		setModePS3();
-#endif
+		return;
+	}
 #endif
 
+#if USE_WII
+	if(!Stick_Forward) {
+		setModeWii();
+		return;
 	}
-	else {
-		// else set to default mode
-#if USE_PS3
-#if USE_PT
-		if(CFG_DEF_WORK_MODE_DS)
-			setModePS3();
-		else
-			setModePT();
-#else
-		setModePS3();
-#endif
-#else
-#if USE_PT
-		setModePT();
-#endif
 #endif
 
+#if USE_PT
+	if(!Stick_Jab) {
+		setModePT();
+		return;
 	}
+#endif
+
+#if USE_PS3
+	if(CFG_DEF_WORK_MODE_PS3) {
+		setModePS3();
+		return;
+	}
+#endif
+
+#if USE_WII
+	if(CFG_DEF_WORK_MODE_WII) {
+		setModeWii();
+		return;
+	}
+#endif
+
+#if USE_PT
+	if(CFG_DEF_WORK_MODE_PT) {
+		setModePT();
+		return;
+	}
+#endif
+}
+
+/* ------------------------------------------------------------------------- */
+
+void readJoystickSwitch() {
+    if(CFG_JOYSTICK_SWITCH_READ) {
+        if(!(PIND & (1<<4)) && (PINC & (1<<6))) { // S3 low and S4 high
+			DISABLE_CFG_DIGITAL_PAD
+			ENABLE_CFG_LEFT_STICK
+			DISABLE_CFG_RIGHT_STICK
+        }
+        else if((PIND & (1<<4)) && !(PINC & (1<<6))) { // S3 high and S4 low
+			DISABLE_CFG_DIGITAL_PAD
+			DISABLE_CFG_LEFT_STICK
+			ENABLE_CFG_RIGHT_STICK
+        }
+        else if((PIND & (1<<4)) && (PINC & (1<<6))) { // S3 high and S4 high
+			ENABLE_CFG_DIGITAL_PAD
+			DISABLE_CFG_LEFT_STICK
+			DISABLE_CFG_RIGHT_STICK
+        }
+        else if(!(PIND & (1<<4)) && !(PINC & (1<<6))) { // S3 low and S4 low
+			DISABLE_CFG_DIGITAL_PAD
+			DISABLE_CFG_LEFT_STICK
+			DISABLE_CFG_RIGHT_STICK
+        }
+    }
 }
 
 /* ------------------------------------------------------------------------- */

@@ -9,7 +9,7 @@
 #include <avr/pgmspace.h>   /* required by usbdrv.h */
 #include "usbdrv/usbdrv.h"
 
-extern uint8_t config;
+extern uint8_t config[2];
 
 /* ------------------------------------------------------------------------- */
 /* ----------------------------- USB interface ----------------------------- */
@@ -117,7 +117,7 @@ PROGMEM char usbHidReportDescriptor[] = { // PC HID Report Descriptor
 
 /* ------------------------------------------------------------------------- */
 
-void readJoystickPS3()
+void readInputPS3()
 {
 	resetReportBuffer();
 
@@ -216,42 +216,8 @@ void ps3_controller() {
 
         if(usbInterruptIsReady()) {
             /* called after every poll of the interrupt endpoint */				
-            if(CFG_JOYSTICK_SWITCH_READ) {
-                if(!(PIND & (1<<4)) && (PINC & (1<<6))) { // S3 low and S4 high
-                    // Dual Strike digital pad: disabled
-                    config &= ~(1<<2);
-                    // Dual Strike left stick: enabled
-                    config |= (1<<1);
-                    // Dual Strike right stick: disabled
-                    config &= ~(1<<3);
-                }
-                else if((PIND & (1<<4)) && !(PINC & (1<<6))) { // S3 high and S4 low
-                    // Dual Strike digital pad: disabled
-                    config &= ~(1<<2);
-                    // Dual Strike left stick: disabled
-                    config &= ~(1<<1);
-                    // Dual Strike right stick: enabled
-                    config |= (1<<3);
-                }
-                else if((PIND & (1<<4)) && (PINC & (1<<6))) { // S3 high and S4 high
-                    // Dual Strike digital pad: enabled
-                    config |= (1<<2);
-                    // Dual Strike left stick: disabled
-                    config &= ~(1<<1);
-                    // Dual Strike right stick: disabled
-                    config &= ~(1<<3);
-                }
-                else if(!(PIND & (1<<4)) && !(PINC & (1<<6))) { // S3 low and S4 low
-                    // Dual Strike digital pad: disabled
-                    config &= ~(1<<2);
-                    // Dual Strike left stick: disabled
-                    config &= ~(1<<1);
-                    // Dual Strike right stick: disabled
-                    config &= ~(1<<3);
-                }
-            }
-
-            readJoystickPS3();
+			readJoystickSwitch();
+            readInputPS3();
             usbSetInterrupt((void *)&reportBuffer, 7*sizeof(uchar));
         }
     }

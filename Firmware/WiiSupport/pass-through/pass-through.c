@@ -3,7 +3,7 @@
 #include "../DualStrike.h"
 #include <avr/io.h>
 
-extern uint8_t config;
+extern uint8_t config[2];
 
 void pass_through() {
     if(CFG_JOYSTICK_SWITCH_EMU) {	
