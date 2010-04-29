@@ -2,10 +2,10 @@
 
 #include <avr/eeprom.h> /* EEPROM functions */
 #include <avr/pgmspace.h>   /* required by usbdrv.h */
-#include "ps3/usbdrv/usbdrv.h"
 
-uint8_t config[2] = {EEPROM_DEF, EEPROM_DEF};;
-uint8_t config_EEPROM[2] EEMEM = {CONFIG_0_DEF, CONFIG_1_DEF};
+#ifndef uchar
+#define uchar   unsigned char
+#endif
 
 // README
 /* 
@@ -59,14 +59,16 @@ Down  = inverted triggers for pass-through
 #define WORKING_MODE_WII 1
 #define WORKING_MODE_PT	 2
 
+uint8_t config[2] = {EEPROM_DEF, EEPROM_DEF};
+uint8_t config_EEPROM[2] EEMEM = {CONFIG_0_DEF, CONFIG_1_DEF};
+
 void configInit() {
-	uint8_t newConfig[2];
+	uint8_t newConfig[2] = {0,0};
 
 	 // read config from EEPROM
-	config[0] = eeprom_read_byte(&config_EEPROM[0]);
-	config[1] = eeprom_read_byte(&config_EEPROM[1]);
+	eeprom_read_block(config, config_EEPROM, 2);
 
-	if(config[0] == EEPROM_DEF && config[1] == EEPROM_DEF) {
+	if(config[0] == EEPROM_DEF || config[1] == EEPROM_DEF) {
 		/* if EEPROM is unitialized set to default config */
         newConfig[0] = CONFIG_0_DEF;
         newConfig[1] = CONFIG_1_DEF;
@@ -81,38 +83,38 @@ void configInit() {
 
 		while(Stick_Start) {
 			if(!Stick_Up) {
-				ENABLE_CFG_DIGITAL_PAD
-				DISABLE_CFG_LEFT_STICK
-				DISABLE_CFG_RIGHT_STICK
+				ENABLE_CFG_DIGITAL_PAD(newConfig)
+				DISABLE_CFG_LEFT_STICK(newConfig)
+				DISABLE_CFG_RIGHT_STICK(newConfig)
 			}
 			else if(!Stick_Left) {
-				DISABLE_CFG_DIGITAL_PAD
-				ENABLE_CFG_LEFT_STICK
-				DISABLE_CFG_RIGHT_STICK
+				DISABLE_CFG_DIGITAL_PAD(newConfig)
+				ENABLE_CFG_LEFT_STICK(newConfig)
+				DISABLE_CFG_RIGHT_STICK(newConfig)
 			}
 			else if(!Stick_Right) {
-				DISABLE_CFG_DIGITAL_PAD
-				DISABLE_CFG_LEFT_STICK
-				ENABLE_CFG_RIGHT_STICK
+				DISABLE_CFG_DIGITAL_PAD(newConfig)
+				DISABLE_CFG_LEFT_STICK(newConfig)
+				ENABLE_CFG_RIGHT_STICK(newConfig)
 			}
 			
 			if(!Stick_Down)
-				ENABLE_CFG_DIGITAL_PAD
+				ENABLE_CFG_DIGITAL_PAD(newConfig)
 
 			if(!Stick_Short) {
 #if USE_PS3
 				if(!Stick_Left)
-					SET_CFG_DEF_WORK_MODE_PS3
+					SET_CFG_DEF_WORK_MODE_PS3(newConfig)
 #endif
 
 #if USE_WII
 				if(!Stick_Up)
-					SET_CFG_DEF_WORK_MODE_WII
+					SET_CFG_DEF_WORK_MODE_WII(newConfig)
 #endif
 
 #if USE_PT
 				if(!Stick_Right)
-					SET_CFG_DEF_WORK_MODE_PT
+					SET_CFG_DEF_WORK_MODE_PT(newConfig)
 #endif
 			}
 			
@@ -124,33 +126,32 @@ void configInit() {
 			
 			if(!Stick_Jab) {
 				if(!Stick_Left)
-					DISABLE_CFG_HOME_EMU
+					DISABLE_CFG_HOME_EMU(newConfig)
 				
 				if(!Stick_Right)
-					ENABLE_CFG_HOME_EMU
+					ENABLE_CFG_HOME_EMU(newConfig)
 			}
 
 			if(!Stick_Strong) {
 				if(!Stick_Up) {
-					SET_CFG_NO_EXTRA_PINS
+					SET_CFG_NO_EXTRA_PINS(newConfig)
 				}
 				else if(!Stick_Left) {
-					SET_CFG_JOYSTICK_SWITCH_READ
+					SET_CFG_JOYSTICK_SWITCH_READ(newConfig)
 				}
 				else if(!Stick_Right) {
-					SET_CFG_JOYSTICK_SWITCH_EMU
+					SET_CFG_JOYSTICK_SWITCH_EMU(newConfig)
 				}
 				else if(!Stick_Down) {
-					SET_CFG_INVERTED_TRIGGERS
+					SET_CFG_INVERTED_TRIGGERS(newConfig)
 				}
 			}
 		}
 	}
 
-	if(newConfig != config) {
+	if(newConfig[0] != config[0] || newConfig[1] != config[1]) {
 		/* if newConfig was changed update configuration */
-		eeprom_write_byte(&config_EEPROM[0], newConfig[0]);
-		eeprom_write_byte(&config_EEPROM[1], newConfig[1]);
+		eeprom_write_block(newConfig, config_EEPROM, 2);
 		config[0] = newConfig[0];
 		config[1] = newConfig[1];
 	}
@@ -227,19 +228,19 @@ int hardwareInit() {
 
 	if(!Stick_Up) // [precedence]
 	{
-		ENABLE_CFG_DIGITAL_PAD
-		DISABLE_CFG_LEFT_STICK
-		DISABLE_CFG_RIGHT_STICK
+		ENABLE_CFG_DIGITAL_PAD(config)
+		DISABLE_CFG_LEFT_STICK(config)
+		DISABLE_CFG_RIGHT_STICK(config)
 	}
 	else if(!Stick_Left) {
-		DISABLE_CFG_DIGITAL_PAD
-		ENABLE_CFG_LEFT_STICK
-		DISABLE_CFG_RIGHT_STICK
+		DISABLE_CFG_DIGITAL_PAD(config)
+		ENABLE_CFG_LEFT_STICK(config)
+		DISABLE_CFG_RIGHT_STICK(config)
 	}
 	else if(!Stick_Right) {
-		DISABLE_CFG_DIGITAL_PAD
-		DISABLE_CFG_LEFT_STICK
-		ENABLE_CFG_RIGHT_STICK
+		DISABLE_CFG_DIGITAL_PAD(config)
+		DISABLE_CFG_LEFT_STICK(config)
+		ENABLE_CFG_RIGHT_STICK(config)
 	}
 
 	if(CFG_JOYSTICK_SWITCH_READ) {	
@@ -285,24 +286,24 @@ int hardwareInit() {
 void readJoystickSwitch() {
     if(CFG_JOYSTICK_SWITCH_READ) {
         if(!(PIND & (1<<4)) && (PINC & (1<<6))) { // S3 low and S4 high
-			DISABLE_CFG_DIGITAL_PAD
-			ENABLE_CFG_LEFT_STICK
-			DISABLE_CFG_RIGHT_STICK
+			DISABLE_CFG_DIGITAL_PAD(config)
+			ENABLE_CFG_LEFT_STICK(config)
+			DISABLE_CFG_RIGHT_STICK(config)
         }
         else if((PIND & (1<<4)) && !(PINC & (1<<6))) { // S3 high and S4 low
-			DISABLE_CFG_DIGITAL_PAD
-			DISABLE_CFG_LEFT_STICK
-			ENABLE_CFG_RIGHT_STICK
+			DISABLE_CFG_DIGITAL_PAD(config)
+			DISABLE_CFG_LEFT_STICK(config)
+			ENABLE_CFG_RIGHT_STICK(config)
         }
         else if((PIND & (1<<4)) && (PINC & (1<<6))) { // S3 high and S4 high
-			ENABLE_CFG_DIGITAL_PAD
-			DISABLE_CFG_LEFT_STICK
-			DISABLE_CFG_RIGHT_STICK
+			ENABLE_CFG_DIGITAL_PAD(config)
+			DISABLE_CFG_LEFT_STICK(config)
+			DISABLE_CFG_RIGHT_STICK(config)
         }
         else if(!(PIND & (1<<4)) && !(PINC & (1<<6))) { // S3 low and S4 low, SHOULD NEVER HAPPEN
-			DISABLE_CFG_DIGITAL_PAD
-			DISABLE_CFG_LEFT_STICK
-			DISABLE_CFG_RIGHT_STICK
+			DISABLE_CFG_DIGITAL_PAD(config)
+			DISABLE_CFG_LEFT_STICK(config)
+			DISABLE_CFG_RIGHT_STICK(config)
         }
     }
 }

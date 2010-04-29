@@ -15,7 +15,7 @@ COMMON = -mmcu=$(MCU)
 
 ## Compile options common for all C compilation units.
 CFLAGS = $(COMMON)
-CFLAGS += -Wall -std=c99                                                          -DF_CPU=12000000UL -Os -funsigned-char
+CFLAGS += -Wall -std=c99                                                                           -DF_CPU=12000000UL -Os -fsigned-char
 CFLAGS += -MD -MP -MT $(*F).o -MF dep/$(@F).d 
 
 ## Assembly specific flags
@@ -37,7 +37,7 @@ HEX_EEPROM_FLAGS += --change-section-lma .eeprom=0 --no-change-warnings
 
 
 ## Objects that must be built in order to link
-OBJECTS = DualStrike.o pass-through.o ps3_controller.o usbdrv.o usbdrvasm.o wiimote_extension_controller.o wiimote.o 
+OBJECTS = DualStrike.o pass-through.o ps3_controller.o usbdrv.o usbdrvasm.o 
 
 ## Objects explicitly added by the user
 LINKONLYOBJECTS = 
@@ -60,12 +60,6 @@ usbdrv.o: ../ps3/usbdrv/usbdrv.c
 
 usbdrvasm.o: ../ps3/usbdrv/usbdrvasm.S
 	$(CC) $(INCLUDES) $(ASMFLAGS) -c  $<
-
-wiimote_extension_controller.o: ../wii/wiimote_extension_controller.c
-	$(CC) $(INCLUDES) $(CFLAGS) -c  $<
-
-wiimote.o: ../wii/wiimote.c
-	$(CC) $(INCLUDES) $(CFLAGS) -c  $<
 
 ##Link
 $(TARGET): $(OBJECTS)

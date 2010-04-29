@@ -2,7 +2,7 @@
 #define __DualStrike_h_included__
 
 #define USE_PS3 1
-#define USE_WII 1
+#define USE_WII 0
 #define USE_PT 1
 
 #if USE_PS3
@@ -54,21 +54,21 @@ The bits have the following semantics:
 #define CFG_INVERTED_TRIGGERS		(  (config[1] & (1<<0)) &&  (config[1] & (1<<1)) )
 
 // configuration modifications:
-#define SET_CFG_DEF_WORK_MODE_PT		config[0] &= 0b11111100;
-#define SET_CFG_DEF_WORK_MODE_PS3 		config[0] |= (1<<0); config[0] &= ~(1<<1); 
-#define SET_CFG_DEF_WORK_MODE_WII		config[0] &= ~(1<<0); config[0] |= (1<<1);
-#define ENABLE_CFG_LEFT_STICK 			config[0] |= (1<<2);
-#define DISABLE_CFG_LEFT_STICK 			config[0] &= ~(1<<2);
-#define ENABLE_CFG_DIGITAL_PAD			config[0] |= (1<<3);
-#define DISABLE_CFG_DIGITAL_PAD			config[0] &= ~(1<<3);
-#define ENABLE_CFG_RIGHT_STICK			config[0] |= (1<<4);
-#define DISABLE_CFG_RIGHT_STICK			config[0] &= ~(1<<4);
-#define ENABLE_CFG_HOME_EMU		 		config[0] |= (1<<5);
-#define DISABLE_CFG_HOME_EMU			config[0] &= ~(1<<5);
-#define SET_CFG_NO_EXTRA_PINS			config[1] &= 0b11111100;
-#define SET_CFG_JOYSTICK_SWITCH_READ	config[1] &= ~(1<<0); config[1] |= (1<<1);
-#define SET_CFG_JOYSTICK_SWITCH_EMU		config[1] |= (1<<0); config[1] &= ~(1<<1); 
-#define SET_CFG_INVERTED_TRIGGERS		config[1] |= (1<<0); config[1] |= (1<<1);
+#define SET_CFG_DEF_WORK_MODE_PT(config)		config[0] &= 0b11111100;
+#define SET_CFG_DEF_WORK_MODE_PS3(config)		config[0] |= (1<<0); config[0] &= ~(1<<1); 
+#define SET_CFG_DEF_WORK_MODE_WII(config)		config[0] &= ~(1<<0); config[0] |= (1<<1);
+#define ENABLE_CFG_LEFT_STICK(config) 			config[0] |= (1<<2);
+#define DISABLE_CFG_LEFT_STICK(config) 			config[0] &= ~(1<<2);
+#define ENABLE_CFG_DIGITAL_PAD(config)			config[0] |= (1<<3);
+#define DISABLE_CFG_DIGITAL_PAD(config)			config[0] &= ~(1<<3);
+#define ENABLE_CFG_RIGHT_STICK(config)			config[0] |= (1<<4);
+#define DISABLE_CFG_RIGHT_STICK(config)			config[0] &= ~(1<<4);
+#define ENABLE_CFG_HOME_EMU(config)		 		config[0] |= (1<<5);
+#define DISABLE_CFG_HOME_EMU(config)			config[0] &= ~(1<<5);
+#define SET_CFG_NO_EXTRA_PINS(config)			config[1] &= 0b11111100;
+#define SET_CFG_JOYSTICK_SWITCH_READ(config)	config[1] |= (1<<0); config[1] &= ~(1<<1); 
+#define SET_CFG_JOYSTICK_SWITCH_EMU(config)		config[1] &= ~(1<<0); config[1] |= (1<<1);
+#define SET_CFG_INVERTED_TRIGGERS(config)		config[1] |= (1<<0); config[1] |= (1<<1);
 
 
 // BUTTON DEFINITIONS
