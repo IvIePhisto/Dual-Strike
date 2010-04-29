@@ -1,4 +1,5 @@
 #include "wiimote.h"
+#include "wiimote_config.h"
 #include "wm_crypto.h"
 
 // pointer to user function
@@ -88,7 +89,7 @@ void wm_gentabs()
 		tkey[5] = ((wm_ror8((ans[5] ^ t0[7]), (t0[8] % 8)) - t0[5]) ^ t0[9]);
 
 		// compare with actual key
-		if(memcmp(tkey, wm_key, 6) == 0) break; // if match, then use this idx
+		if(memcmp(tkey, (void*)wm_key, 6) == 0) break; // if match, then use this idx
 	}
 
 	// generate encryption from idx key and rand
@@ -155,29 +156,29 @@ void wm_slaveRx(unsigned char addr, unsigned char l)
 	}
 }
 
-void wm_newaction(unsigned char * d)
+void wm_newaction(const unsigned char * button_data)
 {
 	// load button data from user application
-	memcpy(twi_reg, d, 6);
+	memcpy((void*)twi_reg, button_data, WII_EXTENSION_BUTTON_DATA_LENGTH);
 }
 
-void wm_init(unsigned char * id, unsigned char * t, unsigned char * cal_data, void (*function)(void))
+void wm_init(const unsigned char * id, const unsigned char * button_data, const unsigned char * cal_data, void (*function)(void))
 {
 	// link user function
 	wm_sample_event = function;
 
 	// start state
-	wm_newaction(t);
+	wm_newaction(button_data);
 	twi_reg[0xF0] = 0; // disable encryption
 
 	// set id
-	for(unsigned int i = 0, j = 0xFA; i < 6; i++, j++)
+	for(unsigned int i = 0, j = 0xFA; i < WII_EXTENSION_ID_LENGTH; i++, j++)
 	{
 		twi_reg[j] = id[i];
 	}
 
 	// set calibration data
-	for(unsigned int i = 0, j = 0x20; i < 6; i++, j++)
+	for(unsigned int i = 0, j = 0x20; i < WII_EXTENSION_CALIBRATION_DATA_LENGTH; i++, j++)
 	{
 		twi_reg[j] = cal_data[i];
 	}

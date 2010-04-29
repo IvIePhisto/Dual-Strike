@@ -12,10 +12,6 @@
 extern uint8_t config[2];
 
 /* ------------------------------------------------------------------------- */
-/* ----------------------------- USB interface ----------------------------- */
-/* ------------------------------------------------------------------------- */
-
-/* ------------------------------------------------------------------------- */
 
 
 typedef struct {
@@ -29,27 +25,27 @@ typedef struct {
 	uchar   extra; // only used for HID report
 } report_t;
 
-static	report_t reportBuffer;
+extern report_t data;
 
-usbMsgLen_t usbFunctionSetup(uchar data[8])
+usbMsgLen_t usbFunctionSetup(uchar receivedData[8])
 {
-	usbRequest_t    *rq = (void *)data;
+	usbRequest_t    *rq = (void *)receivedData;
 
     if((rq->bmRequestType & USBRQ_TYPE_MASK) == USBRQ_TYPE_CLASS) {    /* class request */
 		/* wValue: ReportType (highbyte), ReportID (lowbyte) */
         if(rq->bRequest == USBRQ_HID_GET_REPORT) {
 			 // set buffer data
-			reportBuffer.buttons1 = 33;
-			reportBuffer.buttons2 = 38;
-			reportBuffer.hatswitch =
-			reportBuffer.x =
-			reportBuffer.y =
-			reportBuffer.z = 
-			reportBuffer.rz =
-			reportBuffer.extra = 0;
-			usbMsgPtr = (void *)&reportBuffer;
+			data.buttons1 = 33;
+			data.buttons2 = 38;
+			data.hatswitch =
+			data.x =
+			data.y =
+			data.z = 
+			data.rz =
+			data.extra = 0;
+			usbMsgPtr = (void *)&data;
 
-			return sizeof(reportBuffer);
+			return 8;
         }
     }
 
@@ -57,14 +53,14 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
 }
 
 void resetReportBuffer() {
-	reportBuffer.buttons1 =
-	reportBuffer.buttons2 =
-	reportBuffer.extra = 0;
-	reportBuffer.hatswitch = 0x08;
-	reportBuffer.x =
-	reportBuffer.y =
-	reportBuffer.z =
-	reportBuffer.rz = 0x80;
+	data.buttons1 =
+	data.buttons2 =
+	data.extra = 0;
+	data.hatswitch = 0x08;
+	data.x =
+	data.y =
+	data.z =
+	data.rz = 0x80;
 }
 
 PROGMEM char usbHidReportDescriptor[] = { // PC HID Report Descriptor
@@ -123,20 +119,20 @@ void readInputPS3()
 
 	// Left Joystick Directions
 	if(CFG_LEFT_STICK) {
-		if (!Stick_Up) reportBuffer.y = 0x00;
-		else if (!Stick_Down) reportBuffer.y = 0xFF;
+		if (!Stick_Up) data.y = 0x00;
+		else if (!Stick_Down) data.y = 0xFF;
 
-		if (!Stick_Left) reportBuffer.x = 0x00;
-		else if (!Stick_Right) reportBuffer.x = 0xFF;
+		if (!Stick_Left) data.x = 0x00;
+		else if (!Stick_Right) data.x = 0xFF;
 	}
 
 	// Right Joystick Directions
 	if(CFG_RIGHT_STICK) {
-		if (!Stick_Up) reportBuffer.rz = 0;
-		else if (!Stick_Down) reportBuffer.rz = 0xFF;
+		if (!Stick_Up) data.rz = 0;
+		else if (!Stick_Down) data.rz = 0xFF;
 		
-		if (!Stick_Left) reportBuffer.z = 0;
-		else if (!Stick_Right) reportBuffer.z = 0xFF;
+		if (!Stick_Left) data.z = 0;
+		else if (!Stick_Right) data.z = 0xFF;
 
 	}
 
@@ -144,62 +140,62 @@ void readInputPS3()
 	if(CFG_DIGITAL_PAD) {
 		if(!Stick_Up)
 		{
-			if(!Stick_Right) reportBuffer.hatswitch=0x01;
-			else if(!Stick_Left) reportBuffer.hatswitch=0x07;
-			else reportBuffer.hatswitch=0x00;
+			if(!Stick_Right) data.hatswitch=0x01;
+			else if(!Stick_Left) data.hatswitch=0x07;
+			else data.hatswitch=0x00;
 		}
 		else if(!Stick_Down)
 		{
-			if(!Stick_Right) reportBuffer.hatswitch=0x03;
-			else if(!Stick_Left) reportBuffer.hatswitch=0x05;
-			else reportBuffer.hatswitch=0x04;
+			if(!Stick_Right) data.hatswitch=0x03;
+			else if(!Stick_Left) data.hatswitch=0x05;
+			else data.hatswitch=0x04;
 		}
 		else
 		{
-			if(!Stick_Right) reportBuffer.hatswitch=0x02;
-			if(!Stick_Left) reportBuffer.hatswitch=0x06;
+			if(!Stick_Right) data.hatswitch=0x02;
+			if(!Stick_Left) data.hatswitch=0x06;
 		}
 	}
 
 	// Buttons
 	if(!Stick_Jab)
-		reportBuffer.buttons1 |= 0b00000001;
+		data.buttons1 |= 0b00000001;
 
 	if(!Stick_Short)
-		reportBuffer.buttons1 |= 0b00000010;
+		data.buttons1 |= 0b00000010;
 
 	if(!Stick_Forward)
-		reportBuffer.buttons1 |= 0b00000100;
+		data.buttons1 |= 0b00000100;
 
 	if(!Stick_Strong)
-		reportBuffer.buttons1 |= 0b00001000;
+		data.buttons1 |= 0b00001000;
 
 #ifdef EXTRA_BUTTONS					
 	if(!Stick_Extra0)
-		reportBuffer.buttons1 |=0b00010000;
+		data.buttons1 |=0b00010000;
 
 	if(!Stick_Extra1)
-		reportBuffer.buttons1 |=0b01000000;
+		data.buttons1 |=0b01000000;
 #endif
 
 	if(!Stick_Fierce)
-		reportBuffer.buttons1 |= 0b00100000;
+		data.buttons1 |= 0b00100000;
 
 	if(!Stick_Roundhouse)
-		reportBuffer.buttons1 |= 0b10000000;
+		data.buttons1 |= 0b10000000;
 
 	if(CFG_HOME_EMU && !Stick_Start && !Stick_Select /* && Stick_Jab */)
-		reportBuffer.buttons2 |= 0b00010000;
+		data.buttons2 |= 0b00010000;
 	else {
 		if(!Stick_Start)
-			reportBuffer.buttons2 |=0b00000010;
+			data.buttons2 |=0b00000010;
 
 		if(!Stick_Select)
-			reportBuffer.buttons2 |=0b00000001;
+			data.buttons2 |=0b00000001;
 	}
 
 	if(!Stick_Home)
-		reportBuffer.buttons2 |= 0b00010000;
+		data.buttons2 |= 0b00010000;
 }
 
 /* ------------------------------------------------------------------------- */
@@ -218,7 +214,7 @@ void ps3_controller() {
             /* called after every poll of the interrupt endpoint */				
 			readJoystickSwitch();
             readInputPS3();
-            usbSetInterrupt((void *)&reportBuffer, 7*sizeof(uchar));
+            usbSetInterrupt((void *)&data, 7*sizeof(uchar));
         }
     }
 }

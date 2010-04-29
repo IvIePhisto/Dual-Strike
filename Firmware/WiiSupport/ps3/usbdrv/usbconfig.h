@@ -21,6 +21,8 @@ other hardware interrupt, as long as it is the highest level interrupt, see
 section at the end of this file).
 */
 
+#define USB_CFG_USE_SWITCH_STATEMENT 0
+
 /* ---------------------------- Hardware Config ---------------------------- */
 
 #define USB_CFG_IOPORTNAME      D

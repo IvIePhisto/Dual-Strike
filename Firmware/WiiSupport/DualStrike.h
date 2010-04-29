@@ -2,7 +2,7 @@
 #define __DualStrike_h_included__
 
 #define USE_PS3 1
-#define USE_WII 0
+#define USE_WII 1
 #define USE_PT 1
 
 #if USE_PS3
@@ -17,9 +17,11 @@
 #include "pass-through/pass-through.h"
 #endif
 
+// CONFIGURATION
 /*
-config bytes description by bits:
---------------------------------
+The configuration is saved in a two byte array named 'config'.
+The bits have the following semantics:
+
 [0]0-1: default working mode (00 == pass-through; 01 == PS3, 10 == Wii)
 [0]2:   Dual Strike left stick (0 == deactivated; 1 == activated)
 [0]3:   Dual Strike digital pad (0 == deactivated; 1 == activated)
@@ -38,29 +40,20 @@ config bytes description by bits:
 #define CONFIG_1_DEF 0 /* default config part 1 */
 #define EEPROM_DEF 0xFF /* for uninitialized EEPROMs */
 
-// test configuration: default working mode == pass-through
+// configuration tests:
 #define CFG_DEF_WORK_MODE_PT 	( !(config[0] & (1<<0)) && !(config[0] & (1<<1)) ) 
-// test configuration: default working mode == PS3
 #define CFG_DEF_WORK_MODE_PS3 	(  (config[0] & (1<<0)) && !(config[0] & (1<<1)) )
-// test configuration: default working mode == Wii
 #define CFG_DEF_WORK_MODE_WII 	( !(config[0] & (1<<0)) &&  (config[0] & (1<<1)) )
-// test configuration:  Dual Strike left stick == enabled
 #define CFG_LEFT_STICK 			(config[0] & (1<<2))
-// test configuration:  Dual Strike digital pad == enabled
 #define CFG_DIGITAL_PAD		    (config[0] & (1<<3))
-// test configuration:  Dual Strike right stick == enabled
 #define CFG_RIGHT_STICK			(config[0] & (1<<4))
-// test configuration: Start+Select=Home == enabled
 #define CFG_HOME_EMU		 	(config[0] & (1<<5))
-// test configuration: extra PINs mode == disabled
 #define CFG_NO_EXTRA_PINS			( !(config[1] & (1<<0)) && !(config[1] & (1<<1)) )
-// test configuration: extra PINs mode == read Joystick mode switch
 #define CFG_JOYSTICK_SWITCH_READ	(  (config[1] & (1<<0)) && !(config[1] & (1<<1)) )
-// test configuration: extra PINs mode == emulate Joystick mode switch for pass-through
 #define CFG_JOYSTICK_SWITCH_EMU		( !(config[1] & (1<<0)) &&  (config[1] & (1<<1)) )
-// test configuration: extra PINs mode == inverted triggers for pass-through
 #define CFG_INVERTED_TRIGGERS		(  (config[1] & (1<<0)) &&  (config[1] & (1<<1)) )
 
+// configuration modifications:
 #define SET_CFG_DEF_WORK_MODE_PT		config[0] &= 0b11111100;
 #define SET_CFG_DEF_WORK_MODE_PS3 		config[0] |= (1<<0); config[0] &= ~(1<<1); 
 #define SET_CFG_DEF_WORK_MODE_WII		config[0] &= ~(1<<0); config[0] |= (1<<1);
@@ -76,6 +69,9 @@ config bytes description by bits:
 #define SET_CFG_JOYSTICK_SWITCH_READ	config[1] &= ~(1<<0); config[1] |= (1<<1);
 #define SET_CFG_JOYSTICK_SWITCH_EMU		config[1] |= (1<<0); config[1] &= ~(1<<1); 
 #define SET_CFG_INVERTED_TRIGGERS		config[1] |= (1<<0); config[1] |= (1<<1);
+
+
+// BUTTON DEFINITIONS
 
 // set to 1 for SMD version of the Dual Strike
 #define DUAL_STRIKE_SMD 0

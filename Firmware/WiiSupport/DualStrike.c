@@ -7,8 +7,7 @@
 uint8_t config[2] = {EEPROM_DEF, EEPROM_DEF};;
 uint8_t config_EEPROM[2] EEMEM = {CONFIG_0_DEF, CONFIG_1_DEF};
 
-/* ------------------------------------------------------------------------- */
-
+// README
 /* 
 Configuration Mode
 ==================
@@ -56,7 +55,9 @@ Down  = inverted triggers for pass-through
 		pass-through PCB		
 */
 
-int SwitchMode = -1;
+#define WORKING_MODE_PS3 0
+#define WORKING_MODE_WII 1
+#define WORKING_MODE_PT	 2
 
 void configInit() {
 	uint8_t newConfig[2];
@@ -77,7 +78,6 @@ void configInit() {
 
 	if(!Stick_Select) {
 		/* enter configuration modification mode */
-		usbDeviceDisconnect(); /* prevents unsuccessful initialization by host */
 
 		while(Stick_Start) {
 			if(!Stick_Up) {
@@ -105,14 +105,14 @@ void configInit() {
 					SET_CFG_DEF_WORK_MODE_PS3
 #endif
 
-#if USE_PT
-				if(!Stick_Right)
-					SET_CFG_DEF_WORK_MODE_PT
-#endif
-
 #if USE_WII
 				if(!Stick_Up)
 					SET_CFG_DEF_WORK_MODE_WII
+#endif
+
+#if USE_PT
+				if(!Stick_Right)
+					SET_CFG_DEF_WORK_MODE_PT
 #endif
 			}
 			
@@ -157,37 +157,38 @@ void configInit() {
 }
 
 #if USE_PS3
-void setModePS3() {
-	if(CFG_JOYSTICK_SWITCH_READ) {		
-		PORTD |= (1<<4); // pin S3 is high
-		PORTC |= (1<<6); // pin S4 is high
-	}
+int setModePS3() {
+	PORTD |= (1<<0); // enable Dual Strike USB lines
 
-	SwitchMode = 0;
+	return WORKING_MODE_PS3;
+}
+#endif
+
+#if USE_WII
+int setModeWii() {
+	PORTD |= (1<<0); // enable Dual Strike USB lines
+
+	return WORKING_MODE_WII;
 }
 #endif
 
 #if USE_PT
-void setModePT() {	
+int setModePT() {	
 	if(CFG_HOME_EMU)
 		SET_HOME_OUTPUT
 
-	if(CFG_JOYSTICK_SWITCH_READ) {	
-		PORTD |= (1<<4); // pin S3 is high
-		PORTC |= (1<<6); // pin S4 is high
-	}
-	else if(CFG_JOYSTICK_SWITCH_EMU || CFG_INVERTED_TRIGGERS) {
+	if(CFG_JOYSTICK_SWITCH_EMU || CFG_INVERTED_TRIGGERS) {
 		DDRD |= (1<<4); // pin S3 is output
 		DDRC |= (1<<6); // pin S4 is output
 	}
 
-	PORTD &= ~(1<<0); // disable ps3 usb
-	PORTD |= (1<<3); // enable pass-through usb
+	PORTD |= (1<<3); // enable pass-through usb lines
 
-	SwitchMode = 2;
+	return WORKING_MODE_PT;
 }
 #endif
 
+// README
 /*
 Startup Behaviour
 =================
@@ -200,8 +201,9 @@ If the Select button is pressed, then configuration mode is entered (see below).
 If the Start button is pressed, then firmware update mode is entered (see below).
 
 If the X/Cross button is pressed, then the Dual Strike PS3 working mode is activated.
-If the Y/Circle button is pressed, then the Dual Strike Wii working mode is activated.
-If the A/Squard button is pressed, then the pass-through working mode is activated.
+Otherwise if the Y/Circle button is pressed, then the Dual Strike Wii working mode is activated.
+Otherwise if the A/Squard button is pressed, then the pass-through working mode is activated.
+Otherwise the default working mode is activated.
 
 If the joystick is moved to the up direction, the joystick is acting as a digital pad
 when in Dual Strike working mode (default).
@@ -210,16 +212,16 @@ stick when in Dual Strike working mode.
 If the joystick is moved to the right direction, the joystick is acting as a right analogue
 stick when in Dual Strike working mode.
 */
-void HardwareInit() {
+int hardwareInit() {
 	DDRC	= 0b00000000;	// PINC inputs
 	PORTC	= 0b00111111;	// PORTC with pull-ups except S4
 
-	DDRB	= 0b00000000;	// PINC inputs
+	DDRB	= 0b00000000;	// PINB inputs
 	PORTB	= 0b00111111;	// PORTB with pull-ups except clock
 	
 
-	DDRD	= 0b00001001;  // PINC inputs, except S1 and S2
-	PORTD	= 0b11100001;  // PORTD with pull-ups except S2, D+, D- and S3
+	DDRD	= 0b00001001;  // PIND inputs, except S1 and S2
+	PORTD	= 0b11100000;  // PORTD with pull-ups except S1, S2, D+, D- and S3
 
 	configInit();
 
@@ -240,47 +242,42 @@ void HardwareInit() {
 		ENABLE_CFG_RIGHT_STICK
 	}
 
-#if USE_PS3
-	if(!Stick_Short) {
-		setModePS3();
-		return;
+	if(CFG_JOYSTICK_SWITCH_READ) {	
+		PORTD |= (1<<4); // pin S3 is high
+		PORTC |= (1<<6); // pin S4 is high
 	}
+
+#if USE_PS3
+	if(!Stick_Short)
+		return setModePS3();
 #endif
 
 #if USE_WII
-	if(!Stick_Forward) {
-		setModeWii();
-		return;
-	}
+	if(!Stick_Forward)
+		return setModeWii();
 #endif
 
 #if USE_PT
-	if(!Stick_Jab) {
-		setModePT();
-		return;
-	}
+	if(!Stick_Jab)
+		return setModePT();
 #endif
 
 #if USE_PS3
-	if(CFG_DEF_WORK_MODE_PS3) {
-		setModePS3();
-		return;
-	}
+	if(CFG_DEF_WORK_MODE_PS3)
+		return setModePS3();
 #endif
 
 #if USE_WII
-	if(CFG_DEF_WORK_MODE_WII) {
-		setModeWii();
-		return;
-	}
+	if(CFG_DEF_WORK_MODE_WII)
+		return setModeWii();
 #endif
 
 #if USE_PT
-	if(CFG_DEF_WORK_MODE_PT) {
-		setModePT();
-		return;
-	}
+	if(CFG_DEF_WORK_MODE_PT)
+		return setModePT();
 #endif
+
+	return -1;
 }
 
 /* ------------------------------------------------------------------------- */
@@ -302,7 +299,7 @@ void readJoystickSwitch() {
 			DISABLE_CFG_LEFT_STICK
 			DISABLE_CFG_RIGHT_STICK
         }
-        else if(!(PIND & (1<<4)) && !(PINC & (1<<6))) { // S3 low and S4 low
+        else if(!(PIND & (1<<4)) && !(PINC & (1<<6))) { // S3 low and S4 low, SHOULD NEVER HAPPEN
 			DISABLE_CFG_DIGITAL_PAD
 			DISABLE_CFG_LEFT_STICK
 			DISABLE_CFG_RIGHT_STICK
@@ -312,24 +309,30 @@ void readJoystickSwitch() {
 
 /* ------------------------------------------------------------------------- */
 
+uchar* data[8] = {0,0,0,0,0,0,0,0};
+
 int main(void)
 {
-	HardwareInit();
-
+	data[0] = 0;
+	switch(hardwareInit()) {
 #if USE_PS3
-	if(SwitchMode == 0)
+	case WORKING_MODE_PS3:
 	  ps3_controller();
+	  break;
 #endif
 
 #if USE_WII
-	if(SwitchMode == 1)
+	case WORKING_MODE_WII:
 	  wiimote_extension_controller();
+	  break;
 #endif
 
 #if USE_PT
-	if(SwitchMode == 2)
+	case WORKING_MODE_PT:
 	  pass_through();
+	  break;
 #endif
+	}
 
     return 0;
 }

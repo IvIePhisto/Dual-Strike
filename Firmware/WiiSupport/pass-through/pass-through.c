@@ -21,13 +21,11 @@ void pass_through() {
         }
     }
 
-    while(1) { /* main event loop */
+    while(1) {
         if(CFG_HOME_EMU) {
             if((!Stick_Start) &&  (!Stick_Select))
-                //if start and select are pressed then make guide line low
                 SWITCH_HOME_LOW
             else
-                //else guide line is high
                 SWITCH_HOME_HIGH
         }
 
