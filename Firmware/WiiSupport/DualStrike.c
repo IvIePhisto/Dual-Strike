@@ -314,7 +314,6 @@ uchar* data[8] = {0,0,0,0,0,0,0,0};
 
 int main(void)
 {
-	data[0] = 0;
 	switch(hardwareInit()) {
 #if USE_PS3
 	case WORKING_MODE_PS3:
