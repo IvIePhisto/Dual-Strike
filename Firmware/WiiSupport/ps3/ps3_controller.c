@@ -159,7 +159,7 @@ void readInputPS3()
 			else if(!Stick_Left)
 				data.hatswitch = 0b00000101;
 			else
-				data.hatswitch = 0b00001000;
+				data.hatswitch = 0b00000100;
 		}
 		else {
 			if(!Stick_Right)
