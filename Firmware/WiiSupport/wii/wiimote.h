@@ -1,11 +1,5 @@
 #ifndef wiimote_h
 
-#include <string.h>
-#include <avr/io.h>
-#include <util/delay.h>
-#include <util/twi.h>
-#include <avr/interrupt.h>
-
 #define twi_port PORTD
 #define twi_ddr DDRD
 #define twi_scl_pin 1

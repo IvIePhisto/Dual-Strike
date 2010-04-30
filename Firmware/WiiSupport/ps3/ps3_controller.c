@@ -56,11 +56,11 @@ void resetReportBuffer() {
 	data.buttons1 =
 	data.buttons2 =
 	data.extra = 0;
-	data.hatswitch = 0x08;
+	data.hatswitch = 0b00001000;
 	data.x =
 	data.y =
 	data.z =
-	data.rz = 0x80;
+	data.rz = 0b10000000;
 }
 
 PROGMEM char usbHidReportDescriptor[] = { // PC HID Report Descriptor
@@ -119,83 +119,95 @@ void readInputPS3()
 
 	// Left Joystick Directions
 	if(CFG_LEFT_STICK) {
-		if (!Stick_Up) data.y = 0x00;
-		else if (!Stick_Down) data.y = 0xFF;
+		if (!Stick_Up)
+			data.y = 0x00;
+		else if (!Stick_Down)
+			data.y = 0xFF;
 
-		if (!Stick_Left) data.x = 0x00;
-		else if (!Stick_Right) data.x = 0xFF;
+		if (!Stick_Left)
+			data.x = 0x00;
+		else if (!Stick_Right)
+			data.x = 0xFF;
 	}
 
 	// Right Joystick Directions
 	if(CFG_RIGHT_STICK) {
-		if (!Stick_Up) data.rz = 0;
-		else if (!Stick_Down) data.rz = 0xFF;
+		if (!Stick_Up)
+			data.rz = 0;
+		else if (!Stick_Down)
+			data.rz = 0xFF;
 		
-		if (!Stick_Left) data.z = 0;
-		else if (!Stick_Right) data.z = 0xFF;
-
+		if (!Stick_Left)
+			data.z = 0;
+		else if (!Stick_Right)
+			data.z = 0xFF;
 	}
 
 	// Digital Pad Directions
 	if(CFG_DIGITAL_PAD) {
-		if(!Stick_Up)
-		{
-			if(!Stick_Right) data.hatswitch=0x01;
-			else if(!Stick_Left) data.hatswitch=0x07;
-			else data.hatswitch=0x00;
+		if(!Stick_Up) {
+			if(!Stick_Right)
+				data.hatswitch = 0b00000001;
+			else if(!Stick_Left)
+				data.hatswitch = 0b00000111;
+			else
+				data.hatswitch = 0b00000000;
 		}
-		else if(!Stick_Down)
-		{
-			if(!Stick_Right) data.hatswitch=0x03;
-			else if(!Stick_Left) data.hatswitch=0x05;
-			else data.hatswitch=0x04;
+		else if(!Stick_Down) {
+			if(!Stick_Right)
+				data.hatswitch = 0b00000011;
+			else if(!Stick_Left)
+				data.hatswitch = 0b00000101;
+			else
+				data.hatswitch = 0b00001000;
 		}
-		else
-		{
-			if(!Stick_Right) data.hatswitch=0x02;
-			if(!Stick_Left) data.hatswitch=0x06;
+		else {
+			if(!Stick_Right)
+				data.hatswitch = 0b00000010;
+			if(!Stick_Left)
+				data.hatswitch = 0b00000110;
 		}
 	}
 
 	// Buttons
 	if(!Stick_Jab)
-		data.buttons1 |= 0b00000001;
+		data.buttons1 |= (1<<0);
 
 	if(!Stick_Short)
-		data.buttons1 |= 0b00000010;
+		data.buttons1 |= (1<<1);
 
 	if(!Stick_Forward)
-		data.buttons1 |= 0b00000100;
+		data.buttons1 |= (1<<2);
 
 	if(!Stick_Strong)
-		data.buttons1 |= 0b00001000;
+		data.buttons1 |= (1<<3);
 
 #ifdef EXTRA_BUTTONS					
 	if(!Stick_Extra0)
-		data.buttons1 |=0b00010000;
+		data.buttons1 |= (1<<4);
 
 	if(!Stick_Extra1)
-		data.buttons1 |=0b01000000;
+		data.buttons1 |= (1<<6);
 #endif
 
 	if(!Stick_Fierce)
-		data.buttons1 |= 0b00100000;
+		data.buttons1 |= (1<<5);
 
 	if(!Stick_Roundhouse)
-		data.buttons1 |= 0b10000000;
+		data.buttons1 |= (1<<7);
 
 	if(CFG_HOME_EMU && !Stick_Start && !Stick_Select /* && Stick_Jab */)
-		data.buttons2 |= 0b00010000;
+		data.buttons2 |= (1<<4);
 	else {
 		if(!Stick_Start)
-			data.buttons2 |=0b00000010;
+			data.buttons2 |= (1<<1);
 
 		if(!Stick_Select)
-			data.buttons2 |=0b00000001;
+			data.buttons2 |= (1<<0);
 	}
 
 	if(!Stick_Home)
-		data.buttons2 |= 0b00010000;
+		data.buttons2 |= (1<<4);
 }
 
 /* ------------------------------------------------------------------------- */

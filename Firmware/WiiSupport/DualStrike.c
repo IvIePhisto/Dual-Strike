@@ -27,8 +27,8 @@ Down  = activate digital pad additionallly to left or right analogue stick
 Default Working Mode:
 ---------------------
 Button: LK
-Left  = Dual Strike PS3 [default]
-Up    = Dual Strike Wii
+Left  = Dual Strike PS3 [default] if firmware supports PS3
+Up    = Dual Strike Wii if firmware supports Wii
 Right = pass-through
 
 revert to defaults:
@@ -201,8 +201,8 @@ If the Select button is pressed, then configuration mode is entered (see below).
 
 If the Start button is pressed, then firmware update mode is entered (see below).
 
-If the X/Cross button is pressed, then the Dual Strike PS3 working mode is activated.
-Otherwise if the Y/Circle button is pressed, then the Dual Strike Wii working mode is activated.
+If the X/Cross button is pressed and firmware supports PS3 (default), then the Dual Strike PS3 working mode is activated.
+Otherwise if the Y/Circle button is pressed and firmware supports Wii, then the Dual Strike Wii working mode is activated.
 Otherwise if the A/Squard button is pressed, then the pass-through working mode is activated.
 Otherwise the default working mode is activated.
 

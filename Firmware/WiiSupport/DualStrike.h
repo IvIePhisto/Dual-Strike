@@ -1,9 +1,13 @@
 #ifndef __DualStrike_h_included__
 #define __DualStrike_h_included__
 
+// base 576 bytes
 #define USE_PS3 1
+// 2114 bytes
 #define USE_WII 0
+// 5000+ bytes
 #define USE_PT 1
+// 110 bytes
 
 #if USE_PS3
 #include "ps3/ps3_controller.h"

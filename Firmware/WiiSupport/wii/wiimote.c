@@ -1,5 +1,10 @@
+#include <string.h>
+#include <avr/io.h>
+#include <util/delay.h>
+#include <util/twi.h>
+#include <avr/interrupt.h>
+
 #include "wiimote.h"
-#include "wiimote_config.h"
 #include "wm_crypto.h"
 
 // pointer to user function
@@ -159,7 +164,7 @@ void wm_slaveRx(unsigned char addr, unsigned char l)
 void wm_newaction(const unsigned char * button_data)
 {
 	// load button data from user application
-	memcpy((void*)twi_reg, button_data, WII_EXTENSION_BUTTON_DATA_LENGTH);
+	memcpy((void*)twi_reg, button_data, 6);
 }
 
 void wm_init(const unsigned char * id, const unsigned char * button_data, const unsigned char * cal_data, void (*function)(void))
@@ -172,13 +177,13 @@ void wm_init(const unsigned char * id, const unsigned char * button_data, const 
 	twi_reg[0xF0] = 0; // disable encryption
 
 	// set id
-	for(unsigned int i = 0, j = 0xFA; i < WII_EXTENSION_ID_LENGTH; i++, j++)
+	for(unsigned int i = 0, j = 0xFA; i < 6; i++, j++)
 	{
 		twi_reg[j] = id[i];
 	}
 
 	// set calibration data
-	for(unsigned int i = 0, j = 0x20; i < WII_EXTENSION_CALIBRATION_DATA_LENGTH; i++, j++)
+	for(unsigned int i = 0, j = 0x20; i < 6; i++, j++)
 	{
 		twi_reg[j] = cal_data[i];
 	}

@@ -62,19 +62,20 @@ the Wiimote.
 #include <avr/io.h>
 #include <avr/pgmspace.h>
 
-#include "macros.h"
 #include "wiimote.h"
 #include "../DualStrike.h"
 
+#ifndef uchar
+#define uchar   unsigned char
+#endif
+
 extern uint8_t config[2];
 
-// device id
-PROGMEM const uchar deviceID[2] = {0x01, 0x01};
+// device id starting at address 0xA400FA
+PROGMEM const uchar deviceID[6] = {0, 0, 0, 0, 0x01, 0x01};
 
-// calibration data
-PROGMEM const uchar calibrationData[32] = {
-	0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-};
+// calibration data starting at address 0xA40020
+PROGMEM const uchar calibrationData[6] = { 0,0,0,0,0,0 };
 
 typedef struct {
 	uchar	rx4_3Lx;

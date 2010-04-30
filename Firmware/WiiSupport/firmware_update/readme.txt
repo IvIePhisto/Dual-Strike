@@ -9,6 +9,9 @@ the GNU Public License V3, see license.txt for more details.
 
 History
 =======
+1.7.0  -major changes in source
+       -added Wii Classic Controller working mode (EXPERIMENTAL)
+
 1.6.2  -merged SMD design code into source code
 
 1.6.1  -bug solved: triggers not working after being used to switch to
@@ -74,6 +77,7 @@ Features
           a MadCatz Fightstick and Fightpad PCB)
         - pass-through PCBs with inverted (active low) triggers
 
+
 Installation
 ============
 Connect all wires/pins to the buttons and the joystick and connect the USB lines
@@ -93,31 +97,27 @@ See Extra Pins Mode in the Configuration Mode section for how to configure the
 Dual Strike accordingly.
 
 
-
 Startup Behaviour
 =================
-If a button (except start or select) or joystick direction is pressed, when the
-Dual Strike controller is activated (if the machine it is plugged in is turned
-on or the controller gets plugged into the machine), then special functions are
-activated:
-
+If a button or joystick direction is pressed, when the Dual Strike controller is
+activated (if the machine it is plugged in is turned on or the controller gets
+plugged into the machine), then special functions are activated:
 If the Select button is pressed, then configuration mode is entered (see below).
 
-If the Start button is pressed, then firmware update mode is entered (see 
-Firmware).
+If the Start button is pressed, then firmware update mode is entered (see
+below).
 
-If any other Button except Home is pressed, then the non default working mode is
-entered. The working mode is either the Dual Strike acting as a controller 
-(default) or pass-through (e.g. a XBox360 controller PCB).
+If the X/Cross button is pressed and firmware supports PS3 (default), then the
+Dual Strike PS3 working mode is activated. Otherwise if the Y/Circle button is
+pressed and firmware supports Wii, then the Dual Strike Wii working mode is
+activated. Otherwise if the A/Squard button is pressed, then the pass-through
+working mode is activated. Otherwise the default working mode is activated.
 
 If the joystick is moved to the up direction, the joystick is acting as a
-digital pad when in Dual Strike working mode (default).
-If the joystick is moved to the left direction, the joystick is acting as a left
-analogue stick when in Dual Strike working mode.
-If the joystick is moved to the right direction, the joystick is acting as a
-right analogue stick when in Dual Strike working mode.
-This joystick mode selection also works for pass-through device with joystick
-mode switch emulation.
+digital pad when in Dual Strike working mode (default). If the joystick is moved
+to the left direction, the joystick is acting as a left analogue stick when in
+Dual Strike working mode. If the joystick is moved to the right direction, the
+joystick is acting as a right analogue stick when in Dual Strike working mode.
 
 
 Configuration Mode
@@ -138,7 +138,8 @@ Down  = activate digital pad additionallly to left or right analogue stick
 Default Working Mode:
 ---------------------
 Button: LK
-Left  = Dual Strike [default]
+Left  = Dual Strike PS3 [default] if firmware supports PS3
+Up    = Dual Strike Wii if firmware supports Wii
 Right = pass-through
 
 revert to defaults:
@@ -164,13 +165,73 @@ Down  = inverted triggers for pass-through
         S3 and S4 have to be connected to trigger pins with active high on the
         pass-through PCB        
 
-    
+
+Wiimote Adapter
+===============
+The Dual Strike can act as a Wii Classic Controller when connected to a
+Wiimote. You need a passive adapter from USB to the Wiimote extension port
+for this working mode, its composition is detailed below.
+
+If you get your Wiimote plug and cable of a working Wii extension (Nunchuck,
+Classic Controller, ...), you can add a USB jack to the extension's side of
+the cable. So you can continue using the extension by utilising your adapter.
+
+Wiimote extension port layout (as seen looking on the Wiimote bottom): 
++---___---+
+| 1  2  3 |
+| ======= |
+| 4  5  6 |
++---------+
+1: Ground [white]
+2: No Connection
+3: SCL [yellow]
+4: SDA [green]
+5: Device Detect, in the connector wired to VCC [red]
+6: VCC (3.3V) [red]
+
+USB type B port layout (as seen looking at the port):
+   --
+ /    \
+| 2  1 |
+| ==== |
+| 3  4 |
++------+
+1: VCC (5V) [red]
+2: D- [white]
+3: D+ [green]
+3: Ground [black]
+
+Your adapter has to make the following connections:
+
+USB Wires      | Wiimote Wires
+---------------+---------------
+D-     [white] | SCL    [yellow]
+D+     [green] | SDA    [green]
+VCC    [red]   | VCC    [red]
+Ground [black] | Ground [white]
+
+The adapter should be connected to the USB port before plugging it into
+the Wiimote.
+Alternatively you can connect the USB wires VCC and Ground to a USB type A plug
+(creating a Y adapter) to use the standard USB voltage from another source
+(e.g. USB AC adapter).
+
+
 Firmware
 ========
-To update the firmware of your Dual Strike press and hold Start to switch to
-the firmware update mode, then you can execute the file "update_firmware.bat"
-for a classic Dual Strike or "update_firmware_smd.bat" for the SMD design to
-update the firmware (two command prompt windows should open). After releasing 
-the Start button, firmware update mode is left.
+To update the firmware of your Dual Strike press and hold Start to switch to the
+firmware update mode, then you can execute the firmware update file to update
+the firmware (two command prompt windows should open with UAC, one without UAC).
+After releasing the Start button, firmware update mode is left.
+After updating the firmware it is strongly recommended to enter configuration
+mode and load the defaults!
 
+The firmware update files are the following:
+
+Filename                    | Dual Strike type | Functionality
+----------------------------+------------------+--------------
+update_firmware.bat         | classic          | PS3
+update_firmware_smd.bat     | SMD              | PS3
+update_firmware_wii.bat     | classic          | Wii
+update_firmware_smd_wii.bat | SMD              | Wii
 
