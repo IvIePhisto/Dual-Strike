@@ -38,7 +38,7 @@ USB type B port layout (as seen looking at the port):
 1: VCC (5V) [red]
 2: D- [white]
 3: D+ [green]
-3: Ground [black]
+4: Ground [black]
 
 Your adapter has to make the following connections:
 
