@@ -12,14 +12,10 @@
 */
 
 // initialize wiimote interface with id, starting data, and calibration data
-void wm_init(
-	const unsigned char * id,
-	const unsigned char * buton_data,
-	const unsigned char * cal_data,
-	void (*function)(void));
+void wm_init(unsigned char * id, unsigned char * buton_data, unsigned char * cal_data);
 
 // set button data
-void wm_newaction(const unsigned char * button_data);
+void wm_newaction(unsigned char * button_data);
 
 #define wiimote_h
 #endif

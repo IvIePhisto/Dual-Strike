@@ -7,8 +7,10 @@
 #include "wiimote.h"
 #include "wm_crypto.h"
 
+/*
 // pointer to user function
 static void (*wm_sample_event)();
+*/
 
 // crypto data
 static volatile unsigned char wm_rand[10];
@@ -117,6 +119,7 @@ void wm_gentabs()
 	wm_sb[7] = pgm_read_byte(&(sboxes[idx + 1][wm_rand[2]])) ^ pgm_read_byte(&(sboxes[idx + 2][wm_rand[6]]));
 }
 
+/*
 void wm_slaveTxStart(unsigned char addr)
 {
 	if(addr >= 0x00 && addr < 0x06)
@@ -125,6 +128,7 @@ void wm_slaveTxStart(unsigned char addr)
 		wm_sample_event();
 	}
 }
+*/
 
 void wm_slaveRx(unsigned char addr, unsigned char l)
 {
@@ -161,16 +165,18 @@ void wm_slaveRx(unsigned char addr, unsigned char l)
 	}
 }
 
-void wm_newaction(const unsigned char * button_data)
+void wm_newaction(unsigned char * button_data)
 {
 	// load button data from user application
 	memcpy((void*)twi_reg, button_data, 6);
 }
 
-void wm_init(const unsigned char * id, const unsigned char * button_data, const unsigned char * cal_data, void (*function)(void))
+void wm_init(unsigned char * id, unsigned char * button_data, unsigned char * cal_data/*, void (*function)(void)*/)
 {
+	/*
 	// link user function
 	wm_sample_event = function;
+	*/
 
 	// start state
 	wm_newaction(button_data);
@@ -262,8 +268,10 @@ ISR(TWI_vect)
 		// Slave Tx
 		case TW_ST_SLA_ACK:	// addressed, returned ack
 		case TW_ST_ARB_LOST_SLA_ACK: // arbitration lost, returned ack
+			/*
 			// run user defined function
 			wm_slaveTxStart(twi_reg_addr);
+			*/
 			twi_rw_len = 0;
 		case TW_ST_DATA_ACK: // byte sent, ack returned
 			// ready output byte

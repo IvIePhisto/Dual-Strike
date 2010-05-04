@@ -104,8 +104,6 @@ extern data_t data;
 #define WII_MINUS	data.rightDownBltMinusHomePlusBrtNA &= ~(1<<4);
 #define WII_PLUS	data.rightDownBltMinusHomePlusBrtNA &= ~(1<<2);
 
-void wm_timer_inc() {}
-
 void resetButtonData() {
 	data.rx4_3Lx = 0b10100000;
 	data.rx2_1Ly = 0b00100000;
@@ -210,7 +208,7 @@ void readInputWii() {
 }
 
 void wiimote_extension_controller() {
-	wm_init((uchar *)deviceID, (uchar *)&data, (uchar *)calibrationData, wm_timer_inc);
+	wm_init((uchar *)deviceID, (uchar *)&data, (uchar *)calibrationData);
 
 	while(1) {
 		readJoystickSwitch();
