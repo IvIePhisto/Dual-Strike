@@ -75,7 +75,41 @@ extern uint8_t config[2];
 PROGMEM const uchar deviceID[6] = {0x00, 0x00, 0xA4, 0x20, 0x01, 0x01};
 
 // calibration data starting at address 0xA40020
-PROGMEM const uchar calibrationData[6] = { 0,0,0,0,0,0 };
+PROGMEM const uchar calibrationData[] = {
+	// left stick X
+	0b00000000, // -min
+	0b00100000, // -mid
+	0b00111111, // -max
+
+	// left stick Y
+	0b00000000, // -min
+	0b00100000, // -mid
+	0b00111111, // -max
+
+	// right stick X
+	0b00000000, // -min
+	0b00010000, // -mid
+	0b00011111, // -max
+
+	// right stick Y
+	0b00000000, // -min
+	0b00010000, // -mid
+	0b00011111, // -max
+
+	// left trigger
+	0b00000000, // -min
+	0b00001000, // -max
+
+	// right trigger
+	0b00000000, // -min
+	0b00001000, // -max
+	
+	/*
+    0xff, 0x00, 0x80, 0xff, 0x00, 0x80,
+    0xff, 0x00, 0x80, 0xff, 0x00, 0x80,
+    0x00, 0x00, 0x51, 0xa6
+	*/
+};
 
 typedef struct {
 	uchar	rx4_3Lx;
@@ -208,7 +242,7 @@ void readInputWii() {
 }
 
 void wiimote_extension_controller() {
-	wm_init((uchar *)deviceID, (uchar *)&data, (uchar *)calibrationData);
+	wm_init((uchar *)deviceID, (uchar *)&data, (uchar *)calibrationData, sizeof(calibrationData));
 
 	while(1) {
 		readJoystickSwitch();

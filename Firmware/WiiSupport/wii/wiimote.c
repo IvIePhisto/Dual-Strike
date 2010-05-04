@@ -171,7 +171,7 @@ void wm_newaction(unsigned char * button_data)
 	memcpy((void*)twi_reg, button_data, 6);
 }
 
-void wm_init(unsigned char * id, unsigned char * button_data, unsigned char * cal_data/*, void (*function)(void)*/)
+void wm_init(unsigned char * id, unsigned char * button_data, unsigned char * cal_data, unsigned int cal_data_length/*, void (*function)(void)*/)
 {
 	/*
 	// link user function
@@ -189,7 +189,7 @@ void wm_init(unsigned char * id, unsigned char * button_data, unsigned char * ca
 	}
 
 	// set calibration data
-	for(unsigned int i = 0, j = 0x20; i < 6; i++, j++)
+	for(unsigned int i = 0, j = 0x20; i < cal_data_length; i++, j++)
 	{
 		twi_reg[j] = cal_data[i];
 	}
