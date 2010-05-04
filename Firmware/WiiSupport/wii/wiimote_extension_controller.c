@@ -72,7 +72,7 @@ the Wiimote.
 extern uint8_t config[2];
 
 // device id starting at address 0xA400FA
-PROGMEM const uchar deviceID[6] = {0, 0, 0, 0, 0x01, 0x01};
+PROGMEM const uchar deviceID[6] = {0x00, 0x00, 0xA4, 0x20, 0x01, 0x01};
 
 // calibration data starting at address 0xA40020
 PROGMEM const uchar calibrationData[6] = { 0,0,0,0,0,0 };
@@ -88,6 +88,22 @@ typedef struct {
 
 extern data_t data;
 
+#define WII_UP		data.bzlBbByBaBxBzrLeftUp &= ~(1<<0);
+#define WII_DOWN	data.rightDownBltMinusHomePlusBrtNA &= ~(1<<6);
+#define WII_RIGHT	data.rightDownBltMinusHomePlusBrtNA &= ~(1<<7);
+#define WII_LEFT	data.bzlBbByBaBxBzrLeftUp &= ~(1<<1);
+#define WII_Y 		data.bzlBbByBaBxBzrLeftUp &= ~(1<<5);
+#define WII_X		data.bzlBbByBaBxBzrLeftUp &= ~(1<<3);
+#define WII_ZR		data.bzlBbByBaBxBzrLeftUp &= ~(1<<2);
+#define WII_RT		data.rightDownBltMinusHomePlusBrtNA &= ~(1<<1);
+#define WII_B		data.bzlBbByBaBxBzrLeftUp &= ~(1<<6);
+#define WII_A		data.bzlBbByBaBxBzrLeftUp &= ~(1<<4);
+#define WII_ZL		data.bzlBbByBaBxBzrLeftUp &= ~(1<<7);
+#define WII_LT		data.rightDownBltMinusHomePlusBrtNA &= ~(1<<5);
+#define WII_HOME	data.rightDownBltMinusHomePlusBrtNA &= ~(1<<3);
+#define WII_MINUS	data.rightDownBltMinusHomePlusBrtNA &= ~(1<<4);
+#define WII_PLUS	data.rightDownBltMinusHomePlusBrtNA &= ~(1<<2);
+
 void wm_timer_inc() {}
 
 void resetButtonData() {
@@ -96,7 +112,7 @@ void resetButtonData() {
 	data.rx0Lt4_3Ry = 0b00010000;
 	data.lt2_0Rt = 
 	data.rightDownBltMinusHomePlusBrtNA = 
-	data.bzlBbByBaBxBzrLeftUp = 0;
+	data.bzlBbByBaBxBzrLeftUp = 0xFF;
 }
 
 void readInputWii() {
@@ -137,61 +153,60 @@ void readInputWii() {
 	// Digital Pad Directions
 	if(CFG_DIGITAL_PAD) {
 		if(!Stick_Up)
-			data.bzlBbByBaBxBzrLeftUp |= (1<<0);
+			WII_UP
 		else if(!Stick_Down)
-			data.rightDownBltMinusHomePlusBrtNA |= (1<<6);
+			WII_DOWN
 
 		if(!Stick_Right)
-			data.rightDownBltMinusHomePlusBrtNA |= (1<<7);
+			WII_RIGHT
 		else if(!Stick_Left) 
-			data.bzlBbByBaBxBzrLeftUp |= (1<<1);
+			WII_LEFT
 	}
 
 	// Buttons
 	if(!Stick_Jab)
-		data.bzlBbByBaBxBzrLeftUp |= (1<<5);
+		WII_UP
 
 	if(!Stick_Short)
-		data.bzlBbByBaBxBzrLeftUp |= (1<<3);
+		WII_X
 
-	if(!Stick_Strong) {
-		data.bzlBbByBaBxBzrLeftUp |= (1<<7);
-	}
+	if(!Stick_Strong)
+		WII_ZL
 
 	if(!Stick_Forward)
-		data.bzlBbByBaBxBzrLeftUp |= (1<<2);
+		WII_B
 
 	if(!Stick_Fierce)
-		data.bzlBbByBaBxBzrLeftUp |= (1<<4);
+		WII_A
 
 	if(!Stick_Roundhouse) {
-		data.rightDownBltMinusHomePlusBrtNA |= (1<<1);
-		data.lt2_0Rt |= 0b00011111;
+		WII_RT
+		data.lt2_0Rt &= ~0b00011111;
 	}
 
 #ifdef EXTRA_BUTTONS					
 	if(!Stick_Extra0)
-		data.bzlBbByBaBxBzrLeftUp |= (1<<7);
+		WII_ZL
 
 	if(!Stick_Extra1) {
-		data.rightDownBltMinusHomePlusBrtNA |= (1<<5);
-		data.lt2_0Rt |= 0b11100000;
-		data.rx0Lt4_3Ry |= 0b01100000;
+		WII_LT
+		data.rx0Lt4_3Ry &= ~0b01100000;
+		data.lt2_0Rt &= ~0b11100000;
 	}
 #endif
 
 	if(CFG_HOME_EMU && !Stick_Start && !Stick_Select)
-		data.rightDownBltMinusHomePlusBrtNA |= (1<<3);
+		WII_HOME
 	else {
 		if(!Stick_Start)
-			data.rightDownBltMinusHomePlusBrtNA |= (1<<4);
+			WII_MINUS
 
 		if(!Stick_Select)
-			data.rightDownBltMinusHomePlusBrtNA |= (1<<2);
+			WII_PLUS
 	}
 
 	if(!Stick_Home)
-		data.rightDownBltMinusHomePlusBrtNA |= (1<<3);
+		WII_HOME
 }
 
 void wiimote_extension_controller() {

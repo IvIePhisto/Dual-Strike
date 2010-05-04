@@ -1,9 +1,9 @@
 #ifndef wiimote_h
 
-#define twi_port PORTD
-#define twi_ddr DDRD
-#define twi_scl_pin 1
-#define twi_sda_pin 2
+#define twi_port PORTC
+#define twi_ddr DDRC
+#define twi_scl_pin 5
+#define twi_sda_pin 4
 
 /*
 #define dev_detect_port PORTD

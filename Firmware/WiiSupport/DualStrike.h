@@ -2,11 +2,11 @@
 #define __DualStrike_h_included__
 
 // base 576 bytes
-#define USE_PS3 1
+#define USE_PS3 0
 // 2114 bytes
-#define USE_WII 0
+#define USE_WII 1
 // 5000+ bytes
-#define USE_PT 1
+#define USE_PT 0
 // 110 bytes
 
 #if USE_PS3
@@ -19,6 +19,10 @@
 
 #if USE_PT
 #include "pass-through/pass-through.h"
+#endif
+
+#if USE_WII && (USE_PS3 || USE_PT)
+#error Wii working mode can only be used alone, as S1/S2 are used for the buttons at PinC 4 and 5.
 #endif
 
 // CONFIGURATION
@@ -89,12 +93,18 @@ The bits have the following semantics:
 #define Stick_Start			(PINC & (1<<0))
 
 #if DUAL_STRIKE_SMD
+	#if USE_WII
+		#define Stick_Up			(PIND & (1<<0))
+		#define Stick_Down			(PIND & (1<<3))
+	#else
+		#define Stick_Up			(PINC & (1<<4))
+		#define Stick_Down			(PINC & (1<<5))
+	#endif
+
 	#define SET_HOME_OUTPUT DDRB |= (1<<5);
 	#define SWITCH_HOME_LOW PORTB &= ~(1<<5);
 	#define SWITCH_HOME_HIGH PORTB |= (1<<5);
 
-	#define Stick_Up			(PINC & (1<<4))
-	#define Stick_Down			(PINC & (1<<5))
 	#define Stick_Left			(PINC & (1<<3))
 	#define Stick_Right			(PINC & (1<<2))
 
@@ -120,9 +130,27 @@ The bits have the following semantics:
 		#define Stick_Extra1		(PINB & (1<<3))
 	#endif
 #else
-	#define SET_HOME_OUTPUT DDRC |= (1<<5);
-	#define SWITCH_HOME_LOW PORTC &= ~(1<<5);
-	#define SWITCH_HOME_HIGH PORTC |= (1<<5);
+	#if USE_WII
+		//PC Button 13 - Home
+		#define Stick_Home			(PIND & (1<<0))
+
+		#if EXTRA_BUTTONS
+			//PC Button 7 - L2 - 4K
+			#define Stick_Extra1		(PIND & (1<<3))
+		#endif
+	#else
+		//PC Button 13 - Home
+		#define Stick_Home			(PINC & (1<<5))
+
+		#if EXTRA_BUTTONS
+			//PC Button 7 - L2 - 4K
+			#define Stick_Extra1		(PINC & (1<<4))
+		#endif
+
+		#define SET_HOME_OUTPUT DDRC |= (1<<5);
+		#define SWITCH_HOME_LOW PORTC &= ~(1<<5);
+		#define SWITCH_HOME_HIGH PORTC |= (1<<5);
+	#endif
 
 	#define Stick_Up			(PIND & (1<<6))
 	#define Stick_Down			(PIND & (1<<7))
@@ -141,14 +169,11 @@ The bits have the following semantics:
 	#define Stick_Forward		(PINB & (1<<4))
 	//PC Button 8 - R2 - HK
 	#define Stick_Roundhouse	(PINC & (1<<2))
-	//PC Button 13 - Home
-	#define Stick_Home			(PINC & (1<<5))
+
 
 	#if EXTRA_BUTTONS
 		//PC Button 5 - L1 - 4P
 		#define Stick_Extra0		(PINC & (1<<3))
-		//PC Button 7 - L2 - 4K
-		#define Stick_Extra1		(PINC & (1<<4))
 	#endif
 #endif
 

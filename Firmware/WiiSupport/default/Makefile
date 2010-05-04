@@ -37,7 +37,7 @@ HEX_EEPROM_FLAGS += --change-section-lma .eeprom=0 --no-change-warnings
 
 
 ## Objects that must be built in order to link
-OBJECTS = DualStrike.o pass-through.o ps3_controller.o usbdrv.o usbdrvasm.o 
+OBJECTS = DualStrike.o wiimote_extension_controller.o wiimote.o 
 
 ## Objects explicitly added by the user
 LINKONLYOBJECTS = 
@@ -49,17 +49,11 @@ all: $(TARGET) DualStrike.hex DualStrike.eep size
 DualStrike.o: ../DualStrike.c
 	$(CC) $(INCLUDES) $(CFLAGS) -c  $<
 
-pass-through.o: ../pass-through/pass-through.c
+wiimote_extension_controller.o: ../wii/wiimote_extension_controller.c
 	$(CC) $(INCLUDES) $(CFLAGS) -c  $<
 
-ps3_controller.o: ../ps3/ps3_controller.c
+wiimote.o: ../wii/wiimote.c
 	$(CC) $(INCLUDES) $(CFLAGS) -c  $<
-
-usbdrv.o: ../ps3/usbdrv/usbdrv.c
-	$(CC) $(INCLUDES) $(CFLAGS) -c  $<
-
-usbdrvasm.o: ../ps3/usbdrv/usbdrvasm.S
-	$(CC) $(INCLUDES) $(ASMFLAGS) -c  $<
 
 ##Link
 $(TARGET): $(OBJECTS)

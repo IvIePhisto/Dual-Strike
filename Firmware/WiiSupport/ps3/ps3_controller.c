@@ -28,6 +28,8 @@ typedef struct {
 	uchar   r1;
 } report_t;
 
+extern report_t data;
+
 #define PS3_SQUARE		data.buttons1 |= (1<<0);
 #define PS3_TRIANGLE	data.buttons1 |= (1<<1);
 #define PS3_CROSS		data.buttons1 |= (1<<2);
@@ -41,8 +43,6 @@ typedef struct {
 #define PS3_L3			data.buttons2 |= (1<<2);
 #define PS3_R3			data.buttons2 |= (1<<3);
 #define PS3_HOME		data.buttons2 |= (1<<4);
-
-extern report_t data;
 
 usbMsgLen_t usbFunctionSetup(uchar receivedData[8])
 {

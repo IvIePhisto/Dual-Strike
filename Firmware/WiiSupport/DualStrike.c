@@ -167,7 +167,8 @@ int setModePS3() {
 
 #if USE_WII
 int setModeWii() {
-	PORTD |= (1<<0); // enable Dual Strike USB lines
+	PORTD |= (1<<0); // enable pull-up for S1
+	PORTD |= (1<<3); // enable pull-up for S2
 
 	return WORKING_MODE_WII;
 }
@@ -248,37 +249,24 @@ int hardwareInit() {
 		PORTC |= (1<<6); // pin S4 is high
 	}
 
-#if USE_PS3
-	if(!Stick_Short)
-		return setModePS3();
-#endif
-
 #if USE_WII
-	if(!Stick_Forward)
-		return setModeWii();
-#endif
+	return setModeWii();
+#else
+	if( !Stick_Jab ||
+		!Stick_Short ||
+		!Stick_Forward ||
+		!Stick_Fierce) {
 
-#if USE_PT
-	if(!Stick_Jab)
+		if(CFG_DEF_WORK_MODE_PS3)
+			return setModePT();
+		else
+			return setModePS3();
+	}
+	else if(CFG_DEF_WORK_MODE_PS3)
+		return setModePS3();
+	else
 		return setModePT();
 #endif
-
-#if USE_PS3
-	if(CFG_DEF_WORK_MODE_PS3)
-		return setModePS3();
-#endif
-
-#if USE_WII
-	if(CFG_DEF_WORK_MODE_WII)
-		return setModeWii();
-#endif
-
-#if USE_PT
-	if(CFG_DEF_WORK_MODE_PT)
-		return setModePT();
-#endif
-
-	return -1;
 }
 
 /* ------------------------------------------------------------------------- */
@@ -314,25 +302,19 @@ uchar* data[11] = {0,0,0,0,0,0,0,0,0,0,0};
 
 int main(void)
 {
+#if USE_WII
+	wiimote_extension_controller();
+#else
 	switch(hardwareInit()) {
-#if USE_PS3
 	case WORKING_MODE_PS3:
 	  ps3_controller();
 	  break;
-#endif
 
-#if USE_WII
-	case WORKING_MODE_WII:
-	  wiimote_extension_controller();
-	  break;
-#endif
-
-#if USE_PT
 	case WORKING_MODE_PT:
 	  pass_through();
 	  break;
-#endif
 	}
+#endif
 
     return 0;
 }
