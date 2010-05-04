@@ -2,12 +2,18 @@
 #define __DualStrike_h_included__
 
 // base 576 bytes
-#define USE_PS3 0
+#ifndef USE_PS3
+#define USE_PS3 1
+#endif
 // 2114 bytes
-#define USE_WII 1
+#ifndef USE_WII
+#define USE_WII 0
+#endif
 // 5000+ bytes
-#define USE_PT 0
+#ifndef USE_PT
+#define USE_PT 1
 // 110 bytes
+#endif
 
 #if USE_PS3
 #include "ps3/ps3_controller.h"
@@ -82,10 +88,14 @@ The bits have the following semantics:
 // BUTTON DEFINITIONS
 
 // set to 1 for SMD version of the Dual Strike
+#ifndef DUAL_STRIKE_SMD
 #define DUAL_STRIKE_SMD 0
+#endif
 
 // set to 1 to use L1 and L2
+#ifndef EXTRA_BUTTONS
 #define EXTRA_BUTTONS 1
+#endif
 
 //PC Button 9 - Select
 #define Stick_Select		(PINC & (1<<1))
