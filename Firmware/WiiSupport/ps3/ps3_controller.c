@@ -24,8 +24,6 @@ typedef struct {
 	uchar	rz;
 	uchar   l2;
 	uchar   r2;
-	uchar   l1;
-	uchar   r1;
 } report_t;
 
 extern report_t data;
@@ -60,9 +58,7 @@ usbMsgLen_t usbFunctionSetup(uchar receivedData[8])
 			data.z = 
 			data.rz =
 			data.l2 =
-			data.r2 =
-			data.l1 =
-			data.r1 = 0;
+			data.r2 = 0;
 			usbMsgPtr = (void *)&data;
 
 			return 8;
@@ -79,11 +75,9 @@ void resetReportBuffer() {
 	data.x =
 	data.y =
 	data.z =
-	data.rz =
+	data.rz = 0b10000000;
 	data.l2 = 
-	data.r2 = 
-	data.l1 = 
-	data.r1 = 0b10000000;
+	data.r2 = 0;
 }
 
 PROGMEM char usbHidReportDescriptor[] = { // PC HID Report Descriptor
@@ -123,17 +117,17 @@ PROGMEM char usbHidReportDescriptor[] = { // PC HID Report Descriptor
     0x09, 0x31,                    //   USAGE (Y)
     0x09, 0x32,                    //   USAGE (Z)
     0x09, 0x35,                    //   USAGE (Rz)
-    0x75, 0x08,                    //   REPORT_SIZE (8)
     0x95, 0x04,                    //   REPORT_COUNT (4)
-    0x81, 0x02,                    //   INPUT (Data,Var,Abs)
-/* report bits: + 4x8=32 */
-//--
-	0x09, 0x01,                    //   USAGE (Pointer)
+	/*
+    0x09, 0x33,                    //   USAGE (Rx)
+    0x09, 0x34,                    //   USAGE (Ry)
+    0x95, 0x06,                    //   REPORT_COUNT (6)
+	*/
+
     0x75, 0x08,                    //   REPORT_SIZE (8)
-    0x95, 0x04,                    //   REPORT_COUNT (4)
     0x81, 0x02,                    //   INPUT (Data,Var,Abs)
+
 /* report bits: + 4x8=32 */
-//--
     0x06, 0x00, 0xff,              //   USAGE_PAGE (Vendor Defined Page 1)
     0x0a, 0x21, 0x26,              //   UNKNOWN
     0x95, 0x08,                    //   REPORT_COUNT (8)
@@ -212,26 +206,26 @@ void readInputPS3()
 	if(!Stick_Strong)
 		PS3_CIRCLE
 
-	if(!Stick_Fierce) {
+	if(!Stick_Fierce)
 		PS3_R1
-		data.r1 = 0xFF;
-	}
 
 	if(!Stick_Roundhouse) {
 		PS3_R2
 		data.r2 = 0xFF;
 	}
+	else
+		data.r2 = 0;
 
 #ifdef EXTRA_BUTTONS					
-	if(!Stick_Extra0) {
+	if(!Stick_Extra0)
 		PS3_L1
-		data.l1 = 0xFF;
-	}
 
 	if(!Stick_Extra1) {
 		PS3_L2
 		data.l2 = 0xFF;
 	}
+	else
+		data.l2 = 0;
 #endif
 
 	if(CFG_HOME_EMU && !Stick_Start && !Stick_Select /* && Stick_Jab */)
@@ -264,7 +258,7 @@ void ps3_controller() {
             /* called after every poll of the interrupt endpoint */				
 			readJoystickSwitch();
             readInputPS3();
-            usbSetInterrupt((void *)&data, 11*sizeof(uchar));
+            usbSetInterrupt((void *)&data, /*9*/7*sizeof(uchar));
         }
     }
 }
