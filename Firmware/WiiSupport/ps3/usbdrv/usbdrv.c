@@ -22,11 +22,6 @@ This module implements the C-part of the USB driver. See usbdrv.h for a
 documentation of the entire driver.
 */
 
-/* ADDED */
-// defined in "ArcadeStick.h" and used by USB_SET_ADDRESS_HOOK() from "usbconfig.h"
-extern char detectedPS3;
-/* END ADDED */
-
 /* ------------------------------------------------------------------------- */
 
 /* raw USB registers / interface to assembler code: */
