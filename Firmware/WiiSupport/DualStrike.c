@@ -167,8 +167,11 @@ int setModePS3() {
 
 #if USE_WII
 int setModeWii() {
-	PORTD |= (1<<0); // enable pull-up for S1
-	PORTD |= (1<<3); // enable pull-up for S2
+	PORTD |= 0b00001001; // enable pull-up for S1 and S2
+	DDRD  &= 0b11110110; // make S1 and S2 input
+
+	PORTC &= 0b11001111; // disable pull-up for SDA and SCL
+	DDRC  |= 0b00110000; // make SDA and SCL output
 
 	return WORKING_MODE_WII;
 }
