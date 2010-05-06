@@ -299,8 +299,8 @@ void readJoystickSwitch() {
 /* ------------------------------------------------------------------------- */
 
 /* buffer for data */
-/* NOTE: as V-USB conforms to the USB low speed standard, the maximum packet size is 8 bytes! */
-uchar* data[8] = {0,0,0,0,0,0,0,0};
+/* NOTE: as V-USB conforms to the USB low speed standard, the maximum packet size is 8 bytes for one call of usbSetInterrupt()! */
+uchar* data[9] = {0,0,0,0,0,0,0,0};
 
 int main(void)
 {

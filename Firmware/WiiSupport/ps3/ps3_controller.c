@@ -22,7 +22,8 @@ typedef struct {
 	uchar	y;
 	uchar	z;
 	uchar	rz;
-	uchar   r2_l2;
+	uchar   l2;
+	uchar   r2;
 } report_t;
 
 extern report_t data;
@@ -49,14 +50,26 @@ usbMsgLen_t usbFunctionSetup(uchar receivedData[8])
 		/* wValue: ReportType (highbyte), ReportID (lowbyte) */
         if(rq->bRequest == USBRQ_HID_GET_REPORT) {
 			 // set buffer data
-			data.buttons1 = 33;
-			data.buttons2 = 38;
+			data.buttons1 = 0x21;
+			data.buttons2 = 0x26;
+			data.hatswitch = 
+			data.x = 
+			data.y =
+			data.z =
+			data.rz =
+			data.l2 =
+			data.r2 = 0;
+			/*
+			data.buttons1 = 0b00100001;
+			data.buttons2 = 0b00100110;
 			data.hatswitch =
 			data.x =
 			data.y =
 			data.z = 
 			data.rz =
-			data.r2_l2 = 0;
+			data.l2 =
+			data.r2 = 0;
+			*/
 			usbMsgPtr = (uchar*)&data;
 
 			return 8;
@@ -74,12 +87,13 @@ void resetReportBuffer() {
 	data.y =
 	data.z =
 	data.rz = 0b10000000;
-	data.r2_l2 = 0;
+	data.l2 = 0;
+	data.r2 = 0;
 }
 
 PROGMEM char usbHidReportDescriptor[] = { // PC HID Report Descriptor
     0x05, 0x01,                    // USAGE_PAGE (Generic Desktop)
-    0x09, 0x05,                    // USAGE (Joystick)
+    0x09, 0x04,                    // USAGE (Gamepad)
     0xa1, 0x01,                    // COLLECTION (Application)
 
     0x15, 0x00,                    //   LOGICAL_MINIMUM (0)
@@ -120,9 +134,10 @@ PROGMEM char usbHidReportDescriptor[] = { // PC HID Report Descriptor
     0x81, 0x02,                    //   INPUT (Data,Var,Abs)
 /* report bits: + 4x8=32 */
 
+	/*
     0x25, 0x0f,		               //   LOGICAL_MAXIMUM (15)
     0x45, 0x0f,                    //   PHYSICAL_MAXIMUM (15)
-	/*
+
     0x09, 0x30,                    //   USAGE (X)
     0x09, 0x31,                    //   USAGE (Y)
     0x09, 0x32,                    //   USAGE (Z)
@@ -138,19 +153,21 @@ PROGMEM char usbHidReportDescriptor[] = { // PC HID Report Descriptor
     0x09, 0x43,                    //   USAGE (Vbrx)
     0x09, 0x44,                    //   USAGE (Vbry)
     0x09, 0x45,                    //   USAGE (Vbrz)
-	*/
 
     0x09, 0x33,                    //   USAGE (Rx)
     0x09, 0x34,                    //   USAGE (Ry)
-
     0x95, 0x02,                    //   REPORT_COUNT (2)
-    0x75, 0x04,                    //   REPORT_SIZE (4)
     0x81, 0x02,                    //   INPUT (Data,Var,Abs)
+	*/
 
-/* report bits: + 2x4=8 */
+    0x09, 0x01,                    //   USAGE (Pointer)
+    0x95, 0x02,                    //   REPORT_COUNT (2)
+    0x81, 0x02,                    //   INPUT (Data,Var,Abs)
+/* report bits: + 2x8=16 */
+
     0x06, 0x00, 0xff,              //   USAGE_PAGE (Vendor Defined Page 1)
     0x0a, 0x21, 0x26,              //   USAGE (Undefined, value 0x2621)
-    0x95, 0x10,                    //   REPORT_COUNT (16)
+    0x95, 0x08,                    //   REPORT_COUNT (8)
     0xb1, 0x02,                    //   FEATURE (Data,Var,Abs)
 
 
@@ -233,9 +250,9 @@ void readInputPS3()
 
 	if(!Stick_Roundhouse) {
 		PS3_R2
-		data.r2_l2 |= 0xF0;
+		data.r2 = 0xFF;
 	}
-	else data.r2_l2 &= 0x0F;
+	else data.r2 = 0x00;
 
 #ifdef EXTRA_BUTTONS					
 	if(!Stick_Extra0)
@@ -243,10 +260,10 @@ void readInputPS3()
 
 	if(!Stick_Extra1) {
 		PS3_L2
-		data.r2_l2 |= 0x0F;
+		data.l2 = 0xFF;
 	}
 	else
-		data.r2_l2 &= 0xF0;
+		data.l2 = 0x00;
 #endif
 
 	if(CFG_HOME_EMU && !Stick_Start && !Stick_Select /* && Stick_Jab */)
@@ -280,6 +297,8 @@ void ps3_controller() {
 			readJoystickSwitch();
             readInputPS3();
             usbSetInterrupt((uchar *)&data, 8*sizeof(uchar));
+			while(!usbInterruptIsReady()) usbPoll();
+            usbSetInterrupt((uchar *)&data + 8, 1*sizeof(uchar));
         }
     }
 }
