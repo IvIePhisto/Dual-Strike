@@ -205,9 +205,8 @@ If the Select button is pressed, then configuration mode is entered (see below).
 
 If the Start button is pressed, then firmware update mode is entered (see below).
 
-If the X/Cross button is pressed and firmware supports PS3 (default), then the Dual Strike PS3 working mode is activated.
-Otherwise if the Y/Circle button is pressed and firmware supports Wii, then the Dual Strike Wii working mode is activated.
-Otherwise if the A/Squard button is pressed, then the pass-through working mode is activated.
+If the firmware is the PS3/pass-through version, then if at least one of the buttons X/Cross,
+Y/Circle, A/Square or B/Triangle is pressed then the non-default mode is activated.
 Otherwise the default working mode is activated.
 
 If the joystick is moved to the up direction, the joystick is acting as a digital pad
@@ -302,8 +301,19 @@ void readJoystickSwitch() {
 /* ------------------------------------------------------------------------- */
 
 /* buffer for data */
-/* NOTE: as V-USB conforms to the USB low speed standard, the maximum packet size is 8 bytes for one call of usbSetInterrupt()! */
-uchar* data[9] = {0,0,0,0,0,0,0,0};
+/*
+NOTE:
+As V-USB conforms to the USB low speed standard, the maximum packet size is 8 bytes for one call of usbSetInterrupt()!
+But it is possible to send longer reports by using
+---
+while(!usbInterruptIsReady()) usbPoll();
+---
+to wait until the data is sent, then you can send the next part like this:
+---
+usbSetInterrupt((uchar *)&data + 8, 1*sizeof(uchar));
+---
+*/
+uchar* data[8] = {0,0,0,0,0,0,0};
 
 int main(void)
 {
