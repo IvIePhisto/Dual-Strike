@@ -22,7 +22,10 @@ typedef struct {
 	uchar	y;
 	uchar	z;
 	uchar	rz;
-	uchar   r2_l2;
+	//uchar   r2_l2;
+	uchar   l2;
+	uchar   r2;
+	uchar   unknown[37];
 } report_t;
 
 extern report_t data;
@@ -62,7 +65,8 @@ usbMsgLen_t usbFunctionSetup(uchar receivedData[8])
 					data.y =
 					data.z =
 					data.rz =
-					data.r2_l2 = 0;
+					//data.r2_l2 = 0;
+					data.l2 = 0;
 					usbMsgPtr = (uchar*)&data;
 
 					return 8;
@@ -82,7 +86,12 @@ void resetReportBuffer() {
 	data.y =
 	data.z =
 	data.rz = 0b10000000;
-	data.r2_l2 = 0;
+	//data.r2_l2 = 0;
+	data.l2 =
+	data.r2 = 0;
+
+	for(int i = 0; i < 37; i++)
+		data.unknown[i] = 0;
 }
 
 PROGMEM char usbHidReportDescriptor[] = { // PC HID Report Descriptor
@@ -157,11 +166,9 @@ PROGMEM char usbHidReportDescriptor[] = { // PC HID Report Descriptor
     0x25, 0x0f,		               //   LOGICAL_MAXIMUM (15)
     0x45, 0x0f,                    //   PHYSICAL_MAXIMUM (15)
     0x09, 0x01,                    //   USAGE (Pointer)
-    0x95, 0x02,                    //   REPORT_COUNT (2)
-    0x75, 0x04,                    //   REPORT_SIZE (4)
+	0x95, 0x27,                    //   REPORT_COUNT (39)
     0x81, 0x02,                    //   INPUT (Data,Var,Abs)
-/* report bits: + 2x8=16 */
-    0x75, 0x08,                    //   REPORT_SIZE (8)
+/* report bits: + 39x8=312 */
 
     0x06, 0x00, 0xff,              //   USAGE_PAGE (Vendor Defined Page 1)
     0x0a, 0x21, 0x26,              //   USAGE (Undefined, value 0x2621)
@@ -248,9 +255,12 @@ void readInputPS3()
 
 	if(!Stick_Roundhouse) {
 		PS3_R2
-		data.r2_l2 |= 0xF0;
+		//data.r2_l2 |= 0xF0;
+		data.r2 = 0xFF;
+
+		for(int i = 0; i < 37; i++)
+			data.unknown[i] = 0xFF;
 	}
-	else data.r2_l2 &= 0x0F;
 
 #ifdef EXTRA_BUTTONS					
 	if(!Stick_Extra0)
@@ -258,10 +268,9 @@ void readInputPS3()
 
 	if(!Stick_Extra1) {
 		PS3_L2
-		data.r2_l2 |= 0x0F;
+		//data.r2_l2 |= 0x0F;
+		data.l2 = 0xFF;
 	}
-	else
-		data.r2_l2 &= 0xF0;
 #endif
 
 	if(CFG_HOME_EMU && !Stick_Start && !Stick_Select /* && Stick_Jab */)
@@ -280,25 +289,38 @@ void readInputPS3()
 
 /* ------------------------------------------------------------------------- */
 
+void sendDataPS3(uchar* data, unsigned int byteCount) {
+	int currentByte;
+	int currentCount;
+
+	currentByte = 0;
+
+	while(currentByte < byteCount) {
+		currentCount = byteCount - currentByte;
+
+		if(currentCount > 8)
+			currentCount = 8;
+
+		usbSetInterrupt(data + currentByte, currentCount*sizeof(uchar));
+		currentByte += currentCount;
+
+		while(!usbInterruptIsReady()) usbPoll();
+	}
+}
+
 void ps3_controller() {
     usbDeviceDisconnect(); /* enforce re-enumeration, do this while interrupts are disabled! */
     _delay_ms(300UL);/* fake USB disconnect for > 250 ms */
     usbDeviceConnect();
     usbInit();
     sei();
+	usbPoll();
 
     while(1) { /* main event loop */
-        usbPoll();
-
         if(usbInterruptIsReady()) {
-            /* called after every poll of the interrupt endpoint */				
 			readJoystickSwitch();
             readInputPS3();
-            usbSetInterrupt((uchar *)&data, 8*sizeof(uchar));
-			/*
-			while(!usbInterruptIsReady()) usbPoll();
-            usbSetInterrupt((uchar *)&data + 8, 1*sizeof(uchar));
-			*/
+			sendDataPS3((uchar*)&data, 46);
         }
     }
 }
