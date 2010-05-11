@@ -41,36 +41,33 @@ extern report_t data;
 #define PS3_R3			data.buttons2 |= (1<<3);
 #define PS3_HOME		data.buttons2 |= (1<<4);
 
+#define HID_REPORT_TYPE_INPUT 1
+#define HID_REPORT_TYPE_OUTPUT 2
+#define HID_REPORT_TYPE_FEATURE 3
+
 usbMsgLen_t usbFunctionSetup(uchar receivedData[8])
 {
 	usbRequest_t    *rq = (void *)receivedData;
 
     if((rq->bmRequestType & USBRQ_TYPE_MASK) == USBRQ_TYPE_CLASS) {    /* class request */
-		/* wValue: ReportType (highbyte), ReportID (lowbyte) */
+		// wValue: ReportType (highbyte), ReportID (lowbyte)
         if(rq->bRequest == USBRQ_HID_GET_REPORT) {
-			 // set buffer data
-			data.buttons1 = 0x21;
-			data.buttons2 = 0x26;
-			data.hatswitch = 
-			data.x = 
-			data.y =
-			data.z =
-			data.rz =
-			data.r2_l2 = 0;
-			/*
-			data.buttons1 = 0b00100001;
-			data.buttons2 = 0b00100110;
-			data.hatswitch =
-			data.x =
-			data.y =
-			data.z = 
-			data.rz =
-			data.l2 =
-			data.r2 = 0;
-			*/
-			usbMsgPtr = (uchar*)&data;
+			if(rq->wValue.bytes[1] == HID_REPORT_TYPE_FEATURE) {
+				if(rq->wValue.bytes[0] == 0) {
+					 // set buffer data
+					data.buttons1 = 0x21; // 0b00100001
+					data.buttons2 = 0x26; // 0b00100110
+					data.hatswitch = 
+					data.x = 
+					data.y =
+					data.z =
+					data.rz =
+					data.r2_l2 = 0;
+					usbMsgPtr = (uchar*)&data;
 
-			return 8;
+					return 8;
+				}
+			}
         }
     }
 
