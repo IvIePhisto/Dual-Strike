@@ -22,10 +22,8 @@ typedef struct {
 	uchar	y;
 	uchar	z;
 	uchar	rz;
-	//uchar   r2_l2;
 	uchar   l2;
 	uchar   r2;
-	uchar   unknown[37];
 } report_t;
 
 extern report_t data;
@@ -58,15 +56,12 @@ usbMsgLen_t usbFunctionSetup(uchar receivedData[8])
 			if(rq->wValue.bytes[1] == HID_REPORT_TYPE_FEATURE) {
 				if(rq->wValue.bytes[0] == 0) {
 					 // set buffer data
-					data.buttons1 = 0x21; // 0b00100001
-					data.buttons2 = 0x26; // 0b00100110
-					data.hatswitch = 
-					data.x = 
-					data.y =
-					data.z =
-					data.rz =
-					//data.r2_l2 = 0;
-					data.l2 = 0;
+					((uchar*)&data)[0] = 0x21; // 0b00100001
+					((uchar*)&data)[1] = 0x26; // 0b00100110
+
+					for(int i = 2; i < 8; i++)
+						((uchar*)&data)[i] = 0;
+
 					usbMsgPtr = (uchar*)&data;
 
 					return 8;
@@ -86,12 +81,8 @@ void resetReportBuffer() {
 	data.y =
 	data.z =
 	data.rz = 0b10000000;
-	//data.r2_l2 = 0;
 	data.l2 =
 	data.r2 = 0;
-
-	for(int i = 0; i < 37; i++)
-		data.unknown[i] = 0;
 }
 
 PROGMEM char usbHidReportDescriptor[] = { // PC HID Report Descriptor
@@ -163,10 +154,10 @@ PROGMEM char usbHidReportDescriptor[] = { // PC HID Report Descriptor
     0x81, 0x02,                    //   INPUT (Data,Var,Abs)
 	*/
 
-    0x25, 0x0f,		               //   LOGICAL_MAXIMUM (15)
-    0x45, 0x0f,                    //   PHYSICAL_MAXIMUM (15)
+    //0x25, 0x0f,		             //   LOGICAL_MAXIMUM (15)
+    //0x45, 0x0f,                    //   PHYSICAL_MAXIMUM (15)
     0x09, 0x01,                    //   USAGE (Pointer)
-	0x95, 0x27,                    //   REPORT_COUNT (39)
+	0x95, 0x02,                    //   REPORT_COUNT (2)
     0x81, 0x02,                    //   INPUT (Data,Var,Abs)
 /* report bits: + 39x8=312 */
 
@@ -257,9 +248,6 @@ void readInputPS3()
 		PS3_R2
 		//data.r2_l2 |= 0xF0;
 		data.r2 = 0xFF;
-
-		for(int i = 0; i < 37; i++)
-			data.unknown[i] = 0xFF;
 	}
 
 #ifdef EXTRA_BUTTONS					
@@ -320,7 +308,7 @@ void ps3_controller() {
         if(usbInterruptIsReady()) {
 			readJoystickSwitch();
             readInputPS3();
-			sendDataPS3((uchar*)&data, 46);
+			sendDataPS3((uchar*)&data, 9);
         }
     }
 }
