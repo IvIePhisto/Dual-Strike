@@ -13,34 +13,268 @@ extern uint8_t config[2];
 
 /* ------------------------------------------------------------------------- */
 
-
 typedef struct {
-	uchar	buttons1;
-	uchar	buttons2;	
-	uchar   hatswitch;
-	uchar	x;
-	uchar	y;
-	uchar	z;
-	uchar	rz;
-	uchar   l2;
-	uchar   r2;
+/* based on: 
+   http://wiki.ps2dev.org/ps3:hardware:sixaxis
+   http://ps3.jim.sh/sixaxis/usb/
+*/
+
+	uchar	unknown1; // sample: 0x00
+
+	/*
+	byte 0 from low to high bit:
+		Select
+		L3
+		R3
+		Start
+		DPad Up
+		DPad Right
+		DPad Down
+		DPad Left
+
+	byte 1 from low to high bit:
+		L2
+		R2
+		L1
+		R1
+		Triangle
+		Circle
+		Cross
+		Square
+
+	byte 2 from low to high bit:
+		PS
+		rest: unknown
+	*/
+	uchar	buttons[3];
+
+	// maybe placeholder for keycode
+	uchar	unknown2; 
+
+	uchar	lx;
+	uchar	ly;
+	uchar	rx;
+	uchar	ry;
+
+	uchar   analogue_select;	// GUESS!
+	uchar   analogue_l3;		// GUESS!
+	uchar   analogue_r3;		// GUESS!
+	uchar   analogue_start;		// GUESS!
+	uchar	analogue_dpad_up;
+	uchar	analogue_dpad_right;
+	uchar	analogue_dpad_down;
+	uchar	analogue_dpad_left;
+	uchar	analogue_l2;
+	uchar	analogue_r2;
+	uchar	analogue_l1;
+	uchar	analogue_r1;
+	uchar	analogue_triangle;
+	uchar	analogue_circle;
+	uchar	analogue_cross;
+	uchar	analogue_square;
+	uchar   analogue_ps;
+
+	uchar	unknown3[2];
+
+	// ? 0x03 when operating normally, 0x02 when charging cable plugged in
+	uchar	charging_status;
+	
+	// ? 0x05=full, 0x02=dying, 0x01=just before shutdown, 0xEE=charging
+	uchar	power_status;
+
+	// ? 0x14 when operating by bluetooth, 0x10 when operating by bluetooth with cable plugged in, 0x16 when bluetooth and rumble 
+	uchar	connection_type;
+
+	// some values seem to fluctuate - maybe voltage and signal quality readings?
+	// sample: 0xFF 0xB9 0x00 0x00 0x23 0x16 0x77 0x01 0x81
+	uchar	unknown4[9];
+
+	uchar	acceleration_x;
+	uchar	sin_roll;
+	uchar	acceleration_y;
+	uchar	sin_pitch;
+	uchar	acceleration_z;
+	uchar	gravity_x;
+	uchar	gravity_z1;
+	uchar	gravity_z2;
 } report_t;
 
 extern report_t data;
 
-#define PS3_SQUARE		data.buttons1 |= (1<<0);
-#define PS3_TRIANGLE	data.buttons1 |= (1<<1);
-#define PS3_CROSS		data.buttons1 |= (1<<2);
-#define PS3_CIRCLE		data.buttons1 |= (1<<3);
-#define PS3_L1			data.buttons1 |= (1<<4);
-#define PS3_R1			data.buttons1 |= (1<<5);
-#define PS3_L2			data.buttons1 |= (1<<6);
-#define PS3_R2			data.buttons1 |= (1<<7);
-#define PS3_SELECT		data.buttons2 |= (1<<0);
-#define PS3_START		data.buttons2 |= (1<<1);
-#define PS3_L3			data.buttons2 |= (1<<2);
-#define PS3_R3			data.buttons2 |= (1<<3);
-#define PS3_HOME		data.buttons2 |= (1<<4);
+#define PS3_SELECT		{ data.buttons[0] |= (1<<0); data.analogue_select = 0xFF; }
+#define PS3_L3			{ data.buttons[0] |= (1<<1); data.analogue_l3 = 0xFF; }
+#define PS3_R3			{ data.buttons[0] |= (1<<2); data.analogue_r3 = 0xFF; }
+#define PS3_START		{ data.buttons[0] |= (1<<3); data.analogue_start = 0xFF; }
+#define PS3_DPAD_UP		{ data.buttons[0] |= (1<<4); data.analogue_dpad_up = 0xFF; }
+#define PS3_DPAD_RIGHT	{ data.buttons[0] |= (1<<5); data.analogue_dpad_right = 0xFF; }
+#define PS3_DPAD_DOWN	{ data.buttons[0] |= (1<<6); data.analogue_dpad_down = 0xFF; }
+#define PS3_DPAD_LEFT	{ data.buttons[0] |= (1<<7); data.analogue_dpad_left = 0xFF; }
+
+#define PS3_L2			{ data.buttons[1] |= (1<<0); data.analogue_l2 = 0xFF; }
+#define PS3_R2			{ data.buttons[1] |= (1<<1); data.analogue_r2 = 0xFF; }
+#define PS3_L1			{ data.buttons[1] |= (1<<2); data.analogue_l1 = 0xFF; }
+#define PS3_R1			{ data.buttons[1] |= (1<<3); data.analogue_r1 = 0xFF; }
+#define PS3_TRIANGLE	{ data.buttons[1] |= (1<<4); data.analogue_triangle = 0xFF; }
+#define PS3_CIRCLE		{ data.buttons[1] |= (1<<5); data.analogue_circle = 0xFF; }
+#define PS3_CROSS		{ data.buttons[1] |= (1<<6); data.analogue_cross = 0xFF; }
+#define PS3_SQUARE		{ data.buttons[1] |= (1<<7); data.analogue_square = 0xFF; }
+
+#define PS3_PS			{ data.buttons[2] |= (1<<0); data.analogue_ps = 0xFF; }
+
+void resetReportBuffer() {
+	data.unknown1 =
+	data.buttons[0] =
+	data.buttons[1] = 
+	data.buttons[2] =
+	data.unknown2 = 0;
+
+	data.lx =
+	data.ly =
+	data.rx =
+	data.ry = 0b10000000;
+
+	data.analogue_select =
+	data.analogue_l3 =
+	data.analogue_r3 =
+	data.analogue_start =
+	data.analogue_dpad_up =
+	data.analogue_dpad_right =
+	data.analogue_dpad_down =
+	data.analogue_dpad_left =
+	data.analogue_l2 =
+	data.analogue_r2 =
+	data.analogue_l1 =
+	data.analogue_r1 = 
+	data.analogue_triangle =
+	data.analogue_circle =
+	data.analogue_cross =
+	data.analogue_square =
+	data.analogue_ps =
+	data.unknown3[0] =
+	data.unknown3[1] = 0;
+
+	data.charging_status = 0x03;
+	data.power_status = 0x05;
+	data.connection_type = 0;
+
+	/*
+	data.unknown4[0] = 0xFF;
+	data.unknown4[1] = 0xB9;
+	data.unknown4[2] =
+	data.unknown4[3] = 0;
+	data.unknown4[4] = 0x23;
+	data.unknown4[5] = 0x16;
+	data.unknown4[6] = 0x77;
+	data.unknown4[7] = 0x01;
+	data.unknown4[8] = 0x81;
+	*/
+	data.unknown4[0] =
+	data.unknown4[1] =
+	data.unknown4[2] =
+	data.unknown4[3] =
+	data.unknown4[4] =
+	data.unknown4[5] =
+	data.unknown4[6] =
+	data.unknown4[7] =
+	data.unknown4[8] =
+
+	data.acceleration_x =
+	data.sin_roll =
+	data.acceleration_y =
+	data.sin_pitch =
+	data.acceleration_z =
+	data.gravity_x =
+	data.gravity_z1 =
+	data.gravity_z2 = 0;
+}
+
+PROGMEM char usbHidReportDescriptor[] = {
+    0x05, 0x01,                    // USAGE_PAGE (Generic Desktop)
+    0x09, 0x04,                    // USAGE (Joystick)
+    0xa1, 0x01,                    // COLLECTION (Application)
+    0xa1, 0x02,                    //   COLLECTION (Logical)
+    0x85, 0x01,                    //     REPORT_ID (1)
+    0x75, 0x08,                    //     REPORT_SIZE (8)
+    0x95, 0x01,                    //     REPORT_COUNT (1)
+    0x15, 0x00,                    //     LOGICAL_MINIMUM (0)
+    0x26, 0xff, 0x00,              //     LOGICAL_MAXIMUM (255)
+    0x81, 0x03,                    //     INPUT (Cnst,Var,Abs)
+	// Input: 1 * 1 byte = 1 byte
+    0x75, 0x01,                    //     REPORT_SIZE (1)
+    0x95, 0x13,                    //     REPORT_COUNT (19)
+    0x15, 0x00,                    //     LOGICAL_MINIMUM (0)
+    0x25, 0x01,                    //     LOGICAL_MAXIMUM (1)
+    0x35, 0x00,                    //     PHYSICAL_MINIMUM (0)
+    0x45, 0x01,                    //     PHYSICAL_MAXIMUM (1)
+    0x05, 0x09,                    //     USAGE_PAGE (Button)
+    0x19, 0x01,                    //     USAGE_MINIMUM (Button 1)
+    0x29, 0x13,                    //     USAGE_MAXIMUM (Button 19)
+    0x81, 0x02,                    //     INPUT (Data,Var,Abs)
+	// Input: 19 * 1 bit = 2 byte + 3 bit
+    0x75, 0x01,                    //     REPORT_SIZE (1)
+    0x95, 0x0d,                    //     REPORT_COUNT (13)
+    0x06, 0x00, 0xff,              //     USAGE_PAGE (Vendor Defined Page 1)
+    0x81, 0x03,                    //     INPUT (Cnst,Var,Abs)
+	// Input: 13 * 1 bit = 1 byte + 5 bit
+    0x15, 0x00,                    //     LOGICAL_MINIMUM (0)
+    0x26, 0xff, 0x00,              //     LOGICAL_MAXIMUM (255)
+    0x05, 0x01,                    //     USAGE_PAGE (Generic Desktop)
+    0x09, 0x01,                    //     USAGE (Pointer)
+    0xa1, 0x00,                    //     COLLECTION (Physical)
+    0x75, 0x08,                    //       REPORT_SIZE (8)
+    0x95, 0x04,                    //       REPORT_COUNT (4)
+    0x35, 0x00,                    //       PHYSICAL_MINIMUM (0)
+    0x46, 0xff, 0x00,              //       PHYSICAL_MAXIMUM (255)
+    0x09, 0x30,                    //       USAGE (X)
+    0x09, 0x31,                    //       USAGE (Y)
+    0x09, 0x32,                    //       USAGE (Z)
+    0x09, 0x35,                    //       USAGE (Rz)
+    0x81, 0x02,                    //       INPUT (Data,Var,Abs)
+	// Input: 4 * 1 byte = 4 byte
+    0xc0,                          //     END_COLLECTION
+    0x05, 0x01,                    //     USAGE_PAGE (Generic Desktop)
+    0x75, 0x08,                    //     REPORT_SIZE (8)
+    0x95, 0x27,                    //     REPORT_COUNT (39)
+    0x09, 0x01,                    //     USAGE (Pointer)
+    0x81, 0x02,                    //     INPUT (Data,Var,Abs)
+	// Input: 39 * 1 byte = 39 byte
+    0x75, 0x08,                    //     REPORT_SIZE (8)
+    0x95, 0x30,                    //     REPORT_COUNT (48)
+    0x09, 0x01,                    //     USAGE (Pointer)
+    0x91, 0x02,                    //     OUTPUT (Data,Var,Abs)
+	// Output: 48 * 1 byte = 48 byte
+    0x75, 0x08,                    //     REPORT_SIZE (8)
+    0x95, 0x30,                    //     REPORT_COUNT (48)
+    0x09, 0x01,                    //     USAGE (Pointer)
+    0xb1, 0x02,                    //     FEATURE (Data,Var,Abs)
+	// Feature: 48 * 1 byte = 48 byte
+    0xc0,                          //   END_COLLECTION
+    0xa1, 0x02,                    //   COLLECTION (Logical)
+    0x85, 0x02,                    //     REPORT_ID (2)
+    0x75, 0x08,                    //     REPORT_SIZE (8)
+    0x95, 0x30,                    //     REPORT_COUNT (48)
+    0x09, 0x01,                    //     USAGE (Pointer)
+    0xb1, 0x02,                    //     FEATURE (Data,Var,Abs)
+	// Feature: 48 * 1 byte = 48 byte
+    0xc0,                          //     END_COLLECTION
+    0xa1, 0x02,                    //   COLLECTION (Logical)
+    0x85, 0xee,                    //     REPORT_ID (238)
+    0x75, 0x08,                    //     REPORT_SIZE (8)
+    0x95, 0x30,                    //     REPORT_COUNT (48)
+    0x09, 0x01,                    //     USAGE (Pointer)
+    0xb1, 0x02,                    //     FEATURE (Data,Var,Abs)
+	// Feature: 48 * 1 byte = 48 byte
+    0xc0,                          //   END_COLLECTION
+    0xa1, 0x02,                    //   COLLECTION (Logical)
+    0x85, 0xef,                    //     REPORT_ID (239)
+    0x75, 0x08,                    //     REPORT_SIZE (8)
+    0x95, 0x30,                    //     REPORT_COUNT (48)
+    0x09, 0x00,                    //     USAGE (Undefined)
+    0xb1, 0x02,                    //     FEATURE (Data,Var,Abs)
+	// Feature: 48 * 1 byte = 48 byte
+    0xc0,                          //   END_COLLECTION
+    0xc0                           // END_COLLECTION
+};
 
 #define HID_REPORT_TYPE_INPUT 1
 #define HID_REPORT_TYPE_OUTPUT 2
@@ -50,7 +284,7 @@ usbMsgLen_t usbFunctionSetup(uchar receivedData[8])
 {
 	usbRequest_t    *rq = (void *)receivedData;
 
-    if((rq->bmRequestType & USBRQ_TYPE_MASK) == USBRQ_TYPE_CLASS) {    /* class request */
+    if((rq->bmRequestType & USBRQ_TYPE_MASK) == USBRQ_TYPE_CLASS) {    // class request
 		// wValue: ReportType (highbyte), ReportID (lowbyte)
         if(rq->bRequest == USBRQ_HID_GET_REPORT) {
 			if(rq->wValue.bytes[1] == HID_REPORT_TYPE_FEATURE) {
@@ -70,105 +304,9 @@ usbMsgLen_t usbFunctionSetup(uchar receivedData[8])
         }
     }
 
-    return 0;   /* default for not implemented requests: return no data back to host */
+    return 0;   // default for not implemented requests: return no data back to host
 }
 
-void resetReportBuffer() {
-	data.buttons1 =
-	data.buttons2 = 0;
-	data.hatswitch = 0b00001000; /* only first 4 bits*/
-	data.x =
-	data.y =
-	data.z =
-	data.rz = 0b10000000;
-	data.l2 =
-	data.r2 = 0;
-}
-
-PROGMEM char usbHidReportDescriptor[] = { // PC HID Report Descriptor
-    0x05, 0x01,                    // USAGE_PAGE (Generic Desktop)
-    0x09, 0x04,                    // USAGE (Gamepad)
-    0xa1, 0x01,                    // COLLECTION (Application)
-
-    0x15, 0x00,                    //   LOGICAL_MINIMUM (0)
-    0x25, 0x01,                    //   LOGICAL_MAXIMUM (1)
-    0x35, 0x00,                    //   PHYSICAL_MINIMUM (0)
-    0x45, 0x01,                    //   PHYSICAL_MAXIMUM (1)
-    0x75, 0x01,                    //   REPORT_SIZE (1)
-    0x95, 0x0d,                    //   REPORT_COUNT (13)
-    0x05, 0x09,                    //   USAGE_PAGE (Button)
-    0x19, 0x01,                    //   USAGE_MINIMUM (Button 1)
-    0x29, 0x0d,                    //   USAGE_MAXIMUM (Button 13)
-    0x81, 0x02,                    //   INPUT (Data,Var,Abs)
-/* report bits: 13x1=13 */
-    0x95, 0x03,                    //   REPORT_COUNT (3)
-    0x81, 0x01,                    //   INPUT (Cnst,Ary,Abs)
-/* report bits: + 3x1=3 */
-    0x05, 0x01,                    //   USAGE_PAGE (Generic Desktop)
-    0x25, 0x07,                    //   LOGICAL_MAXIMUM (7)
-    0x46, 0x3b, 0x01,              //   PHYSICAL_MAXIMUM (315)
-    0x75, 0x04,                    //   REPORT_SIZE (4)
-    0x95, 0x01,                    //   REPORT_COUNT (1)
-    0x65, 0x14,                    //   UNIT (Eng Rot:Angular Pos)
-    0x09, 0x39,                    //   USAGE (Hat switch)
-    0x81, 0x42,                    //   INPUT (Data,Var,Abs,Null)
-/* report bits: + 1x4=4 */
-    0x65, 0x00,                    //   UNIT (None)
-    0x95, 0x01,                    //   REPORT_COUNT (1)
-    0x81, 0x01,                    //   INPUT (Cnst,Ary,Abs)
-/* report bits: + 1x4=4 */
-    0x26, 0xff, 0x00,              //   LOGICAL_MAXIMUM (255)
-    0x46, 0xff, 0x00,              //   PHYSICAL_MAXIMUM (255)
-    0x09, 0x30,                    //   USAGE (X)
-    0x09, 0x31,                    //   USAGE (Y)
-    0x09, 0x32,                    //   USAGE (Z)
-    0x09, 0x35,                    //   USAGE (Rz)
-    0x95, 0x04,                    //   REPORT_COUNT (4)
-    0x75, 0x08,                    //   REPORT_SIZE (8)
-    0x81, 0x02,                    //   INPUT (Data,Var,Abs)
-/* report bits: + 4x8=32 */
-
-	/*
-    0x25, 0x0f,		               //   LOGICAL_MAXIMUM (15)
-    0x45, 0x0f,                    //   PHYSICAL_MAXIMUM (15)
-
-    0x09, 0x30,                    //   USAGE (X)
-    0x09, 0x31,                    //   USAGE (Y)
-    0x09, 0x32,                    //   USAGE (Z)
-    0x09, 0x33,                    //   USAGE (Rx)
-    0x09, 0x34,                    //   USAGE (Ry)
-    0x09, 0x35,                    //   USAGE (Rz)
-    0x09, 0x36,                    //   USAGE (Slider)
-    0x09, 0x37,                    //   USAGE (Dial)
-    0x09, 0x37,                    //   USAGE (Wheel)
-    0x09, 0x40,                    //   USAGE (Vx)
-    0x09, 0x41,                    //   USAGE (Vy)
-    0x09, 0x42,                    //   USAGE (Vz)
-    0x09, 0x43,                    //   USAGE (Vbrx)
-    0x09, 0x44,                    //   USAGE (Vbry)
-    0x09, 0x45,                    //   USAGE (Vbrz)
-
-    0x09, 0x33,                    //   USAGE (Rx)
-    0x09, 0x34,                    //   USAGE (Ry)
-    0x95, 0x02,                    //   REPORT_COUNT (2)
-    0x81, 0x02,                    //   INPUT (Data,Var,Abs)
-	*/
-
-    //0x25, 0x0f,		             //   LOGICAL_MAXIMUM (15)
-    //0x45, 0x0f,                    //   PHYSICAL_MAXIMUM (15)
-    0x09, 0x01,                    //   USAGE (Pointer)
-	0x95, 0x02,                    //   REPORT_COUNT (2)
-    0x81, 0x02,                    //   INPUT (Data,Var,Abs)
-/* report bits: + 39x8=312 */
-
-    0x06, 0x00, 0xff,              //   USAGE_PAGE (Vendor Defined Page 1)
-    0x0a, 0x21, 0x26,              //   USAGE (Undefined, value 0x2621)
-    0x95, 0x08,                    //   REPORT_COUNT (8)
-    0xb1, 0x02,                    //   FEATURE (Data,Var,Abs)
-
-
-    0xc0                           // END_COLLECTION
-};
 
 /* ------------------------------------------------------------------------- */
 
@@ -179,53 +317,40 @@ void readInputPS3()
 	// Left Joystick Directions
 	if(CFG_LEFT_STICK) {
 		if (!Stick_Up)
-			data.y = 0x00;
+			data.ly = 0x00;
 		else if (!Stick_Down)
-			data.y = 0xFF;
+			data.ly = 0xFF;
 
 		if (!Stick_Left)
-			data.x = 0x00;
+			data.lx = 0x00;
 		else if (!Stick_Right)
-			data.x = 0xFF;
+			data.lx = 0xFF;
 	}
 
 	// Right Joystick Directions
 	if(CFG_RIGHT_STICK) {
 		if (!Stick_Up)
-			data.rz = 0;
+			data.ry = 0;
 		else if (!Stick_Down)
-			data.rz = 0xFF;
+			data.ry = 0xFF;
 		
 		if (!Stick_Left)
-			data.z = 0;
+			data.rx = 0;
 		else if (!Stick_Right)
-			data.z = 0xFF;
+			data.rx = 0xFF;
 	}
 
 	// Digital Pad Directions
 	if(CFG_DIGITAL_PAD) {
-		if(!Stick_Up) {
-			if(!Stick_Right)
-				data.hatswitch = 0b00000001;
-			else if(!Stick_Left)
-				data.hatswitch = 0b00000111;
-			else
-				data.hatswitch = 0b00000000;
-		}
-		else if(!Stick_Down) {
-			if(!Stick_Right)
-				data.hatswitch = 0b00000011;
-			else if(!Stick_Left)
-				data.hatswitch = 0b00000101;
-			else
-				data.hatswitch = 0b00000100;
-		}
-		else {
-			if(!Stick_Right)
-				data.hatswitch = 0b00000010;
-			if(!Stick_Left)
-				data.hatswitch = 0b00000110;
-		}
+		if (!Stick_Up)
+			PS3_DPAD_UP
+		else if (!Stick_Down)
+			PS3_DPAD_DOWN
+		
+		if (!Stick_Left)
+			PS3_DPAD_LEFT
+		else if (!Stick_Right)
+			PS3_DPAD_RIGHT
 	}
 
 	// Buttons
@@ -244,25 +369,19 @@ void readInputPS3()
 	if(!Stick_Fierce)
 		PS3_R1
 
-	if(!Stick_Roundhouse) {
+	if(!Stick_Roundhouse)
 		PS3_R2
-		//data.r2_l2 |= 0xF0;
-		data.r2 = 0xFF;
-	}
 
 #ifdef EXTRA_BUTTONS					
 	if(!Stick_Extra0)
 		PS3_L1
 
-	if(!Stick_Extra1) {
+	if(!Stick_Extra1)
 		PS3_L2
-		//data.r2_l2 |= 0x0F;
-		data.l2 = 0xFF;
-	}
 #endif
 
-	if(CFG_HOME_EMU && !Stick_Start && !Stick_Select /* && Stick_Jab */)
-		PS3_HOME
+	if(CFG_HOME_EMU && !Stick_Start && !Stick_Select)
+		PS3_PS
 	else {
 		if(!Stick_Start)
 			PS3_START
@@ -272,7 +391,7 @@ void readInputPS3()
 	}
 
 	if(!Stick_Home)
-		PS3_HOME
+		PS3_PS
 }
 
 /* ------------------------------------------------------------------------- */
@@ -294,6 +413,13 @@ void sendDataPS3(uchar* data, unsigned int byteCount) {
 
 		while(!usbInterruptIsReady()) usbPoll();
 	}
+
+	/*
+	if(currentByte == byteCount -1) {
+		usbSetInterrupt(data + currentByte, 0);
+		while(!usbInterruptIsReady()) usbPoll();
+	}
+	*/
 }
 
 void ps3_controller() {
@@ -308,7 +434,7 @@ void ps3_controller() {
         if(usbInterruptIsReady()) {
 			readJoystickSwitch();
             readInputPS3();
-			sendDataPS3((uchar*)&data, 9);
+			sendDataPS3((uchar*)&data, 48);
         }
     }
 }
