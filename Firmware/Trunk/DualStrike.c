@@ -313,14 +313,7 @@ to wait until the data is sent, then you can send the next part like this:
 usbSetInterrupt((uchar *)&data + 8, 1*sizeof(uchar));
 ---
 */
-uchar* data[6*8] = {
-	0,0,0,0,0,0,0,0,
-	0,0,0,0,0,0,0,0,
-	0,0,0,0,0,0,0,0,
-	0,0,0,0,0,0,0,0,
-	0,0,0,0,0,0,0,0,
-	0,0,0,0,0,0,0,0,
-};
+uchar* data[8];
 
 int main(void)
 {
