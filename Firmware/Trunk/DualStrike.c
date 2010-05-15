@@ -204,7 +204,7 @@ If the Select button is pressed, then configuration mode is entered (see below).
 
 If the Start button is pressed, then firmware update mode is entered (see below).
 
-If the firmware is the PS3/pass-through version, then if at least one of the buttons X/Cross,
+If at least one of the buttons X/Cross,
 Y/Circle, A/Square or B/Triangle is pressed then the non-default mode is activated.
 Otherwise the default working mode is activated.
 
