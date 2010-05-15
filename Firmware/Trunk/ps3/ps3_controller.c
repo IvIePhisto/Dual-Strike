@@ -13,7 +13,7 @@ extern uint8_t config[2];
 
 /* ------------------------------------------------------------------------- */
 
-PROGMEM char usbHidReportDescriptor[96] = {
+PROGMEM char usbHidReportDescriptor[124] = {
     0x05, 0x01,                    // USAGE_PAGE (Generic Desktop)
     0x09, 0x04,                    // USAGE (Joystick)
     0xa1, 0x01,                    // COLLECTION (Application)
@@ -53,11 +53,25 @@ PROGMEM char usbHidReportDescriptor[96] = {
     0x81, 0x02,                    //       INPUT (Data,Var,Abs)
     0xc0,                          //     END_COLLECTION
     0xc0,                          //   END_COLLECTION
-    0x06, 0x00, 0xff,              //   USAGE_PAGE (Vendor Defined Page 1)
     0x75, 0x08,                    //   REPORT_SIZE (8)
     0x95, 0x08,                    //   REPORT_COUNT (8)
     0x26, 0xff, 0x00,              //   LOGICAL_MAXIMUM (255)
     0x46, 0xff, 0x00,              //   PHYSICAL_MAXIMUM (255)
+    0x06, 0x00, 0xff,              //   USAGE_PAGE (Vendor Defined Page 1)
+	0x09, 0x20,                    //   USAGE (Unknown)
+	0x09, 0x21,                    //   USAGE (Unknown)
+	0x09, 0x22,                    //   USAGE (Unknown)
+	0x09, 0x23,                    //   USAGE (Unknown) 
+	0x09, 0x24,                    //   USAGE (Unknown)
+	0x09, 0x25,                    //   USAGE (Unknown)
+	0x09, 0x26,                    //   USAGE (Unknown)
+	0x09, 0x27,                    //   USAGE (Unknown)
+	0x09, 0x28,                    //   USAGE (Unknown)
+	0x09, 0x29,                    //   USAGE (Unknown)
+	0x09, 0x2a,                    //   USAGE (Unknown)
+	0x09, 0x2b,                    //   USAGE (Unknown)
+	0x95, 0x0c,                    //   REPORT_COUNT (12)
+    0x81, 0x02,                    //   INPUT (Data,Var,Abs)
     0x0a, 0x21, 0x26,              //   UNKNOWN
     0xb1, 0x02,                    //   FEATURE (Data,Var,Abs)
     0xc0                           // END_COLLECTION
@@ -67,6 +81,7 @@ typedef struct {
 	uchar	buttons[2];
 	uchar	hatswitch;
 	uchar	joystick_axes;
+	uchar	analogue_buttons[12];
 } report_t;
 
 extern report_t data;
@@ -76,29 +91,41 @@ void resetReportBuffer() {
 	data.buttons[1] = 0;
 	data.hatswitch  = 0b00001111;
 	data.joystick_axes = 0b01010101;
+	data.analogue_buttons[0] =
+	data.analogue_buttons[1] =
+	data.analogue_buttons[2] =
+	data.analogue_buttons[3] =
+	data.analogue_buttons[4] =
+	data.analogue_buttons[5] =
+	data.analogue_buttons[6] =
+	data.analogue_buttons[7] =
+	data.analogue_buttons[8] =
+	data.analogue_buttons[9] =
+	data.analogue_buttons[10] =
+	data.analogue_buttons[11] = 0;
 }
 
-#define PS3_SQUARE		{ data.buttons[0] |= (1<<0); }
-#define PS3_CROSS		{ data.buttons[0] |= (1<<1); }
-#define PS3_CIRCLE		{ data.buttons[0] |= (1<<2); }
-#define PS3_TRIANGLE	{ data.buttons[0] |= (1<<3); }
-#define PS3_L1			{ data.buttons[0] |= (1<<4); }
-#define PS3_R1			{ data.buttons[0] |= (1<<5); }
-#define PS3_L2			{ data.buttons[0] |= (1<<6); }
-#define PS3_R2			{ data.buttons[0] |= (1<<7); }
+#define PS3_SQUARE		{ data.buttons[0] |= (1<<0); data.analogue_buttons[7] = 0xFF; }
+#define PS3_CROSS		{ data.buttons[0] |= (1<<1); data.analogue_buttons[6] = 0xFF; }
+#define PS3_CIRCLE		{ data.buttons[0] |= (1<<2); data.analogue_buttons[5] = 0xFF; }
+#define PS3_TRIANGLE	{ data.buttons[0] |= (1<<3); data.analogue_buttons[4] = 0xFF; }
+#define PS3_L1			{ data.buttons[0] |= (1<<4); data.analogue_buttons[8] = 0xFF; }
+#define PS3_R1			{ data.buttons[0] |= (1<<5); data.analogue_buttons[9] = 0xFF; }
+#define PS3_L2			{ data.buttons[0] |= (1<<6); data.analogue_buttons[10] = 0xFF; }
+#define PS3_R2			{ data.buttons[0] |= (1<<7); data.analogue_buttons[11] = 0xFF; }
 
 #define PS3_SELECT		{ data.buttons[1] |= (1<<0); }
 #define PS3_START		{ data.buttons[1] |= (1<<1); }
 #define PS3_PS			{ data.buttons[1] |= (1<<4); }
 
-#define PS3_DPAD_UP			{ data.hatswitch = 0; }
-#define PS3_DPAD_UP_RIGHT	{ data.hatswitch = 1; }
-#define PS3_DPAD_RIGHT		{ data.hatswitch = 2; }
-#define PS3_DPAD_DOWN_RIGHT	{ data.hatswitch = 3; }
-#define PS3_DPAD_DOWN		{ data.hatswitch = 4; }
-#define PS3_DPAD_DOWN_LEFT	{ data.hatswitch = 5; }
-#define PS3_DPAD_LEFT		{ data.hatswitch = 6; }
-#define PS3_DPAD_UP_LEFT	{ data.hatswitch = 7; }
+#define PS3_DPAD_UP			{ data.hatswitch = 0; data.analogue_buttons[2] = 0xFF; }
+#define PS3_DPAD_UP_RIGHT	{ data.hatswitch = 1; data.analogue_buttons[2] = 0xFF; data.analogue_buttons[0] = 0xFF; }
+#define PS3_DPAD_RIGHT		{ data.hatswitch = 2; 								   data.analogue_buttons[0] = 0xFF; }
+#define PS3_DPAD_DOWN_RIGHT	{ data.hatswitch = 3; data.analogue_buttons[3] = 0xFF; data.analogue_buttons[0] = 0xFF; }
+#define PS3_DPAD_DOWN		{ data.hatswitch = 4; data.analogue_buttons[3] = 0xFF; }
+#define PS3_DPAD_DOWN_LEFT	{ data.hatswitch = 5; data.analogue_buttons[3] = 0xFF; data.analogue_buttons[1] = 0xFF; }
+#define PS3_DPAD_LEFT		{ data.hatswitch = 6; 								   data.analogue_buttons[1] = 0xFF; }
+#define PS3_DPAD_UP_LEFT	{ data.hatswitch = 7; data.analogue_buttons[2] = 0xFF; data.analogue_buttons[1] = 0xFF; }
 
 #define PS3_LS_LEFT		{ data.joystick_axes &= 0b11111100; }
 #define PS3_LS_RIGHT	{ data.joystick_axes |= 0b00000010; data.joystick_axes &= 0b11111110; }
@@ -242,7 +269,6 @@ void readInputPS3()
 
 /* ------------------------------------------------------------------------- */
 
-/*
 void sendDataPS3(uchar* data, unsigned int byteCount) {
 	int currentByte;
 	int currentCount;
@@ -261,7 +287,6 @@ void sendDataPS3(uchar* data, unsigned int byteCount) {
 		while(!usbInterruptIsReady()) usbPoll();
 	}
 }
-*/
 
 void ps3_controller() {
     usbDeviceDisconnect(); /* enforce re-enumeration, do this while interrupts are disabled! */
@@ -271,7 +296,7 @@ void ps3_controller() {
     sei();
 	usbPoll();
 	resetReportBuffer();
-	usbSetInterrupt((uchar*)&data, 4*sizeof(uchar));
+	sendDataPS3((uchar*)&data, 16);
 
     while(1) { /* main event loop */
 		usbPoll();
@@ -279,7 +304,7 @@ void ps3_controller() {
         if(usbInterruptIsReady()) {
 			readJoystickSwitch();
             readInputPS3();
-			usbSetInterrupt((uchar*)&data, 4*sizeof(uchar));
+			sendDataPS3((uchar*)&data, 16);
         }
     }
 }
