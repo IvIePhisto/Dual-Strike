@@ -9,8 +9,8 @@ the GNU Public License V3, see license.txt for more details.
 
 History
 =======
-1.7.0  -major changes in source
-       -added Wii Classic Controller working mode (EXPERIMENTAL)
+1.7.0  -PS3 mode: added support for analogue button/dpad values (like in
+        SSFIITHDR and the on-screen keyboard)
 
 1.6.2  -merged SMD design code into source code
 
@@ -99,25 +99,24 @@ Dual Strike accordingly.
 
 Startup Behaviour
 =================
-If a button or joystick direction is pressed, when the Dual Strike controller is
-activated (if the machine it is plugged in is turned on or the controller gets
+If a button or joystick direction is pressed, when the Dual Strike controller
+is activated (if the machine it is plugged in is turned on or the controller gets
 plugged into the machine), then special functions are activated:
+
 If the Select button is pressed, then configuration mode is entered (see below).
 
-If the Start button is pressed, then firmware update mode is entered (see
-below).
+If the Start button is pressed, then firmware update mode is entered (see below).
 
-If the X/Cross button is pressed and firmware supports PS3 (default), then the
-Dual Strike PS3 working mode is activated. Otherwise if the Y/Circle button is
-pressed and firmware supports Wii, then the Dual Strike Wii working mode is
-activated. Otherwise if the A/Squard button is pressed, then the pass-through
-working mode is activated. Otherwise the default working mode is activated.
+If at least one of the buttons X/Cross, Y/Circle, A/Square or B/Triangle 
+is pressed then the non-default mode is activated. Otherwise the default 
+working mode is activated. 
 
-If the joystick is moved to the up direction, the joystick is acting as a
-digital pad when in Dual Strike working mode (default). If the joystick is moved
-to the left direction, the joystick is acting as a left analogue stick when in
-Dual Strike working mode. If the joystick is moved to the right direction, the
-joystick is acting as a right analogue stick when in Dual Strike working mode.
+If the joystick is moved to the up direction, the joystick is acting as 
+a digital pad when in Dual Strike working mode (default). If the 
+joystick is moved to the left direction, the joystick is acting as a 
+left analogue stick when in Dual Strike working mode. If the joystick is 
+moved to the right direction, the joystick is acting as a right analogue 
+stick when in Dual Strike working mode. 
 
 
 Configuration Mode
@@ -125,8 +124,8 @@ Configuration Mode
 In the configuration mode the behaviour of the Dual Strike can be changed,
 see Startup Behaviour for how to enter it. Leave it by pressing Start.
 
-While in configuration mode pressing a button and/or a joystick direction,
-changes part of the configuration:
+While in configuration mode pressing a button and/or a joystick
+direction, changes part of the configuration:
 
 Dual Strike default stick mode:
 -------------------------------
@@ -138,8 +137,7 @@ Down  = activate digital pad additionallly to left or right analogue stick
 Default Working Mode:
 ---------------------
 Button: LK
-Left  = Dual Strike PS3 [default] if firmware supports PS3
-Up    = Dual Strike Wii if firmware supports Wii
+Left  = Dual Strike PS3 [default]
 Right = pass-through
 
 revert to defaults:
@@ -157,64 +155,13 @@ Extra Pins Mode
 Button: MP
 Up    = deactivated (precedence over Left and Right) [default]
 Left  = read joystick mode switch (precedence over Down)
-        S3 and S4 have to be connected to a triple switch
+		S3 and S4 have to be connected to a triple switch
 Right = emulate joystick mode switch for pass-through (precedence over Down)
         S3 and S4 have to be connected to joystick mode pins on the 
 		pass-through PCB
 Down  = inverted triggers for pass-through
         S3 and S4 have to be connected to trigger pins with active high on the
-        pass-through PCB        
-
-
-Wiimote Adapter
-===============
-The Dual Strike can act as a Wii Classic Controller when connected to a
-Wiimote. You need a passive adapter from USB to the Wiimote extension port
-for this working mode, its composition is detailed below.
-
-If you get your Wiimote plug and cable of a working Wii extension (Nunchuck,
-Classic Controller, ...), you can add a USB jack to the extension's side of
-the cable. So you can continue using the extension by utilising your adapter.
-
-Wiimote extension port layout (as seen looking on the Wiimote bottom): 
-+---___---+
-| 1  2  3 |
-| ======= |
-| 4  5  6 |
-+---------+
-1: Ground [white]
-2: No Connection
-3: SCL [yellow]
-4: SDA [green]
-5: Device Detect, in the connector wired to VCC [red]
-6: VCC (3.3V) [red]
-
-USB type B port layout (as seen looking at the port):
-   --
- /    \
-| 2  1 |
-| ==== |
-| 3  4 |
-+------+
-1: VCC (5V) [red]
-2: D- [white]
-3: D+ [green]
-3: Ground [black]
-
-Your adapter has to make the following connections:
-
-USB Wires      | Wiimote Wires
----------------+---------------
-D-     [white] | SCL    [yellow]
-D+     [green] | SDA    [green]
-VCC    [red]   | VCC    [red]
-Ground [black] | Ground [white]
-
-The adapter should be connected to the USB port before plugging it into
-the Wiimote.
-Alternatively you can connect the USB wires VCC and Ground to a USB type A plug
-(creating a Y adapter) to use the standard USB voltage from another source
-(e.g. USB AC adapter).
+		pass-through PCB
 
 
 Firmware
@@ -228,10 +175,7 @@ mode and load the defaults!
 
 The firmware update files are the following:
 
-Filename                    | Dual Strike type | Functionality
-----------------------------+------------------+--------------
-update_firmware.bat         | classic          | PS3
-update_firmware_smd.bat     | SMD              | PS3
-update_firmware_wii.bat     | classic          | Wii
-update_firmware_smd_wii.bat | SMD              | Wii
-
+Filename                    | Dual Strike type 
+----------------------------+------------------
+update_firmware.bat         | classic          
+update_firmware_smd.bat     | SMD              

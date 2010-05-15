@@ -27,8 +27,7 @@ Down  = activate digital pad additionallly to left or right analogue stick
 Default Working Mode:
 ---------------------
 Button: LK
-Left  = Dual Strike PS3 [default] if firmware supports PS3
-Up    = Dual Strike Wii if firmware supports Wii
+Left  = Dual Strike PS3 [default]
 Right = pass-through
 
 revert to defaults:
