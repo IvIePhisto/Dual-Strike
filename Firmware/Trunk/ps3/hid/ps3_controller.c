@@ -19,6 +19,7 @@ typedef struct {
    http://ps3.jim.sh/sixaxis/usb/
 */
 
+	uchar	reportID;
 	uchar	unknown1; // sample: 0x00
 
 	/*
@@ -122,6 +123,7 @@ extern report_t data;
 #define PS3_PS			{ data.buttons[2] |= (1<<0); data.analogue_ps = 0xFF; }
 
 void resetReportBuffer() {
+	data.reportID = 1;
 	data.unknown1 =
 	data.buttons[0] =
 	data.buttons[1] = 
@@ -157,7 +159,6 @@ void resetReportBuffer() {
 	data.power_status = 0x05;
 	data.connection_type = 0;
 
-	/*
 	data.unknown4[0] = 0xFF;
 	data.unknown4[1] = 0xB9;
 	data.unknown4[2] =
@@ -167,7 +168,7 @@ void resetReportBuffer() {
 	data.unknown4[6] = 0x77;
 	data.unknown4[7] = 0x01;
 	data.unknown4[8] = 0x81;
-	*/
+	/*
 	data.unknown4[0] =
 	data.unknown4[1] =
 	data.unknown4[2] =
@@ -177,6 +178,7 @@ void resetReportBuffer() {
 	data.unknown4[6] =
 	data.unknown4[7] =
 	data.unknown4[8] =
+	*/
 
 	data.acceleration_x =
 	data.sin_roll =
@@ -188,7 +190,7 @@ void resetReportBuffer() {
 	data.gravity_z2 = 0;
 }
 
-PROGMEM char usbHidReportDescriptor[] = {
+PROGMEM char usbHidReportDescriptor[148] = {
     0x05, 0x01,                    // USAGE_PAGE (Generic Desktop)
     0x09, 0x04,                    // USAGE (Joystick)
     0xa1, 0x01,                    // COLLECTION (Application)
@@ -199,6 +201,7 @@ PROGMEM char usbHidReportDescriptor[] = {
     0x15, 0x00,                    //     LOGICAL_MINIMUM (0)
     0x26, 0xff, 0x00,              //     LOGICAL_MAXIMUM (255)
     0x81, 0x03,                    //     INPUT (Cnst,Var,Abs)
+	// 21
 	// Input: 1 * 1 byte = 1 byte
     0x75, 0x01,                    //     REPORT_SIZE (1)
     0x95, 0x13,                    //     REPORT_COUNT (19)
@@ -210,11 +213,13 @@ PROGMEM char usbHidReportDescriptor[] = {
     0x19, 0x01,                    //     USAGE_MINIMUM (Button 1)
     0x29, 0x13,                    //     USAGE_MAXIMUM (Button 19)
     0x81, 0x02,                    //     INPUT (Data,Var,Abs)
+	// 20
 	// Input: 19 * 1 bit = 2 byte + 3 bit
     0x75, 0x01,                    //     REPORT_SIZE (1)
     0x95, 0x0d,                    //     REPORT_COUNT (13)
     0x06, 0x00, 0xff,              //     USAGE_PAGE (Vendor Defined Page 1)
     0x81, 0x03,                    //     INPUT (Cnst,Var,Abs)
+	// 9
 	// Input: 13 * 1 bit = 1 byte + 5 bit
     0x15, 0x00,                    //     LOGICAL_MINIMUM (0)
     0x26, 0xff, 0x00,              //     LOGICAL_MAXIMUM (255)
@@ -282,6 +287,7 @@ PROGMEM char usbHidReportDescriptor[] = {
 
 usbMsgLen_t usbFunctionSetup(uchar receivedData[8])
 {
+	return 0;
 	usbRequest_t    *rq = (void *)receivedData;
 
     if((rq->bmRequestType & USBRQ_TYPE_MASK) == USBRQ_TYPE_CLASS) {    // class request
@@ -434,7 +440,7 @@ void ps3_controller() {
         if(usbInterruptIsReady()) {
 			readJoystickSwitch();
             readInputPS3();
-			sendDataPS3((uchar*)&data, 48);
+			sendDataPS3((uchar*)&data, 49);
         }
     }
 }
