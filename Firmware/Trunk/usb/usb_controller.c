@@ -198,7 +198,7 @@ PROGMEM const unsigned char usbDescriptorConfigurationXBox[] = {
     0,          				// string index for interface 
     7,          				// sizeof(usbDescrEndpoint): length of descriptor in bytes 
     USBDESCR_ENDPOINT,			// descriptor type = endpoint 
-    0x81,						// IN endpoint number 1
+    0x81,						// IN endpoint number 1 ORIGINALLY: 0x82
     0x03,						// attrib: Interrupt endpoint 
     8, 0,						// maximum packet size 
     4, 							// interrupt poll interval in ms 
@@ -217,8 +217,9 @@ PROGMEM const unsigned char usbDescriptorConfigurationXBox[] = {
 */
 
 void resetDataXBox() {
+	((uchar*)&data)[1] = 20; // size of report
+
 	((uchar*)&data)[0] =
-	((uchar*)&data)[1] =
 	((uchar*)&data)[2] =
 	((uchar*)&data)[3] =
 	((uchar*)&data)[4] =
@@ -239,31 +240,31 @@ void resetDataXBox() {
 	((uchar*)&data)[19] = 0;
 }
 
-#define XBOX_DPAD_UP	{ ((uchar*)&data)[0] |= (1<<0); }
-#define XBOX_DPAD_DOWN	{ ((uchar*)&data)[0] |= (1<<1); }
-#define XBOX_DPAD_LEFT	{ ((uchar*)&data)[0] |= (1<<2); }
-#define XBOX_DPAD_RIGHT	{ ((uchar*)&data)[0] |= (1<<3); }
-#define XBOX_START		{ ((uchar*)&data)[0] |= (1<<4); }
-#define XBOX_BACK		{ ((uchar*)&data)[0] |= (1<<5); }
-#define XBOX_L_STICK	{ ((uchar*)&data)[0] |= (1<<6); }
-#define XBOX_R_STICK	{ ((uchar*)&data)[0] |= (1<<7); }
+#define XBOX_DPAD_UP	{ ((uchar*)&data)[2] |= (1<<0); }
+#define XBOX_DPAD_DOWN	{ ((uchar*)&data)[2] |= (1<<1); }
+#define XBOX_DPAD_LEFT	{ ((uchar*)&data)[2] |= (1<<2); }
+#define XBOX_DPAD_RIGHT	{ ((uchar*)&data)[2] |= (1<<3); }
+#define XBOX_START		{ ((uchar*)&data)[2] |= (1<<4); }
+#define XBOX_BACK		{ ((uchar*)&data)[2] |= (1<<5); }
+#define XBOX_L_STICK	{ ((uchar*)&data)[2] |= (1<<6); }
+#define XBOX_R_STICK	{ ((uchar*)&data)[2] |= (1<<7); }
 
-#define XBOX_A			{ ((uchar*)&data)[2] |= 0xFF; }
-#define XBOX_B			{ ((uchar*)&data)[3] |= 0xFF; }
-#define XBOX_X			{ ((uchar*)&data)[4] |= 0xFF; }
-#define XBOX_Y			{ ((uchar*)&data)[5] |= 0xFF; }
-#define XBOX_BLACK		{ ((uchar*)&data)[6] |= 0xFF; }
-#define XBOX_WHITE		{ ((uchar*)&data)[7] |= 0xFF; }
-#define XBOX_LT			{ ((uchar*)&data)[8] |= 0xFF; }
-#define XBOX_RT			{ ((uchar*)&data)[9] |= 0xFF; }
-#define XBOX_LS_RIGHT	{ ((uchar*)&data)[10] |= 0xFF; ((uchar*)&data)[11] |= 0b01111111; }
-#define XBOX_LS_LEFT	{ ((uchar*)&data)[10] |= 0;    ((uchar*)&data)[11] |= 0b10000000; }
-#define XBOX_LS_UP		{ ((uchar*)&data)[12] |= 0xFF; ((uchar*)&data)[13] |= 0b01111111; }
-#define XBOX_LS_DOWN	{ ((uchar*)&data)[12] |= 0;    ((uchar*)&data)[13] |= 0b10000000; }
-#define XBOX_RS_RIGHT	{ ((uchar*)&data)[14] |= 0xFF; ((uchar*)&data)[15] |= 0b01111111; }
-#define XBOX_RS_LEFT	{ ((uchar*)&data)[14] |= 0;    ((uchar*)&data)[15] |= 0b10000000; }
-#define XBOX_RS_UP		{ ((uchar*)&data)[16] |= 0xFF; ((uchar*)&data)[17] |= 0b01111111; }
-#define XBOX_RS_DOWN	{ ((uchar*)&data)[16] |= 0;    ((uchar*)&data)[17] |= 0b10000000; }
+#define XBOX_A			{ ((uchar*)&data)[4] |= 0xFF; }
+#define XBOX_B			{ ((uchar*)&data)[5] |= 0xFF; }
+#define XBOX_X			{ ((uchar*)&data)[6] |= 0xFF; }
+#define XBOX_Y			{ ((uchar*)&data)[7] |= 0xFF; }
+#define XBOX_BLACK		{ ((uchar*)&data)[8] |= 0xFF; }
+#define XBOX_WHITE		{ ((uchar*)&data)[9] |= 0xFF; }
+#define XBOX_LT			{ ((uchar*)&data)[10] |= 0xFF; }
+#define XBOX_RT			{ ((uchar*)&data)[11] |= 0xFF; }
+#define XBOX_LS_RIGHT	{ ((uchar*)&data)[12] |= 0xFF; ((uchar*)&data)[13] |= 0b01111111; }
+#define XBOX_LS_LEFT	{ ((uchar*)&data)[12] |= 0;    ((uchar*)&data)[13] |= 0b10000000; }
+#define XBOX_LS_UP		{ ((uchar*)&data)[14] |= 0xFF; ((uchar*)&data)[15] |= 0b01111111; }
+#define XBOX_LS_DOWN	{ ((uchar*)&data)[14] |= 0;    ((uchar*)&data)[15] |= 0b10000000; }
+#define XBOX_RS_RIGHT	{ ((uchar*)&data)[16] |= 0xFF; ((uchar*)&data)[17] |= 0b01111111; }
+#define XBOX_RS_LEFT	{ ((uchar*)&data)[16] |= 0;    ((uchar*)&data)[17] |= 0b10000000; }
+#define XBOX_RS_UP		{ ((uchar*)&data)[18] |= 0xFF; ((uchar*)&data)[19] |= 0b01111111; }
+#define XBOX_RS_DOWN	{ ((uchar*)&data)[18] |= 0;    ((uchar*)&data)[19] |= 0b10000000; }
 
 #define USB_MODE_PS3 1
 #define USB_MODE_XBOX 2
