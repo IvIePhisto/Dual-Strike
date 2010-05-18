@@ -5,6 +5,9 @@
 #ifndef USE_PS3
 #define USE_PS3 1
 #endif
+#ifndef USE_XBOX
+#define USE_XBOX 1
+#endif
 // 2114 bytes
 #ifndef USE_WII
 #define USE_WII 0
@@ -15,8 +18,8 @@
 // 110 bytes
 #endif
 
-#if USE_PS3
-#include "ps3/ps3_controller.h"
+#if USE_PS3 || USE_XBOX
+#include "usb/usb_controller.h"
 #endif
 
 #if USE_WII
@@ -36,7 +39,7 @@
 The configuration is saved in a two byte array named 'config'.
 The bits have the following semantics:
 
-[0]0-1: default working mode (00 == pass-through; 01 == PS3, 10 == Wii)
+[0]0-1: default working mode (00 == pass-through; 01 == PS3, 10 == XBox)
 [0]2:   Dual Strike left stick (0 == deactivated; 1 == activated)
 [0]3:   Dual Strike digital pad (0 == deactivated; 1 == activated)
 [0]4:   Dual Strike right stick (0 == deactivated; 1 == activated)
@@ -57,7 +60,7 @@ The bits have the following semantics:
 // configuration tests:
 #define CFG_DEF_WORK_MODE_PT 	( !(config[0] & (1<<0)) && !(config[0] & (1<<1)) ) 
 #define CFG_DEF_WORK_MODE_PS3 	(  (config[0] & (1<<0)) && !(config[0] & (1<<1)) )
-#define CFG_DEF_WORK_MODE_WII 	( !(config[0] & (1<<0)) &&  (config[0] & (1<<1)) )
+#define CFG_DEF_WORK_MODE_XBOX 	( !(config[0] & (1<<0)) &&  (config[0] & (1<<1)) )
 #define CFG_LEFT_STICK 			(config[0] & (1<<2))
 #define CFG_DIGITAL_PAD		    (config[0] & (1<<3))
 #define CFG_RIGHT_STICK			(config[0] & (1<<4))
@@ -70,7 +73,7 @@ The bits have the following semantics:
 // configuration modifications:
 #define SET_CFG_DEF_WORK_MODE_PT(config)		config[0] &= 0b11111100;
 #define SET_CFG_DEF_WORK_MODE_PS3(config)		config[0] |= (1<<0); config[0] &= ~(1<<1); 
-#define SET_CFG_DEF_WORK_MODE_WII(config)		config[0] &= ~(1<<0); config[0] |= (1<<1);
+#define SET_CFG_DEF_WORK_MODE_XBOX(config)		config[0] &= ~(1<<0); config[0] |= (1<<1);
 #define ENABLE_CFG_LEFT_STICK(config) 			config[0] |= (1<<2);
 #define DISABLE_CFG_LEFT_STICK(config) 			config[0] &= ~(1<<2);
 #define ENABLE_CFG_DIGITAL_PAD(config)			config[0] |= (1<<3);

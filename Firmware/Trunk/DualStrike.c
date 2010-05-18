@@ -28,6 +28,7 @@ Default Working Mode:
 ---------------------
 Button: LK
 Left  = Dual Strike PS3 [default]
+Up    = XBox
 Right = pass-through
 
 revert to defaults:
@@ -54,9 +55,11 @@ Down  = inverted triggers for pass-through
 		pass-through PCB		
 */
 
-#define WORKING_MODE_PS3 0
-#define WORKING_MODE_WII 1
-#define WORKING_MODE_PT	 2
+#define WORKING_MODE_PS3	0
+#define WORKING_MODE_XBOX	1
+#define WORKING_MODE_PT		2
+#define WORKING_MODE_WII	3
+
 
 uint8_t config[2] = {EEPROM_DEF, EEPROM_DEF};
 uint8_t config_EEPROM[2] EEMEM = {CONFIG_0_DEF, CONFIG_1_DEF};
@@ -106,9 +109,9 @@ void configInit() {
 					SET_CFG_DEF_WORK_MODE_PS3(newConfig)
 #endif
 
-#if USE_WII
+#if USE_XBOX
 				if(!Stick_Up)
-					SET_CFG_DEF_WORK_MODE_WII(newConfig)
+					SET_CFG_DEF_WORK_MODE_XBOX(newConfig)
 #endif
 
 #if USE_PT
@@ -164,6 +167,14 @@ int setModePS3() {
 }
 #endif
 
+#if USE_XBOX
+int setModeXBox() {
+	PORTD |= (1<<0); // enable Dual Strike USB lines
+
+	return WORKING_MODE_XBOX;
+}
+#endif
+
 #if USE_WII
 int setModeWii() {
 	PORTD |= 0b00001001; // enable pull-up for S1 and S2
@@ -204,8 +215,9 @@ If the Select button is pressed, then configuration mode is entered (see below).
 
 If the Start button is pressed, then firmware update mode is entered (see below).
 
-If at least one of the buttons X/Cross,
-Y/Circle, A/Square or B/Triangle is pressed then the non-default mode is activated.
+If the button A/Cross is pressed, then the PS3 mode is activated.
+If the button B/Circle is pressed, then the XBox mode is activated.
+If the button X/Square is pressed, then the pass-through mode is activated.
 Otherwise the default working mode is activated.
 
 If the joystick is moved to the up direction, the joystick is acting as a digital pad
@@ -253,20 +265,20 @@ int hardwareInit() {
 #if USE_WII
 	return setModeWii();
 #else
-	if( !Stick_Jab ||
-		!Stick_Short ||
-		!Stick_Forward ||
-		!Stick_Fierce) {
-
-		if(CFG_DEF_WORK_MODE_PS3)
-			return setModePT();
-		else
-			return setModePS3();
-	}
-	else if(CFG_DEF_WORK_MODE_PS3)
+	if(!Stick_Forward)
 		return setModePS3();
-	else
+	else if(!Stick_Fierce)
+		return setModeXBox();
+	else if(!Stick_Jab)
 		return setModePT();
+	else {
+		if(CFG_DEF_WORK_MODE_PS3)
+			return setModePS3();
+		else if(CFG_DEF_WORK_MODE_XBOX)
+			return setModeXBox();
+		else
+			return setModePT();
+	}
 #endif
 }
 
@@ -312,7 +324,7 @@ to wait until the data is sent, then you can send the next part like this:
 usbSetInterrupt((uchar *)&data + 8, 1*sizeof(uchar));
 ---
 */
-uchar* data[16];
+uchar* data[20];
 
 int main(void)
 {
@@ -322,6 +334,10 @@ int main(void)
 	switch(hardwareInit()) {
 	case WORKING_MODE_PS3:
 	  ps3_controller();
+	  break;
+
+	case WORKING_MODE_XBOX:
+	  xbox_controller();
 	  break;
 
 	case WORKING_MODE_PT:
