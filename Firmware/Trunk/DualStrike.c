@@ -265,9 +265,9 @@ int hardwareInit() {
 #if USE_WII
 	return setModeWii();
 #else
-	if(!Stick_Forward)
+	if(!Stick_Short)
 		return setModePS3();
-	else if(!Stick_Fierce)
+	else if(!Stick_Forward)
 		return setModeXBox();
 	else if(!Stick_Jab)
 		return setModePT();

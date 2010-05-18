@@ -191,17 +191,17 @@ PROGMEM const unsigned char usbDescriptorConfigurationXBox[] = {
     USBDESCR_INTERFACE,			// descriptor type 
     0,          				// index of this interface 
     0,							// alternate setting for this interface 
-    1, 							// endpoints excl 0: number of endpoint descriptors to follow 
+    1, 							// endpoints excl 0: number of endpoint descriptors to follow  | ORIGINALLY: 2
     0x58,						// USB interface class: Unknown 
     0x42,						// USB interface subclass 
     0,							// USB interface protocol 
     0,          				// string index for interface 
     7,          				// sizeof(usbDescrEndpoint): length of descriptor in bytes 
     USBDESCR_ENDPOINT,			// descriptor type = endpoint 
-    0x81,						// IN endpoint number 1 ORIGINALLY: 0x82
+    0x81,						// IN endpoint number 1 | ORIGINALLY: 0x82
     0x03,						// attrib: Interrupt endpoint 
     8, 0,						// maximum packet size 
-    4, 							// interrupt poll interval in ms 
+    10, 							// interrupt poll interval in ms 
 	/*
     7,          				// sizeof(usbDescrEndpoint): length of descriptor in bytes 
     USBDESCR_ENDPOINT,			// descriptor type = endpoint 
@@ -534,6 +534,7 @@ void usbPrepare() {
 }
 
 void ps3_controller() {
+	mode = USB_MODE_PS3;
 	usbPrepare();
 	resetDataPS3();
 	sendUSBData((uchar*)&data, 16);
@@ -550,6 +551,7 @@ void ps3_controller() {
 }
 
 void xbox_controller() {
+	mode = USB_MODE_XBOX;
 	usbPrepare();
 	resetDataXBox();
 	sendUSBData((uchar*)&data, 20);
