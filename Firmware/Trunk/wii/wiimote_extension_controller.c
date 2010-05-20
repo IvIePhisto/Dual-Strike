@@ -12,6 +12,8 @@ IMPORTANT NOTES:
 -due to the remapping S1 and S2 are used for Home and 4P, thus pass-through
  does not work and the 4066N has to be left out
 -to support the USB firmware update the original USB-lines still work
+-the Wiimote data lines have to be free of resistors and diodes, but the
+ Wiimote VCC could use a diode to avoid battery draining
 
 Wiimote Adapter
 ===============
