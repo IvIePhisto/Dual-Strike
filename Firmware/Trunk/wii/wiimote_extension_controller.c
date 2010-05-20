@@ -5,6 +5,14 @@
 
 // README
 /*
+IMPORTANT NOTES:
+-not working yet
+-as the I2C-Bus pins are on pins C4 (SDA) and C5 (SCL) those have
+ to be connected to the Wiimote plug
+-due to the remapping S1 and S2 are used for Home and 4P, thus pass-through
+ does not work and the 4066N has to be left out
+-to support the USB firmware update the original USB-lines still work
+
 Wiimote Adapter
 ===============
 The Dual Strike can act as a Wii Classic Controller when connected to a
