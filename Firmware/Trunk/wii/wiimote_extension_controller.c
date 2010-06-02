@@ -226,8 +226,10 @@ void readInputWii() {
 	}
 
 #ifdef EXTRA_BUTTONS					
+	/* LED DEBUG
 	if(!Stick_Extra0)
 		WII_ZL
+	*/
 
 	if(!Stick_Extra1) {
 		WII_LT
@@ -251,6 +253,11 @@ void readInputWii() {
 }
 
 void wiimote_extension_controller() {
+	/* LED DEBUG */
+	PORTD &= ~(1<<4); // S3 low
+	DDRD  |= (1<<4); // S3 output
+
+
 	resetButtonData();
 	wm_init((uchar *)deviceID, (uchar *)&data, (uchar *)calibrationData, sizeof(calibrationData));
 	wm_newaction((void*)&data);
