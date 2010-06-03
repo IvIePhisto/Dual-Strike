@@ -1,5 +1,5 @@
 /* Wii support based on:
-   http://frank.circleofcurrent.com/cache/wii_extension_lib.htm
+   http://frank.circleofcurrent.com/cache/WII_CC_extension_lib.htm
    http://wiibrew.org/wiki/Wiimote/Extension_Controllers
 */
 
@@ -65,10 +65,6 @@ the Wiimote.
 
 #include "wiimote_extension_controller.h"
 
-#if F_CPU == NULL
-#error "define your clock speed"
-#endif
-
 #include <avr/io.h>
 #include <avr/pgmspace.h>
 
@@ -81,11 +77,15 @@ the Wiimote.
 
 extern uint8_t config[2];
 
+#define CLASSIC_CONTROLLER 0
+
+#if CLASSIC_CONTROLLER
+
 // device id starting at address 0xA400FA
-PROGMEM const uchar deviceID[6] = {0x00, 0x00, 0xA4, 0x20, 0x01, 0x01};
+PROGMEM const uchar classicControllerDeviceID[6] = {0x00, 0x00, 0xA4, 0x20, 0x01, 0x01};
 
 // calibration data starting at address 0xA40020
-PROGMEM const uchar calibrationData[16] = {
+PROGMEM const uchar classicControllerCalibrationData[16] = {
 	// left stick X
 	0b00000000, // -min
 	0b00100000, // -mid
@@ -127,27 +127,27 @@ typedef struct {
 	uchar   lt2_0Rt;
 	uchar	rightDownBltMinusHomePlusBrtNA;
 	uchar	bzlBbByBaBxBzrLeftUp;
-} data_t;
+} classicControllerData_t;
 
-extern data_t data;
+extern classicControllerData_t data;
 
-#define WII_UP		data.bzlBbByBaBxBzrLeftUp &= ~(1<<0);
-#define WII_DOWN	data.rightDownBltMinusHomePlusBrtNA &= ~(1<<6);
-#define WII_RIGHT	data.rightDownBltMinusHomePlusBrtNA &= ~(1<<7);
-#define WII_LEFT	data.bzlBbByBaBxBzrLeftUp &= ~(1<<1);
-#define WII_Y 		data.bzlBbByBaBxBzrLeftUp &= ~(1<<5);
-#define WII_X		data.bzlBbByBaBxBzrLeftUp &= ~(1<<3);
-#define WII_ZR		data.bzlBbByBaBxBzrLeftUp &= ~(1<<2);
-#define WII_RT		data.rightDownBltMinusHomePlusBrtNA &= ~(1<<1);
-#define WII_B		data.bzlBbByBaBxBzrLeftUp &= ~(1<<6);
-#define WII_A		data.bzlBbByBaBxBzrLeftUp &= ~(1<<4);
-#define WII_ZL		data.bzlBbByBaBxBzrLeftUp &= ~(1<<7);
-#define WII_LT		data.rightDownBltMinusHomePlusBrtNA &= ~(1<<5);
-#define WII_HOME	data.rightDownBltMinusHomePlusBrtNA &= ~(1<<3);
-#define WII_MINUS	data.rightDownBltMinusHomePlusBrtNA &= ~(1<<4);
-#define WII_PLUS	data.rightDownBltMinusHomePlusBrtNA &= ~(1<<2);
+#define WII_CC_UP		data.bzlBbByBaBxBzrLeftUp &= ~(1<<0);
+#define WII_CC_DOWN		data.rightDownBltMinusHomePlusBrtNA &= ~(1<<6);
+#define WII_CC_RIGHT	data.rightDownBltMinusHomePlusBrtNA &= ~(1<<7);
+#define WII_CC_LEFT		data.bzlBbByBaBxBzrLeftUp &= ~(1<<1);
+#define WII_CC_Y 		data.bzlBbByBaBxBzrLeftUp &= ~(1<<5);
+#define WII_CC_X		data.bzlBbByBaBxBzrLeftUp &= ~(1<<3);
+#define WII_CC_ZR		data.bzlBbByBaBxBzrLeftUp &= ~(1<<2);
+#define WII_CC_RT		data.rightDownBltMinusHomePlusBrtNA &= ~(1<<1);
+#define WII_CC_B		data.bzlBbByBaBxBzrLeftUp &= ~(1<<6);
+#define WII_CC_A		data.bzlBbByBaBxBzrLeftUp &= ~(1<<4);
+#define WII_CC_ZL		data.bzlBbByBaBxBzrLeftUp &= ~(1<<7);
+#define WII_CC_LT		data.rightDownBltMinusHomePlusBrtNA &= ~(1<<5);
+#define WII_CC_HOME		data.rightDownBltMinusHomePlusBrtNA &= ~(1<<3);
+#define WII_CC_MINUS	data.rightDownBltMinusHomePlusBrtNA &= ~(1<<4);
+#define WII_CC_PLUS		data.rightDownBltMinusHomePlusBrtNA &= ~(1<<2);
 
-void resetButtonData() {
+void resetClassicControllerData() {
 	data.rx4_3Lx = 0b10100000;
 	data.rx2_1Ly = 0b00100000;
 	data.rx0Lt4_3Ry = 0b00010000;
@@ -156,8 +156,8 @@ void resetButtonData() {
 	data.bzlBbByBaBxBzrLeftUp = 0xFF;
 }
 
-void readInputWii() {
-	resetButtonData();
+void readInputWiiClassicController() {
+	resetClassicControllerData();
 
 	// Left Joystick Directions
 	if(CFG_LEFT_STICK) {
@@ -194,78 +194,182 @@ void readInputWii() {
 	// Digital Pad Directions
 	if(CFG_DIGITAL_PAD) {
 		if(!Stick_Up)
-			WII_UP
+			WII_CC_UP
 		else if(!Stick_Down)
-			WII_DOWN
+			WII_CC_DOWN
 
 		if(!Stick_Right)
-			WII_RIGHT
+			WII_CC_RIGHT
 		else if(!Stick_Left) 
-			WII_LEFT
+			WII_CC_LEFT
 	}
 
 	// Buttons
 	if(!Stick_Jab)
-		WII_UP
+		WII_CC_X
 
 	if(!Stick_Short)
-		WII_X
+		WII_CC_Y
 
 	if(!Stick_Strong)
-		WII_ZL
+		WII_CC_ZL
 
 	if(!Stick_Forward)
-		WII_B
+		WII_CC_B
 
 	if(!Stick_Fierce)
-		WII_A
+		WII_CC_A
 
 	if(!Stick_Roundhouse) {
-		WII_RT
+		WII_CC_RT
 		data.lt2_0Rt &= ~0b00011111;
 	}
 
 #ifdef EXTRA_BUTTONS					
-	/* LED DEBUG
+	/* COMMENT FOR LED DEBUG: */
 	if(!Stick_Extra0)
-		WII_ZL
-	*/
+		WII_CC_ZL
 
 	if(!Stick_Extra1) {
-		WII_LT
+		WII_CC_LT
 		data.rx0Lt4_3Ry &= ~0b01100000;
 		data.lt2_0Rt &= ~0b11100000;
 	}
 #endif
 
 	if(CFG_HOME_EMU && !Stick_Start && !Stick_Select)
-		WII_HOME
+		WII_CC_HOME
 	else {
 		if(!Stick_Start)
-			WII_MINUS
+			WII_CC_MINUS
 
 		if(!Stick_Select)
-			WII_PLUS
+			WII_CC_PLUS
 	}
 
 	if(!Stick_Home)
-		WII_HOME
+		WII_CC_HOME
 }
 
 void wiimote_extension_controller() {
 	/* LED DEBUG */
-	PORTD &= ~(1<<4); // S3 low
-	DDRD  |= (1<<4); // S3 output
+	//PORTD &= ~(1<<4); // S3 low
+	//DDRD  |= (1<<4); // S3 output
 
-
-	resetButtonData();
-	wm_init((uchar *)deviceID, (uchar *)&data, (uchar *)calibrationData, sizeof(calibrationData));
+	resetClassicControllerData();
+	wm_init((uchar *)classicControllerDeviceID, (uchar *)&data, (uchar *)classicControllerCalibrationData, sizeof(classicControllerCalibrationData));
 	wm_newaction((void*)&data);
 
 	while(1) {
 		readJoystickSwitch();
-		readInputWii();
+		readInputWiiClassicController();
 		wm_newaction((void*)&data);
 	}
 }
 
+#else
+
+// device id starting at address 0xA400FA
+PROGMEM const uchar drumDeviceID[6] = {0x01, 0x00, 0xA4, 0x20, 0x01, 0x03};
+
+// calibration data starting at address 0xA40020
+const unsigned char drumCalibrationData[32] = {
+	0x00, 0x00, 0x00, 0x00,
+	0x00, 0x00, 0x00, 0x00,
+	0x00, 0x00, 0x00, 0x00,
+	0x00, 0x00, 0x00, 0x00,
+	0x00, 0x00, 0x00, 0x00,
+	0x00, 0x00, 0x00, 0x00,
+	0x00, 0x00, 0x00, 0x00,
+	0x00, 0x00, 0x00, 0x00
+};
+
+typedef struct {
+	uchar	NaNaSx;
+	uchar	NaNaSy;
+	uchar   HhpVelocityTypeUnknown;	
+	uchar   SoftnessStaticUnknown;
+	uchar	UnknownStaticStaticMinusStaticPlusStaticUnknown;
+	uchar	OrangeRedYellowGreenBluePedalStaticStatic;
+} drumData_t;
+
+extern drumData_t data;
+
+#define WII_DRUM_ORANGE	data.OrangeRedYellowGreenBluePedalStaticStatic &= ~(1<<7);
+#define WII_DRUM_RED	data.OrangeRedYellowGreenBluePedalStaticStatic &= ~(1<<6);
+#define WII_DRUM_YELLOW	data.OrangeRedYellowGreenBluePedalStaticStatic &= ~(1<<5);
+#define WII_DRUM_GREEN	data.OrangeRedYellowGreenBluePedalStaticStatic &= ~(1<<4);
+#define WII_DRUM_BLUE	data.OrangeRedYellowGreenBluePedalStaticStatic &= ~(1<<3);
+#define WII_DRUM_PEDAL	data.OrangeRedYellowGreenBluePedalStaticStatic &= ~(1<<3);
+#define WII_DRUM_MINUS	data.UnknownStaticStaticMinusStaticPlusStaticUnknown &= ~(1<<4);
+#define WII_DRUM_PLUS	data.UnknownStaticStaticMinusStaticPlusStaticUnknown &= ~(1<<2);
+#define WII_DRUM_UP		data.NaNaSx |= 0b00111111;
+#define WII_DRUM_DOWN	data.NaNaSx &= 0b11000000;
+#define WII_DRUM_LEFT	data.NaNaSy &= 0b11000000;
+#define WII_DRUM_RIGHT	data.NaNaSy |= 0b00111111;
+
+void resetDrumData() {
+	data.NaNaSx = 0b00100000;
+	data.NaNaSy = 0b00100000;
+	data.HhpVelocityTypeUnknown = 0xFF;
+	data.SoftnessStaticUnknown = 0xFF;
+	data.UnknownStaticStaticMinusStaticPlusStaticUnknown = 0xFF;
+	data.OrangeRedYellowGreenBluePedalStaticStatic = 0xFF;
+}
+
+void readInputWiiDrum() {
+	resetDrumData();
+
+	if (!Stick_Up)
+		WII_DRUM_UP
+	else if (!Stick_Down)
+		WII_DRUM_DOWN
+
+	if (!Stick_Left)
+		WII_DRUM_LEFT
+	else if (!Stick_Right)
+		WII_DRUM_RIGHT
+
+	// Buttons
+	if(!Stick_Jab)
+		WII_DRUM_ORANGE
+
+	if(!Stick_Short)
+		WII_DRUM_YELLOW
+
+	if(!Stick_Strong)
+		WII_DRUM_PEDAL
+
+	if(!Stick_Forward)
+		WII_DRUM_RED
+
+	if(!Stick_Fierce)
+		WII_DRUM_BLUE
+
+	if(!Stick_Roundhouse)
+		WII_DRUM_GREEN
+
+	if(!Stick_Start)
+		WII_DRUM_MINUS
+
+	if(!Stick_Select)
+		WII_DRUM_PLUS
+}
+
+void wiimote_extension_controller() {
+	/* LED DEBUG */
+	//PORTD &= ~(1<<4); // S3 low
+	//DDRD  |= (1<<4); // S3 output
+
+	resetDrumData();
+	wm_init((uchar*)drumDeviceID, (uchar*)&data, (uchar*)drumCalibrationData, sizeof(drumCalibrationData));
+	wm_newaction((void*)&data);
+
+	while(1) {
+		readJoystickSwitch();
+		readInputWiiDrum();
+		wm_newaction((uchar*)&data);
+	}
+}
+
+#endif

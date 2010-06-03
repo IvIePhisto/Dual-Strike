@@ -217,7 +217,7 @@ void wm_init(unsigned char * id, unsigned char * button_data, unsigned char * ca
 ISR(TWI_vect)
 {
 	/* LED DEBUG */
-	PORTD &= ~(1<<4);
+	//PORTD &= ~(1<<4);
 
 	switch(TW_STATUS)
 	{
@@ -292,7 +292,7 @@ ISR(TWI_vect)
 			twi_clear_int(1); // ack
 			
 			/* LED DEBUG */
-			PORTD |= (1<<4);
+			//PORTD |= (1<<4);
 
 			break;
 		case TW_ST_DATA_NACK: // received nack, we are done 
