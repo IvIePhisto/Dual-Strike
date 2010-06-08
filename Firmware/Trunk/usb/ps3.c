@@ -271,3 +271,30 @@ void ps3_controller() {
         }
     }
 }
+
+usbMsgLen_t usbFunctionSetupPS3(uchar receivedData[8]) {
+	usbRequest_t* rq = (void *)receivedData;
+
+    if((rq->bmRequestType & USBRQ_TYPE_MASK) == USBRQ_TYPE_CLASS) {    // class request
+		// wValue: ReportType (highbyte), ReportID (lowbyte)
+        if(rq->bRequest == USBRQ_HID_GET_REPORT) {
+			if(rq->wValue.bytes[1] == HID_REPORT_TYPE_FEATURE) {
+				if(rq->wValue.bytes[0] == 0) {
+					 // set buffer data
+					data[0] = 0x21; // 0b00100001 0d33
+					data[1] = 0x26; // 0b00100110 0d38
+
+					for(int i = 2; i < 8; i++)
+						data[i] = 0;
+
+					usbMsgPtr = data;
+
+					return 8;
+				}
+			}
+        }
+    }
+
+	return 0;
+}
+

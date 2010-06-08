@@ -107,7 +107,7 @@ section at the end of this file).
  * The value is in milliamperes. [It will be divided by two since USB
  * communicates power requirements in units of 2 mA.]
  */
-#define USB_CFG_IMPLEMENT_FN_WRITE      0
+#define USB_CFG_IMPLEMENT_FN_WRITE      1
 /* Set this to 1 if you want usbFunctionWrite() to be called for control-out
  * transfers. Set it to 0 if you don't need it and want to save a couple of
  * bytes.
@@ -167,12 +167,16 @@ section at the end of this file).
 
 //10204 (0x27db) | 5824 (0x16c0) | For USB Joysticks
 
-#define  USB_CFG_VENDOR_ID       0xC4, 0x10 //0xDf, 0x05//0xC4, 0x10//0xdb, 0x27
+#define  USB_CFG_VENDOR_ID       0xc0, 0x16
+// obdev's free shared: 0xc0, 0x16
+// Virtua Stick: 0xC4, 0x10
 /* USB vendor ID for the device, low byte first. If you have registered your
  * own Vendor ID, define it here. Otherwise you use one of obdev's free shared
  * VID/PID pairs. Be sure to read USBID-License.txt for rules!
  */
-#define  USB_CFG_DEVICE_ID        0xC0, 0x82 //0xc0, 0x16//0xC0, 0x82 //0x08, 0xD9
+#define  USB_CFG_DEVICE_ID		0xdc, 0x05
+// obdev's free shared: 0xdc, 0x05
+// Virtua Stick: 0xC0, 0x82
 
 /* This is the ID of the product, low byte first. It is interpreted in the
  * scope of the vendor ID. If you have registered your own VID with usb.org
