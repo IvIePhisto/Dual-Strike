@@ -1,0 +1,7 @@
+http://www.mikrocontroller.net/articles/Bootloader
+http://www.fischl.de/usbasp/
+http://www.obdev.at/products/vusb/usbasploader.html
+http://www.obdev.at/products/vusb/powerswitch.html
+http://sourceforge.net/projects/libusb/develop
+http://johannes.krude.de/projects/usb-Relay/
+http://www.ulrichradig.de/home/index.php/avr/usb-relaiskarte
