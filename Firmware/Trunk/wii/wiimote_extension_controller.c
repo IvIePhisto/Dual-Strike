@@ -67,6 +67,8 @@ the Wiimote.
 
 #include <avr/io.h>
 #include <avr/pgmspace.h>
+#include <avr/interrupt.h>
+#include <util/delay.h>
 
 #include "wiimote.h"
 #include "../DualStrike.h"
