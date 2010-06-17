@@ -4,7 +4,7 @@
                                        
                            http://www.zurborg.info
 
-All code, schematics, PCB designs, firmware and other files included within this
+All code, schematics, firmware and other files included within this
 archive are licensed under the GNU Public License V3, see license.txt for more
 details.
 
