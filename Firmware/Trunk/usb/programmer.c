@@ -102,82 +102,35 @@ usbMsgLen_t usbFunctionSetupProgrammer(uchar receivedData[8]) {
 	return 0;
 }
 
-#ifndef ulong
-#   define ulong    unsigned long
-#endif
-#ifndef uint
-#   define uint     unsigned int
-#endif
-
-#define LONG_ADDRESSING (E2END) > 0xffff
-
-#if LONG_ADDRESSING
-#   define addr_t           ulong
-#else
-#   define addr_t           uint
-#endif
-
-static addr_t currentAddress; /* in bytes */
-
-union {
-    addr_t  l;
-    uint    s[sizeof(addr_t)/2];
-    uchar   c[sizeof(addr_t)];
-} address;
-
+static size_t currentEEPROMAddress;
 
 // NOT FINISHED:
 uchar usbFunctionWriteProgrammer(uchar *data, uchar len) {
-	if(writeReportID == EEPROM_PROGRAMMING_REPORT_ID) {
-		uchar   isLast;
+	uchar   isLast;
 
-	    address.l = currentAddress;
+	if(writeReportID == EEPROM_PROGRAMMING_REPORT_ID) {
+		size_t eepromAddress;
 
 	    if(eepromOffset == 0) {
-	        address.c[0] = data[1];
-	        address.c[1] = data[2];
-#if LONG_ADDRESSING
-	        address.c[2] = data[3];
-	        address.c[3] = 0;
-#endif
+			eepromAddress = data[1];
 	        data += 4;
 	        len -= 4;
 	    }
+		else {
+		    eepromAddress = currentEEPROMAddress;
+		}
 
 	    eepromOffset += len;
 	    isLast = eepromOffset & 0x80; /* != 0 if last block received */
-
-	    do {
-	        addr_t prevAddr;
-
-#if E2PAGESIZE > 256
-	        uint pageAddr;
-#else
-	        uchar pageAddr;
-#endif
-	        pageAddr = address.s[0] & (SPM_PAGESIZE - 1);
-	        cli();
-	        eeprom_write_byte((uchar*)address.l, *data);
-	        sei();
-	        prevAddr = address.l;
-	        address.l += 2;
-	        data += 2;
-	        /* write page when we cross page boundary */
-	        pageAddr = address.s[0] & (SPM_PAGESIZE - 1);
-
-	        if(pageAddr == 0) {
-	            cli();
-	            eeprom_write_byte((uchar*)address.l, *data);
-	            sei();
-	        }
-
-	        len -= 2;
-	    } while(len);
-
-	    currentAddress = address.l;
+        cli();
+		eeprom_write_block(data, (void*)eepromAddress, len);
+        sei();
+	    currentEEPROMAddress = eepromAddress + len;
 
 	    return isLast;
 	}
+
+	return 0;
 }
 
 
