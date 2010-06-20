@@ -129,33 +129,33 @@ int i;
 
 /* ------------------------------------------------------------------------- */
 
-typedef struct deviceInfo{
+typedef struct deviceInfo {
     char    reportId;
     char    pageSize[2];
-    char    flashSize[4];
+    char    memorySize[4];
 }deviceInfo_t;
 
-typedef struct deviceData{
+typedef struct deviceData {
     char    reportId;
     char    address[3];
     char    data[128];
 }deviceData_t;
 
-static int uploadData(char *dataBuffer, int startAddr, int endAddr)
-{
 usbDevice_t *dev = NULL;
-int         err = 0, len, mask, pageSize, deviceSize;
-union{
+
+union {
     char            bytes[1];
     deviceInfo_t    info;
     deviceData_t    data;
-}           buffer;
+} buffer;
 
-    if((err = usbOpenDevice(&dev, IDENT_VENDOR_NUM, IDENT_VENDOR_STRING, IDENT_PRODUCT_NUM, IDENT_PRODUCT_STRING, 1)) != 0){
-        fprintf(stderr, "Error opening HIDBoot device: %s\n", usbErrorMessage(err));
-        goto errorOccurred;
-    }
+static int uploadFlashData(char *dataBuffer, int startAddr, int endAddr) {
+	int err = 0, len, mask, pageSize, deviceSize;
+	
     len = sizeof(buffer);
+
+	print("Uploading flash data...\n");
+	
     if((err = usbGetReport(dev, USB_HID_REPORT_TYPE_FEATURE, 1, buffer.bytes, &len)) != 0){
         fprintf(stderr, "Error reading page size: %s\n", usbErrorMessage(err));
         goto errorOccurred;
@@ -166,7 +166,7 @@ union{
         goto errorOccurred;
     }
     pageSize = getUsbInt(buffer.info.pageSize, 2);
-    deviceSize = getUsbInt(buffer.info.flashSize, 4);
+    deviceSize = getUsbInt(buffer.info.memorySize, 4);
     printf("Page size   = %d (0x%x)\n", pageSize, pageSize);
     printf("Device size = %d (0x%x); %d bytes remaining\n", deviceSize, deviceSize, deviceSize - 2048);
     if(endAddr > deviceSize - 2048){
@@ -213,14 +213,20 @@ errorOccurred:
 
 static void printUsage(char *pname)
 {
-    fprintf(stderr, "usage: %s [-r] <intel-hexfile>\n", pname);
+    fprintf(stderr,
+	"usage: %s ([-h|--help] | [-r] [-f <intel-hexfile>] [-e <intel-hexfile>])\n" + 
+	"\"-h\" or \"--help\" prints this message.\n" +
+	"\"-r\" restarts the device in the end.\n" +
+	"\"-f\" specifies a file to write into the flash.\n" + 
+	"\"-e\" specifies a file to write to the EEPROM.\n" +
+	"At least one of the arguments must be used.\n", pname);
 }
 
 int main(int argc, char **argv)
 {
 char    *file;
 
-    if(argc < 2){
+    if(argc < 2 || argc > 4){
         printUsage(argv[0]);
         return 1;
     }
@@ -228,27 +234,38 @@ char    *file;
         printUsage(argv[0]);
         return 1;
     }
-    if(strcmp(argv[1], "-r") == 0){
+	
+    // TODO
+	if(strcmp(argv[1], "-r") == 0){
         leaveBootLoader = 1;
         if(argc < 3){
             printUsage(argv[0]);
             return 1;
         }
         file = argv[2];
-    }else{
+    }
+	else{
         file = argv[1];
     }
+	
+    if((err = usbOpenDevice(&dev, IDENT_VENDOR_NUM, IDENT_VENDOR_STRING, IDENT_PRODUCT_NUM, IDENT_PRODUCT_STRING, 1)) != 0){
+        fprintf(stderr, "Error opening HIDBoot device: %s\n", usbErrorMessage(err));
+        goto errorOccurred;
+    }
+
     startAddress = sizeof(dataBuffer);
     endAddress = 0;
     memset(dataBuffer, -1, sizeof(dataBuffer));
+	
     if(parseIntelHex(file, dataBuffer, &startAddress, &endAddress))
         return 1;
     if(startAddress >= endAddress){
         fprintf(stderr, "No data in input file, exiting.\n");
         return 0;
     }
-    if(uploadData(dataBuffer, startAddress, endAddress))
+    if(uploadFlashData(dataBuffer, startAddress, endAddress))
         return 1;
+		
     return 0;
 }
 

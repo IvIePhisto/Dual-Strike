@@ -1,5 +1,35 @@
 #include <avr/eeprom.h>
 
+PROGMEM int  usbDescriptorStringVendorHIDBoot[] = {
+    USB_STRING_DESCRIPTOR_HEADER(8),
+    'o', 'b', 'd', 'e', 'v', '.', 'a', 't'
+};
+
+PROGMEM int  usbDescriptorStringDeviceHIDBoot[] = {
+    USB_STRING_DESCRIPTOR_HEADER(7),
+    'H', 'I', 'D', 'B', 'o', 'o', 't'
+};
+
+PROGMEM char usbDescriptorDeviceHIDBoot[] = {    /* USB device descriptor */
+    18,         /* sizeof(usbDescriptorDevice): length of descriptor in bytes */
+    USBDESCR_DEVICE,        /* descriptor type */
+    0x10, 0x01,             /* USB version supported */
+    USB_CFG_DEVICE_CLASS,
+    USB_CFG_DEVICE_SUBCLASS,
+    0,                      /* protocol */
+    8,                      /* max packet size */
+    /* the following two casts affect the first byte of the constant only, but
+     * that's sufficient to avoid a warning with the default values.
+     */
+    0xc0, 0x16,/* Objective Development */
+    0xdf, 0x05,/* Shared USB HID ID */
+    USB_CFG_DEVICE_VERSION, /* 2 bytes */
+    1,          /* manufacturer string index */
+    2,          /* product string index */
+    0,          /* serial number string index */
+    1,          /* number of configurations */
+};
+
 PROGMEM char usbDescriptorConfigurationProgrammer[] = {
     /* HID USB configuration descriptor */
     9,          				/* sizeof(usbDescriptorConfiguration): length of descriptor in bytes */
@@ -60,7 +90,6 @@ PROGMEM char usbHidReportDescriptorProgrammer[33] = {
 };
 
 static uchar eepromOffset = 0xFF;
-static uchar exitProgrammer = 0;
 static uchar writeReportID = 0;
 
 usbMsgLen_t usbFunctionSetupProgrammer(uchar receivedData[8]) {
@@ -77,8 +106,6 @@ usbMsgLen_t usbFunctionSetupProgrammer(uchar receivedData[8]) {
 
 	            return USB_NO_MSG; // use usbFunctionWrite()
 	        }
-			else
-				exitProgrammer = 1;
 	    }
 		else if(rq->bRequest == USBRQ_HID_GET_REPORT) {
 	        if(reportType == HID_REPORT_TYPE_FEATURE
@@ -94,8 +121,6 @@ usbMsgLen_t usbFunctionSetupProgrammer(uchar receivedData[8]) {
 
 		        return 7;
 	        }
-			else
-				exitProgrammer = 1;
 	    }
 	}
 
@@ -134,11 +159,12 @@ uchar usbFunctionWriteProgrammer(uchar *data, uchar len) {
 }
 
 
-void programmer() {
+void programmer_setup() {
 	mode = USB_MODE_PROGRAMMER;
 	usbPrepare();
+}
 
-    while(usbInterruptIsReady() && !exitProgrammer) { /* main event loop */
+void programmer_poll() {
+    if(usbInterruptIsReady())
 		usbPoll();
-    }
 }

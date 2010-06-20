@@ -3,5 +3,7 @@
 
 void ps3_controller();
 void xbox_controller();
+void programmer_setup();
+void programmer_poll();
 
 #endif

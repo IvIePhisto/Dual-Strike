@@ -23,6 +23,38 @@ uchar mode = USB_MODE_PS3;
 #define HID_REPORT_TYPE_OUTPUT 2
 #define HID_REPORT_TYPE_FEATURE 3
 
+PROGMEM char usbDescriptorDeviceDS[] = {    /* USB device descriptor */
+    18,         /* sizeof(usbDescriptorDevice): length of descriptor in bytes */
+    USBDESCR_DEVICE,        /* descriptor type */
+    0x10, 0x01,             /* USB version supported */
+    USB_CFG_DEVICE_CLASS,
+    USB_CFG_DEVICE_SUBCLASS,
+    0,                      /* protocol */
+    8,                      /* max packet size */
+    /* the following two casts affect the first byte of the constant only, but
+     * that's sufficient to avoid a warning with the default values.
+     */
+    (char)USB_CFG_VENDOR_ID,/* 2 bytes */
+    (char)USB_CFG_DEVICE_ID,/* 2 bytes */
+    USB_CFG_DEVICE_VERSION, /* 2 bytes */
+    1,          /* manufacturer string index */
+    2,          /* product string index */
+    0,          /* serial number string index */
+    1,          /* number of configurations */
+};
+
+PROGMEM int  usbDescriptorStringVendorDS[] = {
+    USB_STRING_DESCRIPTOR_HEADER(USB_CFG_VENDOR_NAME_LEN),
+    USB_CFG_VENDOR_NAME
+};
+
+PROGMEM int  usbDescriptorStringDeviceDS[] = {
+    USB_STRING_DESCRIPTOR_HEADER(USB_CFG_DEVICE_NAME_LEN),
+    USB_CFG_DEVICE_NAME
+};
+
+PROGMEM int usbDescriptorStringSerialNumberDS[] = { 2, 8 };
+
 void sendUSBData(uchar* data, unsigned int byteCount) {
 	int currentByte;
 	int currentCount;
@@ -72,6 +104,38 @@ usbMsgLen_t usbFunctionDescriptor(struct usbRequest *rq)
 	usbMsgLen_t len = 0;
 
     switch(rq->wValue.bytes[1]) {
+    case USBDESCR_DEVICE:
+		if(mode == USB_MODE_PROGRAMMER) {
+	        usbMsgPtr = (uchar *)(usbDescriptorDeviceHIDBoot);
+	        len = sizeof(usbDescriptorDeviceHIDBoot);
+		}
+		else {
+	        usbMsgPtr = (uchar *)(usbDescriptorDeviceDS);
+	        len = sizeof(usbDescriptorDeviceDS);
+		}
+		break;
+
+    case USBDESCR_STRING:
+        switch(rq->wValue.bytes[0]) {
+        case 1: // Vendor
+			if(mode == USB_MODE_PROGRAMMER)
+		        usbMsgPtr = (uchar *)(usbDescriptorStringVendorHIDBoot);
+			else
+		        usbMsgPtr = (uchar *)(usbDescriptorStringVendorDS);
+
+	        len = usbMsgPtr[0];
+			break;
+        case 2: // Device
+			if(mode == USB_MODE_PROGRAMMER)
+		        usbMsgPtr = (uchar *)(usbDescriptorStringDeviceHIDBoot);
+			else
+		        usbMsgPtr = (uchar *)(usbDescriptorStringDeviceDS);
+	        len = usbMsgPtr[0];
+			break;
+		}
+
+		break;
+
     case USBDESCR_CONFIG:
 		if(mode == USB_MODE_PS3) {
         	usbMsgPtr = (uchar*)usbDescriptorConfigurationPS3;
@@ -89,6 +153,7 @@ usbMsgLen_t usbFunctionDescriptor(struct usbRequest *rq)
 			return 0;
 
 		break;
+
     case USBDESCR_HID:
 		if(mode == USB_MODE_PS3) {
         	usbMsgPtr = (uchar *)(usbDescriptorConfigurationPS3 + 18);
@@ -102,6 +167,7 @@ usbMsgLen_t usbFunctionDescriptor(struct usbRequest *rq)
 			return 0;
 
 		break;
+
     case USBDESCR_HID_REPORT:
 		if(mode == USB_MODE_PS3) {
 			usbMsgPtr = (uchar*)usbHidReportDescriptorPS3;

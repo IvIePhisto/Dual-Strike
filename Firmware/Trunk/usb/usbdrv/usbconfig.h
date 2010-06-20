@@ -168,14 +168,14 @@ section at the end of this file).
 //10204 (0x27db) | 5824 (0x16c0) | For USB Joysticks
 
 #define  USB_CFG_VENDOR_ID       0xc0, 0x16
-// obdev's free shared: 0xc0, 0x16
+// obdev's free shared Vendor ID: 0xc0, 0x16
 // Virtua Stick: 0xC4, 0x10
 /* USB vendor ID for the device, low byte first. If you have registered your
  * own Vendor ID, define it here. Otherwise you use one of obdev's free shared
  * VID/PID pairs. Be sure to read USBID-License.txt for rules!
  */
 #define  USB_CFG_DEVICE_ID		0xdc, 0x05
-// obdev's free shared: 0xdc, 0x05
+// obdev's free shared HID Device ID: 0xdc, 0x05
 // Virtua Stick: 0xC0, 0x82
 
 /* This is the ID of the product, low byte first. It is interpreted in the
@@ -288,12 +288,12 @@ section at the end of this file).
  *
  */
 
-#define USB_CFG_DESCR_PROPS_DEVICE                  0
+#define USB_CFG_DESCR_PROPS_DEVICE                  USB_PROP_IS_DYNAMIC
 #define USB_CFG_DESCR_PROPS_CONFIGURATION           USB_PROP_IS_DYNAMIC
 #define USB_CFG_DESCR_PROPS_STRINGS                 0
 #define USB_CFG_DESCR_PROPS_STRING_0                0
-#define USB_CFG_DESCR_PROPS_STRING_VENDOR           0
-#define USB_CFG_DESCR_PROPS_STRING_PRODUCT          0
+#define USB_CFG_DESCR_PROPS_STRING_VENDOR           USB_PROP_IS_DYNAMIC
+#define USB_CFG_DESCR_PROPS_STRING_PRODUCT          USB_PROP_IS_DYNAMIC
 #define USB_CFG_DESCR_PROPS_STRING_SERIAL_NUMBER    0
 #define USB_CFG_DESCR_PROPS_HID                     USB_PROP_IS_DYNAMIC
 #define USB_CFG_DESCR_PROPS_HID_REPORT              USB_PROP_IS_DYNAMIC

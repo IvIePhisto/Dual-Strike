@@ -82,6 +82,7 @@ void configInit() {
 
 	if(!Stick_Select) {
 		/* enter configuration modification mode */
+		programmer_setup();
 
 		while(Stick_Start) {
 			if(!Stick_Up) {
@@ -148,6 +149,8 @@ void configInit() {
 					SET_CFG_INVERTED_TRIGGERS(newConfig)
 				}
 			}
+
+			programmer_poll();
 		}
 	}
 
