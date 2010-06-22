@@ -328,26 +328,34 @@ int main(int argc, char **argv) {
         fprintf(stderr, "Error opening HIDBoot device: %s\n", usbErrorMessage(err));
 		return 1;
     }
-
-    startAddress = sizeof(dataBuffer);
-    endAddress = 0;
-    memset(dataBuffer, -1, sizeof(dataBuffer));
 	
-    if(parseIntelHex(flashFile, dataBuffer, &startAddress, &endAddress))
-        return 1;
-		
-    if(startAddress >= endAddress)
-        fprintf(stderr, "No data in flash input file.\n");
-	else if(uploadFlashData(dataBuffer, startAddress, endAddress))
+	if(flashFile != NULL) {
+		startAddress = sizeof(dataBuffer);
+		endAddress = 0;
+		memset(dataBuffer, -1, sizeof(dataBuffer));
+
+		if(parseIntelHex(flashFile, dataBuffer, &startAddress, &endAddress))
 			return 1;
+		
+		if(startAddress >= endAddress)
+			fprintf(stderr, "No data in flash input file.\n");
+		else if(uploadFlashData(dataBuffer, startAddress, endAddress))
+				return 1;
+	}
 	
-    if(parseIntelHex(eepromFile, dataBuffer, &startAddress, &endAddress))
-        return 1;
+	if(eepromFile != NULL) {
+		startAddress = sizeof(dataBuffer);
+		endAddress = 0;
+		memset(dataBuffer, -1, sizeof(dataBuffer));
 
-    if(startAddress >= endAddress)
-        fprintf(stderr, "No data in EEPROM input file.\n");
-    else if(uploadEEPROMData(dataBuffer, startAddress, endAddress))
-        return 1;
+		if(parseIntelHex(eepromFile, dataBuffer, &startAddress, &endAddress))
+			return 1;
+
+		if(startAddress >= endAddress)
+			fprintf(stderr, "No data in EEPROM input file.\n");
+		else if(uploadEEPROMData(dataBuffer, startAddress, endAddress))
+			return 1;
+	}
 	
 	if(leaveBootLoader){
         // and now leave boot loader:
