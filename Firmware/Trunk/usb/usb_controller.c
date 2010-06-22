@@ -17,7 +17,7 @@ extern uchar* data;
 #define USB_MODE_XBOX 2
 #define USB_MODE_PROGRAMMER 3
 
-static uchar mode = USB_MODE_PS3;
+static uchar mode = -1;
 
 #define HID_REPORT_TYPE_INPUT 1
 #define HID_REPORT_TYPE_OUTPUT 2
@@ -53,24 +53,27 @@ PROGMEM int  usbDescriptorStringDeviceDS[] = {
     USB_CFG_DEVICE_NAME
 };
 
-PROGMEM int usbDescriptorStringSerialNumberDS[] = { 2, 8 };
-
 void sendUSBData(uchar* data, unsigned int byteCount) {
 	int currentByte;
 	int currentCount;
 
 	currentByte = 0;
 
-	while(currentByte < byteCount) {
-		currentCount = byteCount - currentByte;
+	while(1) {
+        usbPoll();
 
-		if(currentCount > 8)
-			currentCount = 8;
+        if(usbInterruptIsReady()) {
+			if(currentByte >= byteCount)
+				break;
 
-		usbSetInterrupt(data + currentByte, currentCount*sizeof(uchar));
-		currentByte += currentCount;
+			currentCount = byteCount - currentByte;
 
-		while(!usbInterruptIsReady()) usbPoll();
+			if(currentCount > 8)
+				currentCount = 8;
+		
+			usbSetInterrupt(data + currentByte, currentCount*sizeof(uchar));
+			currentByte += currentCount;
+		}
 	}
 }
 
@@ -120,24 +123,28 @@ usbMsgLen_t usbFunctionDescriptor(struct usbRequest *rq)
 		break;
 
     case USBDESCR_STRING:
-        switch(rq->wValue.bytes[0]) {
-        case 1: // Vendor
-			if(mode == USB_MODE_PROGRAMMER)
+		if(mode == USB_MODE_PROGRAMMER) {
+	        switch(rq->wValue.bytes[0]) {
+	        case 1: // Vendor
 		        usbMsgPtr = (uchar *)(usbDescriptorStringVendorHIDBoot);
-			else
-		        usbMsgPtr = (uchar *)(usbDescriptorStringVendorDS);
-
-	        len = usbMsgPtr[0];
-			break;
-        case 2: // Device
-			if(mode == USB_MODE_PROGRAMMER)
+				break;
+	        case 2: // Device
 		        usbMsgPtr = (uchar *)(usbDescriptorStringDeviceHIDBoot);
-			else
+				break;
+			}
+		}
+		else {
+		    switch(rq->wValue.bytes[0]) {
+	        case 1: // Vendor
+		        usbMsgPtr = (uchar *)(usbDescriptorStringVendorDS);
+				break;
+	        case 2: // Device
 		        usbMsgPtr = (uchar *)(usbDescriptorStringDeviceDS);
-	        len = usbMsgPtr[0];
-			break;
+				break;
+			}
 		}
 
+        len = usbMsgPtr[0];
 		break;
 
     case USBDESCR_CONFIG:
@@ -154,7 +161,7 @@ usbMsgLen_t usbFunctionDescriptor(struct usbRequest *rq)
 			len = sizeof(usbDescriptorConfigurationProgrammer);
 		}
 		else
-			return 0;
+			len = 0;
 
 		break;
 
@@ -168,7 +175,7 @@ usbMsgLen_t usbFunctionDescriptor(struct usbRequest *rq)
 			len = usbDescriptorConfigurationProgrammer[18];
 		}
 		else
-			return 0;
+			len = 0;
 
 		break;
 
@@ -182,7 +189,7 @@ usbMsgLen_t usbFunctionDescriptor(struct usbRequest *rq)
 			len = sizeof(usbHidReportDescriptorProgrammer);
 		}
 		else
-			return 0;
+			len = 0;
 
 		break;
     }
@@ -198,5 +205,5 @@ uchar usbFunctionWrite(uchar *data, uchar len) {
 	return 0;
 }
 
-PROGMEM char usbDescriptorConfiguration[0] = {};
+
 

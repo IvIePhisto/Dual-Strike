@@ -130,15 +130,15 @@ usbMsgLen_t usbFunctionSetupProgrammer(uchar receivedData[8]) {
 static size_t currentEEPROMAddress;
 
 // NOT FINISHED:
-uchar usbFunctionWriteProgrammer(uchar *data, uchar len) {
+uchar usbFunctionWriteProgrammer(uchar *receivedData, uchar len) {
 	uchar   isLast;
 
 	if(writeReportID == EEPROM_PROGRAMMING_REPORT_ID) {
 		size_t eepromAddress;
 
 	    if(eepromOffset == 0) {
-			eepromAddress = data[1];
-	        data += 4;
+			eepromAddress = receivedData[1];
+	        receivedData += 4;
 	        len -= 4;
 	    }
 		else {
@@ -148,7 +148,7 @@ uchar usbFunctionWriteProgrammer(uchar *data, uchar len) {
 	    eepromOffset += len;
 	    isLast = eepromOffset & 0x80; /* != 0 if last block received */
         cli();
-		eeprom_write_block(data, (void*)eepromAddress, len);
+		eeprom_write_block(receivedData, (void*)eepromAddress, len);
         sei();
 	    currentEEPROMAddress = eepromAddress + len;
 

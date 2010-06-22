@@ -30,10 +30,12 @@ PROGMEM char usbDescriptorConfigurationPS3[] = {
     0x81,						/* IN endpoint number 1 */
     0x03,						/* attrib: Interrupt endpoint */
     8, 0,						/* maximum packet size */
-    1, 							/* interrupt poll interval in ms */
+    10, 							/* interrupt poll interval in ms */
 };
 
 PROGMEM char usbHidReportDescriptorPS3[124] = {
+//PROGMEM char usbHidReportDescriptorPS3[0] = {};
+//PROGMEM char usbDescriptorHidReport[124] = {
     0x05, 0x01,                    // USAGE_PAGE (Generic Desktop)
     0x09, 0x04,                    // USAGE (Joystick)
     0xa1, 0x01,                    // COLLECTION (Application)
