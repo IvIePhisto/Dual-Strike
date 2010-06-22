@@ -13,6 +13,6 @@
 
 include Makefile
 
-USBFLAGS=
+USBFLAGS= -mno-cygwin
 USBLIBS=    -lhid -lusb -lsetupapi
 EXE_SUFFIX= .exe
