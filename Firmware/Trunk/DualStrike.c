@@ -82,7 +82,7 @@ void configInit() {
 
 	if(!Stick_Select) {
 		/* enter configuration modification mode */
-		programmer_setup();
+		//programmer_setup();
 
 		while(Stick_Start) {
 			if(!Stick_Up) {
@@ -150,7 +150,7 @@ void configInit() {
 				}
 			}
 
-			programmer_poll();
+			//programmer_poll();
 		}
 	}
 
@@ -340,7 +340,7 @@ int main(void)
 	  break;
 
 	case WORKING_MODE_XBOX:
-	  xbox_controller();
+	  //xbox_controller();
 	  break;
 
 	case WORKING_MODE_PT:

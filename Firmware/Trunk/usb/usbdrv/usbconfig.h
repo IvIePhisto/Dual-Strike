@@ -77,7 +77,7 @@ section at the end of this file).
  * configured below) and a catch-all default interrupt-in endpoint as above.
  * You must also define USB_CFG_HAVE_INTRIN_ENDPOINT to 1 for this feature.
  */
-#define USB_CFG_EP3_NUMBER              2
+#define USB_CFG_EP3_NUMBER              3
 /* If the so-called endpoint 3 is used, it can now be configured to any other
  * endpoint number (except 0) with this macro. Default if undefined is 3.
  */
@@ -107,7 +107,7 @@ section at the end of this file).
  * The value is in milliamperes. [It will be divided by two since USB
  * communicates power requirements in units of 2 mA.]
  */
-#define USB_CFG_IMPLEMENT_FN_WRITE      1
+#define USB_CFG_IMPLEMENT_FN_WRITE      0
 /* Set this to 1 if you want usbFunctionWrite() to be called for control-out
  * transfers. Set it to 0 if you don't need it and want to save a couple of
  * bytes.
@@ -184,7 +184,7 @@ section at the end of this file).
  * you use obdev's free shared VID/PID pair. Be sure to read the rules in
  * USBID-License.txt!
  */
-#define USB_CFG_DEVICE_VERSION  0x06, 0x01
+#define USB_CFG_DEVICE_VERSION  0x08, 0x01
 /* Version number of the device: Minor number first, then major number.
  */
  
