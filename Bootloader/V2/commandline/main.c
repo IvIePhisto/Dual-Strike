@@ -359,7 +359,7 @@ int main(int argc, char **argv) {
 	
 	if(leaveBootLoader){
         // and now leave boot loader:
-		printf("Telling device to leave bootloader...");
+		printf("Telling device to leave bootloader...\n");
         buffer.info.reportId = 1;
         usbSetReport(dev, USB_HID_REPORT_TYPE_FEATURE, buffer.bytes, sizeof(buffer.info));
         // Ignore errors here. If the device reboots before we poll the response,
