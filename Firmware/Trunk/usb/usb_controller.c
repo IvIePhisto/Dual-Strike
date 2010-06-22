@@ -8,7 +8,7 @@
 
 #include <avr/pgmspace.h>   /* required by usbdrv.h */
 #include "usbdrv/usbdrv.h"
-
+#include "usbdrv/usbconfig.h"
 
 extern uint8_t config[2];
 extern uchar* data;
@@ -17,7 +17,7 @@ extern uchar* data;
 #define USB_MODE_XBOX 2
 #define USB_MODE_PROGRAMMER 3
 
-uchar mode = USB_MODE_PS3;
+static uchar mode = USB_MODE_PS3;
 
 #define HID_REPORT_TYPE_INPUT 1
 #define HID_REPORT_TYPE_OUTPUT 2
@@ -84,7 +84,11 @@ void usbPrepare() {
 }
 
 #include "ps3.c"
+
+#if USE_XBOX
 #include "xbox.c"
+#endif
+
 #include "programmer.c"
 
 usbMsgLen_t usbFunctionSetup(uchar receivedData[8]) {

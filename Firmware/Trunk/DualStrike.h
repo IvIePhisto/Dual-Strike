@@ -5,6 +5,7 @@
 #ifndef USE_PS3
 #define USE_PS3 1
 #endif
+
 #ifndef USE_XBOX
 #define USE_XBOX 1
 #endif
@@ -53,7 +54,7 @@ The bits have the following semantics:
 [1]7:   0 (reserved for uninitialized EEPROM test)
 */
 
-#define CONFIG_0_DEF 0b00000001 /* default config part 0 */
+#define CONFIG_0_DEF 0b00001001 /* default config part 0 */
 #define CONFIG_1_DEF 0 /* default config part 1 */
 #define EEPROM_DEF 0xFF /* for uninitialized EEPROMs */
 
