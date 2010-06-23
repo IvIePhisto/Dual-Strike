@@ -68,8 +68,7 @@ usbMsgLen_t usbFunctionSetup(uchar receivedData[8]) {
 	else if(usbMode == USB_MODE_PROGRAMMER) {
 		if((rq->bmRequestType & USBRQ_TYPE_MASK) == USBRQ_TYPE_CLASS) {
 		    if(rq->bRequest == USBRQ_HID_SET_REPORT){
-		        if(reportType == HID_REPORT_TYPE_FEATURE
-				&& reportID == EEPROM_PROGRAMMING_REPORT_ID) {
+		        if(reportID == EEPROM_PROGRAMMING_REPORT_ID) {
 		            eepromOffset = 0;
 					writeReportID = EEPROM_PROGRAMMING_REPORT_ID;
 
@@ -77,8 +76,7 @@ usbMsgLen_t usbFunctionSetup(uchar receivedData[8]) {
 		        }
 		    }
 			else if(rq->bRequest == USBRQ_HID_GET_REPORT) {
-		        if(reportType == HID_REPORT_TYPE_FEATURE
-				&& reportID == EEPROM_SIZE_QUERY_REPORT_ID) {
+		        if(reportID == EEPROM_SIZE_QUERY_REPORT_ID) {
 					data.array[0] = EEPROM_SIZE_QUERY_REPORT_ID;
 					data.array[1] = E2PAGESIZE  & 0xff;
 					data.array[2] = E2PAGESIZE >> 8;
@@ -115,9 +113,9 @@ uchar usbFunctionWrite(uchar *receivedData, uchar len) {
 
 		    eepromOffset += len;
 		    isLast = eepromOffset & 0x80; /* != 0 if last block received */
-	        cli();
+	        //cli();
 			eeprom_write_block(receivedData, (void*)eepromAddress, len);
-	        sei();
+	        //sei();
 		    currentEEPROMAddress = eepromAddress + len;
 
 		    return isLast;
