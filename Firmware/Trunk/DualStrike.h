@@ -19,9 +19,7 @@
 // 110 bytes
 #endif
 
-#if USE_PS3 || USE_XBOX
 #include "usb/usb_controller.h"
-#endif
 
 #if USE_WII
 #include "wii/wiimote_extension_controller.h"

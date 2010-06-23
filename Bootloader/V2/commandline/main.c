@@ -204,7 +204,7 @@ errorOccurred:
 }
 
 static int uploadEEPROMData(char *dataBuffer, int startAddr, int endAddr) {
-	int err = 0, len, mask, pageSize, deviceSize;
+	int err = 0, len, pageSize, deviceSize;
 	
     len = sizeof(buffer);
 
@@ -223,22 +223,14 @@ static int uploadEEPROMData(char *dataBuffer, int startAddr, int endAddr) {
     pageSize = getUsbInt(buffer.info.pageSize, 2);
     deviceSize = getUsbInt(buffer.info.memorySize, 4);
     printf("Page size   = %d (0x%x)\n", pageSize, pageSize);
-    printf("Device size = %d (0x%x); %d bytes remaining\n", deviceSize, deviceSize, deviceSize - 2048);
+    printf("Device size = %d (0x%x)\n", deviceSize, deviceSize);
 	
     if(endAddr > deviceSize) {
         fprintf(stderr, "Data (%d bytes) exceeds remaining EEPROM size!\n", endAddr);
         err = -1;
         goto errorOccurred;
     }
-	
-    if(pageSize < 128)
-        mask = 127;
-	else
-        mask = pageSize - 1;
 		
-    startAddr &= ~mask;                  /* round down */
-    endAddr = (endAddr + mask) & ~mask;  /* round up */
-	
     printf("Uploading %d (0x%x) bytes starting at %d (0x%x)\n", endAddr - startAddr, endAddr - startAddr, startAddr, startAddr);
 	
     while(startAddr < endAddr){
@@ -248,7 +240,7 @@ static int uploadEEPROMData(char *dataBuffer, int startAddr, int endAddr) {
         printf("\r0x%05x ... 0x%05x", startAddr, startAddr + (int)sizeof(buffer.data.data));
         fflush(stdout);
         if((err = usbSetReport(dev, USB_HID_REPORT_TYPE_FEATURE, buffer.bytes, sizeof(buffer.data))) != 0){
-            fprintf(stderr, "Error uploading data block: %s\n", usbErrorMessage(err));
+            fprintf(stderr, "\nError uploading data block: %s\n", usbErrorMessage(err));
             goto errorOccurred;
         }
         startAddr += sizeof(buffer.data.data);

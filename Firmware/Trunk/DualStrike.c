@@ -64,6 +64,9 @@ Down  = inverted triggers for pass-through
 uint8_t config[2] = {EEPROM_DEF, EEPROM_DEF};
 uint8_t config_EEPROM[2] EEMEM = {CONFIG_0_DEF, CONFIG_1_DEF};
 
+#define enableUsbLines()	PORTD |= (1<<0)
+#define disableUsbLines()	PORTD &= ~(1<<0);
+
 void configInit() {
 	uint8_t newConfig[2] = {0,0};
 
@@ -82,9 +85,12 @@ void configInit() {
 
 	if(!Stick_Select) {
 		/* enter configuration modification mode */
-		//programmer_setup();
+		enableUsbLines();
+		programmer_setup();
 
 		while(Stick_Start) {
+			programmer_poll();
+
 			if(!Stick_Up) {
 				ENABLE_CFG_DIGITAL_PAD(newConfig)
 				DISABLE_CFG_LEFT_STICK(newConfig)
@@ -149,9 +155,9 @@ void configInit() {
 					SET_CFG_INVERTED_TRIGGERS(newConfig)
 				}
 			}
-
-			//programmer_poll();
 		}
+
+		disableUsbLines();
 	}
 
 	if(newConfig[0] != config[0] || newConfig[1] != config[1]) {
@@ -164,7 +170,7 @@ void configInit() {
 
 #if USE_PS3
 int setModePS3() {
-	PORTD |= (1<<0); // enable Dual Strike USB lines
+	enableUsbLines();
 
 	return WORKING_MODE_PS3;
 }
@@ -172,7 +178,7 @@ int setModePS3() {
 
 #if USE_XBOX
 int setModeXBox() {
-	PORTD |= (1<<0); // enable Dual Strike USB lines
+	enableUsbLines();
 
 	return WORKING_MODE_XBOX;
 }
@@ -209,7 +215,7 @@ int setModePT() {
 // README
 /*
 Startup Behaviour
-=================
+================
 If a button or joystick direction is pressed, when the Dual Strike controller
 is activated (if the machine it is plugged in is turned on or the controller gets
 plugged into the machine), then special functions are activated:
