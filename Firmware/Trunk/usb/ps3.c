@@ -1,4 +1,4 @@
-void resetReportBuffer() {
+void resetPS3ReportBuffer() {
 	data.ps3report.buttons[0] =
 	data.ps3report.buttons[1] = 0;
 	data.ps3report.hatswitch  = 0b00001111;
@@ -52,7 +52,7 @@ void resetReportBuffer() {
 #define PS3_RS_DOWN		{ data.ps3report.joystick_axes |= 0b10000000; data.ps3report.joystick_axes &= 0b10111111; }
 
 void readInputPS3() {
-	resetReportBuffer();
+	resetPS3ReportBuffer();
 
 	// Left Joystick Directions
 	if(CFG_LEFT_STICK) {
@@ -149,22 +149,16 @@ void readInputPS3() {
 
 
 void ps3_controller() {
-    usbDeviceDisconnect(); /* enforce re-enumeration, do this while interrupts are disabled! */
-    _delay_ms(300UL);/* fake USB disconnect for > 250 ms */
-    usbDeviceConnect();
-    usbInit();
-    sei();
+	usbMode = USB_MODE_PS3;
+	setupUSB();
 	usbPoll();
-	resetReportBuffer();
-	sendDataUSB(&data.array, 16);
+	resetPS3ReportBuffer();
+	sendDataUSB(data.array, 16);
 
     while(1) { /* main event loop */
 		usbPoll();
-
-        if(usbInterruptIsReady()) {
-			readJoystickSwitch();
-            readInputPS3();
-			sendDataUSB(&data.array, 16);
-        }
+		readJoystickSwitch();
+        readInputPS3();
+		sendDataUSB(data.array, 16);
     }
 }

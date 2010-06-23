@@ -135,43 +135,45 @@ usbMsgLen_t usbFunctionDescriptor(struct usbRequest *rq)
 {
 	usbMsgLen_t len = 0;
 
-    switch(rq->wValue.bytes[1]) {
-    case USBDESCR_DEVICE:
-		usbMsgPtr = (uchar *)(usbDescriptorDeviceDS);
-		len = sizeof(usbDescriptorDeviceDS);
-		break;
-
-    case USBDESCR_STRING:
-		switch(rq->wValue.bytes[0]) {
-		case 1: // Vendor
-			usbMsgPtr = (uchar *)(usbDescriptorStringVendorDS);
+	if(usbMode == USB_MODE_PS3) {
+	    switch(rq->wValue.bytes[1]) {
+	    case USBDESCR_DEVICE:
+			usbMsgPtr = (uchar *)(usbDescriptorDeviceDS);
+			len = sizeof(usbDescriptorDeviceDS);
 			break;
-		case 2: // Device
-			usbMsgPtr = (uchar *)(usbDescriptorStringDeviceDS);
+
+	    case USBDESCR_STRING:
+			switch(rq->wValue.bytes[0]) {
+			case 1: // Vendor
+				usbMsgPtr = (uchar *)(usbDescriptorStringVendorDS);
+				break;
+			case 2: // Device
+				usbMsgPtr = (uchar *)(usbDescriptorStringDeviceDS);
+				break;
+			}
+
+	        len = usbMsgPtr[0];
 			break;
-		}
 
-        len = usbMsgPtr[0];
-		break;
+	    case USBDESCR_CONFIG:
+			usbMsgPtr = (uchar*)usbDescriptorConfigurationPS3;
+			len = sizeof(usbDescriptorConfigurationPS3);
 
-    case USBDESCR_CONFIG:
-		usbMsgPtr = (uchar*)usbDescriptorConfigurationPS3;
-		len = sizeof(usbDescriptorConfigurationPS3);
+			break;
 
-		break;
+	    case USBDESCR_HID:
+			usbMsgPtr = (uchar *)(usbDescriptorConfigurationPS3 + 18);
+			len = usbDescriptorConfigurationPS3[18];
 
-    case USBDESCR_HID:
-		usbMsgPtr = (uchar *)(usbDescriptorConfigurationPS3 + 18);
-		len = usbDescriptorConfigurationPS3[18];
+			break;
 
-		break;
+	    case USBDESCR_HID_REPORT:
+			usbMsgPtr = (uchar*)usbHidReportDescriptorPS3;
+			len = sizeof(usbHidReportDescriptorPS3);
 
-    case USBDESCR_HID_REPORT:
-		usbMsgPtr = (uchar*)usbHidReportDescriptorPS3;
-		len = sizeof(usbHidReportDescriptorPS3);
-
-		break;
-    }
+			break;
+	    }
+	}
 
     return len;
 }
