@@ -22,7 +22,7 @@ typedef struct {
 } ps3report_t;
 
 typedef union {
-	uchar array[130];
+	uchar array[132];
 	ps3report_t ps3report;
 } usb_data_t;
 
