@@ -144,7 +144,7 @@ typedef struct deviceData {
 typedef struct dumpData {
     char    reportId;
     char    length;
-	char[2] unused;
+	char	unused[2];
     char    data[128];
 }dumpData_t;
 
@@ -158,10 +158,11 @@ union {
 } buffer;
 
 int err = 0;
+int len = sizeof(buffer);
 
 int pageSize, deviceSize = 0;
 
-static int readSizes(static int reportID, static int deviceSizeCorrection) {
+static int readSizes(int reportID, int deviceSizeCorrection) {
     if((err = usbGetReport(dev, USB_HID_REPORT_TYPE_FEATURE, reportID, buffer.bytes, &len)) != 0) {
         fprintf(stderr, "Error reading sizes: %s\n", usbErrorMessage(err));
         
@@ -175,12 +176,12 @@ static int readSizes(static int reportID, static int deviceSizeCorrection) {
     deviceSize = getUsbInt(buffer.info.memorySize, 4);
     printf("Page size   = %d (0x%x)\n", pageSize, pageSize);
     printf("Device size = %d (0x%x)\n", deviceSize, deviceSize + deviceSizeCorrection);
+	
+	return 0;
 }
 
 static int uploadFlashData(char *dataBuffer, int startAddr, int endAddr) {
-	int len, mask;
-	
-    len = sizeof(buffer);
+	int mask;
 
 	printf("Uploading flash data...\n");
     readSizes(1, -2048);
@@ -233,10 +234,7 @@ errorOccurred:
 }
 
 static int uploadEEPROMData(char *dataBuffer, int startAddr, int endAddr) {
-	int err = 0, len;
-	
-    len = sizeof(buffer);
-
+	err = 0;
 	printf("Dumping EEPROM data...\n");
 	readSizes(3, 0);
 	
@@ -277,8 +275,9 @@ errorOccurred:
 }
 
 static int  dumpEEPROMData(char *dataBuffer, int dataBufferSize) {
-	int err = address = 0;
+	int address = 0;
 	
+	err = 0;
 	printf("Uploading EEPROM data...\n");
 
 	if(pageSize == 0 && deviceSize == 0)
@@ -296,7 +295,7 @@ static int  dumpEEPROMData(char *dataBuffer, int dataBufferSize) {
         buffer.dump.reportId = 5;
         setUsbInt(buffer.data.address, address, 3);
 
-		if((err = usbGetReport(dev, USB_HID_REPORT_TYPE_FEATURE, reportID, buffer.bytes, &len)) != 0) {		
+		if((err = usbGetReport(dev, USB_HID_REPORT_TYPE_FEATURE, 5, buffer.bytes, &len)) != 0) {		
             fprintf(stderr, "\nError dumping EEPROM data: %s\n", usbErrorMessage(err));
             goto errorOccurred;
 		}
@@ -321,13 +320,13 @@ errorOccurred:
 
 static void printUsage(char *pname)
 {
-    fprintf(stderr,	"usage: %s ([-h|--help] | [-r] [<intel-hexfile>] [-e <intel-hexfile>] [-de <plain-hexfile>])\n");
-	fprint(" \"-h\" or \"--help\" prints this message.\n");
-	fprint(" \"-r\" restarts the device in the end.\n");
-	fprint(" \"<intel-hexfile\" specifies a file to write into the flash.\n");
-	fprint(" \"-e <intel-hexfile>\" specifies a file to write to the EEPROM.\n");
-	fprint(" \"-de <plain-hexfile>\" specifies a file to dump the EEPROM to.\n");
-	fprint("At least one of the arguments not including \"-r\" must be used.\n", pname);
+    fprintf(stderr,	"usage: %s ([-h|--help] | [-r] [<intel-hexfile>] [-e <intel-hexfile>] [-de <plain-hexfile>])\n", pname);
+	fprintf(stderr,	" \"-h\" or \"--help\" prints this message.\n");
+	fprintf(stderr,	" \"-r\" restarts the device in the end.\n");
+	fprintf(stderr,	" \"<intel-hexfile\" specifies a file to write into the flash.\n");
+	fprintf(stderr,	" \"-e <intel-hexfile>\" specifies a file to write to the EEPROM.\n");
+	fprintf(stderr,	" \"-de <plain-hexfile>\" specifies a file to dump the EEPROM to.\n");
+	fprintf(stderr,	"At least one of the arguments not including \"-r\" must be used.\n");
 }
 
 static int testArgs(int argc, char **argv) {
@@ -392,9 +391,21 @@ int main(int argc, char **argv) {
 		currentIndex += 2;
 	}
 	
-	if(argc = currentIndex + 2 && strcmp(argv[currentIndex], "-de") == 0)
+	if(argc == currentIndex + 2 && strcmp(argv[currentIndex], "-de") == 0)
 		eepromDumpFile = argv[currentIndex + 1];
-		
+			
+	if(leaveBootLoader)
+		printf("Leaving bootloader after finishing.\n");
+	
+	if(flashFile != NULL)
+		printf("Flash file: \"%s\"\n", flashFile);
+	
+	if(eepromFile != NULL)
+		printf("EEPROM file: \"%s\"\n", eepromFile);
+
+	if(eepromDumpFile != NULL)
+		printf("EEPROM dump file: \"%s\"\n", eepromDumpFile);
+	
     if((err = usbOpenDevice(&dev, IDENT_VENDOR_NUM, IDENT_VENDOR_STRING, IDENT_PRODUCT_NUM, IDENT_PRODUCT_STRING, 1)) != 0){
         fprintf(stderr, "Error opening HIDBoot device: %s\n", usbErrorMessage(err));
 		return 1;
