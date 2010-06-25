@@ -229,10 +229,6 @@ PROGMEM char usbHidReportDescriptorProgrammer[42] = {
     0xc0                           		// END_COLLECTION
 };
 
-static uchar eepromOffset = 0xFF;
-static uchar writeReportID = 0;
-static size_t currentEEPROMAddress;
-
 usbMsgLen_t usbFunctionDescriptor(struct usbRequest *rq) {
 	usbMsgLen_t len = 0;
 

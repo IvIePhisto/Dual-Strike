@@ -141,62 +141,91 @@ typedef struct deviceData {
     char    data[128];
 }deviceData_t;
 
+typedef struct dumpData {
+    char    reportId;
+    char    length;
+	char[2] unused;
+    char    data[128];
+}dumpData_t;
+
 usbDevice_t *dev = NULL;
 
 union {
     char            bytes[1];
     deviceInfo_t    info;
     deviceData_t    data;
+	dumpData_t		dump;
 } buffer;
 
 int err = 0;
 
+int pageSize, deviceSize = 0;
+
+static int readSizes(static int reportID, static int deviceSizeCorrection) {
+    if((err = usbGetReport(dev, USB_HID_REPORT_TYPE_FEATURE, reportID, buffer.bytes, &len)) != 0) {
+        fprintf(stderr, "Error reading sizes: %s\n", usbErrorMessage(err));
+        
+		if(dev != NULL)
+			usbCloseDevice(dev);
+			
+		return err;
+	}
+
+    pageSize = getUsbInt(buffer.info.pageSize, 2);
+    deviceSize = getUsbInt(buffer.info.memorySize, 4);
+    printf("Page size   = %d (0x%x)\n", pageSize, pageSize);
+    printf("Device size = %d (0x%x)\n", deviceSize, deviceSize + deviceSizeCorrection);
+}
+
 static int uploadFlashData(char *dataBuffer, int startAddr, int endAddr) {
-	int len, mask, pageSize, deviceSize;
+	int len, mask;
 	
     len = sizeof(buffer);
 
 	printf("Uploading flash data...\n");
+    readSizes(1, -2048);
 	
-    if((err = usbGetReport(dev, USB_HID_REPORT_TYPE_FEATURE, 1, buffer.bytes, &len)) != 0){
-        fprintf(stderr, "Error reading page size: %s\n", usbErrorMessage(err));
-        goto errorOccurred;
-    }
     if(len < sizeof(buffer.info)){
         fprintf(stderr, "Not enough bytes in device info report (%d instead of %d)\n", len, (int)sizeof(buffer.info));
         err = -1;
         goto errorOccurred;
     }
-    pageSize = getUsbInt(buffer.info.pageSize, 2);
-    deviceSize = getUsbInt(buffer.info.memorySize, 4);
-    printf("Page size   = %d (0x%x)\n", pageSize, pageSize);
-    printf("Device size = %d (0x%x); %d bytes remaining\n", deviceSize, deviceSize, deviceSize - 2048);
+	
     if(endAddr > deviceSize - 2048){
         fprintf(stderr, "Data (%d bytes) exceeds remaining flash size!\n", endAddr);
         err = -1;
         goto errorOccurred;
     }
-    if(pageSize < 128){
+	
+    if(pageSize < 128)
         mask = 127;
-    }else{
+	else
         mask = pageSize - 1;
-    }
+		
     startAddr &= ~mask;                  /* round down */
     endAddr = (endAddr + mask) & ~mask;  /* round up */
     printf("Uploading %d (0x%x) bytes starting at %d (0x%x)\n", endAddr - startAddr, endAddr - startAddr, startAddr, startAddr);
+	
     while(startAddr < endAddr){
         buffer.data.reportId = 2;
         memcpy(buffer.data.data, dataBuffer + startAddr, 128);
         setUsbInt(buffer.data.address, startAddr, 3);
         printf("\r0x%05x ... 0x%05x", startAddr, startAddr + (int)sizeof(buffer.data.data));
         fflush(stdout);
+		
         if((err = usbSetReport(dev, USB_HID_REPORT_TYPE_FEATURE, buffer.bytes, sizeof(buffer.data))) != 0){
             fprintf(stderr, "Error uploading data block: %s\n", usbErrorMessage(err));
             goto errorOccurred;
         }
+		
         startAddr += sizeof(buffer.data.data);
     }
     printf("\n");
+	
+	pageSize = deviceSize = 0;
+	
+	return 0;
+
 errorOccurred:
     if(dev != NULL)
         usbCloseDevice(dev);
@@ -204,26 +233,18 @@ errorOccurred:
 }
 
 static int uploadEEPROMData(char *dataBuffer, int startAddr, int endAddr) {
-	int err = 0, len, pageSize, deviceSize;
+	int err = 0, len;
 	
     len = sizeof(buffer);
 
-	printf("Uploading EEPROM data...\n");
+	printf("Dumping EEPROM data...\n");
+	readSizes(3, 0);
 	
-    if((err = usbGetReport(dev, USB_HID_REPORT_TYPE_FEATURE, 3, buffer.bytes, &len)) != 0) {
-        fprintf(stderr, "Error reading page size: %s\n", usbErrorMessage(err));
-        goto errorOccurred;
-    }
     if(len < sizeof(buffer.info)) {
-        fprintf(stderr, "Not enough bytes in device info report (%d instead of %d)\n", len, (int)sizeof(buffer.info));
+        fprintf(stderr, "Not enough bytes in EEPROM for data (%d instead of %d)\n", len, (int)sizeof(buffer.info));
         err = -1;
         goto errorOccurred;
-    }
-	
-    pageSize = getUsbInt(buffer.info.pageSize, 2);
-    deviceSize = getUsbInt(buffer.info.memorySize, 4);
-    printf("Page size   = %d (0x%x)\n", pageSize, pageSize);
-    printf("Device size = %d (0x%x)\n", deviceSize, deviceSize);
+    }	
 	
     if(endAddr > deviceSize) {
         fprintf(stderr, "Data (%d bytes) exceeds remaining EEPROM size!\n", endAddr);
@@ -245,13 +266,57 @@ static int uploadEEPROMData(char *dataBuffer, int startAddr, int endAddr) {
         }
         startAddr += sizeof(buffer.data.data);
     }
+	
     printf("\n");
+	return 0;
+
 errorOccurred:
     if(dev != NULL)
         usbCloseDevice(dev);
     return err;
 }
 
+static int  dumpEEPROMData(char *dataBuffer, int dataBufferSize) {
+	int err = address = 0;
+	
+	printf("Uploading EEPROM data...\n");
+
+	if(pageSize == 0 && deviceSize == 0)
+		readSizes(3, 0);
+	
+    if(deviceSize > dataBufferSize) {
+        fprintf(stderr, "Not enough bytes in data buffer for EEPROM data (%d instead of %d)\n", dataBufferSize, deviceSize);
+        err = -1;
+        goto errorOccurred;
+    }	
+		
+    printf("Dumping %d (0x%x) bytes starting at %d (0x%x)\n", deviceSize, deviceSize, 0, 0);
+	
+    while(address < deviceSize){
+        buffer.dump.reportId = 5;
+        setUsbInt(buffer.data.address, address, 3);
+
+		if((err = usbGetReport(dev, USB_HID_REPORT_TYPE_FEATURE, reportID, buffer.bytes, &len)) != 0) {		
+            fprintf(stderr, "\nError dumping EEPROM data: %s\n", usbErrorMessage(err));
+            goto errorOccurred;
+		}
+		
+        printf("\r0x%05x ... 0x%05x", address, address + (int)sizeof(buffer.dump.length));
+        fflush(stdout);
+		
+        memcpy(dataBuffer + address, buffer.dump.data, sizeof(buffer.dump.data));
+        address += buffer.dump.length;
+    }
+    printf("\n");
+	
+	return 0;
+	
+errorOccurred:
+    if(dev != NULL)
+        usbCloseDevice(dev);
+		
+    return err;
+}
 /* ------------------------------------------------------------------------- */
 
 static void printUsage(char *pname)
@@ -363,6 +428,11 @@ int main(int argc, char **argv) {
 			return 1;
 	}
 	
+	if(eepromDumpFile != NULL) {
+		memset(dataBuffer, -1, sizeof(dataBuffer));
+		endAddress = dumpEEPROMData(dataBuffer, sizeof(dataBuffer));
+	}
+	
 	if(leaveBootLoader){
         // and now leave boot loader:
 		printf("Telling device to leave bootloader...\n");
@@ -371,6 +441,9 @@ int main(int argc, char **argv) {
         // Ignore errors here. If the device reboots before we poll the response,
         // this request fails.
     }
+
+	 if(dev != NULL)
+        usbCloseDevice(dev);
 
     return 0;
 }
