@@ -143,7 +143,7 @@ typedef struct deviceData {
 
 typedef struct dumpData {
     char    reportId;
-    char    length;
+    unsigned char    length;
 	char	unused[2];
     char    data[128];
 }dumpData_t;
@@ -155,6 +155,7 @@ union {
     deviceInfo_t    info;
     deviceData_t    data;
 	dumpData_t		dump;
+	char			raw[131];
 } buffer;
 
 int err = 0;
@@ -278,7 +279,7 @@ static int  dumpEEPROMData(char *dataBuffer, int dataBufferSize) {
 	int address = 0;
 	
 	err = 0;
-	printf("Uploading EEPROM data...\n");
+	printf("Dumping EEPROM data...\n");
 
 	if(pageSize == 0 && deviceSize == 0)
 		readSizes(3, 0);
@@ -291,24 +292,25 @@ static int  dumpEEPROMData(char *dataBuffer, int dataBufferSize) {
 		
     printf("Dumping %d (0x%x) bytes starting at %d (0x%x)\n", deviceSize, deviceSize, 0, 0);
 	
-    while(address < deviceSize){
-        buffer.dump.reportId = 5;
-        setUsbInt(buffer.data.address, address, 3);
+    while(address < deviceSize) {
+		unsigned char length;
+		
+        setUsbInt(buffer.raw, address, 3);
 
-		if((err = usbGetReport(dev, USB_HID_REPORT_TYPE_FEATURE, 5, buffer.bytes, &len)) != 0) {		
+		if((err = usbGetReport(dev, USB_HID_REPORT_TYPE_FEATURE, 5, buffer.raw, &len)) != 0) {		
             fprintf(stderr, "\nError dumping EEPROM data: %s\n", usbErrorMessage(err));
             goto errorOccurred;
 		}
 		
-        printf("\r0x%05x ... 0x%05x", address, address + (int)sizeof(buffer.dump.length));
+		length = buffer.dump.length;
+        printf("\r0x%05x ... 0x%05x", address, address + length);
         fflush(stdout);
-		
-        memcpy(dataBuffer + address, buffer.dump.data, sizeof(buffer.dump.data));
-        address += buffer.dump.length;
+        memcpy(dataBuffer + address, buffer.dump.data, length);
+        address += length;
     }
     printf("\n");
 	
-	return 0;
+	return address;
 	
 errorOccurred:
     if(dev != NULL)
@@ -316,6 +318,31 @@ errorOccurred:
 		
     return err;
 }
+
+int writePlainHEX(char* plainHexFile, char* dataBuffer, int endAddress) {
+	FILE* output;
+	int address;
+	
+    output = fopen(plainHexFile, "w");
+	
+	if(output == NULL) {
+        fprintf(stderr, "Error opening file \"%s\" for writing: %s\n", plainHexFile, strerror(errno));
+        return 1;
+	}
+	
+	for(address = 0; address < endAddress; address++) {
+		if(address > 0 && (address % 8 == 0))
+			fprintf(output, "\n");
+		printf("%d: %02x\n", address, dataBuffer[address]);
+		fprintf(output, "%02x", dataBuffer[address]);
+	}
+	
+    fflush(output);
+	fclose(output);
+	
+	return 0;
+}
+
 /* ------------------------------------------------------------------------- */
 
 static void printUsage(char *pname)
@@ -433,8 +460,10 @@ int main(int argc, char **argv) {
 		if(parseIntelHex(eepromFile, dataBuffer, &startAddress, &endAddress))
 			return 1;
 
-		if(startAddress >= endAddress)
+		if(startAddress >= endAddress) {
 			fprintf(stderr, "No data in EEPROM input file.\n");
+			return 1;
+		}
 		else if(uploadEEPROMData(dataBuffer, startAddress, endAddress))
 			return 1;
 	}
@@ -442,9 +471,16 @@ int main(int argc, char **argv) {
 	if(eepromDumpFile != NULL) {
 		memset(dataBuffer, -1, sizeof(dataBuffer));
 		endAddress = dumpEEPROMData(dataBuffer, sizeof(dataBuffer));
+		
+		if(endAddress == 0) {
+			fprintf(stderr, "Error dumping EEPROM data.\n");
+			return 1;
+		}
+		
+		writePlainHEX(eepromDumpFile, dataBuffer, endAddress);
 	}
 	
-	if(leaveBootLoader){
+	if(leaveBootLoader) {
         // and now leave boot loader:
 		printf("Telling device to leave bootloader...\n");
         buffer.info.reportId = 1;

@@ -116,17 +116,21 @@ usbMsgLen_t usbFunctionSetup(uchar receivedData[8]) {
 						currentEEPROMAddress.c[1] = receivedData[2];
 #if (E2END) > 0xffff /* we need long addressing */
 				        currentEEPROMAddress.c[2] = receivedData[3];
-				        currentEEPROMAddress.c[3] = 0;
+#else
+				        currentEEPROMAddress.c[2] = 0;
 #endif
+				        currentEEPROMAddress.c[3] = 0;
 				    }
 
-					uchar length = 128;		            
 
 					if(currentEEPROMAddress.l > E2END)
 						return 0;
 
-					if(E2END - currentEEPROMAddress.l < 128)
-						length = E2END - currentEEPROMAddress.l;
+					size_t length = 128;		            
+					e2addr_t rest = E2END - currentEEPROMAddress.l;
+
+					if(rest < 128)
+						length = rest & 0xFF;
 
 					data.array[0] = EEPROM_READING_REPORT_ID;
 					data.array[1] = length;
