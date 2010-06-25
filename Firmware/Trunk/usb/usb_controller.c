@@ -53,13 +53,12 @@ uchar usbMode = 0;
 
 typedef union {
     e2addr_t  l;
-    uint    s[sizeof(e2addr_t)/2];
     uchar   c[sizeof(e2addr_t)];
 } e2address_t;
 
-static uchar eepromOffset = 0xFF;
+static e2addr_t eepromOffset = -1;
 static uchar writeReportID = 0;
-static e2address_t currentEEPROMAddress;
+static e2addr_t currentEEPROMAddress;
 
 usbMsgLen_t usbFunctionSetup(uchar receivedData[8]) {
 	usbRequest_t    *rq = (void *)receivedData;
@@ -97,18 +96,9 @@ usbMsgLen_t usbFunctionSetup(uchar receivedData[8]) {
 		            return USB_NO_MSG; // use usbFunctionWrite()
 		        }
 				else if(reportID == EEPROM_SET_ADDRESS_REPORT_ID) {
-				    if(eepromOffset == 0) {
-						currentEEPROMAddress.c[0] = receivedData[1];
-						currentEEPROMAddress.c[1] = receivedData[2];
-#if (E2END) > 0xffff /* we need long addressing */
-				        currentEEPROMAddress.c[2] = receivedData[3];
-#else
-				        currentEEPROMAddress.c[2] = 0;
-#endif
-				        currentEEPROMAddress.c[3] = 0;
-				    }
+					writeReportID = EEPROM_SET_ADDRESS_REPORT_ID;
 
-		            return 0;
+		            return USB_NO_MSG; // use usbFunctionWrite()
 				}
 		    }
 			else if(rq->bRequest == USBRQ_HID_GET_REPORT) {
@@ -125,20 +115,20 @@ usbMsgLen_t usbFunctionSetup(uchar receivedData[8]) {
 			        return 7;
 		        }
 				else if(reportID == EEPROM_READING_REPORT_ID) {
-					if(currentEEPROMAddress.l > E2END)
-						return 0;
+					if(currentEEPROMAddress > E2END)
+						return -1;
 
 					size_t length = 128;		            
-					e2addr_t rest = E2END - currentEEPROMAddress.l;
+					e2addr_t rest = E2END - currentEEPROMAddress + 1;
 
 					if(rest < 128)
-						length = rest & 0xFF;
+						length = rest;
 
 					data.array[0] = EEPROM_READING_REPORT_ID;
 					data.array[1] = length;
 					data.array[2] = 0;
 					data.array[3] = 0;
-					eeprom_read_block(&data.array[4], (void*)currentEEPROMAddress.l, length);
+					eeprom_read_block(data.array + 4, (void*)currentEEPROMAddress, length);
 					usbMsgPtr = data.array;
 
 		            return 132;
@@ -152,8 +142,9 @@ usbMsgLen_t usbFunctionSetup(uchar receivedData[8]) {
 
 uchar usbFunctionWrite(uchar *receivedData, uchar len) {
 	if(usbMode == USB_MODE_PROGRAMMER) {
+		e2address_t e2address;
+
 		if(writeReportID == EEPROM_PROGRAMMING_REPORT_ID) {
-			e2address_t e2address;
 			uchar   isLast;
 
 		    if(eepromOffset == 0) {
@@ -167,7 +158,7 @@ uchar usbFunctionWrite(uchar *receivedData, uchar len) {
 		        len -= 4;
 		    }
 			else {
-			    e2address = currentEEPROMAddress;
+			    e2address.l = currentEEPROMAddress;
 			}
 
 		    eepromOffset += len;
@@ -176,13 +167,26 @@ uchar usbFunctionWrite(uchar *receivedData, uchar len) {
 			eeprom_write_block(receivedData, (void*)e2address.l, len);
 	        //sei();
 			e2address.l += len;
-		    currentEEPROMAddress = e2address;
+		    currentEEPROMAddress = e2address.l;
 
 		    return isLast;
 		}
+		else if(writeReportID == EEPROM_SET_ADDRESS_REPORT_ID) {
+			e2address.c[0] = receivedData[1];
+			e2address.c[1] = receivedData[2];
+#if (E2END) > 0xffff /* we need long addressing */
+	        e2address.c[2] = receivedData[3];
+#else
+	        e2address.c[2] = 0;
+#endif
+	        e2address.c[3] = 0;
+			currentEEPROMAddress = e2address.l;
+
+			return 1;
+		}
 	}
 
-	return 0;
+	return -1;
 }
 
 /* ------------------------------------------------------------------------- */

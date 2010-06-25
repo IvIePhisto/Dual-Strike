@@ -135,13 +135,18 @@ typedef struct deviceInfo {
     char    memorySize[4];
 }deviceInfo_t;
 
-typedef struct deviceData {
+typedef struct {
     char    reportId;
     char    address[3];
     char    data[128];
 }deviceData_t;
 
-typedef struct dumpData {
+typedef struct {
+    char    reportId;
+    char    address[3];
+}setAddressData_t;
+
+typedef struct {
     char    reportId;
     unsigned char    length;
 	char	unused[2];
@@ -154,6 +159,7 @@ union {
     char            bytes[1];
     deviceInfo_t    info;
     deviceData_t    data;
+	setAddressData_t setAddress;
 	dumpData_t		dump;
 } buffer;
 
@@ -292,17 +298,13 @@ static int  dumpEEPROMData(char *dataBuffer, int dataBufferSize) {
     printf("Dumping %d (0x%x) bytes starting at %d (0x%x)\n", deviceSize, deviceSize, 0, 0);
 	
     while(address < deviceSize) {
-		unsigned char length;
+		unsigned int length;
 		
-		buffer.data.reportID = 5;
-        setUsbInt(buffer.data.address, address, 3);
-
-		length = buffer.dump.length;
-        printf("\r0x%05x ... 0x%05x", address, address + length);
-        fflush(stdout);
+		buffer.setAddress.reportId = 5;
+        setUsbInt(buffer.setAddress.address, address, 3);
 
         if((err = usbSetReport(dev, USB_HID_REPORT_TYPE_FEATURE, buffer.bytes, 4)) != 0){
-            fprintf(stderr, "\nError uploading data block: %s\n", usbErrorMessage(err));
+            fprintf(stderr, "\nError setting address: %s\n", usbErrorMessage(err));
             goto errorOccurred;
         }
 
@@ -310,6 +312,10 @@ static int  dumpEEPROMData(char *dataBuffer, int dataBufferSize) {
             fprintf(stderr, "\nError receiving dumped EEPROM data: %s\n", usbErrorMessage(err));
             goto errorOccurred;
 		}
+
+		length = buffer.dump.length;
+        printf("\r0x%05x ... 0x%05x", address, address + length);
+        fflush(stdout);
 		
         memcpy(dataBuffer + address, buffer.dump.data, length);
         address += length;
@@ -322,7 +328,7 @@ errorOccurred:
     if(dev != NULL)
         usbCloseDevice(dev);
 		
-    return err;
+    return 0;
 }
 
 int writePlainHEX(char* plainHexFile, char* dataBuffer, int endAddress) {
@@ -339,8 +345,8 @@ int writePlainHEX(char* plainHexFile, char* dataBuffer, int endAddress) {
 	for(address = 0; address < endAddress; address++) {
 		if(address > 0 && (address % 8 == 0))
 			fprintf(output, "\n");
-		printf("%d: %02x\n", address, dataBuffer[address]);
-		fprintf(output, "%02x", dataBuffer[address]);
+
+		fprintf(output, "%02x ", dataBuffer[address] & 0xFF);
 	}
 	
     fflush(output);
