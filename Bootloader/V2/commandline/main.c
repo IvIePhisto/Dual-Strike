@@ -256,14 +256,19 @@ errorOccurred:
 
 static void printUsage(char *pname)
 {
-    fprintf(stderr,
-	"usage: %s ([-h|--help] | [-r] [<intel-hexfile>] [-e <intel-hexfile>])\n \"-h\" or \"--help\" prints this message.\n \"-r\" restarts the device in the end.\n \"<intel-hexfile\" specifies a file to write into the flash.\n \"-e <intel-hexfile>\" specifies a file to write to the EEPROM.\nAt least one of the arguments not including \"-r\" must be used.\n", pname);
+    fprintf(stderr,	"usage: %s ([-h|--help] | [-r] [<intel-hexfile>] [-e <intel-hexfile>] [-de <plain-hexfile>])\n");
+	fprint(" \"-h\" or \"--help\" prints this message.\n");
+	fprint(" \"-r\" restarts the device in the end.\n");
+	fprint(" \"<intel-hexfile\" specifies a file to write into the flash.\n");
+	fprint(" \"-e <intel-hexfile>\" specifies a file to write to the EEPROM.\n");
+	fprint(" \"-de <plain-hexfile>\" specifies a file to dump the EEPROM to.\n");
+	fprint("At least one of the arguments not including \"-r\" must be used.\n", pname);
 }
 
 static int testArgs(int argc, char **argv) {
 	int currentIndex;
 	
-	if(argc < 2 || argc > 5)
+	if(argc < 2 || argc > 7)
 		return 1;
 		
 	if(argc == 1 && (strcmp(argv[1], "-h") == 0 || strcmp(argv[1], "--help") == 0))
@@ -274,11 +279,16 @@ static int testArgs(int argc, char **argv) {
 	else
 		currentIndex = 1;
 
-	if(argc == currentIndex + 1 && strcmp(argv[currentIndex], "-e") != 0)
+	if((argc == currentIndex + 1 && strcmp(argv[currentIndex], "-e") != 0) &&
+	   (argc == currentIndex + 1 && strcmp(argv[currentIndex], "-de") != 0))
 		return 0;
 
 	if((argc == currentIndex + 2 && strcmp(argv[currentIndex], "-e") == 0) ||
-	   (argc == currentIndex + 3 && strcmp(argv[currentIndex + 1], "-e") == 0))
+	   (argc == currentIndex + 2 && strcmp(argv[currentIndex], "-de") == 0) ||
+	   (argc == currentIndex + 3 && strcmp(argv[currentIndex + 1], "-e") == 0) ||
+	   (argc == currentIndex + 3 && strcmp(argv[currentIndex + 1], "-de") == 0) ||
+	   (argc == currentIndex + 4 && strcmp(argv[currentIndex], "-e") == 0 && strcmp(argv[currentIndex + 2], "-de") == 0) ||
+	   (argc == currentIndex + 5 && strcmp(argv[currentIndex + 1], "-e") == 0 && strcmp(argv[currentIndex + 3], "-de") == 0) )
 		return 0;
 	
 	return 1;
@@ -288,6 +298,7 @@ int main(int argc, char **argv) {
 	int currentIndex;
 	char *flashFile = NULL;
 	char *eepromFile = NULL;
+	char *eepromDumpFile = NULL;
 
     if(testArgs(argc, argv)) {
         printUsage(argv[0]);
@@ -306,15 +317,18 @@ int main(int argc, char **argv) {
 	else
 		currentIndex = 1;
 	
-	if(strcmp(argv[currentIndex], "-e") == 0) {
-		eepromFile = argv[currentIndex + 1];
-	}
-	else {
+	if(strcmp(argv[currentIndex], "-e") != 0 && strcmp(argv[currentIndex], "-de") != 0) {
 		flashFile = argv[currentIndex];
-		
-		if(argc == currentIndex + 3)
-			eepromFile = argv[currentIndex + 2];
+		currentIndex++;
 	}
+	
+	if(argc >= currentIndex + 2 && strcmp(argv[currentIndex], "-e") == 0) {
+		eepromFile = argv[currentIndex + 1];
+		currentIndex += 2;
+	}
+	
+	if(argc = currentIndex + 2 && strcmp(argv[currentIndex], "-de") == 0)
+		eepromDumpFile = argv[currentIndex + 1];
 		
     if((err = usbOpenDevice(&dev, IDENT_VENDOR_NUM, IDENT_VENDOR_STRING, IDENT_PRODUCT_NUM, IDENT_PRODUCT_STRING, 1)) != 0){
         fprintf(stderr, "Error opening HIDBoot device: %s\n", usbErrorMessage(err));

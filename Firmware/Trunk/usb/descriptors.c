@@ -201,8 +201,9 @@ PROGMEM int  usbDescriptorStringDeviceHIDBoot[] = {
 
 #define EEPROM_SIZE_QUERY_REPORT_ID 3
 #define EEPROM_PROGRAMMING_REPORT_ID 4
+#define EEPROM_READING_REPORT_ID 5
 
-PROGMEM char usbHidReportDescriptorProgrammer[33] = {
+PROGMEM char usbHidReportDescriptorProgrammer[42] = {
     0x06, 0x00, 0xff,              		// USAGE_PAGE (Generic Desktop)
     0x09, 0x01,                    		// USAGE (Vendor Usage 1)
     0xa1, 0x01,                    		// COLLECTION (Application)
@@ -216,6 +217,11 @@ PROGMEM char usbHidReportDescriptorProgrammer[33] = {
     0xb2, 0x02, 0x01,              		//   FEATURE (Data,Var,Abs,Buf)
 
     0x85, EEPROM_PROGRAMMING_REPORT_ID, //   REPORT_ID (EEPROM_PROGRAMMING_REPORT_ID)
+    0x95, 0x83,                    		//   REPORT_COUNT (131)
+    0x09, 0x00,                    		//   USAGE (Undefined)
+    0xb2, 0x02, 0x01,              		//   FEATURE (Data,Var,Abs,Buf)
+
+    0x85, EEPROM_READING_REPORT_ID,		//   REPORT_ID (EEPROM_READING_REPORT_ID)
     0x95, 0x83,                    		//   REPORT_COUNT (131)
     0x09, 0x00,                    		//   USAGE (Undefined)
     0xb2, 0x02, 0x01,              		//   FEATURE (Data,Var,Abs,Buf)

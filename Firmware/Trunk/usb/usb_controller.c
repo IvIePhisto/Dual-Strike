@@ -22,7 +22,7 @@ typedef struct {
 } ps3report_t;
 
 typedef union {
-	uchar array[20];
+	uchar array[130];
 	ps3report_t ps3report;
 } usb_data_t;
 
@@ -88,6 +88,19 @@ usbMsgLen_t usbFunctionSetup(uchar receivedData[8]) {
 
 			        return 7;
 		        }
+				else if(reportID == EEPROM_READING_REPORT_ID) {
+					size_t eepromAddress = receivedData[1];
+					uchar length = 130;		            
+
+					if(E2END - eepromAddress < 130)
+						length = E2END - eepromAddress;
+
+					eeprom_read_block(&data.array[1], (void*)eepromAddress, length);
+					data.array[0] = EEPROM_READING_REPORT_ID;
+					usbMsgPtr = data.array;
+
+		            return length;
+				}
 		    }
 		}
 	}
