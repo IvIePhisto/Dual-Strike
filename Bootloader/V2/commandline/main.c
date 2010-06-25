@@ -260,6 +260,7 @@ static int uploadEEPROMData(char *dataBuffer, int startAddr, int endAddr) {
 	
     while(startAddr < endAddr){
         buffer.data.reportId = 4;
+		// TODO
         memcpy(buffer.data.data, dataBuffer + startAddr, 128);
         setUsbInt(buffer.data.address, startAddr, 3);
         printf("\r0x%05x ... 0x%05x", startAddr, startAddr + (int)sizeof(buffer.data.data));

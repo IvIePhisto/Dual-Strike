@@ -44,7 +44,7 @@ The bits have the following semantics:
 [0]4:   Dual Strike right stick (0 == deactivated; 1 == activated)
 [0]5:   Start+Select=Home (0 == disabled, 1 == enabled)
 [0]7:   0 (reserved for uninitialized EEPROM test)
-[1]1-2: extra PINs mode
+[1]0-1: extra PINs mode
      	(00 == deactivated,
 		 10 == read Joystick mode switch,
 	     01 == emulate Joystick mode switch for pass-through,
