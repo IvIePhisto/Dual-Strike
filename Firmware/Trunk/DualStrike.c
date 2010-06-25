@@ -166,6 +166,8 @@ void configInit() {
 		config[0] = newConfig[0];
 		config[1] = newConfig[1];
 	}
+
+	eeprom_read_block(config, config_EEPROM, 2);
 }
 
 #if USE_PS3

@@ -184,7 +184,7 @@ PROGMEM char usbHidReportDescriptorProgrammer[51] = {
     0xb2, 0x02, 0x01,              		//   FEATURE (Data,Var,Abs,Buf)
 
     0x85, EEPROM_PROGRAMMING_REPORT_ID, //   REPORT_ID (EEPROM_PROGRAMMING_REPORT_ID)
-    0x95, 0x83,                    		//   REPORT_COUNT (131)
+    0x95, 0x84,                    		//   REPORT_COUNT (132)
     0x09, 0x00,                    		//   USAGE (Undefined)
     0xb2, 0x02, 0x01,              		//   FEATURE (Data,Var,Abs,Buf)
 

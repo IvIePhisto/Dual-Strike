@@ -140,6 +140,8 @@ usbMsgLen_t usbFunctionSetup(uchar receivedData[8]) {
     return 0;   /* default for not implemented requests: return no data back to host */
 }
 
+static int remainingBytes;
+
 uchar usbFunctionWrite(uchar *receivedData, uchar len) {
 	if(usbMode == USB_MODE_PROGRAMMER) {
 		e2address_t e2address;
@@ -154,20 +156,29 @@ uchar usbFunctionWrite(uchar *receivedData, uchar len) {
 		        e2address.c[2] = receivedData[3];
 		        e2address.c[3] = 0;
 #endif
-		        receivedData += 4;
-		        len -= 4;
+				remainingBytes = receivedData[4];
+		        receivedData += 5;
+		        len -= 5;
 		    }
 			else {
 			    e2address.l = currentEEPROMAddress;
 			}
 
+
 		    eepromOffset += len;
 		    isLast = eepromOffset & 0x80; /* != 0 if last block received */
-	        //cli();
-			eeprom_write_block(receivedData, (void*)e2address.l, len);
-	        //sei();
-			e2address.l += len;
-		    currentEEPROMAddress = e2address.l;
+
+			if(remainingBytes > 0) {
+				if(remainingBytes < 8)
+					len = remainingBytes;
+
+		        //cli();
+				eeprom_write_block(receivedData, (void*)e2address.l, len);
+		        //sei();
+				e2address.l += len;
+			    currentEEPROMAddress = e2address.l;
+				remainingBytes -= len;
+			}
 
 		    return isLast;
 		}

@@ -144,6 +144,13 @@ typedef struct {
 typedef struct {
     char    reportId;
     char    address[3];
+	char	length;
+    char    data[128];
+}e2Data_t;
+
+typedef struct {
+    char    reportId;
+    char    address[3];
 }setAddressData_t;
 
 typedef struct {
@@ -159,6 +166,7 @@ union {
     char            bytes[1];
     deviceInfo_t    info;
     deviceData_t    data;
+	e2Data_t		e2data;
 	setAddressData_t setAddress;
 	dumpData_t		dump;
 } buffer;
@@ -259,17 +267,23 @@ static int uploadEEPROMData(char *dataBuffer, int startAddr, int endAddr) {
     printf("Uploading %d (0x%x) bytes starting at %d (0x%x)\n", endAddr - startAddr, endAddr - startAddr, startAddr, startAddr);
 	
     while(startAddr < endAddr){
-        buffer.data.reportId = 4;
+		int length = 128;
+		
+		if(endAddr - startAddr < 128)
+			length = endAddr - startAddr;
+			
+        buffer.e2data.reportId = 4;
 		// TODO
-        memcpy(buffer.data.data, dataBuffer + startAddr, 128);
-        setUsbInt(buffer.data.address, startAddr, 3);
-        printf("\r0x%05x ... 0x%05x", startAddr, startAddr + (int)sizeof(buffer.data.data));
+        memcpy(buffer.e2data.data, dataBuffer + startAddr, length);
+        setUsbInt(buffer.e2data.address, startAddr, 3);
+		buffer.e2data.length = length;
+        printf("\r0x%05x ... 0x%05x", startAddr, startAddr + length);
         fflush(stdout);
-        if((err = usbSetReport(dev, USB_HID_REPORT_TYPE_FEATURE, buffer.bytes, sizeof(buffer.data))) != 0){
+        if((err = usbSetReport(dev, USB_HID_REPORT_TYPE_FEATURE, buffer.bytes, sizeof(buffer.e2data))) != 0){
             fprintf(stderr, "\nError uploading data block: %s\n", usbErrorMessage(err));
             goto errorOccurred;
         }
-        startAddr += sizeof(buffer.data.data);
+        startAddr += length;
     }
 	
     printf("\n");

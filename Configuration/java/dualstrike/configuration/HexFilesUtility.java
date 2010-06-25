@@ -118,7 +118,7 @@ public class HexFilesUtility {
 				for(int j = 0; j < line.length(); j += 2) {
 					byte b;
 					
-					b = Byte.parseByte(line.substring(j, j + 2), 16);
+					b = (byte)Integer.parseInt(line.substring(j, j + 2), 16);
 					bytes.add(b);
 				}
 			}
