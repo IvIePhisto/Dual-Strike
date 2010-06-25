@@ -190,8 +190,8 @@ section at the end of this file).
  
 //#define USB_CFG_VENDOR_NAME     'S',0x00, 'o', 0x00, 'n', 0x00, 'y', 0x00
 //#define USB_CFG_VENDOR_NAME_LEN 8
-#define USB_CFG_VENDOR_NAME     'B', 'e', 'n', 'c', 'a', 'o', '7', '4'
-#define USB_CFG_VENDOR_NAME_LEN 8
+#define USB_CFG_VENDOR_NAME     'z', 'u', 'r', 'b', 'o', 'r', 'g', '.', 'i', 'n', 'f', 'o'
+#define USB_CFG_VENDOR_NAME_LEN 12
 /* These two values define the vendor name returned by the USB device. The name
  * must be given as a list of characters under single quotes. The characters
  * are interpreted as Unicode (UTF-16) entities.
