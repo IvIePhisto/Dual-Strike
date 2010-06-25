@@ -11,14 +11,14 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class HexFilesUtility {
-	public final static String DEFAULT_ENCODING = "ascii";
-	public final static int DEFAULT_MAXIMUM_BYTE_COUNT = 32;
+	private final static String ENCODING = "ascii";
+	public final static byte DEFAULT_MAXIMUM_BYTE_COUNT = 16;
 	
 	private static enum IntelRecordType {
 		DATA,
 		EOF;
 		
-		int getValue() {
+		byte getValue() {
 			switch(this) {
 			case DATA:
 				return 0;
@@ -30,64 +30,63 @@ public class HexFilesUtility {
 		}
 	}
 	
-	public static void writeI8HEXFile(final File outputFile, String encoding, final byte[] data, int maximumByteCount) throws IOException {
+	public static void writeI8HEXFile(final File outputFile, final byte[] data, byte maximumByteCount) throws IOException {
 		PrintStream writer;
-		
-		if(encoding == null)
-			encoding = DEFAULT_ENCODING;
-		
+				
 		if(maximumByteCount <= 0)
 			maximumByteCount = DEFAULT_MAXIMUM_BYTE_COUNT;
 		
-		writer = new PrintStream(outputFile, encoding);
+		writer = new PrintStream(outputFile, ENCODING);
 		
 		try {
 			for(int address = 0; address < data.length;) {
-				int byteCount;
+				byte byteCount;
 				
-				byteCount = data.length - address;
-	
+				byteCount = (byte)(data.length - address);
+
 				if(byteCount > maximumByteCount)
 					byteCount = maximumByteCount;
-	
+
 				printI8HEXLine(writer, byteCount, address, IntelRecordType.DATA, data);
 				
 				if(writer.checkError())
 					throw new Error(String.format("An error occured while writing to file \"%s\".", outputFile.getAbsolutePath()));
+				
+				address += byteCount;
 			}
 
-			printI8HEXLine(writer, 0, 0, IntelRecordType.EOF, data);
+			printI8HEXLine(writer, (byte)0, 0, IntelRecordType.EOF, data);
 		}
 		finally {
 			writer.close();
 		}
 	}
 	
-	private static void printI8HEXLine(PrintStream writer, int byteCount, int address, IntelRecordType recordType, byte[] data) {
+	private static void printI8HEXLine(PrintStream writer, byte byteCount, int address, IntelRecordType recordType, byte[] data) {
 		StringBuilder dataString;
-		int checksum;
+		byte checksum;
 		
 		dataString = new StringBuilder();
-		checksum = byteCount + address + recordType.getValue();
+		checksum = byteCount;
+		checksum += (byte)(address & 0xFF);
+		checksum += (byte)((address >> 8) & 0xFF);
+		checksum += recordType.getValue();
 		
 		for(int i = 0; i < byteCount; i++) {
 			byte value;
 			
 			value = data[address + i];
-			checksum += value;
-			dataString.append(String.format("%x", value));
+			checksum = (byte)(checksum + value);
+			dataString.append(String.format("%02X", value));
 		}
 		
-		checksum = -checksum;
+		checksum = (byte)(-checksum);
 			
-		writer.printf(":%x%04x%x%s%x\n", byteCount, address, recordType.getValue(), dataString, checksum);
+		writer.printf(":%02X%04X%02X%s%02X\n", byteCount, address, recordType.getValue(), dataString, checksum);
 	}
 	
-	public static byte[] readSimpleHexFile(final File file, String encoding) throws IOException {
+	public static byte[] readSimpleHexFile(final File file) throws IOException {
 		InputStream inputStream;
-		
-		if(encoding == null)
-			encoding = DEFAULT_ENCODING;
 
 		inputStream = new FileInputStream(file);
 		
@@ -98,7 +97,7 @@ public class HexFilesUtility {
 			int i;
 			int lineNo;
 	
-			reader = new BufferedReader(new InputStreamReader(inputStream, encoding));
+			reader = new BufferedReader(new InputStreamReader(inputStream, ENCODING));
 			bytes = new LinkedList<Byte>();
 			lineNo = 0;
 			
@@ -116,8 +115,12 @@ public class HexFilesUtility {
 				if(!line.matches("[0123456789aAbBcCdDeEfF]*"))
 					throw new Error(String.format("Invalid characters (neither whitespace nor HEX value) found in line %d of file \"%s\".", lineNo, file.getAbsolutePath()));
 				
-				for(int j = 0; j < line.length(); j += 2)
-					bytes.add(Byte.parseByte(line.substring(j, j + 2), 16));
+				for(int j = 0; j < line.length(); j += 2) {
+					byte b;
+					
+					b = Byte.parseByte(line.substring(j, j + 2), 16);
+					bytes.add(b);
+				}
 			}
 			
 			bytesArray = new byte[bytes.size()];
@@ -141,8 +144,8 @@ public class HexFilesUtility {
 			
 			input = new File(args[0]);
 			output = new File(args[1]);
-			bytes = HexFilesUtility.readSimpleHexFile(input, null);
-			HexFilesUtility.writeI8HEXFile(output, null, bytes, -1);
+			bytes = HexFilesUtility.readSimpleHexFile(input);
+			HexFilesUtility.writeI8HEXFile(output, bytes, (byte)-1);
 		}
 		catch(Throwable t) {
 			t.printStackTrace();
