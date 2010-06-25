@@ -155,7 +155,6 @@ union {
     deviceInfo_t    info;
     deviceData_t    data;
 	dumpData_t		dump;
-	char			raw[131];
 } buffer;
 
 int err = 0;
@@ -295,16 +294,23 @@ static int  dumpEEPROMData(char *dataBuffer, int dataBufferSize) {
     while(address < deviceSize) {
 		unsigned char length;
 		
-        setUsbInt(buffer.raw, address, 3);
+		buffer.data.reportID = 5;
+        setUsbInt(buffer.data.address, address, 3);
 
-		if((err = usbGetReport(dev, USB_HID_REPORT_TYPE_FEATURE, 5, buffer.raw, &len)) != 0) {		
-            fprintf(stderr, "\nError dumping EEPROM data: %s\n", usbErrorMessage(err));
-            goto errorOccurred;
-		}
-		
 		length = buffer.dump.length;
         printf("\r0x%05x ... 0x%05x", address, address + length);
         fflush(stdout);
+
+        if((err = usbSetReport(dev, USB_HID_REPORT_TYPE_FEATURE, buffer.bytes, 4)) != 0){
+            fprintf(stderr, "\nError uploading data block: %s\n", usbErrorMessage(err));
+            goto errorOccurred;
+        }
+
+		if((err = usbGetReport(dev, USB_HID_REPORT_TYPE_FEATURE, 6, buffer.bytes, &len)) != 0) {		
+            fprintf(stderr, "\nError receiving dumped EEPROM data: %s\n", usbErrorMessage(err));
+            goto errorOccurred;
+		}
+		
         memcpy(dataBuffer + address, buffer.dump.data, length);
         address += length;
     }

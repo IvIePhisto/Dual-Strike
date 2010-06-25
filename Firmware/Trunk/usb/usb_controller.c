@@ -96,6 +96,20 @@ usbMsgLen_t usbFunctionSetup(uchar receivedData[8]) {
 
 		            return USB_NO_MSG; // use usbFunctionWrite()
 		        }
+				else if(reportID == EEPROM_SET_ADDRESS_REPORT_ID) {
+				    if(eepromOffset == 0) {
+						currentEEPROMAddress.c[0] = receivedData[1];
+						currentEEPROMAddress.c[1] = receivedData[2];
+#if (E2END) > 0xffff /* we need long addressing */
+				        currentEEPROMAddress.c[2] = receivedData[3];
+#else
+				        currentEEPROMAddress.c[2] = 0;
+#endif
+				        currentEEPROMAddress.c[3] = 0;
+				    }
+
+		            return 0;
+				}
 		    }
 			else if(rq->bRequest == USBRQ_HID_GET_REPORT) {
 		        if(reportID == EEPROM_SIZE_QUERY_REPORT_ID) {
@@ -111,18 +125,6 @@ usbMsgLen_t usbFunctionSetup(uchar receivedData[8]) {
 			        return 7;
 		        }
 				else if(reportID == EEPROM_READING_REPORT_ID) {
-				    if(eepromOffset == 0) {
-						currentEEPROMAddress.c[0] = receivedData[1];
-						currentEEPROMAddress.c[1] = receivedData[2];
-#if (E2END) > 0xffff /* we need long addressing */
-				        currentEEPROMAddress.c[2] = receivedData[3];
-#else
-				        currentEEPROMAddress.c[2] = 0;
-#endif
-				        currentEEPROMAddress.c[3] = 0;
-				    }
-
-
 					if(currentEEPROMAddress.l > E2END)
 						return 0;
 
