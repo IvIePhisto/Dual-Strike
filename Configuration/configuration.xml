@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration xmlns="urn:dualstrike:configuration" lang="en" prefix="CFG_">
+  <title>Dual Strike Configuration</title>
+  <title lang="de">Dual Strike Konfiguration</title>
+  <help>The configuration of the Dual Strike PCB.</help>
+  <help lang="de">Die Konfiguration des Dual Strike PCBs.</help>
+  <version>1</version>
+  <choice prefix="DEF_WORK_MODE_" default="PS3">
+    <title>Default Working Mode</title>
+    <title lang="de">Standard Arbeitsmodus</title>
+    <help>The working mode which is activated on plugging in if no button to change the working mode is pressed.</help>
+    <help lang="de">Der Arbeitsmodus welcher aktiviert wird, falls kein Button um den Arbeitsmodus zu ändern gedrückt wird.</help>
+    <option id="PS3">
+      <title>PS3/PC Controller</title>
+      <title lang="de">PS3/PC Controller</title>
+      <help>The Dual Strike works as a PS3 and PC controller.</help>
+      <help lang="de">Das Dual Strike arbeitet als PS3 und PC Controller.</help>
+    </option>
+    <option id="PT">
+      <title>Pass-Through</title>
+      <title lang="de">Durchschleifen</title>
+      <help>The pass-through data connections are routed to the USB data connections on the Dual Strike PCB.</help>
+      <help lang="de">Die Durschleif-Datenanschlüsse werden auf die USB Datenanschlüsse auf dem Dual Stiker PCB geleitet.</help>
+    </option>
+  </choice>
+  <choice>
+    <title>Default Joystick Mode</title>
+    <title lang="de">Standard Joystick-Modus</title>
+    <help>The joystick mode which is activated on plugging in if no joystick direction to change the joystick mode is activated.</help>
+    <help lang="de">Der Joystick-Modus welcher aktiviert wird, falls keine Joystick-Richtung um den Joystick-Modus zu ändern aktiviert wird.</help>
+    <option id="DIGITAL_PAD">
+      <title>Digital Pad</title>
+      <title lang="de">Digitales Pad</title>
+      <help>The joystick works as a digital pad.</help>
+      <help lang="de">Der Joystick arbeitet als digitales Pad.</help>
+    </option>
+    <option id="LEFT_STICK">
+      <title>Left Analog Stick</title>
+      <title lang="de">Linker Analoger Stick</title>
+      <help>The joystick works as a left analogue joystick.</help>
+      <help lang="de">Der Joystick arbeitet als ein linker analoger Stick.</help>
+    </option>
+    <option id="RIGHT_STICK">
+      <title>Right Analog Stick</title>
+      <title lang="de">Rechter Analoger Stick</title>
+      <help>The joystick works as a right analogue joystick.</help>
+      <help lang="de">Der Joystick arbeitet als ein rechter analoger Stick.</help>
+    </option>
+  </choice>
+  <boolean id="HOME_EMU">
+    <title>Home Button Emulation</title>
+    <help>Pressing the Select and Start buttons simultaneously is recognized as as pressing the Home button.</help>
+    <help lang="de">Gleichzeitiges Aktivieren der Select und Start Buttons wird als Drücken des Home Buttons gewertet.</help>
+  </boolean>
+  <choice>
+      <title>S3/S4 Function</title>
+      <title lang="de">S3/S4 Funktion</title>
+      <help>The function of the S3 and S4 connections on the Dual Strike PCB.</help>
+      <help lang="de">Die Funktion der S3 und S4-Anschlüsse auf dem Dual Strike PCB.</help>
+    <option id="NO_EXTRA_PINS">
+      <title>Nothing</title>
+      <title lang="de">Nichts</title>
+      <help>S3 and S4 will not be used.</help>
+      <help lang="de">S3 und S4 werden nicht verwendet.</help>
+    </option>
+    <option id="JOYSTICK_SWITCH_READ">
+      <title>Joystick Switch Reading</title>
+      <title lang="de">Nichts</title>
+      <help>S3 and S4 should be connected to a SPCO switch as well as VCC to the center position pin. This applies to the PS3/PC working mode.
+In the center position the digital pad will be activated. In the left position the left analogue stick will be activated. If the other position the right analogue stick will be activated.</help>
+      <help lang="en">S3 und S4 sollten mit einem SPCO Schalter verbunden sein genauso wie VCC zum Anschluß der mittleren Position. Dies gilt für den PS3/PC Arbeitsmodus.
+In der mittleren Position wird das digitale Pad aktiviert. In der linken Position wird der linke analoge Stick aktiviert. In der rechten Position wird der rechte analoge Stick aktiviert.</help>
+    </option>
+    <option id="JOYSTICK_SWITCH_EMU">
+      <title>Joystick Switch Emulation</title>
+      <title lang="de">Joystick-Schalter Emulation</title>
+      <help>S3 and S4 should be connected to the pins for a active-high SPCO switch of the pass-through PCB. This applies to the pass-through working mode.
+The joystick setting of the Dual Strike will set the pass-through PCB's switch - either by default setting or by activating an appropiate joystick direction while plugging in.</help>
+      <help lang="de">S3 und S4 sollten mit den Anschlüssen für einen Active-High SPCO Schalter des durgeschliffenen PCBs verbunden sein. Dies gilt für den Durschleif-Arbeitsmodus.
+Die Joystick-Einstellung des Dual Strike wird den Schalter des durgeschliffenen PCBs schalten - entweder durch standard Einstellung oder durch aktivieren einer entsprechenden Joystick-Richtung beim Einstecken.</help>
+    </option>
+    <option id="INVERTED_TRIGGERS">
+      <title>Inverted Triggers</title>
+      <title lang="de">Invertierte Trigger</title>
+      <help>S3 and S4 should be connected to the pins of active-high trigger buttons of the pass-through PCB while these are not connected to the MK and 4K buttons. This applies to the pass-through working mode.
+This will make the appropiate buttons work with active-high trigger PCBs.</help>
+      <help lang="de">S3 und S4 sollten mit den Anschlüssen für Active-High Trigger des durgeschliffenen PCBs verbunden werden, solange diese nicht mit den MK und 4K Buttons verbunden sind. Dies gilt für den Durschleif-Arbeitsmodus.
+Damit funkionieren die entsprechenden Buttons mit Active-High Trigger PCBs.</help>
+    </option>
+  </choice>
+</configuration>
