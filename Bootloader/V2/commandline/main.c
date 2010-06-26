@@ -7,6 +7,11 @@
  * License: Proprietary, free under certain conditions. See Documentation.
  * This Revision: $Id: main.c 373 2007-07-04 08:59:36Z cs $
  */
+ 
+/*
+ * Addition by Michael Pohl for the Dual Strike by Jochen Zurborg:
+ * EEPROM programming and dumping.
+ */
 
 #include <stdio.h>
 #include <string.h>

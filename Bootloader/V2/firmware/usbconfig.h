@@ -8,6 +8,11 @@
  * This Revision: $Id: usbconfig.h 693 2008-11-14 15:09:37Z cs $
  */
 
+/*
+ * Addition by Michael Pohl for the Dual Strike by Jochen Zurborg:
+ * EEPROM programming and dumping.
+ */
+
 #ifndef __usbconfig_h_included__
 #define __usbconfig_h_included__
 
@@ -194,7 +199,7 @@ tuningOverflow:
 /* See USB specification if you want to conform to an existing device class or
  * protocol.
  */
-#define USB_CFG_HID_REPORT_DESCRIPTOR_LENGTH    33  /* total length of report descriptor */
+#define USB_CFG_HID_REPORT_DESCRIPTOR_LENGTH    69  /* total length of report descriptor */
 /* Define this to the length of the HID report descriptor, if you implement
  * an HID device. Otherwise don't define it or define it to 0.
  */

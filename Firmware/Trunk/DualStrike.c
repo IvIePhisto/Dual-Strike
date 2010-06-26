@@ -35,6 +35,12 @@ revert to defaults:
 -------------------
 Button: MK
 
+Programming Mode:
+-----------------
+Button: HK
+Left  = enter
+Right = leave
+
 Start+Select=Home:
 ------------------
 Button: LP
@@ -85,11 +91,10 @@ void configInit() {
 
 	if(!Stick_Select) {
 		/* enter configuration modification mode */
-		enableUsbLines();
-		programmer_setup();
+
 
 		while(Stick_Start) {
-			programmer_poll();
+
 
 			if(!Stick_Up) {
 				ENABLE_CFG_DIGITAL_PAD(newConfig)
@@ -155,9 +160,20 @@ void configInit() {
 					SET_CFG_INVERTED_TRIGGERS(newConfig)
 				}
 			}
+			
+			if(!Stick_Roundhouse) {
+				if(!Stick_Left) {
+					enableUsbLines();
+					programmer_setup();
+
+					while(Stick_Right)
+						programmer_poll();
+
+					disableUsbLines();
+				}
+			}
 		}
 
-		disableUsbLines();
 	}
 
 	if(newConfig[0] != config[0] || newConfig[1] != config[1]) {

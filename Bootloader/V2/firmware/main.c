@@ -42,8 +42,27 @@ static uchar            offset;         /* data already processed in current tra
 static uchar            exitMainloop;
 #endif
 
+#if (E2END) > 0xffff /* we need long addressing */
+#   define e2addr_t           ulong
+#else
+#   define e2addr_t           uint
+#endif
 
-PROGMEM char usbHidReportDescriptor[33] = {
+typedef union {
+    e2addr_t  l;
+    uchar   c[sizeof(e2addr_t)];
+} e2address_t;
+
+static e2addr_t eepromOffset = -1;
+static uchar writeReportID = 0;
+static e2addr_t currentEEPROMAddress;
+
+#define EEPROM_SIZE_QUERY_REPORT_ID 3
+#define EEPROM_PROGRAMMING_REPORT_ID 4
+#define EEPROM_SET_ADDRESS_REPORT_ID 5
+#define EEPROM_READING_REPORT_ID 6
+
+PROGMEM char usbHidReportDescriptor[69] = {
     0x06, 0x00, 0xff,              // USAGE_PAGE (Generic Desktop)
     0x09, 0x01,                    // USAGE (Vendor Usage 1)
     0xa1, 0x01,                    // COLLECTION (Application)
@@ -60,6 +79,27 @@ PROGMEM char usbHidReportDescriptor[33] = {
     0x95, 0x83,                    //   REPORT_COUNT (131)
     0x09, 0x00,                    //   USAGE (Undefined)
     0xb2, 0x02, 0x01,              //   FEATURE (Data,Var,Abs,Buf)
+
+    0x85, EEPROM_SIZE_QUERY_REPORT_ID,	//   REPORT_ID (EEPROM_SIZE_QUERY_REPORT_ID)
+    0x95, 0x06,                    		//   REPORT_COUNT (6)
+    0x09, 0x00,                    		//   USAGE (Undefined)
+    0xb2, 0x02, 0x01,              		//   FEATURE (Data,Var,Abs,Buf)
+
+    0x85, EEPROM_PROGRAMMING_REPORT_ID, //   REPORT_ID (EEPROM_PROGRAMMING_REPORT_ID)
+    0x95, 0x84,                    		//   REPORT_COUNT (132)
+    0x09, 0x00,                    		//   USAGE (Undefined)
+    0xb2, 0x02, 0x01,              		//   FEATURE (Data,Var,Abs,Buf)
+
+    0x85, EEPROM_SET_ADDRESS_REPORT_ID,	//   REPORT_ID (EEPROM_SET_ADDRESS_REPORT_ID)
+    0x95, 0x03,                    		//   REPORT_COUNT (3)
+    0x09, 0x00,                    		//   USAGE (Undefined)
+    0xb2, 0x02, 0x01,              		//   FEATURE (Data,Var,Abs,Buf)
+
+    0x85, EEPROM_READING_REPORT_ID,		//   REPORT_ID (EEPROM_READING_REPORT_ID)
+    0x95, 0x83,                    		//   REPORT_COUNT (131)
+    0x09, 0x00,                    		//   USAGE (Undefined)
+    0xb2, 0x02, 0x01,              		//   FEATURE (Data,Var,Abs,Buf)
+
     0xc0                           // END_COLLECTION
 };
 
@@ -104,97 +144,200 @@ static void leaveBootloader()
 uchar   usbFunctionSetup(uchar data[8])
 {
 usbRequest_t    *rq = (void *)data;
-static uchar    replyBuffer[7] = {
-        1,                              /* report ID */
-        SPM_PAGESIZE & 0xff,
-        SPM_PAGESIZE >> 8,
-        ((long)FLASHEND + 1) & 0xff,
-        (((long)FLASHEND + 1) >> 8) & 0xff,
-        (((long)FLASHEND + 1) >> 16) & 0xff,
-        (((long)FLASHEND + 1) >> 24) & 0xff
-    };
+static uchar    replyBuffer[132];
 
     if(rq->bRequest == USBRQ_HID_SET_REPORT){
         if(rq->wValue.bytes[0] == 2){
             offset = 0;
+			writeReportID = 2;
+
             return USB_NO_MSG;
         }
+        else if(rq->wValue.bytes[0] == EEPROM_PROGRAMMING_REPORT_ID) {
+            eepromOffset = 0;
+			writeReportID = EEPROM_PROGRAMMING_REPORT_ID;
+
+            return USB_NO_MSG; // use usbFunctionWrite()
+        }
+		else if(rq->wValue.bytes[0] == EEPROM_SET_ADDRESS_REPORT_ID) {
+			writeReportID = EEPROM_SET_ADDRESS_REPORT_ID;
+
+            return USB_NO_MSG; // use usbFunctionWrite()
+		}
+
 #if BOOTLOADER_CAN_EXIT
         else{
             exitMainloop = 1;
         }
 #endif
-    }else if(rq->bRequest == USBRQ_HID_GET_REPORT){
-        usbMsgPtr = replyBuffer;
-        return 7;
+    }
+	else if(rq->bRequest == USBRQ_HID_GET_REPORT){
+		if(rq->wValue.bytes[0] == 1) {
+			replyBuffer[0] = 1;
+			replyBuffer[1] = SPM_PAGESIZE & 0xff;
+			replyBuffer[2] = SPM_PAGESIZE >> 8;
+			replyBuffer[3] = ((long)FLASHEND + 1) & 0xff;
+			replyBuffer[4] = (((long)FLASHEND + 1) >> 8) & 0xff;
+			replyBuffer[5] = (((long)FLASHEND + 1) >> 16) & 0xff;
+			replyBuffer[6] = (((long)FLASHEND + 1) >> 24) & 0xff;
+	        usbMsgPtr = replyBuffer;
+
+	        return 7;
+		}
+	    else if(rq->wValue.bytes[0] == EEPROM_SIZE_QUERY_REPORT_ID) {
+			replyBuffer[0] = EEPROM_SIZE_QUERY_REPORT_ID;
+			replyBuffer[1] = E2PAGESIZE  & 0xff;
+			replyBuffer[2] = E2PAGESIZE >> 8;
+			replyBuffer[3] = ((long)E2END + 1) & 0xff;
+			replyBuffer[4] = (((long)E2END + 1) >> 8) & 0xff;
+			replyBuffer[5] = (((long)E2END + 1) >> 16) & 0xff;
+			replyBuffer[6] = (((long)E2END + 1) >> 24) & 0xff;
+	        usbMsgPtr = replyBuffer;
+
+	        return 7;
+        }
+		else if(rq->wValue.bytes[0] == EEPROM_READING_REPORT_ID) {
+			if(currentEEPROMAddress > E2END)
+				return -1;
+
+			size_t length = 128;		            
+			e2addr_t rest = E2END - currentEEPROMAddress + 1;
+
+			if(rest < 128)
+				length = rest;
+
+			replyBuffer[0] = EEPROM_READING_REPORT_ID;
+			replyBuffer[1] = length;
+			replyBuffer[2] = 0;
+			replyBuffer[3] = 0;
+			eeprom_read_block(replyBuffer + 4, (void*)currentEEPROMAddress, length);
+			usbMsgPtr = replyBuffer;
+
+            return 132;
+		}
+
     }
     return 0;
 }
 
+static int remainingBytes;
+
 uchar usbFunctionWrite(uchar *data, uchar len)
 {
-union {
-    addr_t  l;
-    uint    s[sizeof(addr_t)/2];
-    uchar   c[sizeof(addr_t)];
-}       address;
 uchar   isLast;
+	e2address_t e2address;
 
-    address.l = currentAddress;
-    if(offset == 0){
-        DBG1(0x30, data, 3);
-        address.c[0] = data[1];
-        address.c[1] = data[2];
+	if(writeReportID == 2) {
+		union {
+		    addr_t  l;
+		    uint    s[sizeof(addr_t)/2];
+		    uchar   c[sizeof(addr_t)];
+		}       address;
+	    address.l = currentAddress;
+	    if(offset == 0){
+	        DBG1(0x30, data, 3);
+	        address.c[0] = data[1];
+	        address.c[1] = data[2];
 #if (FLASHEND) > 0xffff /* we need long addressing */
-        address.c[2] = data[3];
-        address.c[3] = 0;
+	        address.c[2] = data[3];
+	        address.c[3] = 0;
 #endif
-        data += 4;
-        len -= 4;
-    }
-    DBG1(0x31, (void *)&currentAddress, 4);
-    offset += len;
-    isLast = offset & 0x80; /* != 0 if last block received */
-    do{
-        addr_t prevAddr;
+	        data += 4;
+	        len -= 4;
+	    }
+	    DBG1(0x31, (void *)&currentAddress, 4);
+	    offset += len;
+	    isLast = offset & 0x80; /* != 0 if last block received */
+	    do{
+	        addr_t prevAddr;
 #if SPM_PAGESIZE > 256
-        uint pageAddr;
+	        uint pageAddr;
 #else
-        uchar pageAddr;
+	        uchar pageAddr;
 #endif
-        DBG1(0x32, 0, 0);
-        pageAddr = address.s[0] & (SPM_PAGESIZE - 1);
-        if(pageAddr == 0){              /* if page start: erase */
-            DBG1(0x33, 0, 0);
+	        DBG1(0x32, 0, 0);
+	        pageAddr = address.s[0] & (SPM_PAGESIZE - 1);
+	        if(pageAddr == 0){              /* if page start: erase */
+	            DBG1(0x33, 0, 0);
 #ifndef TEST_MODE
-            cli();
-            boot_page_erase(address.l); /* erase page */
-            sei();
-            boot_spm_busy_wait();       /* wait until page is erased */
+	            cli();
+	            boot_page_erase(address.l); /* erase page */
+	            sei();
+	            boot_spm_busy_wait();       /* wait until page is erased */
 #endif
-        }
-        cli();
-        boot_page_fill(address.l, *(short *)data);
-        sei();
-        prevAddr = address.l;
-        address.l += 2;
-        data += 2;
-        /* write page when we cross page boundary */
-        pageAddr = address.s[0] & (SPM_PAGESIZE - 1);
-        if(pageAddr == 0){
-            DBG1(0x34, 0, 0);
+	        }
+	        cli();
+	        boot_page_fill(address.l, *(short *)data);
+	        sei();
+	        prevAddr = address.l;
+	        address.l += 2;
+	        data += 2;
+	        /* write page when we cross page boundary */
+	        pageAddr = address.s[0] & (SPM_PAGESIZE - 1);
+	        if(pageAddr == 0){
+	            DBG1(0x34, 0, 0);
 #ifndef TEST_MODE
-            cli();
-            boot_page_write(prevAddr);
-            sei();
-            boot_spm_busy_wait();
+	            cli();
+	            boot_page_write(prevAddr);
+	            sei();
+	            boot_spm_busy_wait();
 #endif
-        }
-        len -= 2;
-    }while(len);
-    currentAddress = address.l;
-    DBG1(0x35, (void *)&currentAddress, 4);
-    return isLast;
+	        }
+	        len -= 2;
+	    }while(len);
+	    currentAddress = address.l;
+	    DBG1(0x35, (void *)&currentAddress, 4);
+	    return isLast;
+	}
+	else if(writeReportID == EEPROM_PROGRAMMING_REPORT_ID) {
+	    if(eepromOffset == 0) {
+			e2address.c[0] = data[1];
+			e2address.c[1] = data[2];
+#if (E2END) > 0xffff /* we need long addressing */
+	        e2address.c[2] = data[3];
+	        e2address.c[3] = 0;
+#endif
+			remainingBytes = data[4];
+	        data += 5;
+	        len -= 5;
+	    }
+		else {
+		    e2address.l = currentEEPROMAddress;
+		}
+
+
+	    eepromOffset += len;
+	    isLast = eepromOffset & 0x80; /* != 0 if last block received */
+
+		if(remainingBytes > 0) {
+			if(remainingBytes < 8)
+				len = remainingBytes;
+
+	        //cli();
+			eeprom_write_block(data, (void*)e2address.l, len);
+	        //sei();
+			e2address.l += len;
+		    currentEEPROMAddress = e2address.l;
+			remainingBytes -= len;
+		}
+
+	    return isLast;
+	}
+	else if(writeReportID == EEPROM_SET_ADDRESS_REPORT_ID) {
+		e2address.c[0] = data[1];
+		e2address.c[1] = data[2];
+#if (E2END) > 0xffff /* we need long addressing */
+        e2address.c[2] = data[3];
+#else
+        e2address.c[2] = 0;
+#endif
+        e2address.c[3] = 0;
+		currentEEPROMAddress = e2address.l;
+
+		return 1;
+	}
+
+	return -1;
 }
 
 static void initForUsbConnectivity(void)
