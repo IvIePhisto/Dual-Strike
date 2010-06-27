@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:dualstrike:configuration" xmlns:c="urn:dualstrike:configuration" elementFormDefault="qualified">
+  <xs:element name="configuration">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:group ref="c:Infos"/>
+        <xs:sequence>
+          <xs:element name="version">
+            <xs:simpleType>
+              <xs:restriction base="xs:int">
+                <xs:minInclusive value="0"/>
+                <xs:maxInclusive value="127"/>
+              </xs:restriction>
+            </xs:simpleType>
+          </xs:element>
+          <xs:choice maxOccurs="unbounded">
+            <xs:element name="choice" type="c:ChoiceSetting"/>
+            <xs:element name="boolean" type="c:BooleanSetting"/>
+          </xs:choice>
+        </xs:sequence>      
+      </xs:sequence>
+      <xs:attribute name="def-lang-version" fixed="1" use="required" type="xs:int"/>
+      <xs:attribute name="lang" type="xs:language" use="required"/>
+      <xs:attribute name="prefix" type="xs:ID" use="required"/>
+    </xs:complexType>
+  </xs:element>
+  
+  <xs:group name="Infos">
+    <xs:sequence>
+      <xs:element name="title" maxOccurs="unbounded" type="c:Info"/>
+      <xs:element name="help" maxOccurs="unbounded" type="c:Info"/>
+    </xs:sequence>
+  </xs:group>
+  
+  <xs:complexType name="Info" >
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute name="lang" type="xs:language"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
+  <xs:complexType name="ChoiceSetting">
+    <xs:sequence>
+      <xs:group ref="c:Infos"/>
+      <xs:element name="option" type="c:Setting" maxOccurs="unbounded"/>
+    </xs:sequence>
+    <xs:attribute name="default" type="xs:IDREF"/>
+    <xs:attribute name="prefix" type="xs:ID"/>
+  </xs:complexType>
+
+  <xs:complexType name="BooleanSetting">
+    <xs:complexContent>
+      <xs:extension base="c:Setting">
+        <xs:attribute name="default" type="xs:boolean"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="Setting" >
+    <xs:group ref="c:Infos"/>
+    <xs:attribute name="id" type="xs:ID"/>
+  </xs:complexType>
+</xs:schema>
