@@ -1,22 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:dualstrike:configuration" xmlns:c="urn:dualstrike:configuration" elementFormDefault="qualified">
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:strike-devices:configuration" xmlns:c="urn:strike-devices:configuration" elementFormDefault="qualified">
   <xs:element name="configuration">
     <xs:complexType>
       <xs:sequence>
         <xs:group ref="c:Infos"/>
         <xs:sequence>
-          <xs:element name="version">
-            <xs:simpleType>
-              <xs:restriction base="xs:int">
-                <xs:minInclusive value="0"/>
-                <xs:maxInclusive value="127"/>
-              </xs:restriction>
-            </xs:simpleType>
-          </xs:element>
-          <xs:choice maxOccurs="unbounded">
-            <xs:element name="choice" type="c:ChoiceSetting"/>
-            <xs:element name="boolean" type="c:BooleanSetting"/>
-          </xs:choice>
+          <xs:element name="device" type="c:field"/>
+          <xs:element name="version" type="c:field"/>
+          <xs:element name="page" type="c:Page" maxOccurs="unbounded"/>
         </xs:sequence>      
       </xs:sequence>
       <xs:attribute name="def-lang-version" fixed="1" use="required" type="xs:int"/>
@@ -24,6 +15,12 @@
       <xs:attribute name="prefix" type="xs:ID" use="required"/>
     </xs:complexType>
   </xs:element>
+  
+  <xs:simpleType name="field">
+    <xs:restriction base="xs:byte">
+      <xs:minInclusive value="0"/>
+    </xs:restriction>
+  </xs:simpleType>
   
   <xs:group name="Infos">
     <xs:sequence>
@@ -38,6 +35,16 @@
         <xs:attribute name="lang" type="xs:language"/>
       </xs:extension>
     </xs:simpleContent>
+  </xs:complexType>
+  
+  <xs:complexType name="Page">
+    <xs:sequence>
+      <xs:group ref="c:Infos"/>
+      <xs:choice maxOccurs="unbounded">
+        <xs:element name="choice" type="c:ChoiceSetting"/>
+        <xs:element name="boolean" type="c:BooleanSetting"/>
+      </xs:choice>
+    </xs:sequence>
   </xs:complexType>
 
   <xs:complexType name="ChoiceSetting">
