@@ -12,16 +12,15 @@ import dualstrike.configuration.model.Configuration;
 
 public class ModelUtility {
 	public final static Unmarshaller MODEL_UNMARSHALLER = createUnmarshaller();
-	private final static String MODEL_SCHEMA_NAME = "configuration.xsd";
 	
-	private static Unmarshaller createUnmarshaller() {
+	private final static Unmarshaller createUnmarshaller() {
 		try {
 			URL schemaURL;
 			Schema schema;
 			JAXBContext context;
 			Unmarshaller unmarshaller;
 			
-			schemaURL = ModelUtility.class.getResource(MODEL_SCHEMA_NAME);
+			schemaURL = ModelUtility.class.getResource("configuration.xsd");
 			schema = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI).newSchema(schemaURL);
 			context = JAXBContext.newInstance(Configuration.class.getPackage().getName() + ".model");
 			unmarshaller = context.createUnmarshaller();
