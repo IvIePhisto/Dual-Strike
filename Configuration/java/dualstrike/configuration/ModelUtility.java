@@ -20,7 +20,7 @@ public class ModelUtility {
 			JAXBContext context;
 			Unmarshaller unmarshaller;
 			
-			schemaURL = ModelUtility.class.getResource("configuration.xsd");
+			schemaURL = ModelUtility.class.getResource("annotated-configuration.xsd");
 			schema = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI).newSchema(schemaURL);
 			context = JAXBContext.newInstance(Configuration.class.getPackage().getName() + ".model");
 			unmarshaller = context.createUnmarshaller();

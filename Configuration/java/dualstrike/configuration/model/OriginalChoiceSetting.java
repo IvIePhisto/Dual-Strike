@@ -15,6 +15,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlID;
+import javax.xml.bind.annotation.XmlIDREF;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
@@ -23,16 +24,20 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 
 /**
- * <p>Java class for Setting complex type.
+ * <p>Java class for ChoiceSetting complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="Setting">
+ * &lt;complexType name="ChoiceSetting">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;group ref="{urn:strike-devices:configuration}Infos"/>
- *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" />
+ *       &lt;sequence>
+ *         &lt;group ref="{urn:strike-devices:configuration}Infos"/>
+ *         &lt;element name="option" type="{urn:strike-devices:configuration}Setting" maxOccurs="unbounded"/>
+ *       &lt;/sequence>
+ *       &lt;attribute name="default" type="{http://www.w3.org/2001/XMLSchema}IDREF" />
+ *       &lt;attribute name="prefix" type="{http://www.w3.org/2001/XMLSchema}ID" />
  *     &lt;/restriction>
  *   &lt;/complexContent>
  * &lt;/complexType>
@@ -41,25 +46,31 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "Setting", propOrder = {
+@XmlType(name = "", propOrder = {
     "title",
-    "help"
+    "help",
+    "option"
 })
 @XmlSeeAlso({
-    OriginalOption.class,
-    BooleanSetting.class
+    ChoiceSetting.class
 })
-public class Setting {
+public class OriginalChoiceSetting {
 
     @XmlElement(required = true)
     protected List<Info> title;
     @XmlElement(required = true)
     protected List<Info> help;
+    @XmlElement(required = true)
+    protected List<Setting> option;
+    @XmlAttribute(name = "default")
+    @XmlIDREF
+    @XmlSchemaType(name = "IDREF")
+    protected Object _default;
     @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
     @XmlSchemaType(name = "ID")
-    protected String id;
+    protected String prefix;
 
     /**
      * Gets the value of the title property.
@@ -120,27 +131,80 @@ public class Setting {
     }
 
     /**
-     * Gets the value of the id property.
+     * Gets the value of the option property.
+     * 
+     * <p>
+     * This accessor method returns a reference to the live list,
+     * not a snapshot. Therefore any modification you make to the
+     * returned list will be present inside the JAXB object.
+     * This is why there is not a <CODE>set</CODE> method for the option property.
+     * 
+     * <p>
+     * For example, to add a new item, do as follows:
+     * <pre>
+     *    getOption().add(newItem);
+     * </pre>
+     * 
+     * 
+     * <p>
+     * Objects of the following type(s) are allowed in the list
+     * {@link Setting }
+     * 
+     * 
+     */
+    public List<Setting> getOption() {
+        if (option == null) {
+            option = new ArrayList<Setting>();
+        }
+        return this.option;
+    }
+
+    /**
+     * Gets the value of the default property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link Object }
+     *     
+     */
+    public Object getDefault() {
+        return _default;
+    }
+
+    /**
+     * Sets the value of the default property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Object }
+     *     
+     */
+    public void setDefault(Object value) {
+        this._default = value;
+    }
+
+    /**
+     * Gets the value of the prefix property.
      * 
      * @return
      *     possible object is
      *     {@link String }
      *     
      */
-    public String getId() {
-        return id;
+    public String getPrefix() {
+        return prefix;
     }
 
     /**
-     * Sets the value of the id property.
+     * Sets the value of the prefix property.
      * 
      * @param value
      *     allowed object is
      *     {@link String }
      *     
      */
-    public void setId(String value) {
-        this.id = value;
+    public void setPrefix(String value) {
+        this.prefix = value;
     }
 
 }

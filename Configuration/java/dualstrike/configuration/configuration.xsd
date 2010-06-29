@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:strike-devices:configuration" xmlns:c="urn:strike-devices:configuration" elementFormDefault="qualified">
-  <xs:element name="configuration">
-    <xs:complexType>
+  <xs:element name="configuration" type="c:Configuration"/>
+
+  <xs:complexType name="Configuration">
+    <xs:sequence>
+      <xs:group ref="c:Infos"/>
       <xs:sequence>
-        <xs:group ref="c:Infos"/>
-        <xs:sequence>
-          <xs:element name="device" type="c:field"/>
-          <xs:element name="version" type="c:field"/>
-          <xs:element name="page" type="c:Page" maxOccurs="unbounded"/>
-        </xs:sequence>      
-      </xs:sequence>
-      <xs:attribute name="def-lang-version" fixed="1" use="required" type="xs:int"/>
-      <xs:attribute name="lang" type="xs:language" use="required"/>
-      <xs:attribute name="prefix" type="xs:ID" use="required"/>
-    </xs:complexType>
-  </xs:element>
+        <xs:element name="device" type="c:field"/>
+        <xs:element name="version" type="c:field"/>
+        <xs:element name="page" type="c:Page" maxOccurs="unbounded"/>
+      </xs:sequence>      
+    </xs:sequence>
+    <xs:attribute name="def-lang-version" fixed="1" use="required" type="xs:int"/>
+    <xs:attribute name="lang" type="xs:language" use="required"/>
+    <xs:attribute name="prefix" type="xs:ID" use="required"/>
+  </xs:complexType>
   
   <xs:simpleType name="field">
     <xs:restriction base="xs:byte">
@@ -61,6 +61,12 @@
       <xs:extension base="c:Setting">
         <xs:attribute name="default" type="xs:boolean"/>
       </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="Option">
+    <xs:complexContent>
+      <xs:extension base="c:Setting"/>
     </xs:complexContent>
   </xs:complexType>
 
