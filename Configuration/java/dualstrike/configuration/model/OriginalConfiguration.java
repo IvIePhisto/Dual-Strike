@@ -15,7 +15,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlID;
-import javax.xml.bind.annotation.XmlIDREF;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
@@ -24,20 +23,25 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 
 /**
- * <p>Java class for ChoiceSetting complex type.
+ * <p>Java class for Configuration complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="ChoiceSetting">
+ * &lt;complexType name="Configuration">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;group ref="{urn:strike-devices:configuration}Infos"/>
- *         &lt;element name="option" type="{urn:strike-devices:configuration}Option" maxOccurs="unbounded"/>
+ *         &lt;sequence>
+ *           &lt;element name="device" type="{urn:strike-devices:configuration}field"/>
+ *           &lt;element name="version" type="{urn:strike-devices:configuration}field"/>
+ *           &lt;element name="page" type="{urn:strike-devices:configuration}Page" maxOccurs="unbounded"/>
+ *         &lt;/sequence>
  *       &lt;/sequence>
- *       &lt;attribute name="default" type="{http://www.w3.org/2001/XMLSchema}IDREF" />
- *       &lt;attribute name="prefix" type="{http://www.w3.org/2001/XMLSchema}ID" />
+ *       &lt;attribute name="def-lang-version" use="required" type="{http://www.w3.org/2001/XMLSchema}int" fixed="1" />
+ *       &lt;attribute name="lang" use="required" type="{http://www.w3.org/2001/XMLSchema}language" />
+ *       &lt;attribute name="prefix" use="required" type="{http://www.w3.org/2001/XMLSchema}ID" />
  *     &lt;/restriction>
  *   &lt;/complexContent>
  * &lt;/complexType>
@@ -49,23 +53,29 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 @XmlType(name = "", propOrder = {
     "title",
     "help",
-    "option"
+    "device",
+    "version",
+    "page"
 })
 @XmlSeeAlso({
-    ChoiceSetting.class
+    Configuration.class
 })
-public class OriginalChoiceSetting {
+public class OriginalConfiguration {
 
     @XmlElement(required = true)
     protected List<Info> title;
     protected List<Info> help;
+    protected byte device;
+    protected byte version;
     @XmlElement(required = true)
-    protected List<Option> option;
-    @XmlAttribute(name = "default")
-    @XmlIDREF
-    @XmlSchemaType(name = "IDREF")
-    protected Object _default;
-    @XmlAttribute
+    protected List<Page> page;
+    @XmlAttribute(name = "def-lang-version", required = true)
+    protected int defLangVersion;
+    @XmlAttribute(required = true)
+    @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
+    @XmlSchemaType(name = "language")
+    protected String lang;
+    @XmlAttribute(required = true)
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
     @XmlSchemaType(name = "ID")
@@ -130,56 +140,104 @@ public class OriginalChoiceSetting {
     }
 
     /**
-     * Gets the value of the option property.
+     * Gets the value of the device property.
+     * 
+     */
+    public byte getDevice() {
+        return device;
+    }
+
+    /**
+     * Sets the value of the device property.
+     * 
+     */
+    public void setDevice(byte value) {
+        this.device = value;
+    }
+
+    /**
+     * Gets the value of the version property.
+     * 
+     */
+    public byte getVersion() {
+        return version;
+    }
+
+    /**
+     * Sets the value of the version property.
+     * 
+     */
+    public void setVersion(byte value) {
+        this.version = value;
+    }
+
+    /**
+     * Gets the value of the page property.
      * 
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the option property.
+     * This is why there is not a <CODE>set</CODE> method for the page property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
-     *    getOption().add(newItem);
+     *    getPage().add(newItem);
      * </pre>
      * 
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link Option }
+     * {@link Page }
      * 
      * 
      */
-    public List<Option> getOption() {
-        if (option == null) {
-            option = new ArrayList<Option>();
+    public List<Page> getPage() {
+        if (page == null) {
+            page = new ArrayList<Page>();
         }
-        return this.option;
+        return this.page;
     }
 
     /**
-     * Gets the value of the default property.
+     * Gets the value of the defLangVersion property.
+     * 
+     */
+    public int getDefLangVersion() {
+        return defLangVersion;
+    }
+
+    /**
+     * Sets the value of the defLangVersion property.
+     * 
+     */
+    public void setDefLangVersion(int value) {
+        this.defLangVersion = value;
+    }
+
+    /**
+     * Gets the value of the lang property.
      * 
      * @return
      *     possible object is
-     *     {@link Object }
+     *     {@link String }
      *     
      */
-    public Object getDefault() {
-        return _default;
+    public String getLang() {
+        return lang;
     }
 
     /**
-     * Sets the value of the default property.
+     * Sets the value of the lang property.
      * 
      * @param value
      *     allowed object is
-     *     {@link Object }
+     *     {@link String }
      *     
      */
-    public void setDefault(Object value) {
-        this._default = value;
+    public void setLang(String value) {
+        this.lang = value;
     }
 
     /**

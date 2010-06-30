@@ -4,6 +4,52 @@
   xmlns:c="urn:strike-devices:configuration"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   
+  <xsl:template match="c:configuration">
+    <xsl:copy>
+      <xsl:variable name="bit-width">
+        <xsl:apply-templates select="descendant::c:*[local-name() = 'boolean' or local-name() = 'choice'][1]" mode="calculate-bit-width"/>
+      </xsl:variable>
+      <xsl:attribute name="byte-width">
+        <xsl:value-of select="ceiling($bit-width div 7)"/>
+      </xsl:attribute>
+      <xsl:apply-templates select="@*"/>
+      <xsl:apply-templates select="node()"/>
+    </xsl:copy>
+  </xsl:template>
+  
+  <xsl:template match="c:choice" mode="calculate-bit-width">
+    <xsl:variable name="bit-width">
+      <xsl:call-template name="calculate-bit-width">
+        <xsl:with-param name="value" select="count(c:option) - 1"/>
+      </xsl:call-template>
+    </xsl:variable>
+    <xsl:choose>
+      <xsl:when test="following::c:*[local-name() = 'boolean' or local-name() = 'choice'][1]">
+        <xsl:variable name="following-bit-width">
+          <xsl:apply-templates select="following::c:*[local-name() = 'boolean' or local-name() = 'choice'][1]" mode="calculate-bit-width"/>
+        </xsl:variable>
+        <xsl:value-of select="$following-bit-width + $bit-width"/>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:value-of select="$bit-width"/>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+  
+  <xsl:template match="c:boolean" mode="calculate-bit-width">
+    <xsl:choose>
+      <xsl:when test="following::c:*[local-name() = 'boolean' or local-name() = 'choice'][1]">
+        <xsl:variable name="following-bit-width">
+          <xsl:apply-templates select="following::c:*[local-name() = 'boolean' or local-name() = 'choice'][1]" mode="calculate-bit-width"/>
+        </xsl:variable>
+        <xsl:value-of select="$following-bit-width + 1"/>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:value-of select="1"/>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+  
   <xsl:template match="c:configuration/@xsi:schemaLocation">
     <xsl:variable name="postfix">/configuration.xsd</xsl:variable>
     <xsl:if test="substring(., string-length(.) - string-length($postfix) + 1) = $postfix">
@@ -136,7 +182,7 @@
     </xsl:copy>
   </xsl:template>
   
-  <xsl:template match="c:choice/@bit-width | c:choice/@bit-dividers | c:option/@bit-pattern" priority="1"/>
+  <xsl:template match="c:configuration/@byte-width | c:choice/@bit-width | c:choice/@bit-dividers | c:option/@bit-pattern" priority="1"/>
 
   <xsl:template match="@* | node()">
     <xsl:copy>

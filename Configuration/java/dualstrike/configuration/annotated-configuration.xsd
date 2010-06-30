@@ -6,15 +6,21 @@
   elementFormDefault="qualified">
   
   <xs:redefine schemaLocation="configuration.xsd">
+    <xs:complexType name="Configuration">
+      <xs:complexContent>
+        <xs:extension base="c:Configuration">
+          <xs:attribute name="byte-width" type="xs:unsignedInt"  form="unqualified" use="required"/>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+
     <xs:complexType name="Option">
       <xs:complexContent>
         <xs:extension base="c:Option">
           <xs:attribute name="bit-pattern" form="unqualified" use="required">
             <xs:simpleType>
               <xs:restriction base="xs:integer">
-                <!-- 
                 <xs:pattern value="(0|1)+"/>
-                 -->
               </xs:restriction>
             </xs:simpleType>
           </xs:attribute>
