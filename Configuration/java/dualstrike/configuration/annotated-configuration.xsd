@@ -6,32 +6,27 @@
   elementFormDefault="qualified">
   
   <xs:redefine schemaLocation="configuration.xsd">
-    <xs:complexType name="ChoiceSetting">
-      <xs:complexContent>
-        <xs:extension base="c:ChoiceSetting">
-          <xs:attribute name="bit-width" type="xs:unsignedInt"/>
-        </xs:extension>
-      </xs:complexContent>
-    </xs:complexType>
-
     <xs:complexType name="Option">
       <xs:complexContent>
         <xs:extension base="c:Option">
-          <xs:attribute name="bit-pattern">
+          <xs:attribute name="bit-pattern" form="unqualified" use="required">
             <xs:simpleType>
               <xs:restriction base="xs:integer">
+                <!-- 
                 <xs:pattern value="(0|1)+"/>
+                 -->
               </xs:restriction>
             </xs:simpleType>
           </xs:attribute>
         </xs:extension>
       </xs:complexContent>
     </xs:complexType>
-    
-    <xs:complexType name="Configuration">
+
+    <xs:complexType name="ChoiceSetting">
       <xs:complexContent>
-        <xs:extension base="c:Configuration">
-          <xs:attribute name="byte-dividers">
+        <xs:extension base="c:ChoiceSetting">
+          <xs:attribute name="bit-width" type="xs:unsignedInt"  form="unqualified" use="required"/>
+          <xs:attribute name="byte-dividers" form="unqualified">
             <xs:simpleType>
               <xs:list itemType="xs:unsignedInt"/>
             </xs:simpleType>
@@ -39,5 +34,5 @@
         </xs:extension>
       </xs:complexContent>
     </xs:complexType>
-  </xs:redefine>
+  </xs:redefine>  
 </xs:schema>

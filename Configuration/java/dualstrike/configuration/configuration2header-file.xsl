@@ -7,7 +7,7 @@
 	</xsl:template>
   
   <xsl:template match="c:configuration">
-    
+    <!-- TODO -->
   </xsl:template>
   
   <xsl:template name="define">

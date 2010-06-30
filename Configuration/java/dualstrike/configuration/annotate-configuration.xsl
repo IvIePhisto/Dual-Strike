@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsl:stylesheet version="1.0"
+  xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+  xmlns:c="urn:strike-devices:configuration"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  
+  <xsl:template match="c:configuration/@xsi:schemaLocation">
+    <xsl:variable name="postfix">/configuration.xsd</xsl:variable>
+    <xsl:if test="substring(., string-length(.) - string-length($postfix) + 1) = $postfix">
+      <xsl:attribute name="schemaLocation" namespace="http://www.w3.org/2001/XMLSchema-instance">
+        <xsl:value-of select="substring(., 1, string-length(.) - string-length($postfix))"/>
+        <xsl:text>/annotated-configuration.xsd</xsl:text>
+      </xsl:attribute>
+    </xsl:if>
+  </xsl:template>
+
+  <xsl:template match="c:choice">
+    <xsl:copy>
+      <xsl:variable name="bit-width">
+        <xsl:call-template name="calculate-bit-width">
+          <xsl:with-param name="value" select="count(c:option) - 1"/>
+        </xsl:call-template>
+      </xsl:variable>
+      <xsl:attribute name="bit-width">
+        <xsl:value-of select="$bit-width"/>
+      </xsl:attribute>
+      <xsl:variable name="previous-bits">
+        <xsl:choose>
+          <xsl:when test="preceding::c:*[local-name() = 'choice' or local-name() = 'boolean'][1]">
+            <xsl:apply-templates select="preceding::c:*[local-name() = 'choice' or local-name() = 'boolean'][1]" mode="calculate-previous-bits"/>
+          </xsl:when>
+          <xsl:otherwise>
+            <xsl:value-of select="0"/>
+          </xsl:otherwise>
+        </xsl:choose>
+      </xsl:variable>
+      <xsl:variable name="byte-dividers">
+        <xsl:call-template name="calculate-byte-dividers">
+          <xsl:with-param name="current-byte-index" select="$previous-bits mod 7"/>
+          <xsl:with-param name="bit-width" select="$bit-width"/>
+        </xsl:call-template>
+      </xsl:variable>
+      <xsl:if test="$byte-dividers != ''">
+        <xsl:attribute name="byte-dividers">
+          <xsl:value-of select="$byte-dividers"/>
+        </xsl:attribute>
+      </xsl:if>
+      <xsl:apply-templates select="@*"/>
+      <xsl:comment>
+        <xsl:text>previous bits: </xsl:text>
+        <xsl:value-of select="$previous-bits"/>
+      </xsl:comment>
+      <xsl:apply-templates select="node()"/>
+    </xsl:copy>
+  </xsl:template>
+  
+  <xsl:template match="c:choice" mode="calculate-previous-bits">
+    <xsl:variable name="bit-width">
+        <xsl:call-template name="calculate-bit-width">
+          <xsl:with-param name="value" select="count(c:option) - 1"/>
+        </xsl:call-template>
+    </xsl:variable>
+    <xsl:choose>
+      <xsl:when test="preceding::c:*[local-name() = 'choice' or local-name() = 'boolean'][1]">
+        <xsl:variable name="rest-sum">
+          <xsl:apply-templates select="preceding::c:*[local-name() = 'choice' or local-name() = 'boolean'][1]" mode="calculate-previous-bits"/>
+        </xsl:variable>
+        <xsl:value-of select="$rest-sum + $bit-width"/>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:value-of select="$bit-width"/>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+  
+  <xsl:template match="c:boolean" mode="calculate-previous-bits">
+    <xsl:choose>
+      <xsl:when test="count(preceding::c:*[local-name() = 'choice' or local-name() = 'boolean'][1]) = 1">
+        <xsl:variable name="rest-sum">
+            <xsl:apply-templates select="preceding::c:*[local-name() = 'choice' or local-name() = 'boolean'][1]" mode="calculate-previous-bits"/>
+        </xsl:variable>
+        <xsl:value-of select="$rest-sum + 1"/>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:value-of select="1"/>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+
+  <xsl:template name="calculate-bit-width">
+    <xsl:param name="value"/>
+    <xsl:variable name="binary-value">
+      <xsl:call-template name="calculate-binary-number">
+        <xsl:with-param name="value" select="$value"/>
+      </xsl:call-template>
+    </xsl:variable>
+    <xsl:value-of select="string-length($binary-value)"/>
+  </xsl:template>
+  
+  <xsl:template name="calculate-binary-number">
+    <xsl:param name="value"/>
+    <xsl:variable name="rest" select="$value mod 2"/>
+    <xsl:variable name="new-value" select="($value - $rest) div 2"/>
+    <xsl:if test="$new-value > 0">
+      <xsl:call-template name="calculate-binary-number">
+        <xsl:with-param name="value" select="$new-value"/>
+      </xsl:call-template>
+    </xsl:if>
+    <xsl:value-of select="$rest"/>
+  </xsl:template>
+  
+  <xsl:template name="calculate-byte-dividers">
+    <xsl:param name="current-byte-index" select="0"/>
+    <xsl:param name="bit-width"/>
+    <xsl:if test="($current-byte-index + $bit-width) > 7">
+      <xsl:variable name="rest" select="($current-byte-index + $bit-width) - 7"/>
+      <xsl:value-of select="$bit-width - $rest"/>
+      <xsl:if test="$rest > 7">
+        <xsl:text> </xsl:text>
+        <xsl:call-template name="calculate-byte-dividers">
+          <xsl:with-param name="bit-width" select="$rest"/>
+        </xsl:call-template>
+      </xsl:if>
+    </xsl:if>
+  </xsl:template>
+
+  <xsl:template match="c:option">
+    <xsl:copy>
+      <xsl:attribute name="bit-pattern">
+        <xsl:call-template name="calculate-binary-number">
+          <xsl:with-param name="value" select="count(preceding-sibling::c:option)"/>
+        </xsl:call-template>
+      </xsl:attribute>
+      <xsl:apply-templates select="@*"/>
+      <xsl:apply-templates select="node()"/>
+    </xsl:copy>
+  </xsl:template>
+  
+  <xsl:template match="c:choice/@bit-width | c:choice/@bit-dividers | c:option/@bit-pattern" priority="1"/>
+
+  <xsl:template match="@* | node()">
+    <xsl:copy>
+      <xsl:apply-templates select="@*"/>
+      <xsl:apply-templates select="node()"/>
+    </xsl:copy>
+  </xsl:template>
+</xsl:stylesheet>

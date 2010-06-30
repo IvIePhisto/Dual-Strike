@@ -25,7 +25,7 @@
   <xs:group name="Infos">
     <xs:sequence>
       <xs:element name="title" maxOccurs="unbounded" type="c:Info"/>
-      <xs:element name="help" maxOccurs="unbounded" type="c:Info"/>
+      <xs:element name="help" minOccurs="0" maxOccurs="unbounded" type="c:Info"/>
     </xs:sequence>
   </xs:group>
   
@@ -50,7 +50,7 @@
   <xs:complexType name="ChoiceSetting">
     <xs:sequence>
       <xs:group ref="c:Infos"/>
-      <xs:element name="option" type="c:Setting" maxOccurs="unbounded"/>
+      <xs:element name="option" type="c:Option" maxOccurs="unbounded"/>
     </xs:sequence>
     <xs:attribute name="default" type="xs:IDREF"/>
     <xs:attribute name="prefix" type="xs:ID"/>

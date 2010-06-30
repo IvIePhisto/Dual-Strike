@@ -82,6 +82,14 @@
       <help>Pressing the Select and Start buttons simultaneously is recognized as as pressing the Home button.</help>
       <help lang="de">Gleichzeitiges Aktivieren der Select und Start Buttons wird als Drücken des Home Buttons gewertet.</help>
     </boolean>
+
+    <boolean id="FOO" default="false">
+      <title>Foo</title>
+    </boolean>
+
+    <boolean id="BAR" default="false">
+      <title>Bar</title>
+    </boolean>
     
     <choice default="NO_EXTRA_PINS">
       <title>S3/S4 Function</title>
@@ -100,27 +108,27 @@
         <title>Joystick Switch Reading</title>
         <title lang="de">Joystick-Schalter Auslesen</title>
         <help>S3 and S4 should be connected to a SPCO switch as well as VCC to the center position pin. This applies to the PS3/PC working mode.
-  In the center position the digital pad will be activated. In the left position the left analogue stick will be activated. If the other position the right analogue stick will be activated.</help>
+In the center position the digital pad will be activated. In the left position the left analogue stick will be activated. If the other position the right analogue stick will be activated.</help>
         <help lang="en">S3 und S4 sollten mit einem SPCO Schalter verbunden sein genauso wie VCC zum Anschluß der mittleren Position. Dies gilt für den PS3/PC Arbeitsmodus.
-  In der mittleren Position wird das digitale Pad aktiviert. In der linken Position wird der linke analoge Stick aktiviert. In der rechten Position wird der rechte analoge Stick aktiviert.</help>
+In der mittleren Position wird das digitale Pad aktiviert. In der linken Position wird der linke analoge Stick aktiviert. In der rechten Position wird der rechte analoge Stick aktiviert.</help>
       </option>
       
       <option id="JOYSTICK_SWITCH_EMU">
         <title>Joystick Switch Emulation</title>
         <title lang="de">Joystick-Schalter Emulation</title>
         <help>S3 and S4 should be connected to the pins for a active-high SPCO switch of the pass-through PCB. This applies to the pass-through working mode.
-  The joystick setting of the Dual Strike will set the pass-through PCB's switch - either by default setting or by activating an appropiate joystick direction while plugging in.</help>
+The joystick setting of the Dual Strike will set the pass-through PCB's switch - either by default setting or by activating an appropiate joystick direction while plugging in.</help>
         <help lang="de">S3 und S4 sollten mit den Anschlüssen für einen Active-High SPCO Schalter des durgeschliffenen PCBs verbunden sein. Dies gilt für den Durschleif-Arbeitsmodus.
-  Die Joystick-Einstellung des Dual Strike wird den Schalter des durgeschliffenen PCBs schalten - entweder durch standard Einstellung oder durch aktivieren einer entsprechenden Joystick-Richtung beim Einstecken.</help>
+Die Joystick-Einstellung des Dual Strike wird den Schalter des durgeschliffenen PCBs schalten - entweder durch standard Einstellung oder durch aktivieren einer entsprechenden Joystick-Richtung beim Einstecken.</help>
       </option>
       
       <option id="INVERTED_TRIGGERS">
         <title>Inverted Triggers</title>
         <title lang="de">Invertierte Trigger</title>
         <help>S3 and S4 should be connected to the pins of active-low trigger buttons of the pass-through PCB while these are not connected to the MK and 4K buttons. This applies to the pass-through working mode.
-  This will make the appropiate buttons work with active-high trigger PCBs.</help>
+This will make the appropiate buttons work with active-high trigger PCBs.</help>
         <help lang="de">S3 und S4 sollten mit den Anschlüssen für Active-Low Trigger des durgeschliffenen PCBs verbunden werden, solange diese nicht mit den MK und 4K Buttons verbunden sind. Dies gilt für den Durschleif-Arbeitsmodus.
-  Damit funkionieren die entsprechenden Buttons mit Active-High Trigger PCBs.</help>
+Damit funkionieren die entsprechenden Buttons mit Active-High Trigger PCBs.</help>
       </option>
     </choice>
   </page>
