@@ -34,26 +34,40 @@
 
 /* 
  * IMPORTANT:
- * Use must use the following macro in your main module to declare the variables
+ * You must use the following macro in your main module to declare the variables
  * "config" and "config_EEPROM". 
  */  
 #define </xsl:text>
   <xsl:value-of select="@prefix"/>
-  <xsl:text>DECLARATION uint8_t config_EEPROM[CONFIG_BYTE_WIDTH] EEMEM = {</xsl:text>
+  <xsl:text>DECLARATION \
+uint8_t config_EEPROM[CONFIG_BYTE_WIDTH + 2] EEMEM = {CONFIG_DEVICE, CONFIG_VERSION, </xsl:text>
   <xsl:call-template name="create-list">
     <xsl:with-param name="prefix">CONFIG_DEF_</xsl:with-param>
     <xsl:with-param name="count" select="@byte-width"/>
   </xsl:call-template>
-  <xsl:text>}; uint8_t config[CONFIG_BYTE_WIDTH] = {</xsl:text>
+  <xsl:text>}; \
+uint8_t config[CONFIG_BYTE_WIDTH + 2] = {</xsl:text>
   <xsl:call-template name="create-list">
     <xsl:with-param name="prefix">CONFIG_EMPTY</xsl:with-param>
     <xsl:with-param name="add-count" select="false()"/>
-    <xsl:with-param name="count" select="@byte-width"/>
+    <xsl:with-param name="count" select="@byte-width + 2"/>
   </xsl:call-template>
   <xsl:text>};
 
+/*
+ * Use the following macro to access the configuration from non-main-modules:
+ */
+#define </xsl:text>
+  <xsl:value-of select="@prefix"/>
+  <xsl:text>EXTERN_DECLARATION extern uint8_t config[CONFIG_BYTE_WIDTH + 2];
+  
+/* CONFIG TESTS: */
 </xsl:text>
-  <xsl:apply-templates select="c:page/c:choice/c:option | c:page/c:boolean"/>
+  <xsl:apply-templates select="c:page/c:choice/c:option | c:page/c:boolean" mode="create-tests"/>
+  <xsl:text>
+/* CONFIG SETTERS: */
+</xsl:text>
+  <xsl:apply-templates select="c:page/c:choice/c:option | c:page/c:boolean" mode="create-setters"/>
   <xsl:text>
 #endif
 </xsl:text>
@@ -93,7 +107,6 @@
     <xsl:param name="prefix"></xsl:param>
     <xsl:param name="add-count" select="true()"/>
     <xsl:param name="count"/>
-    
     <xsl:if test="$count > 1">
       <xsl:call-template name="create-list">
         <xsl:with-param name="prefix" select="$prefix"/>
@@ -108,30 +121,30 @@
     </xsl:if>
   </xsl:template>
   
-  <xsl:template match="c:boolean">
+  <xsl:template match="c:boolean" mode="create-tests">
     <xsl:text>#define </xsl:text>
     <xsl:value-of select="/c:configuration/@prefix"/>
     <xsl:value-of select="@id"/>
     <xsl:text> (config[</xsl:text>
     <xsl:value-of select="@byte-no"/>
-    <xsl:text>] &amp; (1&lt;&lt;</xsl:text>
+    <xsl:text> + 2] &amp; (1&lt;&lt;</xsl:text>
     <xsl:value-of select="@bit-no"/>
     <xsl:text>))&#xA;</xsl:text>
   </xsl:template>
 
-  <xsl:template match="c:option">
+  <xsl:template match="c:option" mode="create-tests">
     <xsl:text>#define </xsl:text>
     <xsl:value-of select="/c:configuration/@prefix"/>
     <xsl:value-of select="parent::c:choice/@prefix"/>
     <xsl:value-of select="@id"/>
     <xsl:text> </xsl:text>
     <xsl:if test="parent::c:choice/@byte-dividers">(</xsl:if>
-    <xsl:apply-templates select="." mode="create-config-test"/>
+    <xsl:apply-templates select="." mode="create-choice-test"/>
     <xsl:if test="parent::c:choice/@byte-dividers">)</xsl:if>
     <xsl:text>&#xA;</xsl:text>
   </xsl:template>
   
-  <xsl:template match="c:option" mode="create-config-test">
+  <xsl:template match="c:option" mode="create-choice-test">
     <xsl:param name="dividers" select="parent::c:choice/@byte-dividers"/>
     <xsl:param name="bits" select="@bit-pattern"/>
     <xsl:param name="byte-no" select="parent::c:choice/@byte-no"/>
@@ -140,7 +153,7 @@
       <xsl:when test="string-length($dividers) = 0">
         <xsl:text>(((config[</xsl:text>
         <xsl:value-of select="$byte-no"/>
-        <xsl:text>] >> </xsl:text>
+        <xsl:text> + 2] >> </xsl:text>
         <xsl:value-of select="$bit-no"/>
         <xsl:text>) &amp; 0b</xsl:text>
         <xsl:call-template name="create-byte-mask">
@@ -162,7 +175,7 @@
           </xsl:choose>
         </xsl:variable>
         <xsl:variable name="rest-dividers" select="substring-after($dividers, ' ')"/>
-        <xsl:apply-templates select="." mode="create-config-test">
+        <xsl:apply-templates select="." mode="create-choice-test">
           <xsl:with-param name="dividers"></xsl:with-param>
           <xsl:with-param name="bits" select="substring($bits, 1, $divider)"/>
           <xsl:with-param name="bit-no" select="$bit-no"/>
@@ -171,7 +184,7 @@
         <xsl:variable name="rest-bits" select="substring($bits, $divider + 1)"/>
         <xsl:if test="$rest-bits != ''">
           <xsl:text> &amp;&amp; </xsl:text>
-          <xsl:apply-templates select="." mode="create-config-test">
+          <xsl:apply-templates select="." mode="create-choice-test">
             <xsl:with-param name="dividers" select="$rest-dividers"/>
             <xsl:with-param name="byte-no" select="$byte-no + 1"/>
             <xsl:with-param name="bit-no" select="0"/>
@@ -180,6 +193,42 @@
         </xsl:if>
       </xsl:otherwise>
     </xsl:choose>
+  </xsl:template>
+
+  <xsl:template match="c:boolean" mode="create-setters">
+    <xsl:text>#define </xsl:text>
+    <xsl:value-of select="/c:configuration/@prefix"/>
+    <xsl:text>ENABLE_</xsl:text>
+    <xsl:value-of select="@id"/>
+    <xsl:text>(CONFIG) CONFIG[</xsl:text>
+    <xsl:value-of select="@byte-no"/>
+    <xsl:text> + 2] |= (1&lt;&lt;</xsl:text>
+    <xsl:value-of select="@bit-no"/>
+    <xsl:text>);
+#define </xsl:text>
+    <xsl:value-of select="/c:configuration/@prefix"/>
+    <xsl:text>DISABLE_</xsl:text>
+    <xsl:value-of select="@id"/>
+    <xsl:text>(CONFIG) CONFIG[</xsl:text>
+    <xsl:value-of select="@byte-no"/>
+    <xsl:text> + 2] &amp;= ~(1&lt;&lt;</xsl:text>
+    <xsl:value-of select="@bit-no"/>
+    <xsl:text>);&#xA;</xsl:text>
+  </xsl:template>
+
+  <xsl:template match="c:option" mode="create-setters">
+    <!-- TODO:
+    <xsl:text>#define </xsl:text>
+    <xsl:value-of select="/c:configuration/@prefix"/>
+    <xsl:text>SET_</xsl:text>
+    <xsl:value-of select="parent::c:choice/@prefix"/>
+    <xsl:value-of select="@id"/>
+    <xsl:text> </xsl:text>
+    <xsl:if test="parent::c:choice/@byte-dividers">(</xsl:if>
+    <xsl:apply-templates select="." mode="create-config-test"/>
+    <xsl:if test="parent::c:choice/@byte-dividers">)</xsl:if>
+    <xsl:text>&#xA;</xsl:text>
+     -->
   </xsl:template>
   
   <xsl:template name="create-byte-mask">
