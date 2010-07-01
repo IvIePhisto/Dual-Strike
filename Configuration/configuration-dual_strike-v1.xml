@@ -83,14 +83,6 @@
       <help lang="de">Gleichzeitiges Aktivieren der Select und Start Buttons wird als Drücken des Home Buttons gewertet.</help>
     </boolean>
 
-    <boolean id="FOO" default="false">
-      <title>Foo</title>
-    </boolean>
-
-    <boolean id="BAR" default="false">
-      <title>Bar</title>
-    </boolean>
-    
     <choice default="NO_EXTRA_PINS">
       <title>S3/S4 Function</title>
       <title lang="de">S3/S4 Funktion</title>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:c="urn:dualstrike:configuration">
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:c="urn:strike-devices:configuration">
   <xsl:output method="text" encoding="ascii"/>
 
 	<xsl:template match="/">
@@ -35,7 +35,9 @@
   <xsl:value-of select="@byte-count"/>
   <xsl:text>] = {</xsl:text>
   <!-- TODO -->
-  <xsl:text>};</xsl:text>
+  <xsl:text>};
+
+</xsl:text>
   <xsl:apply-templates select="c:page/c:choice/c:option | c:page/c:boolean"/>
   <xsl:text>
 #endif
@@ -43,20 +45,18 @@
   </xsl:template>
   
   <xsl:template match="c:boolean">
-    <xsl:text>
-#define </xsl:text>
+    <xsl:text>#define </xsl:text>
     <xsl:value-of select="/c:configuration/@prefix"/>
     <xsl:value-of select="@id"/>
     <xsl:text> (config[</xsl:text>
     <xsl:value-of select="@byte-no"/>
-    <xsl:text>] & (1&gt;&gt;</xsl:text>
+    <xsl:text>] &amp; (1&lt;&lt;</xsl:text>
     <xsl:value-of select="@bit-no"/>
     <xsl:text>))&#xA;</xsl:text>
   </xsl:template>
 
   <xsl:template match="c:option">
-    <xsl:text>
-#define </xsl:text>
+    <xsl:text>#define </xsl:text>
     <xsl:value-of select="/c:configuration/@prefix"/>
     <xsl:value-of select="SET_"/>
     <xsl:value-of select="parent::c:choice/@prefix"/>
@@ -64,9 +64,9 @@
     <!-- TODO -->
     <xsl:text> (config[</xsl:text>
     <xsl:value-of select="parent::c:choice/@byte-no"/>
-    <xsl:text>] & (0b</xsl:text>
+    <xsl:text>] &amp; (0b</xsl:text>
     <xsl:value-of select="@bit-pattern"/>
-    <xsl:text>&gt;&gt;</xsl:text>
+    <xsl:text>&lt;&lt;</xsl:text>
     <xsl:value-of select="parent::c:choice/@bit-no"/>
     <xsl:text>))&#xA;</xsl:text>
   </xsl:template>
