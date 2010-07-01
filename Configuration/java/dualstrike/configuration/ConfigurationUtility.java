@@ -3,6 +3,8 @@ package dualstrike.configuration;
 import java.net.URL;
 
 import javax.xml.XMLConstants;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Unmarshaller;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
@@ -17,6 +19,8 @@ import javax.xml.validation.SchemaFactory;
 
 import org.w3c.dom.Document;
 
+import dualstrike.configuration.model.Configuration;
+
 public class ConfigurationUtility {
 	public final static String ANNOTATE_CONFIGURATION_STYLESHEET = "annotate-configuration.xsl";
 	public final static String CONFIGURATION_TO_HEADER_FILE_STYLESHEET = "configuration2header-file.xsl";
@@ -26,7 +30,44 @@ public class ConfigurationUtility {
 	private final static SchemaFactory SCHEMA_FACTORY = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
 	private final static TransformerFactory TRANSFORMER_FACTORY = TransformerFactory.newInstance();
 	
-	public static Transformer createTransformerFromResource(String resourceName) throws Error {
+	public final static Unmarshaller MODEL_UNMARSHALLER = createUnmarshaller();
+
+	private final static Unmarshaller createUnmarshaller() {
+		try {
+			URL schemaURL;
+			Schema schema;
+			JAXBContext context;
+			Unmarshaller unmarshaller;
+			
+			schemaURL = ConfigurationUtility.class.getResource("annotated-configuration.xsd");
+			schema = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI).newSchema(schemaURL);
+			context = JAXBContext.newInstance(Configuration.class.getPackage().getName());
+			unmarshaller = context.createUnmarshaller();
+			unmarshaller.setSchema(schema);
+			
+			return unmarshaller;
+		}
+		catch(Exception e) {
+			throw new Error(e);
+		}
+	}
+	
+	public static Configuration unmarshallConfiguration(final String urlString) throws ConfigurationDefinitionException {
+		try {
+			URL url;
+			Configuration configuration;
+			
+			url = new URL(urlString);
+			configuration = (Configuration)MODEL_UNMARSHALLER.unmarshal(url);
+			
+			return configuration;
+		}
+		catch(Exception e) {
+			throw new ConfigurationDefinitionException(urlString, e);
+		}
+	}
+
+	private static Transformer createTransformerFromResource(final String resourceName) throws Error {
 		try {
 			Transformer transformer;
 			Source source;
@@ -43,7 +84,7 @@ public class ConfigurationUtility {
 		}
 	}
 	
-	public static Schema createSchemaFromResource(String resourceName) throws Error {
+	private static Schema createSchemaFromResource(final String resourceName) throws Error {
 		try {
 			Schema schema;
 			URL resourceURL;
