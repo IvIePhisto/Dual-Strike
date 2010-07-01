@@ -139,12 +139,12 @@ uint8_t config[CONFIG_BYTE_WIDTH + 2] = {</xsl:text>
     <xsl:value-of select="@id"/>
     <xsl:text> </xsl:text>
     <xsl:if test="parent::c:choice/@byte-dividers">(</xsl:if>
-    <xsl:apply-templates select="." mode="create-choice-test"/>
+    <xsl:apply-templates select="." mode="create-option-test"/>
     <xsl:if test="parent::c:choice/@byte-dividers">)</xsl:if>
     <xsl:text>&#xA;</xsl:text>
   </xsl:template>
   
-  <xsl:template match="c:option" mode="create-choice-test">
+  <xsl:template match="c:option" mode="create-option-test">
     <xsl:param name="dividers" select="parent::c:choice/@byte-dividers"/>
     <xsl:param name="bits" select="@bit-pattern"/>
     <xsl:param name="byte-no" select="parent::c:choice/@byte-no"/>
@@ -175,7 +175,7 @@ uint8_t config[CONFIG_BYTE_WIDTH + 2] = {</xsl:text>
           </xsl:choose>
         </xsl:variable>
         <xsl:variable name="rest-dividers" select="substring-after($dividers, ' ')"/>
-        <xsl:apply-templates select="." mode="create-choice-test">
+        <xsl:apply-templates select="." mode="create-option-test">
           <xsl:with-param name="dividers"></xsl:with-param>
           <xsl:with-param name="bits" select="substring($bits, 1, $divider)"/>
           <xsl:with-param name="bit-no" select="$bit-no"/>
@@ -184,7 +184,7 @@ uint8_t config[CONFIG_BYTE_WIDTH + 2] = {</xsl:text>
         <xsl:variable name="rest-bits" select="substring($bits, $divider + 1)"/>
         <xsl:if test="$rest-bits != ''">
           <xsl:text> &amp;&amp; </xsl:text>
-          <xsl:apply-templates select="." mode="create-choice-test">
+          <xsl:apply-templates select="." mode="create-option-test">
             <xsl:with-param name="dividers" select="$rest-dividers"/>
             <xsl:with-param name="byte-no" select="$byte-no + 1"/>
             <xsl:with-param name="bit-no" select="0"/>
@@ -217,18 +217,89 @@ uint8_t config[CONFIG_BYTE_WIDTH + 2] = {</xsl:text>
   </xsl:template>
 
   <xsl:template match="c:option" mode="create-setters">
-    <!-- TODO:
-    <xsl:text>#define </xsl:text>
-    <xsl:value-of select="/c:configuration/@prefix"/>
-    <xsl:text>SET_</xsl:text>
-    <xsl:value-of select="parent::c:choice/@prefix"/>
-    <xsl:value-of select="@id"/>
-    <xsl:text> </xsl:text>
-    <xsl:if test="parent::c:choice/@byte-dividers">(</xsl:if>
-    <xsl:apply-templates select="." mode="create-config-test"/>
-    <xsl:if test="parent::c:choice/@byte-dividers">)</xsl:if>
+    <xsl:apply-templates select="." mode="create-option-setters"/>
     <xsl:text>&#xA;</xsl:text>
-     -->
+  </xsl:template>
+  
+  <xsl:template match="c:option" mode="create-option-setters">
+    <xsl:param name="dividers" select="parent::c:choice/@byte-dividers"/>
+    <xsl:param name="bits" select="@bit-pattern"/>
+    <xsl:param name="byte-no" select="parent::c:choice/@byte-no"/>
+    <xsl:param name="bit-no" select="parent::c:choice/@bit-no"/>
+    <xsl:choose>
+      <xsl:when test="string-length($dividers) = 0">
+        <xsl:if test="$byte-no = parent::c:choice/@byte-no">
+          <xsl:text>#define </xsl:text>
+          <xsl:value-of select="/c:configuration/@prefix"/>
+          <xsl:text>SET_</xsl:text>
+          <xsl:value-of select="parent::c:choice/@prefix"/>
+          <xsl:value-of select="@id"/>
+          <xsl:text> </xsl:text>
+        </xsl:if>
+        <xsl:choose>
+          <xsl:when test="contains($bits, '1') and not(contains($bits, '0')) or contains($bits, '0') and not(contains($bits, '1'))">
+            <xsl:text>(config[</xsl:text>
+            <xsl:value-of select="$byte-no"/>
+            <xsl:text> + 2] </xsl:text>
+            <xsl:choose>
+              <xsl:when test="contains($bits, '1')">|= </xsl:when>
+              <xsl:otherwise>&amp;= ~</xsl:otherwise>
+            </xsl:choose>
+            <xsl:text>(0b</xsl:text>
+            <xsl:value-of select="$bits"/>
+            <xsl:text> &lt;&lt; </xsl:text>
+            <xsl:value-of select="$bit-no"/>
+            <xsl:text>);</xsl:text>
+          </xsl:when>
+          <xsl:otherwise>
+            <xsl:text>((config[</xsl:text>
+            <xsl:value-of select="$byte-no"/>
+            <xsl:text> + 2] |= </xsl:text>
+            <xsl:text>(0b</xsl:text>
+            <xsl:value-of select="$bits"/>
+            <xsl:text> &lt;&lt; </xsl:text>
+            <xsl:value-of select="$bit-no"/>
+            <xsl:text>)); ((config[</xsl:text>
+            <xsl:value-of select="$byte-no"/>
+            <xsl:text> + 2] &amp;= ~</xsl:text>
+            <xsl:text>(0b</xsl:text>
+            <xsl:value-of select="$bits"/>
+            <xsl:text> &lt;&lt; </xsl:text>
+            <xsl:value-of select="$bit-no"/>
+            <xsl:text>));</xsl:text>
+          </xsl:otherwise>
+        </xsl:choose>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:variable name="divider">
+          <xsl:choose>
+            <xsl:when test="contains($dividers, ' ')">
+              <xsl:value-of select="substring-before($dividers, ' ')"/>
+            </xsl:when>
+            <xsl:otherwise>
+              <xsl:value-of select="$dividers"/>
+            </xsl:otherwise>
+          </xsl:choose>
+        </xsl:variable>
+        <xsl:variable name="rest-dividers" select="substring-after($dividers, ' ')"/>
+        <xsl:apply-templates select="." mode="create-option-setters">
+          <xsl:with-param name="dividers"></xsl:with-param>
+          <xsl:with-param name="bits" select="substring($bits, 1, $divider)"/>
+          <xsl:with-param name="bit-no" select="$bit-no"/>
+          <xsl:with-param name="byte-no" select="$byte-no"/>
+        </xsl:apply-templates>
+        <xsl:variable name="rest-bits" select="substring($bits, $divider + 1)"/>
+        <xsl:if test="$rest-bits != ''">
+          <xsl:text> </xsl:text>
+          <xsl:apply-templates select="." mode="create-option-setters">
+            <xsl:with-param name="dividers" select="$rest-dividers"/>
+            <xsl:with-param name="byte-no" select="$byte-no + 1"/>
+            <xsl:with-param name="bit-no" select="0"/>
+            <xsl:with-param name="bits" select="$rest-bits"/>
+          </xsl:apply-templates>
+        </xsl:if>
+      </xsl:otherwise>
+    </xsl:choose>
   </xsl:template>
   
   <xsl:template name="create-byte-mask">

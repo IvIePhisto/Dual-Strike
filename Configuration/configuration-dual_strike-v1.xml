@@ -134,6 +134,12 @@ This will make the appropiate buttons work with active-high trigger PCBs.</help>
         <help lang="de">S3 und S4 sollten mit den Anschlüssen für Active-Low Trigger des durgeschliffenen PCBs verbunden werden, solange diese nicht mit den MK und 4K Buttons verbunden sind. Dies gilt für den Durschleif-Arbeitsmodus.
 Damit funkionieren die entsprechenden Buttons mit Active-High Trigger PCBs.</help>
       </option>
+      
+      <!-- 
+      <option id="FOO">
+        <title>Foo</title>
+      </option>
+       -->
     </choice>
   </page>
 </configuration>
