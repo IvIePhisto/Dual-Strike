@@ -5,6 +5,7 @@ THIS IS A DRAFT
 This configuration engine is a framework for bit-based configurations.
 It is aimed at usage with AVR microcontrollers to read out, modify and update
 EEPROM data.
+The Java files were developed for Java 6.
 
 Important XML files:
 --------------------
@@ -46,3 +47,12 @@ All Java source files reside in the directory "java".
 -"dualstrike.configuration.HexFilesUtility"
  Class with methods to read plain HEX files to byte arrays and to write byte
  arrays to Intel 8-bit HEX files.
+
+Generating JAXB Model Classes
+-----------------------------
+
+If the directory this file is residing in is the current directory and the
+directory of a JDK is in the environment variable "JAVA_HOME", under windows
+the command to compile the model classes from the annotated configuration XML
+Schema is:
+"%JAVA_HOME%\bin\xjc" -d java -p dualstrike.configuration.model java\dualstrike\configuration\annotated-configuration.xsd
