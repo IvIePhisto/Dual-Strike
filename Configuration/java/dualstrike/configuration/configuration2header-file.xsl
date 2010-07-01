@@ -7,21 +7,23 @@
 	</xsl:template>
   
   <xsl:template match="c:configuration">
-    <xsl:text>#ifndef __configuration_h_included__
-#define __configuration_h_included__
-/*
+    <xsl:text>/*
  * GENERATED CONFIGURATION HEADER FILE
  * Title:   </xsl:text><xsl:value-of select="c:title[not(@lang) or @lang = current()/@lang][1]"/><xsl:text>
  * Device:  </xsl:text><xsl:value-of select="c:device"/><xsl:text>
  * Version: </xsl:text><xsl:value-of select="c:version"/><xsl:text>
  */
+ 
+#ifndef __configuration_h_included__
+#define __configuration_h_included__
+
 #include &lt;avr/eeprom.h> /* EEPROM functions */
 #include &lt;stdint.h> /* C99 typedefs */ 
 
 #define CONFIG_DEVICE (uint8_t)</xsl:text><xsl:value-of select="c:device"/><xsl:text>
 #define CONFIG_VERSION (uint8_t)</xsl:text><xsl:value-of select="c:version"/><xsl:text>
 #define CONFIG_BYTE_WIDTH </xsl:text><xsl:value-of select="@byte-width"/><xsl:text>
-#define EEPROM_DEF 0xFF</xsl:text>
+#define CONFIG_EMPTY 0xFF</xsl:text>
   <xsl:call-template name="create-config-defaults">
     <xsl:with-param name="default-bits">
       <xsl:apply-templates select="(c:page/c:choice | c:page/c:boolean)[1]" mode="default-bits"/>
@@ -44,7 +46,7 @@
   </xsl:call-template>
   <xsl:text>}; uint8_t config[CONFIG_BYTE_WIDTH] = {</xsl:text>
   <xsl:call-template name="create-list">
-    <xsl:with-param name="prefix">EEPROM_DEF</xsl:with-param>
+    <xsl:with-param name="prefix">CONFIG_EMPTY</xsl:with-param>
     <xsl:with-param name="add-count" select="false()"/>
     <xsl:with-param name="count" select="@byte-width"/>
   </xsl:call-template>
