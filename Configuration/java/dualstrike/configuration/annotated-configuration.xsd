@@ -31,6 +31,7 @@
     <xs:complexType name="ChoiceSetting">
       <xs:complexContent>
         <xs:extension base="c:ChoiceSetting">
+          <xs:attributeGroup ref="c:Position"/>
           <xs:attribute name="bit-width" type="xs:unsignedInt"  form="unqualified" use="required"/>
           <xs:attribute name="byte-dividers" form="unqualified">
             <xs:simpleType>
@@ -40,5 +41,18 @@
         </xs:extension>
       </xs:complexContent>
     </xs:complexType>
+
+    <xs:complexType name="BooleanSetting">
+      <xs:complexContent>
+        <xs:extension base="c:BooleanSetting">
+          <xs:attributeGroup ref="c:Position"/>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
   </xs:redefine>  
+  
+  <xs:attributeGroup name="Position">
+    <xs:attribute name="byte-no" type="xs:unsignedInt"  form="unqualified" use="required"/>
+    <xs:attribute name="bit-no" type="xs:unsignedInt"  form="unqualified" use="required"/>
+  </xs:attributeGroup>
 </xs:schema>

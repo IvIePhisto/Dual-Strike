@@ -91,11 +91,36 @@
           <xsl:value-of select="$byte-dividers"/>
         </xsl:attribute>
       </xsl:if>
+      <xsl:attribute name="byte-no">
+        <xsl:value-of select="floor($previous-bits div 7)"/>
+      </xsl:attribute>
+      <xsl:attribute name="bit-no">
+        <xsl:value-of select="$previous-bits mod 7"/>
+      </xsl:attribute>
       <xsl:apply-templates select="@*"/>
-      <xsl:comment>
-        <xsl:text>previous bits: </xsl:text>
-        <xsl:value-of select="$previous-bits"/>
-      </xsl:comment>
+      <xsl:apply-templates select="node()"/>
+    </xsl:copy>
+  </xsl:template>
+  
+  <xsl:template match="c:boolean">
+    <xsl:copy>
+      <xsl:variable name="previous-bits">
+        <xsl:choose>
+          <xsl:when test="preceding::c:*[local-name() = 'choice' or local-name() = 'boolean'][1]">
+            <xsl:apply-templates select="preceding::c:*[local-name() = 'choice' or local-name() = 'boolean'][1]" mode="calculate-previous-bits"/>
+          </xsl:when>
+          <xsl:otherwise>
+            <xsl:value-of select="0"/>
+          </xsl:otherwise>
+        </xsl:choose>
+      </xsl:variable>
+      <xsl:attribute name="byte-no">
+        <xsl:value-of select="floor($previous-bits div 7)"/>
+      </xsl:attribute>
+      <xsl:attribute name="bit-no">
+        <xsl:value-of select="$previous-bits mod 7"/>
+      </xsl:attribute>
+      <xsl:apply-templates select="@*"/>
       <xsl:apply-templates select="node()"/>
     </xsl:copy>
   </xsl:template>
@@ -182,7 +207,13 @@
     </xsl:copy>
   </xsl:template>
   
-  <xsl:template match="c:configuration/@byte-width | c:choice/@bit-width | c:choice/@bit-dividers | c:option/@bit-pattern" priority="1"/>
+  <xsl:template match="
+    c:configuration/@byte-width |
+    c:choice/@bit-width |
+    c:choice/@bit-dividers |
+    c:option/@bit-pattern |
+    @byte-no |
+    @bit-no" priority="1"/>
 
   <xsl:template match="@* | node()">
     <xsl:copy>

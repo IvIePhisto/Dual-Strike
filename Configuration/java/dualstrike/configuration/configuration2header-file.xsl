@@ -7,88 +7,67 @@
 	</xsl:template>
   
   <xsl:template match="c:configuration">
+    <xsl:text>
+#ifndef __configuration_h_included__
+#define __configuration_h_included__
+/*
+ * GENERATED COFIGURATION HEADER FILE
+ * Title:   </xsl:text><xsl:value-of select="c:title[not(@lang) or @lang = current()/@lang][1]"/><xsl:text>
+ * Device:  </xsl:text><xsl:value-of select="c:device"/><xsl:text>
+ * Version: </xsl:text><xsl:value-of select="c:version"/><xsl:text>
+ */
+
+#define </xsl:text><xsl:value-of select="@prefix"/><xsl:text>BYTE_WIDTH </xsl:text><xsl:value-of select="@byte-width"/><xsl:text>
+#define EEPROM_DEF 0xFF
+
+/* 
+ * IMPORTANT:
+ * Use must use the following macro in your main module to declare the variables
+ * "config" and "config_EEPROM". 
+ */  
+#define </xsl:text>
+  <xsl:value-of select="@prefix"/>
+  <xsl:text>DECLARATION uint8_t config_EEPROM[</xsl:text>
+  <xsl:value-of select="@byte-count"/>
+  <xsl:text>] EEMEM = {</xsl:text>
+  <!-- TODO -->
+  <xsl:text>}; uint8_t config[</xsl:text>
+  <xsl:value-of select="@byte-count"/>
+  <xsl:text>] = {</xsl:text>
+  <!-- TODO -->
+  <xsl:text>};</xsl:text>
+  <xsl:apply-templates select="c:page/c:choice/c:option | c:page/c:boolean"/>
+  <xsl:text>
+#endif
+</xsl:text>
+  </xsl:template>
+  
+  <xsl:template match="c:boolean">
+    <xsl:text>
+#define </xsl:text>
+    <xsl:value-of select="/c:configuration/@prefix"/>
+    <xsl:value-of select="@id"/>
+    <xsl:text> (config[</xsl:text>
+    <xsl:value-of select="@byte-no"/>
+    <xsl:text>] & (1&gt;&gt;</xsl:text>
+    <xsl:value-of select="@bit-no"/>
+    <xsl:text>))&#xA;</xsl:text>
+  </xsl:template>
+
+  <xsl:template match="c:option">
+    <xsl:text>
+#define </xsl:text>
+    <xsl:value-of select="/c:configuration/@prefix"/>
+    <xsl:value-of select="SET_"/>
+    <xsl:value-of select="parent::c:choice/@prefix"/>
+    <xsl:value-of select="@id"/>
     <!-- TODO -->
-  </xsl:template>
-  
-  <xsl:template name="define">
-    <xsl:param name="name"/>
-    <xsl:param name="value"/>
-    <xsl:text>#define </xsl:text>
-    <xsl:value-of select="$name"/>
-    <xsl:text> </xsl:text>
-    <xsl:value-of select="$value"/>
-    <xsl:text>&#xa;</xsl:text>
-  </xsl:template>
-  
-  <xsl:template name="shift-left">
-    <xsl:param name="value"/>
-    <xsl:param name="count"/>
-    <xsl:text>(</xsl:text>
-    <xsl:value-of select="$value"/>
-    <xsl:text>&lt;&lt;</xsl:text>
-    <xsl:value-of select="$count"/>
-    <xsl:text>)</xsl:text>
-  </xsl:template>
-  
-  <xsl:template name="array-accessor">
-    <xsl:param name="array"/>
-    <xsl:param name="array-index"/>
-    <xsl:value-of select="$array"/>
-    <xsl:text>[</xsl:text>
-    <xsl:value-of select="array-index"/>
-    <xsl:text>]</xsl:text>
-  </xsl:template>
-  
-  <xsl:template name="set-array-bit">
-    <xsl:param name="array"/>
-    <xsl:param name="array-index"/>
-    <xsl:param name="value"/>
-    <xsl:param name="bit-index"/>
-    
-    <xsl:call-template name="array-accessor">
-      <xsl:with-param name="array" select="$array"/>
-      <xsl:with-param name="array-index" select="$array-index"/>
-    </xsl:call-template>
-    
-    <xsl:text> </xsl:text>
-    
-    <xsl:choose>
-      <xsl:when test="boolean($value)">|= </xsl:when>
-      <xsl:otherwise>&amp;= ^</xsl:otherwise>
-    </xsl:choose>
-    
-    <xsl:call-template name="shift-left">
-      <xsl:with-param name="value" select="1"/>
-      <xsl:with-param name="count" select="$bit-index"/>
-    </xsl:call-template>
-  </xsl:template>
-
-  <xsl:template name="set-array-bits">
-    <xsl:param name="array"/>
-    <xsl:param name="array-index"/>
-    <xsl:param name="value"/>
-    <xsl:param name="bit-index"/>
-
-    <xsl:variable name="value-text">
-      <xsl:call-template name="shift-left">
-        <xsl:with-param name="value" select="$value"/>
-        <xsl:with-param name="count" select="$bit-index"/>
-      </xsl:call-template>
-    </xsl:variable>
-    <xsl:variable name="array-accessor">
-      <xsl:call-template name="array-accessor">
-        <xsl:with-param name="array" select="$array"/>
-        <xsl:with-param name="array-index" select="$array-index"/>
-      </xsl:call-template>
-    </xsl:variable>
-
-    <xsl:value-of select="$array-accessor"/>    
-    <xsl:text> |= </xsl:text>
-    <xsl:value-of select="$value-text"/>
-    <xsl:text>; </xsl:text>
-    <xsl:value-of select="$array-accessor"/>    
-    <xsl:text> &amp;= ^</xsl:text>
-    <xsl:value-of select="$value-text"/>
-    <xsl:text>;</xsl:text>
+    <xsl:text> (config[</xsl:text>
+    <xsl:value-of select="parent::c:choice/@byte-no"/>
+    <xsl:text>] & (0b</xsl:text>
+    <xsl:value-of select="@bit-pattern"/>
+    <xsl:text>&gt;&gt;</xsl:text>
+    <xsl:value-of select="parent::c:choice/@bit-no"/>
+    <xsl:text>))&#xA;</xsl:text>
   </xsl:template>
 </xsl:stylesheet>
