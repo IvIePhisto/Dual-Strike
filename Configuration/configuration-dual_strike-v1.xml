@@ -41,6 +41,16 @@
         <help>The pass-through data connections are routed to the USB data connections on the Dual Strike PCB.</help>
         <help lang="de">Die Durschleif-Datenanschlüsse werden auf die USB Datenanschlüsse auf dem Dual Stiker PCB geleitet.</help>
       </option>
+
+      <option id="XBOX">
+        <title>XBox</title>
+      </option>
+      <option id="Wii">
+        <title>Wii</title>
+      </option>
+      <option id="MAME">
+        <title>MAME</title>
+      </option>
     </choice>
     
     <choice default="DIGITAL_PAD">
@@ -77,13 +87,13 @@
     <help>Settings related to the hardware.</help>
     <help lang="de">Einstellungen im Zusammenhang mit der Hardware.</help>
 
-    <boolean id="HOME_EMU" default="false">
+    <boolean id="HOME_EMU" default="true">
       <title>Home Button Emulation</title>
       <help>Pressing the Select and Start buttons simultaneously is recognized as as pressing the Home button.</help>
       <help lang="de">Gleichzeitiges Aktivieren der Select und Start Buttons wird als Drücken des Home Buttons gewertet.</help>
     </boolean>
 
-    <choice default="NO_EXTRA_PINS">
+    <choice default="INVERTED_TRIGGERS">
       <title>S3/S4 Function</title>
       <title lang="de">S3/S4 Funktion</title>
       <help>The function of the S3 and S4 connections on the Dual Strike PCB.</help>

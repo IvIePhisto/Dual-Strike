@@ -98,7 +98,9 @@
         <xsl:value-of select="$previous-bits mod 7"/>
       </xsl:attribute>
       <xsl:apply-templates select="@*"/>
-      <xsl:apply-templates select="node()"/>
+      <xsl:apply-templates select="node()">
+        <xsl:with-param name="bit-width" select="$bit-width"/>
+      </xsl:apply-templates>
     </xsl:copy>
   </xsl:template>
   
@@ -170,11 +172,20 @@
   
   <xsl:template name="calculate-binary-number">
     <xsl:param name="value"/>
+    <xsl:param name="remaining-bits" select="-1"/>
     <xsl:variable name="rest" select="$value mod 2"/>
     <xsl:variable name="new-value" select="($value - $rest) div 2"/>
-    <xsl:if test="$new-value > 0">
+    <xsl:if test="($remaining-bits != -1 and $remaining-bits > 1) or ($new-value > 0)">
       <xsl:call-template name="calculate-binary-number">
         <xsl:with-param name="value" select="$new-value"/>
+        <xsl:with-param name="remaining-bits">
+          <xsl:choose>
+            <xsl:when test="$remaining-bits = -1">-1</xsl:when>
+            <xsl:otherwise>
+              <xsl:value-of select="$remaining-bits - 1"/>
+            </xsl:otherwise>
+          </xsl:choose>
+        </xsl:with-param>
       </xsl:call-template>
     </xsl:if>
     <xsl:value-of select="$rest"/>
@@ -196,10 +207,12 @@
   </xsl:template>
 
   <xsl:template match="c:option">
+    <xsl:param name="bit-width"/>
     <xsl:copy>
       <xsl:attribute name="bit-pattern">
         <xsl:call-template name="calculate-binary-number">
           <xsl:with-param name="value" select="count(preceding-sibling::c:option)"/>
+          <xsl:with-param name="remaining-bits" select="$bit-width"/>
         </xsl:call-template>
       </xsl:attribute>
       <xsl:apply-templates select="@*"/>
