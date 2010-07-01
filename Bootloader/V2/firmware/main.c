@@ -386,7 +386,7 @@ int main(void)
                 }
             }
 #endif
-        }while(exitBootLoaderCondition());
+        }while(!exitBootLoaderCondition());
     }
     leaveBootloader();
     return 0;
