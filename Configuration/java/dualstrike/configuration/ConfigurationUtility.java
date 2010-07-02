@@ -1,14 +1,19 @@
 package dualstrike.configuration;
 
+import java.io.IOException;
 import java.net.URL;
 
 import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
+import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.dom.DOMSource;
@@ -16,34 +21,35 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
+import javax.xml.validation.Validator;
 
 import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
 
 import dualstrike.configuration.model.Configuration;
 
 public class ConfigurationUtility {
-	public final static String ANNOTATE_CONFIGURATION_STYLESHEET = "annotate-configuration.xsl";
-	public final static String CONFIGURATION_TO_HEADER_FILE_STYLESHEET = "configuration2header-file.xsl";
-	public final static String CONFIGURATION_SCHEMA = "configuration.xsd";
-	public final static String ANNOTATED_CONFIGURATION_SCHEMA = "annotated-configuration.xsd";
-	
+	private final static String ANNOTATE_CONFIGURATION_STYLESHEET = "annotate-configuration.xsl";
+	private final static String CONFIGURATION_TO_HEADER_FILE_STYLESHEET = "configuration2header-file.xsl";
+	private final static String CONFIGURATION_SCHEMA_NAME = "configuration.xsd";
+	private final static String ANNOTATED_CONFIGURATION_SCHEMA_NAME = "annotated-configuration.xsd";
 	private final static SchemaFactory SCHEMA_FACTORY = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
 	private final static TransformerFactory TRANSFORMER_FACTORY = TransformerFactory.newInstance();
+	
+	public final static Schema CONFIGURATION_SCHEMA = createConfigurationSchema();
+	public final static Schema ANNOTATED_CONFIGURATION_SCHEMA = createAnnotatedConfigurationSchema();
+	
 	
 	public final static Unmarshaller MODEL_UNMARSHALLER = createUnmarshaller();
 
 	private final static Unmarshaller createUnmarshaller() {
 		try {
-			URL schemaURL;
-			Schema schema;
 			JAXBContext context;
 			Unmarshaller unmarshaller;
 			
-			schemaURL = ConfigurationUtility.class.getResource("annotated-configuration.xsd");
-			schema = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI).newSchema(schemaURL);
 			context = JAXBContext.newInstance(Configuration.class.getPackage().getName());
 			unmarshaller = context.createUnmarshaller();
-			unmarshaller.setSchema(schema);
+			unmarshaller.setSchema(ANNOTATED_CONFIGURATION_SCHEMA);
 			
 			return unmarshaller;
 		}
@@ -52,18 +58,54 @@ public class ConfigurationUtility {
 		}
 	}
 	
-	public static Configuration unmarshallConfiguration(final String urlString) throws ConfigurationDefinitionException {
+	public static Document annotateConfiguration(final URL url) throws IOException, ConfigurationDefinitionException {
 		try {
-			URL url;
-			Configuration configuration;
+			Source configurationSource;
+			Validator configurationValidator;
+			Result annotatedConfigurationResult;
+			Document annotatedConfigurationDocument;
+			Transformer annotateConfigurationTransformer;
 			
-			url = new URL(urlString);
-			configuration = (Configuration)MODEL_UNMARSHALLER.unmarshal(url);
+			configurationSource = new StreamSource(url.toExternalForm());
+			configurationValidator = CONFIGURATION_SCHEMA.newValidator();
+			configurationValidator.validate(configurationSource);
+			annotatedConfigurationDocument = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
+			annotatedConfigurationResult = new DOMResult(annotatedConfigurationDocument);
+			annotateConfigurationTransformer = createAnnotateConfigurationTransformer();
+			annotateConfigurationTransformer.transform(configurationSource, annotatedConfigurationResult);
+			
+			return annotatedConfigurationDocument;
+		}
+		catch(ParserConfigurationException e) {
+			throw new Error(e);
+		}
+		catch(TransformerException e) {
+			throw new Error(e);
+		}
+		catch(SAXException e) {
+			throw new ConfigurationDefinitionException(url.toExternalForm(), e);
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static Configuration unmarshallConfiguration(final URL url) throws IOException, ConfigurationDefinitionException {
+		try {
+			Object configurationObject;
+			Configuration configuration;
+			Document annotatedConfigurationDocument;
+			Source annotatedConfigurationSource;
+			JAXBElement<Configuration> jaxbElement;
+			
+			annotatedConfigurationDocument = annotateConfiguration(url);
+			annotatedConfigurationSource = new DOMSource(annotatedConfigurationDocument);
+			configurationObject = MODEL_UNMARSHALLER.unmarshal(annotatedConfigurationSource);
+			jaxbElement = (JAXBElement<Configuration>)configurationObject;
+			configuration = jaxbElement.getValue();
 			
 			return configuration;
 		}
-		catch(Exception e) {
-			throw new ConfigurationDefinitionException(urlString, e);
+		catch(JAXBException e) {
+			throw new Error(e);
 		}
 	}
 
@@ -108,11 +150,11 @@ public class ConfigurationUtility {
 	}
 	
 	public static Schema createConfigurationSchema() {
-		return createSchemaFromResource(CONFIGURATION_SCHEMA);
+		return createSchemaFromResource(CONFIGURATION_SCHEMA_NAME);
 	}
 
 	public static Schema createAnnotatedConfigurationSchema() {
-		return createSchemaFromResource(ANNOTATED_CONFIGURATION_SCHEMA);
+		return createSchemaFromResource(ANNOTATED_CONFIGURATION_SCHEMA_NAME);
 	}
 
 	public static void main(String[] args) {
