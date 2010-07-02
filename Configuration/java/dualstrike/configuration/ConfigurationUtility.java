@@ -2,6 +2,7 @@ package dualstrike.configuration;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Locale;
 
 import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBContext;
@@ -83,7 +84,7 @@ public class ConfigurationUtility {
 			throw new Error(e);
 		}
 		catch(SAXException e) {
-			throw new ConfigurationDefinitionException(url.toExternalForm(), e);
+			throw new ConfigurationDefinitionException(url.toExternalForm(), e, Locale.getDefault());
 		}
 	}
 	

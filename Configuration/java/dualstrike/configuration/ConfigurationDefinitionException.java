@@ -1,11 +1,13 @@
 package dualstrike.configuration;
 
+import java.util.Locale;
+
 public class ConfigurationDefinitionException extends Exception {
 	private static final long serialVersionUID = 1L;
 	private final String url;
 	
-	public ConfigurationDefinitionException(final String url, final Exception cause) {
-		super(String.format("Configuration \"%s\" invalid:\n%s", url, cause.getLocalizedMessage()), cause);
+	public ConfigurationDefinitionException(final String url, final Exception cause, final Locale language) {
+		super(MessageHelper.get(ConfigurationDefinitionException.class, "invalidConfigurationDefinition", language, cause.getLocalizedMessage()), cause);
 		this.url = url;
 	}
 

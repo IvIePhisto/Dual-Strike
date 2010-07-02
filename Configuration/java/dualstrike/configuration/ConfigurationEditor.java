@@ -1,11 +1,14 @@
 package dualstrike.configuration;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Locale;
 
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 
 import dualstrike.configuration.model.Configuration;
 import dualstrike.configuration.model.Info;
@@ -13,8 +16,8 @@ import dualstrike.configuration.model.Info;
 public class ConfigurationEditor {
 	public static final URL DEFAULT_CONFIGURATION_DEFINITION_FILE_URL = createFileURL("configuration.xml");
 	private final Configuration configuration;
-	private final String language;
-	private final String defaultLanguage;
+	private final Locale language;
+	private final Locale defaultLanguage;
 	
 	private static URL createFileURL(String path) throws Error {
 		try {
@@ -25,18 +28,18 @@ public class ConfigurationEditor {
 		}
 	}
 	
-	private ConfigurationEditor(final Configuration configuration, final String language) {
+	private ConfigurationEditor(final Configuration configuration, final Locale language) {
 		this.configuration = configuration;
 		
 		if(language == null)
-			this.language = configuration.getLang();
+			this.language = new Locale(configuration.getLang());
 		else
 			this.language = language;
 		
-		defaultLanguage = configuration.getLang();
+		defaultLanguage = new Locale(configuration.getLang());
 	}
 	
-	public static ConfigurationEditor newInstance(URL configurationDefinitionURL, final String language) throws IOException, ConfigurationDefinitionException {
+	public static ConfigurationEditor newInstance(URL configurationDefinitionURL, final Locale language) throws IOException, ConfigurationDefinitionException {
 		Configuration configuration;
 		ConfigurationEditor ce;
 		
@@ -89,45 +92,47 @@ public class ConfigurationEditor {
 
 		//5. Show it.
 		frame.setVisible(true);
+	}
+	
+	private static void showError(String message, Locale language) {
+		JFrame frame;
+		String[] options;
 		
-		try {
-			wait(1000L);
-		}
-		catch(InterruptedException e) {
-			e.printStackTrace();
-		}
+		options = new String[]{"OK"};
+		frame = new JFrame();
+		JOptionPane.showOptionDialog(frame, message, MessageHelper.get(ConfigurationEditor.class, "errorMessageTitle", language), JOptionPane.OK_OPTION , JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+		System.exit(1);
 	}
 	
 	public static void main(String[] args) {
-			String language;
-			URL configurationURL;
-			ConfigurationEditor ce;
+		Locale language;
+		URL configurationURL;
+		ConfigurationEditor ce;
+		
+		if(args.length == 0)
+			configurationURL = null;
+		else
+			configurationURL = createFileURL(args[0]);
 			
-			if(args.length == 0)
-				configurationURL = null;
-			else
-				configurationURL = createFileURL(args[0]);
-				
-			if(args.length > 1)
-				language = args[1];
-			else
-				language = null;
-			
-			try {
-				ce = ConfigurationEditor.newInstance(configurationURL, language);
-			}
-			catch(ConfigurationDefinitionException e) {
-				System.err.print(e.getLocalizedMessage());
-				System.exit(1);
-				return;
-			}
-			catch(IOException e) {
-				System.err.printf("Could not load configuration:\n%s", e.getLocalizedMessage());
-				System.exit(1);
-				return;
-			}
-			
+		if(args.length > 1)
+			language = new Locale(args[1]);
+		else
+			language = Locale.getDefault();
+		
+		Locale.setDefault(language);
+		
+		try {
+			ce = ConfigurationEditor.newInstance(configurationURL, language);
 			ce.init();
-			System.exit(0);
+		}
+		catch(ConfigurationDefinitionException e) {
+			showError(e.getLocalizedMessage(), language);
+		}
+		catch(FileNotFoundException e) {
+			showError(MessageHelper.get(ConfigurationEditor.class, "configurationDefinitionNotFound", language, configurationURL), language);
+		}
+		catch(IOException e) {
+			showError(MessageHelper.get(ConfigurationEditor.class, "configurationDefinitionLoadingError", language, e.getLocalizedMessage()), language);
+		}
 	}
 }
