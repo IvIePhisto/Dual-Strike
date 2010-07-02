@@ -68,12 +68,12 @@ public class ConfigurationEditor {
 			value = currentTitle.getValue();
 			
 			if(currentLang == null || currentLang.equals("")) {
-				if(defaultLanguage.equals(language))
+				if(defaultLanguage.equals(language.getLanguage()))
 					title = value;
 				else
 					defaultTitle = value;
 			}
-			else if(currentLang.equals(language)) {
+			else if(currentLang.equals(language.getLanguage())) {
 				title = value;
 				break;
 			}
