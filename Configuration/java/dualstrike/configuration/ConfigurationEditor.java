@@ -1,17 +1,32 @@
 package dualstrike.configuration;
 
+import java.awt.Component;
+import java.awt.Font;
+import java.awt.GridLayout;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.List;
 import java.util.Locale;
 
+import javax.swing.BorderFactory;
+import javax.swing.ButtonGroup;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
 
+import dualstrike.configuration.model.BooleanSetting;
+import dualstrike.configuration.model.ChoiceSetting;
 import dualstrike.configuration.model.Configuration;
 import dualstrike.configuration.model.Info;
+import dualstrike.configuration.model.Option;
+import dualstrike.configuration.model.Page;
 
 public class ConfigurationEditor {
 	public static final URL DEFAULT_CONFIGURATION_DEFINITION_FILE_URL = createFileURL("configuration.xml");
@@ -52,48 +67,164 @@ public class ConfigurationEditor {
 		return ce;
 	}
 	
-	public void init() {
-		String title;
-		String defaultTitle;
-		JFrame frame;
+	private String getLocalizedInfo(List<Info> infos) {
+		String value;
+		String defaultValue;
 		
-		title = null;
-		defaultTitle = null;
+		value = null;
+		defaultValue = null;
 		
-		for(Info currentTitle: configuration.getTitle()) {
+		for(Info currentTitle: infos) {
 			String currentLang;
-			String value;
+			String currentValue;
 			
 			currentLang = currentTitle.getLang();
-			value = currentTitle.getValue();
+			currentValue = currentTitle.getValue();
 			
 			if(currentLang == null || currentLang.equals("")) {
 				if(defaultLanguage.equals(language.getLanguage()))
-					title = value;
+					value = currentValue;
 				else
-					defaultTitle = value;
+					defaultValue = currentValue;
 			}
 			else if(currentLang.equals(language.getLanguage())) {
-				title = value;
+				value = currentValue;
 				break;
 			}
 		}
 		
-		if(title == null)
-			title = defaultTitle;
+		if(value == null)
+			value = defaultValue;
+
+		return value;
+	}
+	
+	public void init() {
+		String title;
+		JFrame frame;
 		
+		title = getLocalizedInfo(configuration.getTitle());
 		frame = new JFrame(title);
-
-		//2. Optional: What happens when the frame closes?
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-		//4. Size the frame.
+		frame.add(createTabs());
 		frame.pack();
-
-		//5. Show it.
 		frame.setVisible(true);
 	}
 	
+	private JTabbedPane createTabs() {
+		JTabbedPane tabs;
+
+		tabs = new JTabbedPane();
+		
+		for(Page page: configuration.getPage()) {
+			String tabTitle;
+			
+			tabTitle = getLocalizedInfo(page.getTitle());
+			tabs.addTab(tabTitle, createTabContent(page));
+		}
+
+		return tabs;
+	}
+	
+	private Component createTabContent(Page page) {
+		String tabHelp;
+		JLabel tabHelpLabel;
+		JScrollPane tabContent;
+		JPanel panel;;
+
+		panel = new JPanel();
+		panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+		panel.setLayout(new GridLayout());
+		tabHelp =  getLocalizedInfo(page.getHelp());
+		tabHelpLabel = new JLabel(tabHelp);
+		panel.add(tabHelpLabel);
+		
+		for(Object setting: page.getChoiceOrBoolean())
+			addControl(panel, setting);
+		
+		tabContent = new JScrollPane(panel);
+		
+		return tabContent;
+	}
+
+	private void addControl(JPanel parent, Object settingObject) {
+		JPanel settingPanel;
+		
+		settingPanel = new JPanel();
+		settingPanel.setLayout(new GridLayout(1, 2));
+		
+		if(settingObject instanceof BooleanSetting) {
+			BooleanSetting setting;
+
+			setting = (BooleanSetting)settingObject;
+			addInfos(settingPanel, setting.getTitle(), setting.getHelp());
+			addSelector(parent, setting);
+		}
+		else if(settingObject instanceof ChoiceSetting) {
+			ChoiceSetting setting;
+			
+			setting = (ChoiceSetting)settingObject;
+			addInfos(parent, setting.getTitle(), setting.getHelp());
+			addSelector(parent, setting);
+		}
+		else {
+			throw new Error(String.format("Unexpected class %s of setting object.", settingObject.getClass().getCanonicalName()));
+		}
+	}
+	
+	private void addInfos(JPanel parent, List<Info> title, List<Info> help) {
+		JPanel infosPanel;
+		JLabel titleLabel;
+		JLabel helpLabel;
+		
+		infosPanel = new JPanel();
+		infosPanel.setLayout(new GridLayout());
+		titleLabel = new JLabel(getLocalizedInfo(title));
+		titleLabel.setFont(new Font(titleLabel.getFont().getName(), Font.BOLD, titleLabel.getFont().getSize()));
+		helpLabel = new JLabel(getLocalizedInfo(help));
+		infosPanel.add(titleLabel);
+		infosPanel.add(helpLabel);
+		parent.add(infosPanel);
+	}
+	
+	private void addSelector(JPanel parent, BooleanSetting b) {
+		JPanel selectorPanel;
+		JRadioButton trueButton;
+		JRadioButton falseButton;
+		ButtonGroup buttons;
+
+		trueButton = new JRadioButton(MessageHelper.get(this, "trueButtonText", language));
+		falseButton = new JRadioButton(MessageHelper.get(this, "falseButtonText", language));
+		
+		if(b.isDefault())
+			trueButton.setEnabled(true);
+		else
+			falseButton.setEnabled(true);
+		
+		buttons = new ButtonGroup();
+		buttons.add(trueButton);
+		buttons.add(falseButton);
+		selectorPanel = new JPanel();
+		selectorPanel.add(trueButton);
+		selectorPanel.add(falseButton);
+		parent.add(selectorPanel);
+	}
+
+	private void addSelector(JPanel parent, ChoiceSetting c) {
+		List<Option> options;
+		
+		options = c.getOption();
+		
+		if(options.size() < 5) {
+			ButtonGroup buttons;
+
+			
+		}
+		else {
+			
+		}
+	}
+
 	private static void showError(String message, Locale language) {
 		JFrame frame;
 		String[] options;
