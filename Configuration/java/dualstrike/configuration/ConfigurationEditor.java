@@ -71,7 +71,7 @@ public class ConfigurationEditor {
 		defaultLanguage = new Locale(configuration.getLang());
 	}
 	
-	public static ConfigurationEditor newInstance(URL configurationDefinitionURL, final Locale language) throws IOException, ConfigurationDefinitionException {
+	private static ConfigurationEditor newInstance(URL configurationDefinitionURL, final Locale language) throws IOException, ConfigurationDefinitionException {
 		Configuration configuration;
 		ConfigurationEditor ce;
 		
@@ -119,7 +119,7 @@ public class ConfigurationEditor {
 		return value;
 	}
 	
-	public void init() {
+	private void createView() {
 		String title;
 		JFrame frame;
 		JPanel contentPanel;
@@ -434,7 +434,7 @@ public class ConfigurationEditor {
 			}
 
 			ce = ConfigurationEditor.newInstance(configurationURL, language);
-			ce.init();
+			ce.createView();
 		}
 		catch(ConfigurationDefinitionException e) {
 			showError(e.getLocalizedMessage(), language);

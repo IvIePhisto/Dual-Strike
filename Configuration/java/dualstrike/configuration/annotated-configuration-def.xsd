@@ -19,7 +19,7 @@
         <xs:extension base="c:Option">
           <xs:attribute name="bit-pattern" form="unqualified" use="required">
             <xs:simpleType>
-              <xs:restriction base="xs:integer">
+              <xs:restriction base="xs:string">
                 <xs:pattern value="(0|1)+"/>
               </xs:restriction>
             </xs:simpleType>
