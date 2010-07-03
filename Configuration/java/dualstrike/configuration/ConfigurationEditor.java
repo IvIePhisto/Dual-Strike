@@ -1,25 +1,36 @@
 package dualstrike.configuration;
 
+import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.FlowLayout;
 import java.awt.Font;
-import java.awt.GridLayout;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 
 import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
+import javax.swing.DefaultListModel;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
+import javax.swing.ListSelectionModel;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.border.Border;
+import javax.swing.border.EmptyBorder;
 
 import dualstrike.configuration.model.BooleanSetting;
 import dualstrike.configuration.model.ChoiceSetting;
@@ -29,7 +40,12 @@ import dualstrike.configuration.model.Option;
 import dualstrike.configuration.model.Page;
 
 public class ConfigurationEditor {
-	public static final URL DEFAULT_CONFIGURATION_DEFINITION_FILE_URL = createFileURL("configuration.xml");
+	private static final URL DEFAULT_CONFIGURATION_DEFINITION_FILE_URL = createFileURL("configuration.xml");
+	private static final int FONT_SIZE = 12;
+	private static final Font TITLE_FONT = new Font(Font.SANS_SERIF, Font.BOLD, FONT_SIZE); 
+	private static final Font DESCRIPTION_FONT = new Font(Font.SANS_SERIF, Font.PLAIN, FONT_SIZE); 
+	private static final Border BOTTOM_SPACER_BORDER = new EmptyBorder(0, 0, 10, 0);
+
 	private final Configuration configuration;
 	private final Locale language;
 	private final Locale defaultLanguage;
@@ -67,7 +83,7 @@ public class ConfigurationEditor {
 		return ce;
 	}
 	
-	private String getLocalizedInfo(List<Info> infos) {
+	private String getLocalizedInfo(List<Info> infos, boolean useHTML) {
 		String value;
 		String defaultValue;
 		
@@ -95,7 +111,10 @@ public class ConfigurationEditor {
 		
 		if(value == null)
 			value = defaultValue;
-
+		
+		if(useHTML)
+			value = "<html>" + value.replace("\n", "<br/>") + "</html>";
+		
 		return value;
 	}
 	
@@ -103,25 +122,29 @@ public class ConfigurationEditor {
 		String title;
 		JFrame frame;
 		
-		title = getLocalizedInfo(configuration.getTitle());
+		title = getLocalizedInfo(configuration.getTitle(), false);
 		frame = new JFrame(title);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.add(createTabs());
 		frame.pack();
+		frame.setBounds(0, 0, 800, 600);
 		frame.setVisible(true);
 	}
 	
-	private JTabbedPane createTabs() {
+	private Component createTabs() {
+		JScrollPane tabsPanel;
 		JTabbedPane tabs;
 
 		tabs = new JTabbedPane();
-		
+
 		for(Page page: configuration.getPage()) {
 			String tabTitle;
 			
-			tabTitle = getLocalizedInfo(page.getTitle());
+			tabTitle = getLocalizedInfo(page.getTitle(), true);
 			tabs.addTab(tabTitle, createTabContent(page));
 		}
+
+		//tabsPanel = new JScrollPane(tabs, JScrollPane.VERTICAL_SCROLLBAR_NEVER, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
 		return tabs;
 	}
@@ -130,98 +153,182 @@ public class ConfigurationEditor {
 		String tabHelp;
 		JLabel tabHelpLabel;
 		JScrollPane tabContent;
-		JPanel panel;;
+		JPanel panel;
+		BoxLayout tabLayout;
 
 		panel = new JPanel();
 		panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-		panel.setLayout(new GridLayout());
-		tabHelp =  getLocalizedInfo(page.getHelp());
+		tabLayout = new BoxLayout(panel, BoxLayout.Y_AXIS);
+		panel.setLayout(tabLayout);
+		tabHelp =  getLocalizedInfo(page.getHelp(), true);
 		tabHelpLabel = new JLabel(tabHelp);
-		panel.add(tabHelpLabel);
+		tabHelpLabel.setFont(DESCRIPTION_FONT);
+		tabHelpLabel.setBorder(BOTTOM_SPACER_BORDER);
+		panel.add(tabHelpLabel, BorderLayout.LINE_START);
 		
 		for(Object setting: page.getChoiceOrBoolean())
 			addControl(panel, setting);
 		
-		tabContent = new JScrollPane(panel);
+		tabContent = new JScrollPane(panel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		
 		return tabContent;
 	}
 
 	private void addControl(JPanel parent, Object settingObject) {
 		JPanel settingPanel;
+		JPanel infosPanel;
+		Component selectorComponent;
 		
 		settingPanel = new JPanel();
-		settingPanel.setLayout(new GridLayout(1, 2));
+		settingPanel.setBorder(BOTTOM_SPACER_BORDER);
+		settingPanel.setAlignmentX(0);
+		settingPanel.setLayout(new BoxLayout(settingPanel, BoxLayout.X_AXIS));
 		
 		if(settingObject instanceof BooleanSetting) {
 			BooleanSetting setting;
 
 			setting = (BooleanSetting)settingObject;
-			addInfos(settingPanel, setting.getTitle(), setting.getHelp());
-			addSelector(parent, setting);
+			infosPanel = createInfosPanel(setting.getTitle(), setting.getHelp());
+			selectorComponent = createSelectorComponent(setting);
 		}
 		else if(settingObject instanceof ChoiceSetting) {
 			ChoiceSetting setting;
 			
 			setting = (ChoiceSetting)settingObject;
-			addInfos(parent, setting.getTitle(), setting.getHelp());
-			addSelector(parent, setting);
+			infosPanel = createInfosPanel(setting.getTitle(), setting.getHelp());
+			selectorComponent = createSelectorComponent(setting);
 		}
 		else {
 			throw new Error(String.format("Unexpected class %s of setting object.", settingObject.getClass().getCanonicalName()));
 		}
+		
+		settingPanel.add(infosPanel);
+		settingPanel.add(selectorComponent);
+		parent.add(settingPanel, BorderLayout.LINE_START);
 	}
 	
-	private void addInfos(JPanel parent, List<Info> title, List<Info> help) {
+	private JPanel createInfosPanel(List<Info> title, List<Info> help) {
 		JPanel infosPanel;
 		JLabel titleLabel;
 		JLabel helpLabel;
 		
 		infosPanel = new JPanel();
-		infosPanel.setLayout(new GridLayout());
-		titleLabel = new JLabel(getLocalizedInfo(title));
-		titleLabel.setFont(new Font(titleLabel.getFont().getName(), Font.BOLD, titleLabel.getFont().getSize()));
-		helpLabel = new JLabel(getLocalizedInfo(help));
+		infosPanel.setLayout(new BoxLayout(infosPanel, BoxLayout.Y_AXIS));
+		titleLabel = createLabel(title, TITLE_FONT);
 		infosPanel.add(titleLabel);
+		helpLabel = createLabel(help, DESCRIPTION_FONT);
+		helpLabel.setLayout(new FlowLayout());
 		infosPanel.add(helpLabel);
-		parent.add(infosPanel);
+		
+		return infosPanel;
 	}
 	
-	private void addSelector(JPanel parent, BooleanSetting b) {
-		JPanel selectorPanel;
-		JRadioButton trueButton;
-		JRadioButton falseButton;
-		ButtonGroup buttons;
+	private JLabel createLabel(List<Info> info, Font font) {
+		JLabel label;
 
-		trueButton = new JRadioButton(MessageHelper.get(this, "trueButtonText", language));
-		falseButton = new JRadioButton(MessageHelper.get(this, "falseButtonText", language));
+		label = new JLabel(getLocalizedInfo(info, true));
+		label.setFont(font);
 		
-		if(b.isDefault())
-			trueButton.setEnabled(true);
-		else
-			falseButton.setEnabled(true);
-		
+		return label;
+	}
+	
+	private Component createSelectorComponent(BooleanSetting b) {
+		JPanel selectorPanel;
+		ButtonGroup buttons;
+		boolean isEnabled;
+
 		buttons = new ButtonGroup();
-		buttons.add(trueButton);
-		buttons.add(falseButton);
 		selectorPanel = new JPanel();
-		selectorPanel.add(trueButton);
-		selectorPanel.add(falseButton);
-		parent.add(selectorPanel);
+		selectorPanel.setLayout(new BoxLayout(selectorPanel, BoxLayout.Y_AXIS));
+		isEnabled = b != null && b.isDefault();
+		addRadioButton(MessageHelper.get(this, "trueButtonText", language), buttons, selectorPanel, isEnabled);
+		addRadioButton(MessageHelper.get(this, "falseButtonText", language), buttons, selectorPanel, !isEnabled);
+
+		return selectorPanel;
+	}
+	
+	private JRadioButton addRadioButton(String text, ButtonGroup buttons, JPanel panel, boolean selected) {
+		JRadioButton button;
+		
+		button = new JRadioButton(text);
+		button.setFont(DESCRIPTION_FONT);
+		button.setAlignmentX(0);
+		button.setSelected(selected);
+		buttons.add(button);
+		panel.add(button);
+		
+		return button;
 	}
 
-	private void addSelector(JPanel parent, ChoiceSetting c) {
+	private Component createSelectorComponent(ChoiceSetting c) {
+		Option defaultOption;
 		List<Option> options;
 		
+		defaultOption = (Option)c.getDefault();
 		options = c.getOption();
 		
-		if(options.size() < 5) {
+		if(options.size() < 3) {
 			ButtonGroup buttons;
+			JPanel selectorPanel;
 
+			buttons = new ButtonGroup();
+			selectorPanel = new JPanel();
+			selectorPanel.setLayout(new BoxLayout(selectorPanel, BoxLayout.Y_AXIS));
+
+			for(Option o: options) {
+				boolean isSelected;
+				String title;
+				String help;
+				
+				isSelected = o.getId().equals(defaultOption.getId());
+				title = getLocalizedInfo(o.getTitle(), true);
+				help = getLocalizedInfo(o.getHelp(), true);
+				addRadioButton(title, buttons, selectorPanel, isSelected).setToolTipText(help);
+			}
 			
+			return selectorPanel;
 		}
 		else {
+			List<String> titles;
+			List<String> helps;
+			final String[] helpsArray;
+			JList list;
+			int selectedIndex;
 			
+			titles = new LinkedList<String>();
+			helps = new LinkedList<String>();
+			selectedIndex = -1;
+			
+			for(Option o: options) {
+				if(o.getId().equals(defaultOption.getId()))
+					selectedIndex = titles.size();
+				
+				titles.add(getLocalizedInfo(o.getTitle(), true));
+				helps.add(getLocalizedInfo(o.getHelp(), true));
+			}
+			
+			helpsArray = helps.toArray(new String[]{});
+			
+			list = new JList(titles.toArray()) {
+				private static final long serialVersionUID = 1L;
+				private String[] helps = helpsArray;
+
+				@Override
+				public String getToolTipText(MouseEvent event) {
+					int index;
+					
+					index = locationToIndex(event.getPoint());
+					
+					return helps[index];
+				}
+			};
+
+			list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+			list.setLayoutOrientation(JList.VERTICAL);
+			list.setVisibleRowCount(3);
+			list.setSelectedIndex(selectedIndex);
+			
+			return list;
 		}
 	}
 
@@ -253,6 +360,22 @@ public class ConfigurationEditor {
 		Locale.setDefault(language);
 		
 		try {
+			try {
+				UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+			}
+			catch(UnsupportedLookAndFeelException e) {
+				throw new Error(e);
+			}
+			catch(IllegalAccessException e) {
+				throw new Error(e);
+			}
+			catch(InstantiationException e) {
+				throw new Error(e);
+			}
+			catch(ClassNotFoundException e) {
+				throw new Error(e);
+			}
+
 			ce = ConfigurationEditor.newInstance(configurationURL, language);
 			ce.init();
 		}

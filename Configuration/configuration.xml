@@ -113,7 +113,7 @@
         <title lang="de">Joystick-Schalter Auslesen</title>
         <help>S3 and S4 should be connected to a SPCO switch as well as VCC to the center position pin. This applies to the PS3/PC working mode.
 In the center position the digital pad will be activated. In the left position the left analogue stick will be activated. If the other position the right analogue stick will be activated.</help>
-        <help lang="en">S3 und S4 sollten mit einem SPCO Schalter verbunden sein genauso wie VCC zum Anschluß der mittleren Position. Dies gilt für den PS3/PC Arbeitsmodus.
+        <help lang="de">S3 und S4 sollten mit einem SPCO Schalter verbunden sein genauso wie VCC zum Anschluß der mittleren Position. Dies gilt für den PS3/PC Arbeitsmodus.
 In der mittleren Position wird das digitale Pad aktiviert. In der linken Position wird der linke analoge Stick aktiviert. In der rechten Position wird der rechte analoge Stick aktiviert.</help>
       </option>
       
