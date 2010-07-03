@@ -10,16 +10,16 @@ The Java files were developed for Java 6.
 Important XML files:
 --------------------
 
--"java/dualstrike/configuration/configuration.xsd"
+-"java/dualstrike/configuration/configuration-def.xsd"
  XML Schema for configuration definitions.
  
--"java/dualstrike/configuration/annotated-configuration.xsd"
+-"java/dualstrike/configuration/annotated-configuration-def.xsd"
  XML Schema for annotated configuration definitions, adding byte and bit information.
 
--"java/dualstrike/configuration/annotate-configuration.xsl"
+-"java/dualstrike/configuration/annotate-configuration-def.xsl"
  XSLT stylesheet adding byte and bit information to configuration definitions.
 
--"java/dualstrike/configuration/configuration2header-file.xsl"
+-"java/dualstrike/configuration/configuration-def2header-file.xsl"
  XSLT stylesheet to create a C header for AVR microcontrollers from
  configuration definitions.
 
@@ -55,4 +55,4 @@ If the directory this file is residing in is the current directory and the
 directory of a JDK is in the environment variable "JAVA_HOME", under windows
 the command to compile the model classes from the annotated configuration XML
 Schema is:
-"%JAVA_HOME%\bin\xjc" -d java -p dualstrike.configuration.definition java\dualstrike\configuration\annotated-configuration.xsd
+"%JAVA_HOME%\bin\xjc" -d java -p dualstrike.configuration.definition java\dualstrike\configuration\annotated-configuration-def.xsd

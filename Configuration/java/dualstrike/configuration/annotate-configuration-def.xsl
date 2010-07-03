@@ -51,11 +51,11 @@
   </xsl:template>
   
   <xsl:template match="c:configuration/@xsi:schemaLocation">
-    <xsl:variable name="postfix">/configuration.xsd</xsl:variable>
+    <xsl:variable name="postfix">/configuration-def.xsd</xsl:variable>
     <xsl:if test="substring(., string-length(.) - string-length($postfix) + 1) = $postfix">
       <xsl:attribute name="schemaLocation" namespace="http://www.w3.org/2001/XMLSchema-instance">
         <xsl:value-of select="substring(., 1, string-length(.) - string-length($postfix))"/>
-        <xsl:text>/annotated-configuration.xsd</xsl:text>
+        <xsl:text>/annotated-configuration-def.xsd</xsl:text>
       </xsl:attribute>
     </xsl:if>
   </xsl:template>

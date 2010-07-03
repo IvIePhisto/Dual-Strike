@@ -2,7 +2,7 @@
 <configuration
   xmlns="urn:strike-devices:configuration"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="urn:strike-devices:configuration java/dualstrike/configuration/configuration.xsd"
+  xsi:schemaLocation="urn:strike-devices:configuration java/dualstrike/configuration/configuration-def.xsd"
   def-lang-version="1"
   lang="en"
   prefix="CFG_">

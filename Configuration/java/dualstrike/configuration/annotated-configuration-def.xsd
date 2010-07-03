@@ -5,7 +5,7 @@
   targetNamespace="urn:strike-devices:configuration"
   elementFormDefault="qualified">
   
-  <xs:redefine schemaLocation="configuration.xsd">
+  <xs:redefine schemaLocation="configuration-def.xsd">
     <xs:complexType name="Configuration">
       <xs:complexContent>
         <xs:extension base="c:Configuration">

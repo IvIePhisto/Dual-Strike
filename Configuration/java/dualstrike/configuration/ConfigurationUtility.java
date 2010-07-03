@@ -30,10 +30,10 @@ import org.xml.sax.SAXException;
 import dualstrike.configuration.definition.Configuration;
 
 public class ConfigurationUtility {
-	private final static String ANNOTATE_CONFIGURATION_STYLESHEET = "annotate-configuration.xsl";
-	private final static String CONFIGURATION_TO_HEADER_FILE_STYLESHEET = "configuration2header-file.xsl";
-	private final static String CONFIGURATION_SCHEMA_NAME = "configuration.xsd";
-	private final static String ANNOTATED_CONFIGURATION_SCHEMA_NAME = "annotated-configuration.xsd";
+	private final static String ANNOTATE_CONFIGURATION_STYLESHEET = "annotate-configuration-def.xsl";
+	private final static String CONFIGURATION_TO_HEADER_FILE_STYLESHEET = "configuration-def2header-file.xsl";
+	private final static String CONFIGURATION_SCHEMA_NAME = "configuration-def.xsd";
+	private final static String ANNOTATED_CONFIGURATION_SCHEMA_NAME = "annotated-configuration-def.xsd";
 	private final static SchemaFactory SCHEMA_FACTORY = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
 	private final static TransformerFactory TRANSFORMER_FACTORY = TransformerFactory.newInstance();
 	
