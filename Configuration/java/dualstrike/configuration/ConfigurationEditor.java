@@ -2,8 +2,6 @@ package dualstrike.configuration;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.MouseEvent;
 import java.io.File;
@@ -18,6 +16,7 @@ import java.util.Locale;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -127,15 +126,14 @@ public class ConfigurationEditor {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.add(createTabs());
 		frame.pack();
-		//frame.setBounds(0, 0, 800, 600);
 		frame.setVisible(true);
+		frame.setLocationRelativeTo(null);
 	}
 	
 	private Component createTabs() {
-		JScrollPane tabsPanel;
 		JTabbedPane tabs;
 
-		tabs = new JTabbedPane();
+		tabs = new JTabbedPane(JTabbedPane.TOP, JTabbedPane.SCROLL_TAB_LAYOUT);
 
 		for(Page page: configuration.getPage()) {
 			String tabTitle;
@@ -144,107 +142,172 @@ public class ConfigurationEditor {
 			tabs.addTab(tabTitle, createTabContent(page));
 		}
 
-		//tabsPanel = new JScrollPane(tabs, JScrollPane.VERTICAL_SCROLLBAR_NEVER, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-
 		return tabs;
 	}
 	
 	private Component createTabContent(Page page) {
-		String tabHelp;
 		JLabel tabHelpLabel;
 		JScrollPane tabContent;
-		JPanel panel;
-		BoxLayout tabLayout;
+		JPanel tabPanel;
 
-		panel = new JPanel();
-		panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-		tabLayout = new BoxLayout(panel, BoxLayout.Y_AXIS);
-		panel.setLayout(tabLayout);
-		tabHelp =  getLocalizedInfo(page.getHelp(), true);
-		tabHelpLabel = new JLabel(tabHelp);
-		tabHelpLabel.setFont(DESCRIPTION_FONT);
+		tabPanel = new ResizingJPanel();
+		tabPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+		tabPanel.setLayout(new BoxLayout(tabPanel, BoxLayout.Y_AXIS));
+		tabPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+		tabPanel.setAlignmentY(Component.TOP_ALIGNMENT);
+		
+		tabHelpLabel = createLabel(page.getHelp(), DESCRIPTION_FONT);
 		tabHelpLabel.setBorder(BOTTOM_SPACER_BORDER);
-		panel.add(tabHelpLabel, BorderLayout.LINE_START);
+		tabPanel.add(tabHelpLabel);
 		
-		for(Object setting: page.getChoiceOrBoolean())
-			addControl(panel, setting);
+		for(Object setting: page.getChoiceOrBoolean()) {
+			JComponent settingComponent;
+			
+			settingComponent = createControl(setting);
+			tabPanel.add(settingComponent);
+		}
 		
-		tabContent = new JScrollPane(panel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		tabContent = new JScrollPane(tabPanel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		
 		return tabContent;
 	}
 
-	private void addControl(JPanel parent, Object settingObject) {
+	private JComponent createControl(Object settingObject) {
 		JPanel settingPanel;
-		JPanel infosPanel;
-		Component selectorComponent;
-		
+		JComponent selectorComponent;
+		Component title;
+		Component help;
+
 		settingPanel = new JPanel();
 		settingPanel.setBorder(BOTTOM_SPACER_BORDER);
-		settingPanel.setAlignmentX(0);
-		settingPanel.setLayout(new BoxLayout(settingPanel, BoxLayout.X_AXIS));
+		settingPanel.setLayout(new BorderLayout(5, 5));
+		settingPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+		settingPanel.setAlignmentY(Component.TOP_ALIGNMENT);
 		
 		if(settingObject instanceof BooleanSetting) {
 			BooleanSetting setting;
 
 			setting = (BooleanSetting)settingObject;
-			infosPanel = createInfosPanel(setting.getTitle(), setting.getHelp());
+			title = createLabel(setting.getTitle(), TITLE_FONT);
+			help = createLabel(setting.getHelp(), DESCRIPTION_FONT);
 			selectorComponent = createSelectorComponent(setting);
 		}
 		else if(settingObject instanceof ChoiceSetting) {
 			ChoiceSetting setting;
 			
 			setting = (ChoiceSetting)settingObject;
-			infosPanel = createInfosPanel(setting.getTitle(), setting.getHelp());
-			selectorComponent = createSelectorComponent(setting);
+			title = createLabel(setting.getTitle(), TITLE_FONT);
+			help = createLabel(setting.getHelp(), DESCRIPTION_FONT);
+			selectorComponent = createSettingComponent(setting);
 		}
 		else {
 			throw new Error(String.format("Unexpected class %s of setting object.", settingObject.getClass().getCanonicalName()));
 		}
 		
-		settingPanel.add(infosPanel);
-		settingPanel.add(selectorComponent);
-		parent.add(settingPanel, BorderLayout.LINE_START);
-	}
-	
-	private JPanel createInfosPanel(List<Info> title, List<Info> help) {
-		JPanel infosPanel;
-		JLabel titleLabel;
-		JLabel helpLabel;
+		settingPanel.add(title, BorderLayout.PAGE_START);
+		settingPanel.add(help, BorderLayout.CENTER);
+		settingPanel.add(selectorComponent, BorderLayout.LINE_END);
 		
-		infosPanel = new JPanel();
-		infosPanel.setLayout(new BoxLayout(infosPanel, BoxLayout.Y_AXIS));
-		titleLabel = createLabel(title, TITLE_FONT);
-		infosPanel.add(titleLabel);
-		helpLabel = createLabel(help, DESCRIPTION_FONT);
-		helpLabel.setLayout(new FlowLayout());
-		infosPanel.add(helpLabel);
-		
-		return infosPanel;
+		return settingPanel;
 	}
-	
-	private JLabel createLabel(List<Info> info, Font font) {
-		JLabel label;
 
-		label = new JLabel(getLocalizedInfo(info, true));
-		label.setFont(font);
-		
-		return label;
-	}
-	
-	private Component createSelectorComponent(BooleanSetting b) {
+	private JComponent createSelectorComponent(BooleanSetting b) {
 		JPanel selectorPanel;
 		ButtonGroup buttons;
 		boolean isEnabled;
+	
+		buttons = new ButtonGroup();
+		selectorPanel = new JPanel();
+		selectorPanel.setLayout(new BoxLayout(selectorPanel, BoxLayout.Y_AXIS));
+		selectorPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+		isEnabled = b != null && b.isDefault();
+		addRadioButton(MessageHelper.get(this, "trueButtonText", language), buttons, selectorPanel, isEnabled);
+		addRadioButton(MessageHelper.get(this, "falseButtonText", language), buttons, selectorPanel, !isEnabled);
+	
+		return selectorPanel;
+	}
+
+	private JComponent createSettingComponent(final ChoiceSetting c) {
+		Option defaultOption;
+		List<Option> options;
+		final int listOptionCount;
+		
+		defaultOption = (Option)c.getDefault();
+		options = c.getOption();
+		listOptionCount = 3;
+		
+		if(options.size() <= listOptionCount)
+			return createOptionRadioButtons(options, defaultOption.getId());
+		else
+			return createOptionList(options, defaultOption.getId(), listOptionCount);
+	}
+	
+	private JComponent createOptionRadioButtons(final List<Option> options, final String defaultOptionID) {
+		ButtonGroup buttons;
+		JPanel selectorPanel;
 
 		buttons = new ButtonGroup();
 		selectorPanel = new JPanel();
 		selectorPanel.setLayout(new BoxLayout(selectorPanel, BoxLayout.Y_AXIS));
-		isEnabled = b != null && b.isDefault();
-		addRadioButton(MessageHelper.get(this, "trueButtonText", language), buttons, selectorPanel, isEnabled);
-		addRadioButton(MessageHelper.get(this, "falseButtonText", language), buttons, selectorPanel, !isEnabled);
+		selectorPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
+		for(Option o: options) {
+			boolean isSelected;
+			String title;
+			String help;
+			
+			isSelected = o.getId().equals(defaultOptionID);
+			title = getLocalizedInfo(o.getTitle(), true);
+			help = getLocalizedInfo(o.getHelp(), true);
+			addRadioButton(title, buttons, selectorPanel, isSelected).setToolTipText(help);
+		}
+		
 		return selectorPanel;
+	}
+	
+	private JComponent createOptionList(List<Option> options, String defaultOptionID, final int optionListCount) {
+		List<String> titles;
+		List<String> helps;
+		final String[] helpsArray;
+		JList list;
+		int selectedIndex;
+		JScrollPane scrollPane;
+		JPanel panel;
+		
+		titles = new LinkedList<String>();
+		helps = new LinkedList<String>();
+		selectedIndex = -1;
+		
+		for(Option o: options) {
+			if(o.getId().equals(defaultOptionID))
+				selectedIndex = titles.size();
+			
+			titles.add(getLocalizedInfo(o.getTitle(), true));
+			helps.add(getLocalizedInfo(o.getHelp(), true));
+		}
+		
+		helpsArray = helps.toArray(new String[]{});
+		
+		list = new JList(titles.toArray()) {
+			private static final long serialVersionUID = 1L;
+			private String[] helps = helpsArray;
+
+			@Override
+			public String getToolTipText(MouseEvent event) {
+				return helps[locationToIndex(event.getPoint())];
+			}
+		};
+
+		list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		list.setLayoutOrientation(JList.VERTICAL);
+		list.setVisibleRowCount(optionListCount);
+		list.setSelectedIndex(selectedIndex);
+		list.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
+		scrollPane = new JScrollPane(list, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		panel = new JPanel();
+		panel.add(scrollPane);
+		
+		return panel;
 	}
 	
 	private JRadioButton addRadioButton(String text, ButtonGroup buttons, JPanel panel, boolean selected) {
@@ -260,84 +323,13 @@ public class ConfigurationEditor {
 		return button;
 	}
 
-	private Component createSelectorComponent(ChoiceSetting c) {
-		Option defaultOption;
-		List<Option> options;
+	private JLabel createLabel(List<Info> info, Font font) {
+		JLabel label;
+
+		label = new JLabel(getLocalizedInfo(info, true));
+		label.setFont(font);
 		
-		defaultOption = (Option)c.getDefault();
-		options = c.getOption();
-		
-		if(options.size() < 3) {
-			ButtonGroup buttons;
-			JPanel selectorPanel;
-
-			buttons = new ButtonGroup();
-			selectorPanel = new JPanel();
-			selectorPanel.setLayout(new BoxLayout(selectorPanel, BoxLayout.Y_AXIS));
-
-			for(Option o: options) {
-				boolean isSelected;
-				String title;
-				String help;
-				
-				isSelected = o.getId().equals(defaultOption.getId());
-				title = getLocalizedInfo(o.getTitle(), true);
-				help = getLocalizedInfo(o.getHelp(), true);
-				addRadioButton(title, buttons, selectorPanel, isSelected).setToolTipText(help);
-			}
-			
-			return selectorPanel;
-		}
-		else {
-			List<String> titles;
-			List<String> helps;
-			final String[] helpsArray;
-			JList list;
-			int selectedIndex;
-			JScrollPane scrollPane;
-			Dimension size;
-			
-			titles = new LinkedList<String>();
-			helps = new LinkedList<String>();
-			selectedIndex = -1;
-			
-			for(Option o: options) {
-				if(o.getId().equals(defaultOption.getId()))
-					selectedIndex = titles.size();
-				
-				titles.add(getLocalizedInfo(o.getTitle(), true));
-				helps.add(getLocalizedInfo(o.getHelp(), true));
-			}
-			
-			helpsArray = helps.toArray(new String[]{});
-			
-			list = new JList(titles.toArray()) {
-				private static final long serialVersionUID = 1L;
-				private String[] helps = helpsArray;
-
-				@Override
-				public String getToolTipText(MouseEvent event) {
-					int index;
-					
-					index = locationToIndex(event.getPoint());
-					
-					return helps[index];
-				}
-			};
-
-			list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-			list.setLayoutOrientation(JList.VERTICAL);
-			list.setVisibleRowCount(3);
-			list.setSelectedIndex(selectedIndex);
-			list.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
-			scrollPane = new JScrollPane(list, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-			size = new Dimension(list.getPreferredSize().width + scrollPane.getVerticalScrollBar().getPreferredSize().width, list.getPreferredScrollableViewportSize().height);
-			scrollPane.setMaximumSize(size);
-			scrollPane.setPreferredSize(size);
-			scrollPane.setMinimumSize(size);
-			
-			return scrollPane;
-		}
+		return label;
 	}
 
 	private static void showError(String message, Locale language) {
