@@ -16,6 +16,7 @@ import java.util.Locale;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
+import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -26,6 +27,7 @@ import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.ListSelectionModel;
+import javax.swing.SpringLayout;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.Border;
@@ -120,19 +122,74 @@ public class ConfigurationEditor {
 	public void init() {
 		String title;
 		JFrame frame;
+		JPanel contentPanel;
+		JComponent buttons;
+		JComponent tabs;
+		SpringLayout layout;
 		
 		title = getLocalizedInfo(configuration.getTitle(), false);
 		frame = new JFrame(title);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.add(createTabs());
+		buttons = createButtons();
+		tabs = createTabs();
+		contentPanel = new JPanel();
+		contentPanel.add(buttons);
+		contentPanel.add(tabs);
+		//contentPanel.setLayout(new BorderLayout());
+		/*
+		contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
+		contentPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+		contentPanel.setAlignmentY(Component.TOP_ALIGNMENT);
+		*/
+		/*
+		layout = new GroupLayout(contentPanel);
+		layout.setVerticalGroup(
+				layout.createSequentialGroup()
+				.addComponent(buttons, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
+				.addComponent(tabs, 0, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE));
+		layout.setHorizontalGroup(
+				layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+				.addComponent(buttons, 0, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
+				.addComponent(tabs));
+		*/
+		layout = new SpringLayout();
+		contentPanel.setLayout(layout);
+		layout.putConstraint(SpringLayout.NORTH, buttons, 0, SpringLayout.NORTH, contentPanel);
+		layout.putConstraint(SpringLayout.EAST, contentPanel, 0, SpringLayout.EAST, buttons);
+		layout.putConstraint(SpringLayout.EAST, contentPanel, 0, SpringLayout.EAST, tabs);
+		layout.putConstraint(SpringLayout.WEST, contentPanel, 0, SpringLayout.WEST, buttons);
+		layout.putConstraint(SpringLayout.WEST, contentPanel, 0, SpringLayout.WEST, tabs);
+		layout.putConstraint(SpringLayout.SOUTH, contentPanel, 0, SpringLayout.SOUTH, tabs);
+		//layout.putConstraint(SpringLayout.EAST, tabs, 0, SpringLayout.EAST, buttons);
+		layout.putConstraint(SpringLayout.WEST, tabs, 0, SpringLayout.WEST, buttons);
+		layout.putConstraint(SpringLayout.NORTH, tabs, 0, SpringLayout.SOUTH, buttons);
+		//layout.putConstraint(SpringLayout.SOUTH, buttons, 0, SpringLayout.NORTH, tabs);
+		
+		frame.getContentPane().add(contentPanel);
 		frame.pack();
-		frame.setVisible(true);
 		frame.setLocationRelativeTo(null);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setVisible(true);
 	}
 	
-	private Component createTabs() {
+	private JComponent createButtons() {
+		JPanel buttonsPanel;
+		JButton loadButton;
+		JButton saveButton;
+		
+		buttonsPanel = new JPanel();
+		loadButton = new JButton(MessageHelper.get(this, "loadButtonTitle"));
+		loadButton.setToolTipText(MessageHelper.get(this, "loadButtonHelp"));
+		buttonsPanel.add(loadButton);
+		saveButton = new JButton(MessageHelper.get(this, "saveButtonTitle"));
+		saveButton.setToolTipText(MessageHelper.get(this, "saveButtonHelp"));
+		buttonsPanel.add(saveButton);
+		
+		return buttonsPanel;
+	}
+	
+	private JComponent createTabs() {
 		JTabbedPane tabs;
-
+		
 		tabs = new JTabbedPane(JTabbedPane.TOP, JTabbedPane.SCROLL_TAB_LAYOUT);
 
 		for(Page page: configuration.getPage()) {
@@ -141,7 +198,7 @@ public class ConfigurationEditor {
 			tabTitle = getLocalizedInfo(page.getTitle(), true);
 			tabs.addTab(tabTitle, createTabContent(page));
 		}
-
+		
 		return tabs;
 	}
 	
