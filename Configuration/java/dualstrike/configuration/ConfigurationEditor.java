@@ -2,6 +2,7 @@ package dualstrike.configuration;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.MouseEvent;
@@ -17,7 +18,6 @@ import java.util.Locale;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
-import javax.swing.DefaultListModel;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -127,7 +127,7 @@ public class ConfigurationEditor {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.add(createTabs());
 		frame.pack();
-		frame.setBounds(0, 0, 800, 600);
+		//frame.setBounds(0, 0, 800, 600);
 		frame.setVisible(true);
 	}
 	
@@ -294,6 +294,8 @@ public class ConfigurationEditor {
 			final String[] helpsArray;
 			JList list;
 			int selectedIndex;
+			JScrollPane scrollPane;
+			Dimension size;
 			
 			titles = new LinkedList<String>();
 			helps = new LinkedList<String>();
@@ -327,8 +329,14 @@ public class ConfigurationEditor {
 			list.setLayoutOrientation(JList.VERTICAL);
 			list.setVisibleRowCount(3);
 			list.setSelectedIndex(selectedIndex);
+			list.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
+			scrollPane = new JScrollPane(list, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+			size = new Dimension(list.getPreferredSize().width + scrollPane.getVerticalScrollBar().getPreferredSize().width, list.getPreferredScrollableViewportSize().height);
+			scrollPane.setMaximumSize(size);
+			scrollPane.setPreferredSize(size);
+			scrollPane.setMinimumSize(size);
 			
-			return list;
+			return scrollPane;
 		}
 	}
 
