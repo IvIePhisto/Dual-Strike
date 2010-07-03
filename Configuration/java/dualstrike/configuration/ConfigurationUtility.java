@@ -27,7 +27,7 @@ import javax.xml.validation.Validator;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
-import dualstrike.configuration.model.Configuration;
+import dualstrike.configuration.definition.Configuration;
 
 public class ConfigurationUtility {
 	private final static String ANNOTATE_CONFIGURATION_STYLESHEET = "annotate-configuration.xsl";

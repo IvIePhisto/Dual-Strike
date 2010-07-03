@@ -33,12 +33,12 @@ import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 
-import dualstrike.configuration.model.BooleanSetting;
-import dualstrike.configuration.model.ChoiceSetting;
-import dualstrike.configuration.model.Configuration;
-import dualstrike.configuration.model.Info;
-import dualstrike.configuration.model.Option;
-import dualstrike.configuration.model.Page;
+import dualstrike.configuration.definition.BooleanSetting;
+import dualstrike.configuration.definition.ChoiceSetting;
+import dualstrike.configuration.definition.Configuration;
+import dualstrike.configuration.definition.Info;
+import dualstrike.configuration.definition.Option;
+import dualstrike.configuration.definition.Page;
 
 public class ConfigurationEditor {
 	private static final URL DEFAULT_CONFIGURATION_DEFINITION_FILE_URL = createFileURL("configuration.xml");

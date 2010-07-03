@@ -6,4 +6,4 @@
 //
 
 @javax.xml.bind.annotation.XmlSchema(namespace = "urn:strike-devices:configuration", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
-package dualstrike.configuration.model;
+package dualstrike.configuration.definition;

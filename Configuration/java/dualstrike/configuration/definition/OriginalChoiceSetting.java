@@ -6,7 +6,7 @@
 //
 
 
-package dualstrike.configuration.model;
+package dualstrike.configuration.definition;
 
 import java.util.ArrayList;
 import java.util.List;
