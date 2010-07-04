@@ -7,7 +7,7 @@ import dualstrike.configuration.definition.Option;
 
 public abstract class ChoiceModel extends SettingModel {
 	private final boolean[][] optionValues;
-	private final int defaultValueIndex;
+	private final int defaultValue;
 	private int currentOption;
 	
 	ChoiceModel(final ChoiceSetting choiceSetting) {
@@ -15,14 +15,14 @@ public abstract class ChoiceModel extends SettingModel {
 		List<Option> options;
 		int bitWidth;
 		int optionCount;
-		int defaultValueIndex;
+		int defaultValue;
 		String defaultID;
 		
 		options = choiceSetting.getOption();
 		optionCount = options.size();
 		bitWidth = (int)choiceSetting.getBitWidth();
 		optionValues = new boolean[optionCount][bitWidth];
-		defaultValueIndex = 0;
+		defaultValue = 0;
 		defaultID = ((Option)choiceSetting.getDefault()).getId();
 		
 		for(int i = 0; i < optionCount; i++) {
@@ -33,7 +33,7 @@ public abstract class ChoiceModel extends SettingModel {
 			bitPattern = option.getBitPattern();
 			
 			if(option.getId().equals(defaultID))
-					defaultValueIndex = i;
+					defaultValue = i;
 			
 			for(int j = 0; j < bitWidth; j++) {
 				if(bitPattern.charAt(j) == '1')
@@ -42,9 +42,10 @@ public abstract class ChoiceModel extends SettingModel {
 					optionValues[i][j] = false;
 			}
 		}
+
 		
-		currentOption = defaultValueIndex;			
-		this.defaultValueIndex = defaultValueIndex;
+		currentOption = defaultValue;			
+		this.defaultValue = defaultValue;
 	}
 
 
@@ -55,12 +56,12 @@ public abstract class ChoiceModel extends SettingModel {
 		this.currentOption = currentOption;
 	}
 
-	public int getCurrentOption() {
+	public final int getCurrentOption() {
 		return currentOption;
 	}
 
 
-	public int getDefaultValueIndex() {
-		return defaultValueIndex;
+	public final int getDefaultValue() {
+		return defaultValue;
 	}
 }

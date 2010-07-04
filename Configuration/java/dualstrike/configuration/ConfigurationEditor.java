@@ -182,6 +182,7 @@ public class ConfigurationEditor {
 		JPanel buttonsPanel;
 		JButton loadButton;
 		JButton saveButton;
+		JButton defaultsButton;
 		
 		buttonsPanel = new JPanel();
 		loadButton = new JButton(MessageHelper.get(this, "loadButtonTitle"));
@@ -190,6 +191,10 @@ public class ConfigurationEditor {
 		saveButton = new JButton(MessageHelper.get(this, "saveButtonTitle"));
 		saveButton.setToolTipText(MessageHelper.get(this, "saveButtonHelp"));
 		buttonsPanel.add(saveButton);
+		defaultsButton = new JButton(MessageHelper.get(this, "defaultsButtonTitle"));
+		defaultsButton.setToolTipText(MessageHelper.get(this, "defaultsButtonHelp"));
+		buttonsPanel.add(defaultsButton);
+		new LoadDefaultsHandler(model, defaultsButton);
 		
 		return buttonsPanel;
 	}

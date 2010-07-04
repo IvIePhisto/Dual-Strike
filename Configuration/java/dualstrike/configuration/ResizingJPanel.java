@@ -11,7 +11,7 @@ import javax.swing.SwingConstants;
 class ResizingJPanel extends JPanel implements Scrollable {
 	private static final long serialVersionUID = 1L;
 
-	public ResizingJPanel() {
+	ResizingJPanel() {
 		super();
 	}
 

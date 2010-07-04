@@ -38,4 +38,9 @@ public class BooleanModel extends SettingModel implements ChangeListener {
 	public boolean isDefaultValue() {
 		return defaultValue;
 	}
+
+	@Override
+	synchronized void loadDefaults() {
+		setValue(defaultValue);
+	}
 }

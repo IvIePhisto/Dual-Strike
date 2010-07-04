@@ -9,11 +9,13 @@ public abstract class SettingModel {
 		this.bitNo = bitNo;
 	}
 
-	public int getByteNo() {
+	public final int getByteNo() {
 		return byteNo;
 	}
 
-	public int getBitNo() {
+	public final int getBitNo() {
 		return bitNo;
 	}
+	
+	abstract void loadDefaults();
 }

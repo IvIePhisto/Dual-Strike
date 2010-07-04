@@ -43,4 +43,8 @@ public class ConfigurationModel {
 		booleanModel = new BooleanModel(booleanSetting, enableButton);
 		settings.add(booleanModel);
 	}
+	
+	public void loadDefaults() {
+		
+	}
 }
