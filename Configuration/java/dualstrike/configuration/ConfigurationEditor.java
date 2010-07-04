@@ -52,7 +52,7 @@ public class ConfigurationEditor {
 	private final Locale language;
 	private final Locale defaultLanguage;
 	private final ConfigurationModel model;
-	private final JFrame view;
+	private JFrame view;
 	
 	private static URL createFileURL(String path) throws Error {
 		try {
@@ -73,7 +73,6 @@ public class ConfigurationEditor {
 		
 		defaultLanguage = new Locale(configuration.getLang());
 		model = new ConfigurationModel(configuration);
-		view = createView();
 	}
 	
 	private static ConfigurationEditor newInstance(URL configurationDefinitionURL, final Locale language) throws IOException, ConfigurationDefinitionException {
@@ -124,16 +123,15 @@ public class ConfigurationEditor {
 		return value;
 	}
 	
-	private JFrame createView() {
+	private void createView() {
 		String title;
-		JFrame frame;
 		JPanel contentPanel;
 		JComponent buttons;
 		JComponent tabs;
 		SpringLayout layout;
 		
 		title = getLocalizedInfo(configuration.getTitle(), false);
-		frame = new JFrame(title);
+		view = new JFrame(title);
 		buttons = createButtons();
 		tabs = createTabs();
 		contentPanel = new JPanel();
@@ -169,13 +167,11 @@ public class ConfigurationEditor {
 		layout.putConstraint(SpringLayout.NORTH, tabs, 0, SpringLayout.SOUTH, buttons);
 		//layout.putConstraint(SpringLayout.SOUTH, buttons, 0, SpringLayout.NORTH, tabs);
 		
-		frame.getContentPane().add(contentPanel);
-		frame.pack();
-		frame.setLocationRelativeTo(null);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setVisible(true);
-		
-		return frame;
+		view.getContentPane().add(contentPanel);
+		view.pack();
+		view.setLocationRelativeTo(null);
+		view.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		view.setVisible(true);
 	}
 	
 	private JComponent createButtons() {
@@ -194,7 +190,7 @@ public class ConfigurationEditor {
 		defaultsButton = new JButton(MessageHelper.get(this, "defaultsButtonTitle"));
 		defaultsButton.setToolTipText(MessageHelper.get(this, "defaultsButtonHelp"));
 		buttonsPanel.add(defaultsButton);
-		new LoadDefaultsHandler(model, defaultsButton);
+		new LoadDefaultsHandler(view, model, defaultsButton);
 		
 		return buttonsPanel;
 	}
@@ -432,6 +428,8 @@ public class ConfigurationEditor {
 		Locale.setDefault(language);
 		
 		try {
+			ConfigurationEditor ce;
+			
 			try {
 				UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 			}
@@ -448,7 +446,8 @@ public class ConfigurationEditor {
 				throw new Error(e);
 			}
 
-			ConfigurationEditor.newInstance(configurationURL, language);
+			ce = ConfigurationEditor.newInstance(configurationURL, language);
+			ce.createView();
 		}
 		catch(ConfigurationDefinitionException e) {
 			showError(e.getLocalizedMessage(), language);

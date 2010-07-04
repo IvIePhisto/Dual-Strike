@@ -45,6 +45,7 @@ public class ConfigurationModel {
 	}
 	
 	public void loadDefaults() {
-		
+		for(SettingModel setting: settings)
+			setting.loadDefaults();
 	}
 }

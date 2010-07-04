@@ -1,12 +1,13 @@
 package dualstrike.configuration.model;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 import javax.swing.JRadioButton;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import dualstrike.configuration.definition.BooleanSetting;
 
-public class BooleanModel extends SettingModel implements ChangeListener {
+public class BooleanModel extends SettingModel implements ActionListener {
 	private final boolean defaultValue;
 	private final JRadioButton enableButton;
 	private boolean value;
@@ -16,11 +17,11 @@ public class BooleanModel extends SettingModel implements ChangeListener {
 		defaultValue = booleanSetting.isDefault();
 		value = defaultValue;
 		this.enableButton = enableButton;
-		enableButton.addChangeListener(this);
+		enableButton.addActionListener(this);
 	}
 
 	@Override
-	public void stateChanged(final ChangeEvent event) {
+	public void actionPerformed(final ActionEvent event) {
 		if(enableButton.isSelected() != value) {
 			value = enableButton.isSelected();
 		}
