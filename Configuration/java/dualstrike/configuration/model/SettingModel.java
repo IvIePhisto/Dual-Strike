@@ -4,7 +4,7 @@ public abstract class SettingModel {
 	private final int byteNo;
 	private final int bitNo;
 
-	protected SettingModel(int byteNo, int bitNo) {
+	protected SettingModel(final int byteNo, final int bitNo) {
 		this.byteNo = byteNo;
 		this.bitNo = bitNo;
 	}

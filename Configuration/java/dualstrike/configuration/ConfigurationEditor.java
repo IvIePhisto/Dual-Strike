@@ -39,6 +39,7 @@ import dualstrike.configuration.definition.Configuration;
 import dualstrike.configuration.definition.Info;
 import dualstrike.configuration.definition.Option;
 import dualstrike.configuration.definition.Page;
+import dualstrike.configuration.model.ConfigurationModel;
 
 public class ConfigurationEditor {
 	private static final URL DEFAULT_CONFIGURATION_DEFINITION_FILE_URL = createFileURL("configuration.xml");
@@ -50,6 +51,8 @@ public class ConfigurationEditor {
 	private final Configuration configuration;
 	private final Locale language;
 	private final Locale defaultLanguage;
+	private final ConfigurationModel model;
+	private final JFrame view;
 	
 	private static URL createFileURL(String path) throws Error {
 		try {
@@ -69,6 +72,8 @@ public class ConfigurationEditor {
 			this.language = language;
 		
 		defaultLanguage = new Locale(configuration.getLang());
+		model = new ConfigurationModel(configuration);
+		view = createView();
 	}
 	
 	private static ConfigurationEditor newInstance(URL configurationDefinitionURL, final Locale language) throws IOException, ConfigurationDefinitionException {
@@ -119,7 +124,7 @@ public class ConfigurationEditor {
 		return value;
 	}
 	
-	private void createView() {
+	private JFrame createView() {
 		String title;
 		JFrame frame;
 		JPanel contentPanel;
@@ -169,6 +174,8 @@ public class ConfigurationEditor {
 		frame.setLocationRelativeTo(null);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setVisible(true);
+		
+		return frame;
 	}
 	
 	private JComponent createButtons() {
@@ -220,7 +227,7 @@ public class ConfigurationEditor {
 		for(Object setting: page.getChoiceOrBoolean()) {
 			JComponent settingComponent;
 			
-			settingComponent = createControl(setting);
+			settingComponent = createSettingComponent(setting);
 			tabPanel.add(settingComponent);
 		}
 		
@@ -229,7 +236,7 @@ public class ConfigurationEditor {
 		return tabContent;
 	}
 
-	private JComponent createControl(Object settingObject) {
+	private JComponent createSettingComponent(Object settingObject) {
 		JPanel settingPanel;
 		JComponent selectorComponent;
 		Component title;
@@ -247,7 +254,7 @@ public class ConfigurationEditor {
 			setting = (BooleanSetting)settingObject;
 			title = createLabel(setting.getTitle(), TITLE_FONT);
 			help = createLabel(setting.getHelp(), DESCRIPTION_FONT);
-			selectorComponent = createSelectorComponent(setting);
+			selectorComponent = createSettingComponent(setting);
 		}
 		else if(settingObject instanceof ChoiceSetting) {
 			ChoiceSetting setting;
@@ -268,9 +275,10 @@ public class ConfigurationEditor {
 		return settingPanel;
 	}
 
-	private JComponent createSelectorComponent(BooleanSetting b) {
+	private JComponent createSettingComponent(BooleanSetting b) {
 		JPanel selectorPanel;
 		ButtonGroup buttons;
+		JRadioButton enableButton;
 		boolean isEnabled;
 	
 		buttons = new ButtonGroup();
@@ -278,9 +286,9 @@ public class ConfigurationEditor {
 		selectorPanel.setLayout(new BoxLayout(selectorPanel, BoxLayout.Y_AXIS));
 		selectorPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
 		isEnabled = b != null && b.isDefault();
-		addRadioButton(MessageHelper.get(this, "trueButtonText", language), buttons, selectorPanel, isEnabled);
+		enableButton = addRadioButton(MessageHelper.get(this, "trueButtonText", language), buttons, selectorPanel, isEnabled);
 		addRadioButton(MessageHelper.get(this, "falseButtonText", language), buttons, selectorPanel, !isEnabled);
-	
+		model.addBoolean(b, enableButton);
 		return selectorPanel;
 	}
 
@@ -294,12 +302,12 @@ public class ConfigurationEditor {
 		listOptionCount = 3;
 		
 		if(options.size() <= listOptionCount)
-			return createOptionRadioButtons(options, defaultOption.getId());
+			return createOptionRadioButtons(c, defaultOption.getId());
 		else
-			return createOptionList(options, defaultOption.getId(), listOptionCount);
+			return createOptionList(c, defaultOption.getId(), listOptionCount);
 	}
 	
-	private JComponent createOptionRadioButtons(final List<Option> options, final String defaultOptionID) {
+	private JComponent createOptionRadioButtons(final ChoiceSetting choiceSetting, final String defaultOptionID) {
 		ButtonGroup buttons;
 		JPanel selectorPanel;
 
@@ -308,7 +316,7 @@ public class ConfigurationEditor {
 		selectorPanel.setLayout(new BoxLayout(selectorPanel, BoxLayout.Y_AXIS));
 		selectorPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-		for(Option o: options) {
+		for(Option o: choiceSetting.getOption()) {
 			boolean isSelected;
 			String title;
 			String help;
@@ -319,10 +327,12 @@ public class ConfigurationEditor {
 			addRadioButton(title, buttons, selectorPanel, isSelected).setToolTipText(help);
 		}
 		
+		model.addChoice(choiceSetting, buttons);
+		
 		return selectorPanel;
 	}
 	
-	private JComponent createOptionList(List<Option> options, String defaultOptionID, final int optionListCount) {
+	private JComponent createOptionList(final ChoiceSetting choiceSetting, String defaultOptionID, final int optionListCount) {
 		List<String> titles;
 		List<String> helps;
 		final String[] helpsArray;
@@ -335,7 +345,7 @@ public class ConfigurationEditor {
 		helps = new LinkedList<String>();
 		selectedIndex = -1;
 		
-		for(Option o: options) {
+		for(Option o: choiceSetting.getOption()) {
 			if(o.getId().equals(defaultOptionID))
 				selectedIndex = titles.size();
 			
@@ -348,13 +358,13 @@ public class ConfigurationEditor {
 		list = new JList(titles.toArray()) {
 			private static final long serialVersionUID = 1L;
 			private String[] helps = helpsArray;
-
+	
 			@Override
 			public String getToolTipText(MouseEvent event) {
 				return helps[locationToIndex(event.getPoint())];
 			}
 		};
-
+	
 		list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		list.setLayoutOrientation(JList.VERTICAL);
 		list.setVisibleRowCount(optionListCount);
@@ -363,10 +373,11 @@ public class ConfigurationEditor {
 		scrollPane = new JScrollPane(list, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		panel = new JPanel();
 		panel.add(scrollPane);
-		
+		model.addChoice(choiceSetting, list);
+
 		return panel;
 	}
-	
+
 	private JRadioButton addRadioButton(String text, ButtonGroup buttons, JPanel panel, boolean selected) {
 		JRadioButton button;
 		
@@ -402,7 +413,6 @@ public class ConfigurationEditor {
 	public static void main(String[] args) {
 		Locale language;
 		URL configurationURL;
-		ConfigurationEditor ce;
 		
 		if(args.length == 0)
 			configurationURL = null;
@@ -433,8 +443,7 @@ public class ConfigurationEditor {
 				throw new Error(e);
 			}
 
-			ce = ConfigurationEditor.newInstance(configurationURL, language);
-			ce.createView();
+			ConfigurationEditor.newInstance(configurationURL, language);
 		}
 		catch(ConfigurationDefinitionException e) {
 			showError(e.getLocalizedMessage(), language);

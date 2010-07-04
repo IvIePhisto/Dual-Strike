@@ -5,7 +5,7 @@ import java.util.List;
 import dualstrike.configuration.definition.ChoiceSetting;
 import dualstrike.configuration.definition.Option;
 
-public class ChoiceModel extends SettingModel {
+public abstract class ChoiceModel extends SettingModel {
 	private final boolean[][] optionValues;
 	private final int defaultValueIndex;
 	private int currentOption;
@@ -35,7 +35,7 @@ public class ChoiceModel extends SettingModel {
 			if(option.getId().equals(defaultID))
 					defaultValueIndex = i;
 			
-			for(int j = 0; j < bitWidth; i++) {
+			for(int j = 0; j < bitWidth; j++) {
 				if(bitPattern.charAt(j) == '1')
 					optionValues[i][j] = true;
 				else
@@ -44,20 +44,21 @@ public class ChoiceModel extends SettingModel {
 		}
 		
 		currentOption = defaultValueIndex;			
-		this.defaultValueIndex = defaultValueIndex;			
+		this.defaultValueIndex = defaultValueIndex;
+	}
+
+
+	public synchronized void setCurrentOption(final int currentOption) throws IndexOutOfBoundsException {
+		if(currentOption < 0 || currentOption >= optionValues.length)
+			throw new IndexOutOfBoundsException();
+		
+		this.currentOption = currentOption;
 	}
 
 	public int getCurrentOption() {
 		return currentOption;
 	}
 
-	public void setCurrentOption(int currentOption) {
-		this.currentOption = currentOption;
-	}
-
-	public boolean[][] getOptionValues() {
-		return optionValues;
-	}
 
 	public int getDefaultValueIndex() {
 		return defaultValueIndex;
