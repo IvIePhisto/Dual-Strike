@@ -60,9 +60,4 @@ public class RadioButtonsChoiceModel extends ChoiceModel  implements ActionListe
 		currentButtonModel = buttonModels[currentOption];
 		buttons.setSelected(buttonModels[currentOption], true);
 	}
-
-	@Override
-	synchronized void loadDefaults() {
-		setCurrentOption(getDefaultValue());
-	}
 }

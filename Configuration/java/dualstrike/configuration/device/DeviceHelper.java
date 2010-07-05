@@ -3,7 +3,7 @@ package dualstrike.configuration.device;
 import java.io.File;
 import java.io.IOException;
 
-public class DeviceInterfaceHelper {
+public class DeviceHelper {
 	private static final File executableFile = new File("device-interface" + (System.getProperty("os.name").contains("Windows")?".exe":""));
 		
 	private static ExecutionResult execute(boolean reset, String option, File targetFile) {
@@ -63,10 +63,9 @@ public class DeviceInterfaceHelper {
 		new Thread() {
 			@Override
 			public void run() {
-				execute(false, "-de", tempFile);
+				listener.executionFinished(execute(false, "-de", tempFile));
 			}
-			
-		}.start();
+		}.start();		
 		
 		return tempFile;
 	}
@@ -76,8 +75,8 @@ public class DeviceInterfaceHelper {
 			@Override
 			public void run() {
 				execute(false, "-e", inputFile);
+				listener.executionFinished(execute(false, "-e", inputFile));
 			}
-			
 		}.start();
 	}
 }

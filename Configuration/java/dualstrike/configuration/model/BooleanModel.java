@@ -44,4 +44,9 @@ public class BooleanModel extends SettingModel implements ActionListener {
 	synchronized void loadDefaults() {
 		setValue(defaultValue);
 	}
+
+	@Override
+	void loadBytes(final byte[] bytes) {
+		setValue(ConfigurationModel.getBit(bytes, getByteNo(), getBitNo()));
+	}
 }

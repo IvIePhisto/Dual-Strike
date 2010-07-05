@@ -24,6 +24,7 @@ class ExecutionOutputBuffer {
 		
 		if(text != null) {
 			buffer.append(text);
+			buffer.append("\n");
 			dataRead = true;
 		}
 
@@ -31,6 +32,7 @@ class ExecutionOutputBuffer {
 		
 		if(text != null) {
 			buffer.append(text);
+			buffer.append("\n");
 			dataRead = true;
 		}
 		

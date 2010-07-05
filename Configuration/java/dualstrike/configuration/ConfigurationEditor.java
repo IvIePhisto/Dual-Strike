@@ -1,8 +1,11 @@
 package dualstrike.configuration;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Graphics;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -53,7 +56,8 @@ public class ConfigurationEditor {
 	private final Locale defaultLanguage;
 	private final ConfigurationModel model;
 	private JFrame view;
-	
+	private JPanel glassPanel;
+
 	private static URL createFileURL(String path) throws Error {
 		try {
 			return new File(path).toURI().toURL();
@@ -73,6 +77,29 @@ public class ConfigurationEditor {
 		
 		defaultLanguage = new Locale(configuration.getLang());
 		model = new ConfigurationModel(configuration);
+	}
+	
+	private void createGlassPanel() {
+		final JPanel glass;
+		final Color color;
+		
+		glass = (JPanel)view.getGlassPane();
+		glass.setLayout(new BorderLayout());
+		color = new Color(255, 255, 255, 125);
+		glassPanel = new JPanel() {
+			private static final long serialVersionUID = 1L;
+			@Override
+		    public Dimension getPreferredSize() {
+		        return view.getSize();
+		    }
+			
+			protected void paintComponent(Graphics g) {
+		        super.paintComponent(g);
+		    }
+		};
+		
+		glassPanel.setBackground(color);
+		glass.add(glassPanel);
 	}
 	
 	private static ConfigurationEditor newInstance(URL configurationDefinitionURL, final Locale language) throws IOException, ConfigurationDefinitionException {
@@ -118,9 +145,13 @@ public class ConfigurationEditor {
 			value = defaultValue;
 		
 		if(useHTML)
-			value = "<html>" + value.replace("\n", "<br/>") + "</html>";
+			value = convertTextToHTML(value);
 		
 		return value;
+	}
+	
+	static String convertTextToHTML(String value) {
+		return "<html>" + value.replace("\n", "<br/>") + "</html>";
 	}
 	
 	private void createView() {
@@ -169,6 +200,7 @@ public class ConfigurationEditor {
 		
 		view.getContentPane().add(contentPanel);
 		view.pack();
+		createGlassPanel();
 		view.setLocationRelativeTo(null);
 		view.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		view.setVisible(true);
@@ -184,6 +216,7 @@ public class ConfigurationEditor {
 		loadButton = new JButton(MessageHelper.get(this, "loadButtonTitle"));
 		loadButton.setToolTipText(MessageHelper.get(this, "loadButtonHelp"));
 		buttonsPanel.add(loadButton);
+		new LoadExecHandler(view, model, loadButton);		
 		saveButton = new JButton(MessageHelper.get(this, "saveButtonTitle"));
 		saveButton.setToolTipText(MessageHelper.get(this, "saveButtonHelp"));
 		buttonsPanel.add(saveButton);

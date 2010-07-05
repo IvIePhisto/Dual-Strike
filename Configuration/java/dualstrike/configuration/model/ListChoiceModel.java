@@ -28,9 +28,4 @@ public class ListChoiceModel extends ChoiceModel implements ListSelectionListene
 		super.setCurrentOption(currentOption);
 		choiceList.setSelectedIndex(currentOption);
 	}
-
-	@Override
-	synchronized void loadDefaults() {
-		setCurrentOption(getDefaultValue());
-	}
 }
