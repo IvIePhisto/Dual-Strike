@@ -28,33 +28,33 @@ public class ConfigurationModel {
 		return byteWidth;
 	}
 	
-	public void addChoice(final ChoiceSetting choiceSetting, final JList choiceList) {
+	public synchronized void addChoice(final ChoiceSetting choiceSetting, final JList choiceList) {
 		ListChoiceModel choiceModel;
 		
 		choiceModel = new ListChoiceModel(choiceSetting, choiceList);
 		settings.add(choiceModel);
 	}
 	
-	public void addChoice(final ChoiceSetting choiceSetting, final ButtonGroup buttons) {
+	public synchronized void addChoice(final ChoiceSetting choiceSetting, final ButtonGroup buttons) {
 		RadioButtonsChoiceModel choiceModel;
 		
 		choiceModel = new RadioButtonsChoiceModel(choiceSetting, buttons);
 		settings.add(choiceModel);
 	}
 
-	public void addBoolean(final BooleanSetting booleanSetting, final JRadioButton enableButton) {
+	public synchronized void addBoolean(final BooleanSetting booleanSetting, final JRadioButton enableButton) {
 		BooleanModel booleanModel;
 		
 		booleanModel = new BooleanModel(booleanSetting, enableButton);
 		settings.add(booleanModel);
 	}
 	
-	public void loadDefaults() {
+	public synchronized void loadDefaults() {
 		for(SettingModel setting: settings)
 			setting.loadDefaults();
 	}
 	
-	public void loadBytes(byte[] bytes) throws ConfigurationException {
+	public synchronized void loadBytes(byte[] bytes) throws ConfigurationException {
 		if(bytes.length < byteWidth + 2)
 			throw new ConfigurationException(ConfigurationException.Type.BYTE_COUNT);
 		
@@ -72,6 +72,23 @@ public class ConfigurationModel {
 
 		for(SettingModel setting: settings)
 			setting.loadBytes(bytes);
+	}
+	
+	public synchronized byte[] saveBytes() {
+		byte[] bytes;
+		
+		bytes = new byte[byteWidth + 2];
+		
+		for(SettingModel setting: settings)
+			setting.saveBytes(bytes);
+		
+		for(int i = 0; i < byteWidth; i++)
+			bytes[byteWidth - i - 1] = bytes[byteWidth - i + 1];
+		
+		bytes[0] = device;
+		bytes[1] = version;
+		
+		return bytes;
 	}
 	
 	static boolean getBit(final byte[] bytes, final int byteNo, final int bitNo) {

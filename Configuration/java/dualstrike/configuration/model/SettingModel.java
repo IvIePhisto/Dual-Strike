@@ -19,4 +19,5 @@ public abstract class SettingModel {
 	
 	abstract void loadDefaults();
 	abstract void loadBytes(byte[] bytes);
+	abstract void saveBytes(byte[] bytes);
 }

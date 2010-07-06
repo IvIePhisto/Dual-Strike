@@ -6,7 +6,6 @@ import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 
 import dualstrike.configuration.device.ExecutionListener;
 import dualstrike.configuration.device.ExecutionResult;
@@ -24,8 +23,8 @@ abstract class ExecHandler implements ActionListener, ExecutionListener {
 
 	@Override
 	public synchronized void actionPerformed(ActionEvent action) {
-		view.getGlassPane().setVisible(true);
 		view.setEnabled(false);
+		view.getGlassPane().setVisible(true);
 		exec();
 	}
 	
@@ -37,14 +36,10 @@ abstract class ExecHandler implements ActionListener, ExecutionListener {
 
 	@Override
 	public void executionFinished(ExecutionResult result) {
-		JPanel glass;
-
-		glass = (JPanel)view.getGlassPane();
-		glass.setVisible(false);
-		glass.removeAll();
-		view.toFront();
+		//view.toFront();
 		view.getGlassPane().setVisible(false);
 		view.setEnabled(true);
+		view.requestFocus();
 	}
 	
 	protected void showError(String title, String message) {

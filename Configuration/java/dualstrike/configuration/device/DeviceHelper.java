@@ -12,6 +12,7 @@ public class DeviceHelper {
 			ExecutionOutputBuffer buffer;
 			String[] cmd;
 			int cmdIndex;
+			boolean proccessRunning;
 			
 			cmdIndex = 1;
 			
@@ -27,7 +28,13 @@ public class DeviceHelper {
 			cmd[cmdIndex++] = targetFile.getPath();
 			p = Runtime.getRuntime().exec(cmd);
 			buffer = new ExecutionOutputBuffer(p.getInputStream(), p.getErrorStream());
-			while (buffer.read() && isProcessRunning(p));
+			
+			while (buffer.read() && (proccessRunning = isProcessRunning(p)))
+				if(proccessRunning)
+					try {
+						Thread.sleep(200);
+					}
+					catch(InterruptedException e) {}
 			
 			return new ExecutionResult(buffer.toString(), p.exitValue() > 0);
 		} catch (IOException e) {
@@ -45,20 +52,16 @@ public class DeviceHelper {
 		}
 	}
 	
-	private static File createTempFile(String prefix, String suffix) {
+	public static File loadConfiguration(final ExecutionListener listener) {
+		final File tempFile;
+		
 		try {
-			return File.createTempFile(prefix, suffix);
+			tempFile = File.createTempFile("configuration-loading-data", ".txt");
+			tempFile.deleteOnExit();
 		}
 		catch(IOException e) {
 			throw new Error(e);
 		}
-	}
-
-	public static File loadConfiguration(final ExecutionListener listener) {
-		final File tempFile;
-		
-		tempFile = createTempFile("configuration-data", ".txt");
-		tempFile.deleteOnExit();
 		
 		new Thread() {
 			@Override

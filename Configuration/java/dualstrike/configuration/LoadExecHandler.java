@@ -20,7 +20,7 @@ public class LoadExecHandler extends ExecHandler {
 
 	@Override
 	void exec() {
-		DeviceHelper.loadConfiguration(this);
+		file = DeviceHelper.loadConfiguration(this);
 	}
 
 	@Override
@@ -32,16 +32,22 @@ public class LoadExecHandler extends ExecHandler {
 				byte[] dataBytes;
 
 				dataBytes = HexFilesUtility.readSimpleHexFile(file);
+				file = null;
 				getModel().loadBytes(dataBytes);
 			}
 			catch(ConfigurationException e) {
 				switch(e.getType()) {
 				case DEVICE:
+					showError(MessageHelper.get(this, "deviceErrorTitle"), MessageHelper.get(this, "deviceErrorMessage", ConfigurationEditor.convertTextToHTML(e.getLocalizedMessage())));
 				case VERSION:
+					showError(MessageHelper.get(this, "versionErrorTitle"), MessageHelper.get(this, "versionErrorMessage", ConfigurationEditor.convertTextToHTML(e.getLocalizedMessage())));
 				case BYTE_COUNT:
+					showError(MessageHelper.get(this, "byteCountErrorTitle"), MessageHelper.get(this, "byteCountErrorMessage", ConfigurationEditor.convertTextToHTML(e.getLocalizedMessage())));
 				case UNITITIALIZED_DATA:
+					showError(MessageHelper.get(this, "unititializedDataErrorTitle"), MessageHelper.get(this, "unititializedDataErrorMessage", ConfigurationEditor.convertTextToHTML(e.getLocalizedMessage())));
+				default:
+					throw new Error("Unsuspected ConfigurationException type.");
 				}
-				//TODO
 			}
 			catch(IOException e) {
 				showError(MessageHelper.get(this, "fileAccessErrorTitle"), MessageHelper.get(this, "fileAccessErrorMessage", ConfigurationEditor.convertTextToHTML(e.getLocalizedMessage())));

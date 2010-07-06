@@ -49,4 +49,10 @@ public class BooleanModel extends SettingModel implements ActionListener {
 	void loadBytes(final byte[] bytes) {
 		setValue(ConfigurationModel.getBit(bytes, getByteNo(), getBitNo()));
 	}
+
+	@Override
+	void saveBytes(byte[] bytes) {
+		if(value)
+			bytes[getByteNo()] |= (1 << getBitNo());
+	}
 }

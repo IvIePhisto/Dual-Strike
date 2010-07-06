@@ -159,13 +159,16 @@ public class ConfigurationEditor {
 		JPanel contentPanel;
 		JComponent buttons;
 		JComponent tabs;
-		SpringLayout layout;
+		JLabel helpLabel;
 		
 		title = getLocalizedInfo(configuration.getTitle(), false);
 		view = new JFrame(title);
+		helpLabel = createLabel(configuration.getHelp(), DESCRIPTION_FONT);
+		helpLabel.setBorder(BorderFactory.createEmptyBorder(5, 5, 0, 5));
 		buttons = createButtons();
 		tabs = createTabs();
 		contentPanel = new JPanel();
+		contentPanel.add(helpLabel);
 		contentPanel.add(buttons);
 		contentPanel.add(tabs);
 		//contentPanel.setLayout(new BorderLayout());
@@ -175,26 +178,35 @@ public class ConfigurationEditor {
 		contentPanel.setAlignmentY(Component.TOP_ALIGNMENT);
 		*/
 		/*
+		GroupLayout layout;
 		layout = new GroupLayout(contentPanel);
 		layout.setVerticalGroup(
 				layout.createSequentialGroup()
+				.addComponent(helpLabel, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
 				.addComponent(buttons, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
 				.addComponent(tabs, 0, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE));
 		layout.setHorizontalGroup(
 				layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+				.addComponent(helpLabel, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
 				.addComponent(buttons, 0, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
-				.addComponent(tabs));
+				.addComponent(tabs, 0, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE));
 		*/
+		SpringLayout layout;
 		layout = new SpringLayout();
 		contentPanel.setLayout(layout);
+		layout.putConstraint(SpringLayout.NORTH, helpLabel, 0, SpringLayout.NORTH, contentPanel);
 		layout.putConstraint(SpringLayout.NORTH, buttons, 0, SpringLayout.NORTH, contentPanel);
+		layout.putConstraint(SpringLayout.EAST, contentPanel, 0, SpringLayout.EAST, helpLabel);
 		layout.putConstraint(SpringLayout.EAST, contentPanel, 0, SpringLayout.EAST, buttons);
 		layout.putConstraint(SpringLayout.EAST, contentPanel, 0, SpringLayout.EAST, tabs);
+		layout.putConstraint(SpringLayout.WEST, contentPanel, 0, SpringLayout.WEST, helpLabel);
 		layout.putConstraint(SpringLayout.WEST, contentPanel, 0, SpringLayout.WEST, buttons);
 		layout.putConstraint(SpringLayout.WEST, contentPanel, 0, SpringLayout.WEST, tabs);
 		layout.putConstraint(SpringLayout.SOUTH, contentPanel, 0, SpringLayout.SOUTH, tabs);
 		//layout.putConstraint(SpringLayout.EAST, tabs, 0, SpringLayout.EAST, buttons);
+		layout.putConstraint(SpringLayout.WEST, buttons, 0, SpringLayout.WEST, helpLabel);
 		layout.putConstraint(SpringLayout.WEST, tabs, 0, SpringLayout.WEST, buttons);
+		layout.putConstraint(SpringLayout.NORTH, buttons, 0, SpringLayout.SOUTH, helpLabel);
 		layout.putConstraint(SpringLayout.NORTH, tabs, 0, SpringLayout.SOUTH, buttons);
 		//layout.putConstraint(SpringLayout.SOUTH, buttons, 0, SpringLayout.NORTH, tabs);
 		
@@ -220,6 +232,7 @@ public class ConfigurationEditor {
 		saveButton = new JButton(MessageHelper.get(this, "saveButtonTitle"));
 		saveButton.setToolTipText(MessageHelper.get(this, "saveButtonHelp"));
 		buttonsPanel.add(saveButton);
+		new SaveExecHandler(view, model, saveButton);
 		defaultsButton = new JButton(MessageHelper.get(this, "defaultsButtonTitle"));
 		defaultsButton.setToolTipText(MessageHelper.get(this, "defaultsButtonHelp"));
 		buttonsPanel.add(defaultsButton);

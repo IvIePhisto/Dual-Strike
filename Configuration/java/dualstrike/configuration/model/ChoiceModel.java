@@ -95,19 +95,56 @@ public abstract class ChoiceModel extends SettingModel {
 		currentByte = getByteNo();
 		option = 0;
 		
-		for(int currentBit = 0; currentBit < bitWidth; currentBit++) {
+		for(int currentBit = 0, currentBitInByte = 0; currentBit < bitWidth; currentBit++, currentBitInByte++) {
 			if(currentBit == currentByteDivider) {
 				currentByte++;
 
+				currentBitInByte = 0;
+				
 				if(nextByteDividerIndex < byteDividers.length)
 					currentByteDivider = byteDividers[nextByteDividerIndex++];
 				else
 					currentByteDivider = Integer.MAX_VALUE;
 			}
 			
-			option += ConfigurationModel.getBit(bytes, currentByte, currentBit)?1:0 << currentBit; 
+			option += ConfigurationModel.getBit(bytes, currentByte, currentBitInByte)?1:0 << currentBit; 
 		}
 		
 		setCurrentOption(option);
+	}
+
+
+	@Override
+	void saveBytes(byte[] bytes) {
+		int currentByteDivider;
+		int nextByteDividerIndex;
+		int currentByte;
+		boolean[] option;
+		
+		nextByteDividerIndex = 0;
+		
+		if(byteDividers.length == 0)
+			currentByteDivider = Integer.MAX_VALUE;
+		else
+			currentByteDivider = byteDividers[nextByteDividerIndex++];
+		
+		currentByte = getByteNo();
+		option = optionValues[currentOption];
+		
+		for(int currentBit = 0, currentBitInByte = 0; currentBit < bitWidth; currentBit++, currentBitInByte++) {
+			if(currentBit == currentByteDivider) {
+				currentByte++;
+				
+				currentBitInByte = 0;
+				
+				if(nextByteDividerIndex < byteDividers.length)
+					currentByteDivider = byteDividers[nextByteDividerIndex++];
+				else
+					currentByteDivider = Integer.MAX_VALUE;
+			}
+			
+			if(option[currentBit])
+				bytes[currentByte] |= 1 << currentBitInByte;
+		}
 	}
 }
