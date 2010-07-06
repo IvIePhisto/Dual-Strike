@@ -19,6 +19,7 @@ import java.util.Locale;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
@@ -160,6 +161,7 @@ public class ConfigurationEditor {
 		JComponent buttons;
 		JComponent tabs;
 		JLabel helpLabel;
+		ImageIcon icon;
 		
 		title = getLocalizedInfo(configuration.getTitle(), false);
 		view = new JFrame(title);
@@ -210,6 +212,8 @@ public class ConfigurationEditor {
 		layout.putConstraint(SpringLayout.NORTH, tabs, 0, SpringLayout.SOUTH, buttons);
 		//layout.putConstraint(SpringLayout.SOUTH, buttons, 0, SpringLayout.NORTH, tabs);
 		
+		icon = new ImageIcon(this.getClass().getResource("icon.png"));
+		view.setIconImage(icon.getImage());
 		view.getContentPane().add(contentPanel);
 		view.pack();
 		createGlassPanel();
