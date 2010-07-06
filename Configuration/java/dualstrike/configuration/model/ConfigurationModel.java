@@ -42,10 +42,10 @@ public class ConfigurationModel {
 		settings.add(choiceModel);
 	}
 
-	public synchronized void addBoolean(final BooleanSetting booleanSetting, final JRadioButton enableButton) {
+	public synchronized void addBoolean(final BooleanSetting booleanSetting, final JRadioButton enableButton, final JRadioButton disableButton) {
 		BooleanModel booleanModel;
 		
-		booleanModel = new BooleanModel(booleanSetting, enableButton);
+		booleanModel = new BooleanModel(booleanSetting, enableButton, disableButton);
 		settings.add(booleanModel);
 	}
 	

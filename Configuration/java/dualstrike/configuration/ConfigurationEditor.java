@@ -330,6 +330,7 @@ public class ConfigurationEditor {
 		JPanel selectorPanel;
 		ButtonGroup buttons;
 		JRadioButton enableButton;
+		JRadioButton disableButton;
 		boolean isEnabled;
 	
 		buttons = new ButtonGroup();
@@ -338,8 +339,9 @@ public class ConfigurationEditor {
 		selectorPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
 		isEnabled = b != null && b.isDefault();
 		enableButton = addRadioButton(MessageHelper.get(this, "trueButtonText", language), buttons, selectorPanel, isEnabled);
-		addRadioButton(MessageHelper.get(this, "falseButtonText", language), buttons, selectorPanel, !isEnabled);
-		model.addBoolean(b, enableButton);
+		disableButton = addRadioButton(MessageHelper.get(this, "falseButtonText", language), buttons, selectorPanel, !isEnabled);
+		model.addBoolean(b, enableButton, disableButton);
+		
 		return selectorPanel;
 	}
 
