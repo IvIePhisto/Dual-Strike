@@ -131,7 +131,7 @@ public abstract class ChoiceModel extends SettingModel {
 		currentByte = getByteNo();
 		option = optionValues[currentOption];
 		
-		for(int currentBit = 0, currentBitInByte = 0; currentBit < bitWidth; currentBit++, currentBitInByte++) {
+		for(int currentBit = 0, currentBitInByte = getBitNo(); currentBit < bitWidth; currentBit++, currentBitInByte++) {
 			if(currentBit == currentByteDivider) {
 				currentByte++;
 				

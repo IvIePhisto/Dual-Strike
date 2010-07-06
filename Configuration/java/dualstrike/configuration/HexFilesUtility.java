@@ -40,14 +40,14 @@ public class HexFilesUtility {
 		
 		try {
 			for(int address = 0; address < data.length;) {
-				byte byteCount;
+				int byteCount;
 				
-				byteCount = (byte)(data.length - address);
+				byteCount = (data.length - address);
 
 				if(byteCount > maximumByteCount)
 					byteCount = maximumByteCount;
 
-				printI8HEXLine(writer, byteCount, address, IntelRecordType.DATA, data);
+				printI8HEXLine(writer, (byte)byteCount, address, IntelRecordType.DATA, data);
 				
 				if(writer.checkError())
 					throw new Error(String.format("An error occured while writing to file \"%s\".", outputFile.getAbsolutePath()));
@@ -74,10 +74,12 @@ public class HexFilesUtility {
 		
 		for(int i = 0; i < byteCount; i++) {
 			byte value;
+			String valueString;
 			
 			value = data[address + i];
 			checksum = (byte)(checksum + value);
-			dataString.append(String.format("%02X", value));
+			valueString = String.format("%02X", value);
+			dataString.append(valueString);
 		}
 		
 		checksum = (byte)(-checksum);
@@ -141,6 +143,11 @@ public class HexFilesUtility {
 			File input;
 			File output;
 			byte[] bytes;
+			
+			if(args.length != 2) {
+				System.err.println("args: <input plain HEX file> <output Intel 8bit HEX file>");
+				System.exit(1);
+			}
 			
 			input = new File(args[0]);
 			output = new File(args[1]);

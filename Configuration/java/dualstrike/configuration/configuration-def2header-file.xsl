@@ -24,14 +24,24 @@
 #define CONFIG_VERSION (uint8_t)</xsl:text><xsl:value-of select="c:version"/><xsl:text>
 #define CONFIG_BYTE_WIDTH </xsl:text><xsl:value-of select="@byte-width"/><xsl:text>
 #define CONFIG_EMPTY 0xFF</xsl:text>
+  <xsl:variable name="default-bits">
+    <xsl:apply-templates select="(c:page/c:choice | c:page/c:boolean)[1]" mode="default-bits"/>
+  </xsl:variable>
   <xsl:call-template name="create-config-defaults">
-    <xsl:with-param name="default-bits">
-      <xsl:apply-templates select="(c:page/c:choice | c:page/c:boolean)[1]" mode="default-bits"/>
-    </xsl:with-param>
+    <xsl:with-param name="default-bits" select="$default-bits"/>
     <xsl:with-param name="byte-count" select="@byte-width"/>
   </xsl:call-template>
 <xsl:text>
 
+#define CONFIG_SET_DEFAULTS(CONFIG)\
+  CONFIG[0] = CONFIG_DEVICE;\
+  CONFIG[1] = CONFIG_VERSION;\
+</xsl:text>
+  <xsl:call-template name="create-set-defaults">
+    <xsl:with-param name="default-bits" select="$default-bits"/>
+    <xsl:with-param name="byte-count" select="@byte-width"/>
+  </xsl:call-template>
+<xsl:text>
 /* 
  * IMPORTANT:
  * You must use the following macro in your main module to declare the variables
@@ -94,7 +104,24 @@ uint8_t config[CONFIG_BYTE_WIDTH + 2] = {</xsl:text>
       <xsl:text>
 #define CONFIG_DEF_</xsl:text><xsl:value-of select="$byte-index + 1"/><xsl:text> 0b</xsl:text>
         <xsl:value-of select="substring($default-bits, string-length($default-bits) - (($byte-index + 1) * 7) + 1, 7)"/>
-        <xsl:text>;</xsl:text>
+        <xsl:call-template name="create-config-defaults">
+          <xsl:with-param name="default-bits" select="$default-bits"/>
+          <xsl:with-param name="byte-count" select="$byte-count"/>
+          <xsl:with-param name="byte-index" select="$byte-index + 1"/>
+        </xsl:call-template>
+    </xsl:if>
+  </xsl:template>
+
+  <xsl:template name="create-set-defaults">
+    <xsl:param name="default-bits"/>
+    <xsl:param name="byte-count"/>
+    <xsl:param name="byte-index" select="0"/>
+    <xsl:if test="$byte-index &lt; $byte-count">
+      <xsl:text>  CONFIG[</xsl:text>
+      <xsl:value-of select="$byte-index + 2"/>
+      <xsl:text>] = </xsl:text>
+      <xsl:text>CONFIG_DEF_</xsl:text><xsl:value-of select="$byte-index + 1"/>
+        <xsl:text>;\&#xA;</xsl:text>
         <xsl:call-template name="create-config-defaults">
           <xsl:with-param name="default-bits" select="$default-bits"/>
           <xsl:with-param name="byte-count" select="$byte-count"/>
@@ -234,11 +261,11 @@ uint8_t config[CONFIG_BYTE_WIDTH + 2] = {</xsl:text>
           <xsl:text>SET_</xsl:text>
           <xsl:value-of select="parent::c:choice/@prefix"/>
           <xsl:value-of select="@id"/>
-          <xsl:text> </xsl:text>
+          <xsl:text>(CONFIG) </xsl:text>
         </xsl:if>
         <xsl:choose>
           <xsl:when test="contains($bits, '1') and not(contains($bits, '0')) or contains($bits, '0') and not(contains($bits, '1'))">
-            <xsl:text>(config[</xsl:text>
+            <xsl:text>CONFIG[</xsl:text>
             <xsl:value-of select="$byte-no"/>
             <xsl:text> + 2] </xsl:text>
             <xsl:choose>
@@ -246,24 +273,35 @@ uint8_t config[CONFIG_BYTE_WIDTH + 2] = {</xsl:text>
               <xsl:otherwise>&amp;= ~</xsl:otherwise>
             </xsl:choose>
             <xsl:text>(0b</xsl:text>
-            <xsl:value-of select="$bits"/>
+            <xsl:choose>
+              <xsl:when test="contains($bits, '1')">
+                <xsl:value-of select="$bits"/>
+              </xsl:when>
+              <xsl:otherwise>
+                <xsl:value-of select="translate($bits, '01', '10')"/>
+              </xsl:otherwise>
+            </xsl:choose>
             <xsl:text> &lt;&lt; </xsl:text>
             <xsl:value-of select="$bit-no"/>
             <xsl:text>);</xsl:text>
           </xsl:when>
           <xsl:otherwise>
-            <xsl:text>((config[</xsl:text>
+            <xsl:text>CONFIG[</xsl:text>
             <xsl:value-of select="$byte-no"/>
             <xsl:text> + 2] |= </xsl:text>
             <xsl:text>(0b</xsl:text>
             <xsl:value-of select="$bits"/>
             <xsl:text> &lt;&lt; </xsl:text>
             <xsl:value-of select="$bit-no"/>
-            <xsl:text>)); ((config[</xsl:text>
+            <xsl:text>); CONFIG[</xsl:text>
             <xsl:value-of select="$byte-no"/>
-            <xsl:text> + 2] &amp;= ~</xsl:text>
-            <xsl:text>(0b</xsl:text>
+            <xsl:text> + 2] &amp;= </xsl:text>
+            <xsl:text>((0b</xsl:text>
             <xsl:value-of select="$bits"/>
+            <xsl:text> &lt;&lt; </xsl:text>
+            <xsl:value-of select="$bit-no"/>
+            <xsl:text>)| ~(0b</xsl:text>
+            <xsl:value-of select="translate($bits, '01', '10')"/>
             <xsl:text> &lt;&lt; </xsl:text>
             <xsl:value-of select="$bit-no"/>
             <xsl:text>));</xsl:text>

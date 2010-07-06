@@ -68,7 +68,7 @@ public class ConfigurationModel {
 		if(bytes[1] != version)
 			throw new ConfigurationException(ConfigurationException.Type.VERSION);
 		
-		bytes = Arrays.copyOfRange(bytes, 2, -1);
+		bytes = Arrays.copyOfRange(bytes, 2, bytes.length);
 
 		for(SettingModel setting: settings)
 			setting.loadBytes(bytes);
@@ -83,7 +83,7 @@ public class ConfigurationModel {
 			setting.saveBytes(bytes);
 		
 		for(int i = 0; i < byteWidth; i++)
-			bytes[byteWidth - i - 1] = bytes[byteWidth - i + 1];
+			bytes[bytes.length - i - 1] = bytes[bytes.length - i - 3];
 		
 		bytes[0] = device;
 		bytes[1] = version;
