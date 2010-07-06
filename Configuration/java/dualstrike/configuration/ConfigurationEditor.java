@@ -78,6 +78,7 @@ public class ConfigurationEditor {
 		
 		defaultLanguage = new Locale(configuration.getLang());
 		model = new ConfigurationModel(configuration);
+		createView();
 	}
 	
 	private void createGlassPanel() {
@@ -160,17 +161,13 @@ public class ConfigurationEditor {
 		JPanel contentPanel;
 		JComponent buttons;
 		JComponent tabs;
-		JLabel helpLabel;
 		ImageIcon icon;
 		
 		title = getLocalizedInfo(configuration.getTitle(), false);
 		view = new JFrame(title);
-		helpLabel = createLabel(configuration.getHelp(), DESCRIPTION_FONT);
-		helpLabel.setBorder(BorderFactory.createEmptyBorder(5, 5, 0, 5));
 		buttons = createButtons();
 		tabs = createTabs();
 		contentPanel = new JPanel();
-		contentPanel.add(helpLabel);
 		contentPanel.add(buttons);
 		contentPanel.add(tabs);
 		//contentPanel.setLayout(new BorderLayout());
@@ -195,23 +192,18 @@ public class ConfigurationEditor {
 		*/
 		SpringLayout layout;
 		layout = new SpringLayout();
-		contentPanel.setLayout(layout);
-		layout.putConstraint(SpringLayout.NORTH, helpLabel, 0, SpringLayout.NORTH, contentPanel);
-		layout.putConstraint(SpringLayout.NORTH, buttons, 0, SpringLayout.NORTH, contentPanel);
-		layout.putConstraint(SpringLayout.EAST, contentPanel, 0, SpringLayout.EAST, helpLabel);
+		layout.putConstraint(SpringLayout.NORTH, contentPanel, 0, SpringLayout.NORTH, buttons);
 		layout.putConstraint(SpringLayout.EAST, contentPanel, 0, SpringLayout.EAST, buttons);
 		layout.putConstraint(SpringLayout.EAST, contentPanel, 0, SpringLayout.EAST, tabs);
-		layout.putConstraint(SpringLayout.WEST, contentPanel, 0, SpringLayout.WEST, helpLabel);
 		layout.putConstraint(SpringLayout.WEST, contentPanel, 0, SpringLayout.WEST, buttons);
 		layout.putConstraint(SpringLayout.WEST, contentPanel, 0, SpringLayout.WEST, tabs);
 		layout.putConstraint(SpringLayout.SOUTH, contentPanel, 0, SpringLayout.SOUTH, tabs);
 		//layout.putConstraint(SpringLayout.EAST, tabs, 0, SpringLayout.EAST, buttons);
-		layout.putConstraint(SpringLayout.WEST, buttons, 0, SpringLayout.WEST, helpLabel);
 		layout.putConstraint(SpringLayout.WEST, tabs, 0, SpringLayout.WEST, buttons);
-		layout.putConstraint(SpringLayout.NORTH, buttons, 0, SpringLayout.SOUTH, helpLabel);
 		layout.putConstraint(SpringLayout.NORTH, tabs, 0, SpringLayout.SOUTH, buttons);
 		//layout.putConstraint(SpringLayout.SOUTH, buttons, 0, SpringLayout.NORTH, tabs);
 		
+		contentPanel.setLayout(layout);
 		icon = new ImageIcon(this.getClass().getResource("icon.png"));
 		view.setIconImage(icon.getImage());
 		view.getContentPane().add(contentPanel);
@@ -228,18 +220,22 @@ public class ConfigurationEditor {
 		JButton saveButton;
 		JButton defaultsButton;
 		
-		buttonsPanel = new JPanel();
 		loadButton = new JButton(MessageHelper.get(this, "loadButtonTitle"));
 		loadButton.setToolTipText(MessageHelper.get(this, "loadButtonHelp"));
-		buttonsPanel.add(loadButton);
-		new LoadExecHandler(view, model, loadButton);		
 		saveButton = new JButton(MessageHelper.get(this, "saveButtonTitle"));
 		saveButton.setToolTipText(MessageHelper.get(this, "saveButtonHelp"));
-		buttonsPanel.add(saveButton);
-		new SaveExecHandler(view, model, saveButton);
 		defaultsButton = new JButton(MessageHelper.get(this, "defaultsButtonTitle"));
 		defaultsButton.setToolTipText(MessageHelper.get(this, "defaultsButtonHelp"));
+		
+		buttonsPanel = new JPanel();
+		buttonsPanel.setLayout(new BoxLayout(buttonsPanel, BoxLayout.X_AXIS));
+		buttonsPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+		buttonsPanel.add(loadButton);
+		buttonsPanel.add(saveButton);
 		buttonsPanel.add(defaultsButton);
+
+		new LoadExecHandler(view, model, loadButton);		
+		new SaveExecHandler(view, model, saveButton);
 		new LoadDefaultsHandler(view, model, defaultsButton);
 		
 		return buttonsPanel;
@@ -249,7 +245,9 @@ public class ConfigurationEditor {
 		JTabbedPane tabs;
 		
 		tabs = new JTabbedPane(JTabbedPane.TOP, JTabbedPane.SCROLL_TAB_LAYOUT);
-
+		//helpLabel.setBorder(BorderFactory.createEmptyBorder(5, 5, 0, 5));
+		tabs.addTab(MessageHelper.get(this, "overviewTabTitle"), createOverviewTabContent());
+		
 		for(Page page: configuration.getPage()) {
 			String tabTitle;
 			
@@ -258,6 +256,23 @@ public class ConfigurationEditor {
 		}
 		
 		return tabs;
+	}
+	
+	private Component createOverviewTabContent() {
+		JLabel helpLabel;
+		JPanel tabPanel;
+		JScrollPane tabContent;
+
+		helpLabel = createLabel(configuration.getHelp(), DESCRIPTION_FONT);
+		tabPanel = new ResizingJPanel();
+		tabPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+		tabPanel.setLayout(new BoxLayout(tabPanel, BoxLayout.Y_AXIS));
+		tabPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+		tabPanel.setAlignmentY(Component.TOP_ALIGNMENT);
+		tabPanel.add(helpLabel);
+		tabContent = new JScrollPane(tabPanel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		
+		return tabContent;
 	}
 	
 	private Component createTabContent(Page page) {
@@ -480,8 +495,6 @@ public class ConfigurationEditor {
 		Locale.setDefault(language);
 		
 		try {
-			ConfigurationEditor ce;
-			
 			try {
 				UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 			}
@@ -498,8 +511,7 @@ public class ConfigurationEditor {
 				throw new Error(e);
 			}
 
-			ce = ConfigurationEditor.newInstance(configurationURL, language);
-			ce.createView();
+			ConfigurationEditor.newInstance(configurationURL, language);
 		}
 		catch(ConfigurationDefinitionException e) {
 			showError(e.getLocalizedMessage(), language);
