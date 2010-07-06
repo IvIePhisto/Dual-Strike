@@ -95,8 +95,10 @@ public abstract class ChoiceModel extends SettingModel {
 		currentByte = getByteNo();
 		option = 0;
 		
-		for(int currentBit = 0, currentBitInByte = 0; currentBit < bitWidth; currentBit++, currentBitInByte++) {
-			if(currentBit == currentByteDivider) {
+		for(int currentBit = 0, currentBitInByte = getBitNo(); currentBit < bitWidth; currentBit++, currentBitInByte++) {
+			boolean bit;
+			
+			if(currentBitInByte == currentByteDivider) {
 				currentByte++;
 
 				currentBitInByte = 0;
@@ -107,7 +109,8 @@ public abstract class ChoiceModel extends SettingModel {
 					currentByteDivider = Integer.MAX_VALUE;
 			}
 			
-			option += ConfigurationModel.getBit(bytes, currentByte, currentBitInByte)?1:0 << currentBit; 
+			bit = ConfigurationModel.getBit(bytes, currentByte, currentBitInByte);
+			option += bit?1:0 << currentBit; 
 		}
 		
 		setCurrentOption(option);
@@ -132,7 +135,7 @@ public abstract class ChoiceModel extends SettingModel {
 		option = optionValues[currentOption];
 		
 		for(int currentBit = 0, currentBitInByte = getBitNo(); currentBit < bitWidth; currentBit++, currentBitInByte++) {
-			if(currentBit == currentByteDivider) {
+			if(currentBitInByte == currentByteDivider) {
 				currentByte++;
 				
 				currentBitInByte = 0;
@@ -143,7 +146,7 @@ public abstract class ChoiceModel extends SettingModel {
 					currentByteDivider = Integer.MAX_VALUE;
 			}
 			
-			if(option[currentBit])
+			if(option[bitWidth - currentBit - 1])
 				bytes[currentByte] |= 1 << currentBitInByte;
 		}
 	}

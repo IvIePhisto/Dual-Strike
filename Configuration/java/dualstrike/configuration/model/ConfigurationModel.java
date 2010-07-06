@@ -92,6 +92,13 @@ public class ConfigurationModel {
 	}
 	
 	static boolean getBit(final byte[] bytes, final int byteNo, final int bitNo) {
-		return (byte) ((byte) (bytes[byteNo] >> bitNo) & 0xFE) == 1;
+		byte value;
+		boolean bit;
+		
+		value = (byte)(bytes[byteNo] >> bitNo);
+		value &= ~0xFE;
+		bit = value == 1;
+		
+		return bit;
 	}
 }
