@@ -32,8 +32,8 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
+import javax.swing.JToolBar;
 import javax.swing.ListSelectionModel;
-import javax.swing.SpringLayout;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.Border;
@@ -49,6 +49,7 @@ import dualstrike.configuration.definition.Configuration;
 import dualstrike.configuration.definition.Info;
 import dualstrike.configuration.definition.Option;
 import dualstrike.configuration.definition.Page;
+import dualstrike.configuration.icons.IconHandler;
 import dualstrike.configuration.model.ConfigurationModel;
 
 public class ConfigurationEditor {
@@ -91,7 +92,7 @@ public class ConfigurationEditor {
 
 		title = getLocalizedInfo(configuration.getTitle(), false);
 		view = new JFrame(title);
-		icon = new ImageIcon(this.getClass().getResource("icon.png"));
+		icon = IconHandler.getIcon("application", null, 64, null);
 		view.setIconImage(icon.getImage());
 		actionListenerHandler = new ActionListenerHandler();
 		registerActionHandlers();
@@ -194,15 +195,18 @@ public class ConfigurationEditor {
 		menu = new JMenu(MessageHelper.get(this, "deviceMenuName"));
 		menuItem = new JMenuItem(MessageHelper.get(this, "loadMenuItemName"));
 		menuItem.setToolTipText(MessageHelper.get(this, "loadHelp"));
+		menuItem.setIcon(IconHandler.getIcon("load", null, 16, null));
 		menu.add(menuItem);
 		actionListenerHandler.registerAction(menuItem, "load");
 		menuItem = new JMenuItem(MessageHelper.get(this, "saveMenuItemName"));
 		menuItem.setToolTipText(MessageHelper.get(this, "saveHelp"));
+		menuItem.setIcon(IconHandler.getIcon("save", null, 16, null));
 		menu.add(menuItem);
 		actionListenerHandler.registerAction(menuItem, "save");
 		//menu = new JMenu(MessageHelper.get(this, "defaultsMenuItemName"));
 		menuItem = new JMenuItem(MessageHelper.get(this, "defaultsMenuItemName"));
 		menuItem.setToolTipText(MessageHelper.get(this, "defaultsHelp"));
+		menuItem.setIcon(IconHandler.getIcon("defaults", null, 16, null));
 		menu.add(menuItem);
 		actionListenerHandler.registerAction(menuItem, "defaults");
 		menuBar.add(menu);
@@ -215,11 +219,11 @@ public class ConfigurationEditor {
 		JComponent buttons;
 		JComponent tabs;
 		
-		buttons = createButtons();
+		buttons = createToolBar();
 		tabs = createTabs();
-		contentPanel = new JPanel();
-		contentPanel.add(buttons);
-		contentPanel.add(tabs);
+		contentPanel = (JPanel)view.getContentPane();
+		contentPanel.add(buttons, BorderLayout.PAGE_START);
+		contentPanel.add(tabs, BorderLayout.CENTER);
 		//contentPanel.setLayout(new BorderLayout());
 		/*
 		contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
@@ -240,6 +244,7 @@ public class ConfigurationEditor {
 				.addComponent(buttons, 0, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
 				.addComponent(tabs, 0, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE));
 		*/
+		/*
 		SpringLayout layout;
 		layout = new SpringLayout();
 		layout.putConstraint(SpringLayout.NORTH, contentPanel, 0, SpringLayout.NORTH, buttons);
@@ -253,32 +258,35 @@ public class ConfigurationEditor {
 		layout.putConstraint(SpringLayout.NORTH, tabs, 0, SpringLayout.SOUTH, buttons);
 		//layout.putConstraint(SpringLayout.SOUTH, buttons, 0, SpringLayout.NORTH, tabs);		
 		contentPanel.setLayout(layout);
-		view.getContentPane().add(contentPanel, BorderLayout.CENTER);
+		*/
 	}
 	
-	private JComponent createButtons() {
-		JPanel buttonsPanel;
+	private JComponent createToolBar() {
+		JToolBar toolBar;
 		JButton button;
 		
-		buttonsPanel = new JPanel();
-		buttonsPanel.setLayout(new BoxLayout(buttonsPanel, BoxLayout.X_AXIS));
+		toolBar = new JToolBar();
+		//toolBar.setLayout(new BoxLayout(toolBar, BoxLayout.X_AXIS));
 		
-		button = new JButton(MessageHelper.get(this, "loadButtonTitle"));
+		button = new JButton();
 		button.setToolTipText(MessageHelper.get(this, "loadHelp"));
-		buttonsPanel.add(button);
+		button.setIcon(IconHandler.getIcon("load", MessageHelper.get(this, "loadButtonTitle"), 22, null));
+		toolBar.add(button);
 		actionListenerHandler.registerAction(button, "load");
 		
-		button = new JButton(MessageHelper.get(this, "saveButtonTitle"));
+		button = new JButton();
 		button.setToolTipText(MessageHelper.get(this, "saveHelp"));
-		buttonsPanel.add(button);
+		button.setIcon(IconHandler.getIcon("save", MessageHelper.get(this, "saveButtonTitle"), 22, null));
+		toolBar.add(button);
 		actionListenerHandler.registerAction(button, "save");
 		
-		button = new JButton(MessageHelper.get(this, "defaultsButtonTitle"));
+		button = new JButton();
 		button.setToolTipText(MessageHelper.get(this, "defaultsHelp"));
-		buttonsPanel.add(button);
+		button.setIcon(IconHandler.getIcon("defaults", MessageHelper.get(this, "defaultsButtonTitle"), 22, null));
+		toolBar.add(button);
 		actionListenerHandler.registerAction(button, "defaults");
 				
-		return buttonsPanel;
+		return toolBar;
 	}
 	
 	private JComponent createTabs() {

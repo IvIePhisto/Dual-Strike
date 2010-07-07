@@ -1,6 +1,5 @@
-The icon is the 128x128 version of "package_settings.png" from the KDE Nuvola
-<http://www.icon-king.com/projects/nuvola/> icon set. It is under the following
-licence:
+The icons are taken from the KDE Nuvola <http://www.icon-king.com/projects/nuvola/> icon set.
+It is under the following licence:
 
 		  GNU LESSER GENERAL PUBLIC LICENSE
 		       Version 2.1, February 1999
