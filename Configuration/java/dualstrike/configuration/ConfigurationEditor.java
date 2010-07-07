@@ -190,20 +190,23 @@ public class ConfigurationEditor {
 		JMenu menu;
 		JMenuItem menuItem;
 
+		menuBar = new JMenuBar();
 		menu = new JMenu(MessageHelper.get(this, "deviceMenuName"));
-		
 		menuItem = new JMenuItem(MessageHelper.get(this, "loadMenuItemName"));
 		menuItem.setToolTipText(MessageHelper.get(this, "loadHelp"));
 		menu.add(menuItem);
 		actionListenerHandler.registerAction(menuItem, "load");
-		
 		menuItem = new JMenuItem(MessageHelper.get(this, "saveMenuItemName"));
 		menuItem.setToolTipText(MessageHelper.get(this, "saveHelp"));
 		menu.add(menuItem);
 		actionListenerHandler.registerAction(menuItem, "save");
-
-		menuBar = new JMenuBar();
+		//menu = new JMenu(MessageHelper.get(this, "defaultsMenuItemName"));
+		menuItem = new JMenuItem(MessageHelper.get(this, "defaultsMenuItemName"));
+		menuItem.setToolTipText(MessageHelper.get(this, "defaultsHelp"));
+		menu.add(menuItem);
+		actionListenerHandler.registerAction(menuItem, "defaults");
 		menuBar.add(menu);
+		
 		view.setJMenuBar(menuBar);
 	}
 	
@@ -271,7 +274,7 @@ public class ConfigurationEditor {
 		actionListenerHandler.registerAction(button, "save");
 		
 		button = new JButton(MessageHelper.get(this, "defaultsButtonTitle"));
-		button.setToolTipText(MessageHelper.get(this, "defaultsButtonHelp"));
+		button.setToolTipText(MessageHelper.get(this, "defaultsHelp"));
 		buttonsPanel.add(button);
 		actionListenerHandler.registerAction(button, "defaults");
 				

@@ -64,12 +64,12 @@ public abstract class ChoiceModel extends SettingModel {
 		this.currentOption = currentOption;
 	}
 
-	public final int getCurrentOption() {
+	public synchronized final int getCurrentOption() {
 		return currentOption;
 	}
 
 
-	public final int getDefaultValue() {
+	public int getDefaultValue() {
 		return defaultValue;
 	}
 	
@@ -79,7 +79,7 @@ public abstract class ChoiceModel extends SettingModel {
 	}
 	
 	@Override
-	void loadBytes(byte[] bytes) {
+	synchronized void loadBytes(byte[] bytes) {
 		int currentByteDivider;
 		int nextByteDividerIndex;
 		int currentByte;
@@ -118,7 +118,7 @@ public abstract class ChoiceModel extends SettingModel {
 
 
 	@Override
-	void saveBytes(byte[] bytes) {
+	synchronized void saveBytes(byte[] bytes) {
 		int currentByteDivider;
 		int nextByteDividerIndex;
 		int currentByte;
