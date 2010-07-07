@@ -40,4 +40,8 @@ public abstract class ExecActionListener implements ActionListener, ExecutionLis
 		options = new String[]{"OK"};
 		JOptionPane.showOptionDialog(controller.getView(), message, title, JOptionPane.OK_OPTION , JOptionPane.ERROR_MESSAGE, null, options, options[0]);
 	}
+
+	ConfigurationEditor getController() {
+		return controller;
+	}
 }

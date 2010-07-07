@@ -24,8 +24,10 @@ public class LoadActionListener extends ExecActionListener {
 
 	@Override
 	public void executionFinished(ExecutionResult result) {
-		if(result.isError())
+		if(result.isError()) {
 			showError(MessageHelper.get(this, "loadErrorTitle"), MessageHelper.get(this, "loadErrorMessage", ConfigurationEditor.convertTextToHTML(result.getMessage())));
+			getController().setStatusLabelText(MessageHelper.get(this, "loadErrorStatus"));
+		}
 		else {
 			try {
 				byte[] dataBytes;
@@ -33,23 +35,31 @@ public class LoadActionListener extends ExecActionListener {
 				dataBytes = HexFilesUtility.readSimpleHexFile(file);
 				file = null;
 				getModel().loadBytes(dataBytes);
+				getController().setStatusLabelText(MessageHelper.get(this, "loadedStatus"));
 			}
 			catch(ConfigurationException e) {
 				switch(e.getType()) {
 				case DEVICE:
 					showError(MessageHelper.get(this, "deviceErrorTitle"), MessageHelper.get(this, "deviceErrorMessage", ConfigurationEditor.convertTextToHTML(e.getLocalizedMessage())));
+					break;
 				case VERSION:
 					showError(MessageHelper.get(this, "versionErrorTitle"), MessageHelper.get(this, "versionErrorMessage", ConfigurationEditor.convertTextToHTML(e.getLocalizedMessage())));
+					break;
 				case BYTE_COUNT:
 					showError(MessageHelper.get(this, "byteCountErrorTitle"), MessageHelper.get(this, "byteCountErrorMessage", ConfigurationEditor.convertTextToHTML(e.getLocalizedMessage())));
+					break;
 				case UNITITIALIZED_DATA:
 					showError(MessageHelper.get(this, "unititializedDataErrorTitle"), MessageHelper.get(this, "unititializedDataErrorMessage", ConfigurationEditor.convertTextToHTML(e.getLocalizedMessage())));
+					break;
 				default:
 					throw new Error("Unsuspected ConfigurationException type.");
 				}
+				
+				getController().setStatusLabelText(MessageHelper.get(this, "loadErrorStatus"));
 			}
 			catch(IOException e) {
 				showError(MessageHelper.get(this, "fileAccessErrorTitle"), MessageHelper.get(this, "fileAccessErrorMessage", ConfigurationEditor.convertTextToHTML(e.getLocalizedMessage())));
+				getController().setStatusLabelText(MessageHelper.get(this, "loadErrorStatus"));
 			}
 		}
 		
