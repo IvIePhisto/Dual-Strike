@@ -3,8 +3,10 @@ package dualstrike.configuration;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Graphics;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -38,6 +40,7 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
+import javax.swing.border.EtchedBorder;
 
 import dualstrike.configuration.action_listeners.ActionListenerHandler;
 import dualstrike.configuration.action_listeners.DefaultsActionListener;
@@ -54,11 +57,12 @@ import dualstrike.configuration.model.ConfigurationModel;
 
 public class ConfigurationEditor {
 	private static final URL DEFAULT_CONFIGURATION_DEFINITION_FILE_URL = createFileURL("configuration.xml");
-	private static final int FONT_SIZE = 12;
+	private static final int FONT_SIZE = 14;
 	private static final Font TITLE_FONT = new Font(Font.SANS_SERIF, Font.BOLD, FONT_SIZE); 
 	private static final Font DESCRIPTION_FONT = new Font(Font.SANS_SERIF, Font.PLAIN, FONT_SIZE); 
 	private static final Border BOTTOM_SPACER_BORDER = new EmptyBorder(0, 0, 10, 0);
-
+	private static final Color WHITE = new Color(255, 255, 255, 150);
+	
 	private final Configuration configuration;
 	private final Locale language;
 	private final Locale defaultLanguage;
@@ -66,6 +70,8 @@ public class ConfigurationEditor {
 	private final ActionListenerHandler actionListenerHandler;
 	private JFrame view;
 	private JPanel glassPanel;
+	private JLabel statusLabel;
+	private StatusClearer statusCleareance;
 
 	private static URL createFileURL(String path) throws Error {
 		try {
@@ -95,29 +101,18 @@ public class ConfigurationEditor {
 		icon = IconHandler.getIcon("application", null, 64, null);
 		view.setIconImage(icon.getImage());
 		actionListenerHandler = new ActionListenerHandler();
+		createGlassPanel();
 		registerActionHandlers();
 		populateView();
+		statusCleareance = new StatusClearer(this);
 	}
 	
-	private void createGlassPane() {
-		final JPanel glass;
-		final Color color;
-		
-		glass = (JPanel)view.getGlassPane();
-		glass.setLayout(new BorderLayout());
-		color = new Color(255, 255, 255, 125);
-		glassPanel = new JPanel() {
-			private static final long serialVersionUID = 1L;
-			@Override
-		    public Dimension getPreferredSize() {
-		        return view.getSize();
-		    }
-		};
-		
-		glassPanel.setBackground(color);
-		glass.add(glassPanel);
+	private void registerActionHandlers() {
+		actionListenerHandler.registerActionListener("save", new SaveActionListener(this));
+		actionListenerHandler.registerActionListener("load", new LoadActionListener(this));
+		actionListenerHandler.registerActionListener("defaults", new DefaultsActionListener(this));
 	}
-	
+
 	private static ConfigurationEditor newInstance(URL configurationDefinitionURL, final Locale language) throws IOException, ConfigurationDefinitionException {
 		Configuration configuration;
 		ConfigurationEditor ce;
@@ -170,14 +165,7 @@ public class ConfigurationEditor {
 		return "<html>" + value.replace("\n", "<br/>") + "</html>";
 	}
 	
-	private void registerActionHandlers() {
-		actionListenerHandler.registerActionListener("save", new SaveActionListener(view, model));
-		actionListenerHandler.registerActionListener("load", new LoadActionListener(view, model));
-		actionListenerHandler.registerActionListener("defaults", new DefaultsActionListener(view, model));
-	}
-	
 	private void populateView() {
-		createGlassPane();
 		createMenuBar();
 		createContentPane();
 		view.pack();
@@ -186,6 +174,47 @@ public class ConfigurationEditor {
 		view.setVisible(true);
 	}
 	
+	private void createGlassPanel() {
+		final JPanel glass;
+		
+		glass = (JPanel)view.getGlassPane();
+		glass.setLayout(new BorderLayout());
+		glassPanel = new JPanel() {
+			private static final long serialVersionUID = 1L;
+			@Override
+		    public Dimension getPreferredSize() {
+		        return view.getSize();
+		    }
+			@Override
+		    public Dimension getMinimumSize() {
+		        return view.getSize();
+		    }
+			@Override
+			protected void paintComponent(Graphics g) {
+			    super.paintComponent(g);
+			}
+		};		
+		glassPanel.setLayout(new BorderLayout());
+		glassPanel.setBackground(WHITE);
+		glass.add(glassPanel, BorderLayout.CENTER);
+	}
+	
+	public void makeViewInactive() {
+		view.setEnabled(false);
+		glassPanel.setVisible(true);
+		//view.repaint();
+		view.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+		view.getGlassPane().setVisible(true);
+	}
+	
+	public void makeViewActive() {
+		view.setCursor(null);
+		glassPanel.setVisible(false);
+		//view.repaint();
+		view.setEnabled(true);
+		view.requestFocus();
+	}
+
 	private void createMenuBar() {
 		JMenuBar menuBar;
 		JMenu menu;
@@ -218,47 +247,16 @@ public class ConfigurationEditor {
 		JPanel contentPanel;
 		JComponent buttons;
 		JComponent tabs;
+		JComponent statusPanel;
 		
 		buttons = createToolBar();
 		tabs = createTabs();
+		statusPanel = createStatusPanel();
+
 		contentPanel = (JPanel)view.getContentPane();
 		contentPanel.add(buttons, BorderLayout.PAGE_START);
 		contentPanel.add(tabs, BorderLayout.CENTER);
-		//contentPanel.setLayout(new BorderLayout());
-		/*
-		contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
-		contentPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
-		contentPanel.setAlignmentY(Component.TOP_ALIGNMENT);
-		*/
-		/*
-		GroupLayout layout;
-		layout = new GroupLayout(contentPanel);
-		layout.setVerticalGroup(
-				layout.createSequentialGroup()
-				.addComponent(helpLabel, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
-				.addComponent(buttons, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
-				.addComponent(tabs, 0, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE));
-		layout.setHorizontalGroup(
-				layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-				.addComponent(helpLabel, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
-				.addComponent(buttons, 0, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
-				.addComponent(tabs, 0, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE));
-		*/
-		/*
-		SpringLayout layout;
-		layout = new SpringLayout();
-		layout.putConstraint(SpringLayout.NORTH, contentPanel, 0, SpringLayout.NORTH, buttons);
-		layout.putConstraint(SpringLayout.EAST, contentPanel, 0, SpringLayout.EAST, buttons);
-		layout.putConstraint(SpringLayout.EAST, contentPanel, 0, SpringLayout.EAST, tabs);
-		layout.putConstraint(SpringLayout.WEST, contentPanel, 0, SpringLayout.WEST, buttons);
-		layout.putConstraint(SpringLayout.WEST, contentPanel, 0, SpringLayout.WEST, tabs);
-		layout.putConstraint(SpringLayout.SOUTH, contentPanel, 0, SpringLayout.SOUTH, tabs);
-		//layout.putConstraint(SpringLayout.EAST, tabs, 0, SpringLayout.EAST, buttons);
-		layout.putConstraint(SpringLayout.WEST, tabs, 0, SpringLayout.WEST, buttons);
-		layout.putConstraint(SpringLayout.NORTH, tabs, 0, SpringLayout.SOUTH, buttons);
-		//layout.putConstraint(SpringLayout.SOUTH, buttons, 0, SpringLayout.NORTH, tabs);		
-		contentPanel.setLayout(layout);
-		*/
+		contentPanel.add(statusPanel, BorderLayout.PAGE_END);
 	}
 	
 	private JComponent createToolBar() {
@@ -287,6 +285,20 @@ public class ConfigurationEditor {
 		actionListenerHandler.registerAction(button, "defaults");
 				
 		return toolBar;
+	}
+
+	private JComponent createStatusPanel() {
+		JPanel statusPanel;
+		
+		statusPanel = new JPanel();
+		statusPanel.setLayout(new BorderLayout());
+		statusPanel.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
+		statusLabel = new JLabel(" ", JLabel.LEFT);
+		statusLabel.setBorder(BorderFactory.createEmptyBorder(1, 4, 1, 4));
+		statusLabel.setFont(DESCRIPTION_FONT);
+		statusPanel.add(statusLabel);
+		
+		return statusLabel;
 	}
 	
 	private JComponent createTabs() {
@@ -570,5 +582,22 @@ public class ConfigurationEditor {
 		catch(IOException e) {
 			showError(MessageHelper.get(ConfigurationEditor.class, "configurationDefinitionLoadingError", language, e.getLocalizedMessage()), language);
 		}
+	}
+
+	public ConfigurationModel getModel() {
+		return model;
+	}
+
+	public JFrame getView() {
+		return view;
+	}
+
+	JLabel getStatusLabel() {
+		return statusLabel;
+	}
+	
+	public synchronized void setStatusLabelText(final String text) {
+		statusLabel.setText(text);
+		statusCleareance.setActive();
 	}
 }

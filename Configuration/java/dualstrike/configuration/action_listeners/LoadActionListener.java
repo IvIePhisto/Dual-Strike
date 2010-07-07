@@ -3,21 +3,18 @@ package dualstrike.configuration.action_listeners;
 import java.io.File;
 import java.io.IOException;
 
-import javax.swing.JFrame;
-
 import dualstrike.configuration.ConfigurationEditor;
 import dualstrike.configuration.HexFilesUtility;
 import dualstrike.configuration.MessageHelper;
 import dualstrike.configuration.device.DeviceHelper;
 import dualstrike.configuration.device.ExecutionResult;
 import dualstrike.configuration.model.ConfigurationException;
-import dualstrike.configuration.model.ConfigurationModel;
 
 public class LoadActionListener extends ExecActionListener {
 	private File file;
 
-	public LoadActionListener(JFrame view, ConfigurationModel model) {
-		super(view, model);
+	public LoadActionListener(final ConfigurationEditor controller) {
+		super(controller);
 	}
 
 	@Override
