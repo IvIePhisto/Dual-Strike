@@ -1,18 +1,20 @@
-package dualstrike.configuration;
+package dualstrike.configuration.action_listeners;
 
 import java.io.File;
 import java.io.IOException;
 
-import javax.swing.JButton;
 import javax.swing.JFrame;
 
+import dualstrike.configuration.ConfigurationEditor;
+import dualstrike.configuration.HexFilesUtility;
+import dualstrike.configuration.MessageHelper;
 import dualstrike.configuration.device.DeviceHelper;
 import dualstrike.configuration.device.ExecutionResult;
 import dualstrike.configuration.model.ConfigurationModel;
 
-public class SaveExecHandler extends ExecHandler {
-	SaveExecHandler(JFrame view, ConfigurationModel model, JButton button) {
-		super(view, model, button);
+public class SaveActionListener extends ExecActionListener {
+	public SaveActionListener(JFrame view, ConfigurationModel model) {
+		super(view, model);
 	}
 
 	@Override

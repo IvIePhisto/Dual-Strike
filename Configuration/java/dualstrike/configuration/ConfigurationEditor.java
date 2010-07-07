@@ -5,7 +5,6 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.Graphics;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -25,6 +24,9 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
@@ -37,6 +39,10 @@ import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 
+import dualstrike.configuration.action_listeners.ActionListenerHandler;
+import dualstrike.configuration.action_listeners.DefaultsActionListener;
+import dualstrike.configuration.action_listeners.LoadActionListener;
+import dualstrike.configuration.action_listeners.SaveActionListener;
 import dualstrike.configuration.definition.BooleanSetting;
 import dualstrike.configuration.definition.ChoiceSetting;
 import dualstrike.configuration.definition.Configuration;
@@ -56,6 +62,7 @@ public class ConfigurationEditor {
 	private final Locale language;
 	private final Locale defaultLanguage;
 	private final ConfigurationModel model;
+	private final ActionListenerHandler actionListenerHandler;
 	private JFrame view;
 	private JPanel glassPanel;
 
@@ -69,6 +76,9 @@ public class ConfigurationEditor {
 	}
 	
 	private ConfigurationEditor(final Configuration configuration, final Locale language) {
+		String title;
+		ImageIcon icon;
+
 		this.configuration = configuration;
 		
 		if(language == null)
@@ -78,10 +88,17 @@ public class ConfigurationEditor {
 		
 		defaultLanguage = new Locale(configuration.getLang());
 		model = new ConfigurationModel(configuration);
-		createView();
+
+		title = getLocalizedInfo(configuration.getTitle(), false);
+		view = new JFrame(title);
+		icon = new ImageIcon(this.getClass().getResource("icon.png"));
+		view.setIconImage(icon.getImage());
+		actionListenerHandler = new ActionListenerHandler();
+		registerActionHandlers();
+		populateView();
 	}
 	
-	private void createGlassPanel() {
+	private void createGlassPane() {
 		final JPanel glass;
 		final Color color;
 		
@@ -93,10 +110,6 @@ public class ConfigurationEditor {
 			@Override
 		    public Dimension getPreferredSize() {
 		        return view.getSize();
-		    }
-			
-			protected void paintComponent(Graphics g) {
-		        super.paintComponent(g);
 		    }
 		};
 		
@@ -152,19 +165,53 @@ public class ConfigurationEditor {
 		return value;
 	}
 	
-	static String convertTextToHTML(String value) {
+	public static String convertTextToHTML(String value) {
 		return "<html>" + value.replace("\n", "<br/>") + "</html>";
 	}
 	
-	private void createView() {
-		String title;
+	private void registerActionHandlers() {
+		actionListenerHandler.registerActionListener("save", new SaveActionListener(view, model));
+		actionListenerHandler.registerActionListener("load", new LoadActionListener(view, model));
+		actionListenerHandler.registerActionListener("defaults", new DefaultsActionListener(view, model));
+	}
+	
+	private void populateView() {
+		createGlassPane();
+		createMenuBar();
+		createContentPane();
+		view.pack();
+		view.setLocationRelativeTo(null);
+		view.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		view.setVisible(true);
+	}
+	
+	private void createMenuBar() {
+		JMenuBar menuBar;
+		JMenu menu;
+		JMenuItem menuItem;
+
+		menu = new JMenu(MessageHelper.get(this, "deviceMenuName"));
+		
+		menuItem = new JMenuItem(MessageHelper.get(this, "loadMenuItemName"));
+		menuItem.setToolTipText(MessageHelper.get(this, "loadHelp"));
+		menu.add(menuItem);
+		actionListenerHandler.registerAction(menuItem, "load");
+		
+		menuItem = new JMenuItem(MessageHelper.get(this, "saveMenuItemName"));
+		menuItem.setToolTipText(MessageHelper.get(this, "saveHelp"));
+		menu.add(menuItem);
+		actionListenerHandler.registerAction(menuItem, "save");
+
+		menuBar = new JMenuBar();
+		menuBar.add(menu);
+		view.setJMenuBar(menuBar);
+	}
+	
+	private void createContentPane() {
 		JPanel contentPanel;
 		JComponent buttons;
 		JComponent tabs;
-		ImageIcon icon;
 		
-		title = getLocalizedInfo(configuration.getTitle(), false);
-		view = new JFrame(title);
 		buttons = createButtons();
 		tabs = createTabs();
 		contentPanel = new JPanel();
@@ -201,43 +248,33 @@ public class ConfigurationEditor {
 		//layout.putConstraint(SpringLayout.EAST, tabs, 0, SpringLayout.EAST, buttons);
 		layout.putConstraint(SpringLayout.WEST, tabs, 0, SpringLayout.WEST, buttons);
 		layout.putConstraint(SpringLayout.NORTH, tabs, 0, SpringLayout.SOUTH, buttons);
-		//layout.putConstraint(SpringLayout.SOUTH, buttons, 0, SpringLayout.NORTH, tabs);
-		
+		//layout.putConstraint(SpringLayout.SOUTH, buttons, 0, SpringLayout.NORTH, tabs);		
 		contentPanel.setLayout(layout);
-		icon = new ImageIcon(this.getClass().getResource("icon.png"));
-		view.setIconImage(icon.getImage());
-		view.getContentPane().add(contentPanel);
-		view.pack();
-		createGlassPanel();
-		view.setLocationRelativeTo(null);
-		view.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		view.setVisible(true);
+		view.getContentPane().add(contentPanel, BorderLayout.CENTER);
 	}
 	
 	private JComponent createButtons() {
 		JPanel buttonsPanel;
-		JButton loadButton;
-		JButton saveButton;
-		JButton defaultsButton;
-		
-		loadButton = new JButton(MessageHelper.get(this, "loadButtonTitle"));
-		loadButton.setToolTipText(MessageHelper.get(this, "loadButtonHelp"));
-		saveButton = new JButton(MessageHelper.get(this, "saveButtonTitle"));
-		saveButton.setToolTipText(MessageHelper.get(this, "saveButtonHelp"));
-		defaultsButton = new JButton(MessageHelper.get(this, "defaultsButtonTitle"));
-		defaultsButton.setToolTipText(MessageHelper.get(this, "defaultsButtonHelp"));
+		JButton button;
 		
 		buttonsPanel = new JPanel();
 		buttonsPanel.setLayout(new BoxLayout(buttonsPanel, BoxLayout.X_AXIS));
-		buttonsPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-		buttonsPanel.add(loadButton);
-		buttonsPanel.add(saveButton);
-		buttonsPanel.add(defaultsButton);
-
-		new LoadExecHandler(view, model, loadButton);		
-		new SaveExecHandler(view, model, saveButton);
-		new LoadDefaultsHandler(view, model, defaultsButton);
 		
+		button = new JButton(MessageHelper.get(this, "loadButtonTitle"));
+		button.setToolTipText(MessageHelper.get(this, "loadHelp"));
+		buttonsPanel.add(button);
+		actionListenerHandler.registerAction(button, "load");
+		
+		button = new JButton(MessageHelper.get(this, "saveButtonTitle"));
+		button.setToolTipText(MessageHelper.get(this, "saveHelp"));
+		buttonsPanel.add(button);
+		actionListenerHandler.registerAction(button, "save");
+		
+		button = new JButton(MessageHelper.get(this, "defaultsButtonTitle"));
+		button.setToolTipText(MessageHelper.get(this, "defaultsButtonHelp"));
+		buttonsPanel.add(button);
+		actionListenerHandler.registerAction(button, "defaults");
+				
 		return buttonsPanel;
 	}
 	

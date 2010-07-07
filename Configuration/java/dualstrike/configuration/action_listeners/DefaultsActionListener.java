@@ -1,21 +1,19 @@
-package dualstrike.configuration;
+package dualstrike.configuration.action_listeners;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.JButton;
 import javax.swing.JFrame;
 
 import dualstrike.configuration.model.ConfigurationModel;
 
-class LoadDefaultsHandler implements ActionListener {
+public class DefaultsActionListener implements ActionListener {
 	private final JFrame view;
 	private final ConfigurationModel model;
 	
-	LoadDefaultsHandler(final JFrame view, final ConfigurationModel model, final JButton button) {
+	public DefaultsActionListener(final JFrame view, final ConfigurationModel model) {
 		this.view = view;
 		this.model = model;
-		button.addActionListener(this);
 	}
 
 	@Override
