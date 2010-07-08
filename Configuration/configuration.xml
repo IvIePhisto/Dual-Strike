@@ -5,7 +5,8 @@
   xsi:schemaLocation="urn:strike-devices:configuration java/dualstrike/configuration/configuration-def.xsd"
   def-lang-version="1"
   lang="en"
-  prefix="CFG_">
+  prefix="CFG_"
+  icon-path="configuration.png">
   
   <title>Dual Strike Configuration</title>
   <title lang="de">Dual Strike Konfiguration</title>

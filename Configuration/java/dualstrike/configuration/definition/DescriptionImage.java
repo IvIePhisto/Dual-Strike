@@ -14,24 +14,20 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlID;
-import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 
 /**
- * <p>Java class for Setting complex type.
+ * <p>Java class for DescriptionImage complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="Setting">
+ * &lt;complexType name="DescriptionImage">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;group ref="{urn:strike-devices:configuration}Infos"/>
- *       &lt;attribute name="id" type="{urn:strike-devices:configuration}SettingID" />
+ *       &lt;attribute name="path" type="{urn:strike-devices:configuration}RelativePath" />
  *     &lt;/restriction>
  *   &lt;/complexContent>
  * &lt;/complexType>
@@ -40,23 +36,17 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "Setting", propOrder = {
+@XmlType(name = "DescriptionImage", propOrder = {
     "title",
     "help"
 })
-@XmlSeeAlso({
-    OriginalOption.class,
-    OriginalBooleanSetting.class
-})
-public class Setting {
+public class DescriptionImage {
 
     @XmlElement(required = true)
     protected List<Info> title;
     protected List<Info> help;
     @XmlAttribute
-    @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    @XmlID
-    protected String id;
+    protected String path;
 
     /**
      * Gets the value of the title property.
@@ -117,27 +107,27 @@ public class Setting {
     }
 
     /**
-     * Gets the value of the id property.
+     * Gets the value of the path property.
      * 
      * @return
      *     possible object is
      *     {@link String }
      *     
      */
-    public String getId() {
-        return id;
+    public String getPath() {
+        return path;
     }
 
     /**
-     * Sets the value of the id property.
+     * Sets the value of the path property.
      * 
      * @param value
      *     allowed object is
      *     {@link String }
      *     
      */
-    public void setId(String value) {
-        this.id = value;
+    public void setPath(String value) {
+        this.path = value;
     }
 
 }

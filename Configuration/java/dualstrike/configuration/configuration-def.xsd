@@ -5,18 +5,20 @@
   <xs:complexType name="Configuration">
     <xs:sequence>
       <xs:group ref="c:Infos"/>
+      <xs:element name="image" type="c:DescriptionImage" minOccurs="0"/>
       <xs:sequence>
-        <xs:element name="device" type="c:field"/>
-        <xs:element name="version" type="c:field"/>
+        <xs:element name="device" type="c:Field"/>
+        <xs:element name="version" type="c:Field"/>
         <xs:element name="page" type="c:Page" maxOccurs="unbounded"/>
       </xs:sequence>      
     </xs:sequence>
     <xs:attribute name="def-lang-version" fixed="1" use="required" type="xs:int"/>
     <xs:attribute name="lang" type="xs:language" use="required"/>
     <xs:attribute name="prefix" type="xs:ID" use="required"/>
+    <xs:attribute name="icon-path" type="c:RelativePath"/>
   </xs:complexType>
   
-  <xs:simpleType name="field">
+  <xs:simpleType name="Field">
     <xs:restriction base="xs:byte">
       <xs:minInclusive value="0"/>
     </xs:restriction>
@@ -50,15 +52,19 @@
   <xs:complexType name="ChoiceSetting">
     <xs:sequence>
       <xs:group ref="c:Infos"/>
+      <xs:element name="image" type="c:DescriptionImage" minOccurs="0"/>
       <xs:element name="option" type="c:Option" maxOccurs="unbounded"/>
     </xs:sequence>
     <xs:attribute name="default" type="xs:IDREF"/>
-    <xs:attribute name="prefix" type="xs:ID"/>
+    <xs:attribute name="prefix" type="c:SettingID"/>
   </xs:complexType>
 
   <xs:complexType name="BooleanSetting">
     <xs:complexContent>
       <xs:extension base="c:Setting">
+        <xs:sequence>
+          <xs:element name="image" type="c:DescriptionImage" minOccurs="0"/>
+        </xs:sequence>
         <xs:attribute name="default" type="xs:boolean"/>
       </xs:extension>
     </xs:complexContent>
@@ -72,6 +78,23 @@
 
   <xs:complexType name="Setting" >
     <xs:group ref="c:Infos"/>
-    <xs:attribute name="id" type="xs:ID"/>
+    <xs:attribute name="id" type="c:SettingID"/>
   </xs:complexType>
+  
+  <xs:simpleType name="SettingID">
+    <xs:restriction base="xs:ID">
+      <xs:pattern value="(\p{Lu}|_|\d)+"/>
+    </xs:restriction>
+  </xs:simpleType>
+  
+  <xs:complexType name="DescriptionImage">
+    <xs:group ref="c:Infos"/>
+    <xs:attribute name="path" type="c:RelativePath"/>
+  </xs:complexType>
+
+  <xs:simpleType name="RelativePath">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="\w(/|\w|\.|\d| |-|_)*"/>
+    </xs:restriction>
+  </xs:simpleType>
 </xs:schema>

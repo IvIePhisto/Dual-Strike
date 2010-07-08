@@ -7,6 +7,7 @@ import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Image;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -84,7 +85,6 @@ public class ConfigurationEditor {
 	
 	private ConfigurationEditor(final Configuration configuration, final Locale language) {
 		String title;
-		ImageIcon icon;
 
 		this.configuration = configuration;
 		
@@ -98,13 +98,45 @@ public class ConfigurationEditor {
 
 		title = getLocalizedInfo(configuration.getTitle(), false);
 		view = new JFrame(title);
-		icon = IconHandler.getIcon("application", null, 64, null);
-		view.setIconImage(icon.getImage());
+		view.setIconImage(getApplicationIconImage(configuration.getIconPath()));
 		actionListenerHandler = new ActionListenerHandler();
 		createGlassPanel();
 		registerActionHandlers();
 		populateView();
 		statusCleareance = new StatusClearer(this);
+	}
+	
+	private static Image getApplicationIconImage(String path) {
+		Image image;
+		
+		if(path == null || path.equals(""))
+			image = IconHandler.getIcon("application", null, 64, null).getImage();
+		else {
+			image = getFileImage(path);
+		}
+		
+		return image;
+	}
+	
+	private static Image getFileImage(String path) {
+		try {
+			Image image;
+			File file;
+			URL url;
+			
+			file = new File(path);
+			
+			if(!file.exists())
+				throw new Error(String.format("Image \"%s\" not found.", path));
+
+			url = file.toURI().toURL();
+			image = new ImageIcon(url).getImage();
+			
+			return image;
+		}
+		catch(MalformedURLException e) {
+			throw new Error(e);
+		}
 	}
 	
 	private void registerActionHandlers() {
