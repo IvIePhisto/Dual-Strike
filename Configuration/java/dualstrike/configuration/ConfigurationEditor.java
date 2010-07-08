@@ -50,6 +50,7 @@ import dualstrike.configuration.action_listeners.SaveActionListener;
 import dualstrike.configuration.definition.BooleanSetting;
 import dualstrike.configuration.definition.ChoiceSetting;
 import dualstrike.configuration.definition.Configuration;
+import dualstrike.configuration.definition.DescriptionImage;
 import dualstrike.configuration.definition.Info;
 import dualstrike.configuration.definition.Option;
 import dualstrike.configuration.definition.Page;
@@ -98,7 +99,7 @@ public class ConfigurationEditor {
 
 		title = getLocalizedInfo(configuration.getTitle(), false);
 		view = new JFrame(title);
-		view.setIconImage(getApplicationIconImage(configuration.getIconPath()));
+		view.setIconImage(createApplicationImage(configuration.getIconPath()));
 		actionListenerHandler = new ActionListenerHandler();
 		createGlassPanel();
 		registerActionHandlers();
@@ -106,21 +107,36 @@ public class ConfigurationEditor {
 		statusCleareance = new StatusClearer(this);
 	}
 	
-	private static Image getApplicationIconImage(String path) {
+	private JLabel createImageLabel(final DescriptionImage descriptionImage) {
+		JLabel label;
+		ImageIcon imageIcon;
+		
+		if(descriptionImage == null)
+			return null;
+		
+		imageIcon = createFileImageIcon(descriptionImage.getPath());
+		imageIcon.setDescription(getLocalizedInfo(descriptionImage.getTitle(), true));
+		label = new JLabel(imageIcon);
+		label.setToolTipText(getLocalizedInfo(descriptionImage.getHelp(), true));
+		
+		return label;
+	}
+	
+	private static Image createApplicationImage(final String path) {
 		Image image;
 		
 		if(path == null || path.equals(""))
 			image = IconHandler.getIcon("application", null, 64, null).getImage();
 		else {
-			image = getFileImage(path);
+			image = createFileImageIcon(path).getImage();
 		}
 		
 		return image;
 	}
 	
-	private static Image getFileImage(String path) {
+	private static ImageIcon createFileImageIcon(final String path) {
 		try {
-			Image image;
+			ImageIcon imageIcon;
 			File file;
 			URL url;
 			
@@ -130,9 +146,9 @@ public class ConfigurationEditor {
 				throw new Error(String.format("Image \"%s\" not found.", path));
 
 			url = file.toURI().toURL();
-			image = new ImageIcon(url).getImage();
+			imageIcon = new ImageIcon(url);
 			
-			return image;
+			return imageIcon;
 		}
 		catch(MalformedURLException e) {
 			throw new Error(e);
@@ -233,16 +249,13 @@ public class ConfigurationEditor {
 	
 	public void makeViewInactive() {
 		view.setEnabled(false);
-		glassPanel.setVisible(true);
-		//view.repaint();
 		view.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 		view.getGlassPane().setVisible(true);
 	}
 	
 	public void makeViewActive() {
-		view.setCursor(null);
 		glassPanel.setVisible(false);
-		//view.repaint();
+		view.setCursor(null);
 		view.setEnabled(true);
 		view.requestFocus();
 	}
@@ -354,14 +367,28 @@ public class ConfigurationEditor {
 		JLabel helpLabel;
 		JPanel tabPanel;
 		JScrollPane tabContent;
+		JLabel imageLabel;
 
-		helpLabel = createLabel(configuration.getHelp(), DESCRIPTION_FONT);
 		tabPanel = new ResizingJPanel();
 		tabPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-		tabPanel.setLayout(new BoxLayout(tabPanel, BoxLayout.Y_AXIS));
+		tabPanel.setLayout(new BoxLayout(tabPanel, BoxLayout.X_AXIS));
 		tabPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
 		tabPanel.setAlignmentY(Component.TOP_ALIGNMENT);
-		tabPanel.add(helpLabel);
+		
+		helpLabel = createLabel(configuration.getHelp(), DESCRIPTION_FONT);
+		helpLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+		helpLabel.setAlignmentY(Component.TOP_ALIGNMENT);
+		tabPanel.add(helpLabel);	
+
+		imageLabel = createImageLabel(configuration.getImage());
+		
+		if(imageLabel != null) {
+			imageLabel.setAlignmentX(Component.RIGHT_ALIGNMENT);
+			imageLabel.setAlignmentY(Component.TOP_ALIGNMENT);
+			imageLabel.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0));
+			tabPanel.add(imageLabel);
+		}
+		
 		tabContent = new JScrollPane(tabPanel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		
 		return tabContent;
@@ -397,12 +424,14 @@ public class ConfigurationEditor {
 	private JComponent createSettingComponent(Object settingObject) {
 		JPanel settingPanel;
 		JComponent selectorComponent;
-		Component title;
-		Component help;
+		JLabel title;
+		JLabel help;
+		JPanel helpPanel;
+		JLabel imageLabel;
 
 		settingPanel = new JPanel();
 		settingPanel.setBorder(BOTTOM_SPACER_BORDER);
-		settingPanel.setLayout(new BorderLayout(5, 5));
+		settingPanel.setLayout(new BorderLayout(10, 5));
 		settingPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
 		settingPanel.setAlignmentY(Component.TOP_ALIGNMENT);
 		
@@ -413,6 +442,7 @@ public class ConfigurationEditor {
 			title = createLabel(setting.getTitle(), TITLE_FONT);
 			help = createLabel(setting.getHelp(), DESCRIPTION_FONT);
 			selectorComponent = createSettingComponent(setting);
+			imageLabel = createImageLabel(setting.getImage());
 		}
 		else if(settingObject instanceof ChoiceSetting) {
 			ChoiceSetting setting;
@@ -421,14 +451,21 @@ public class ConfigurationEditor {
 			title = createLabel(setting.getTitle(), TITLE_FONT);
 			help = createLabel(setting.getHelp(), DESCRIPTION_FONT);
 			selectorComponent = createSettingComponent(setting);
+			imageLabel = createImageLabel(setting.getImage());
 		}
 		else {
 			throw new Error(String.format("Unexpected class %s of setting object.", settingObject.getClass().getCanonicalName()));
 		}
 		
 		settingPanel.add(title, BorderLayout.PAGE_START);
-		settingPanel.add(help, BorderLayout.CENTER);
+		helpPanel = new JPanel();
+		helpPanel.setLayout(new BoxLayout(helpPanel, BoxLayout.Y_AXIS));
+		helpPanel.add(help);
+		settingPanel.add(helpPanel, BorderLayout.CENTER);
 		settingPanel.add(selectorComponent, BorderLayout.LINE_END);
+		
+		if(imageLabel != null)
+			settingPanel.add(imageLabel, BorderLayout.LINE_START);
 		
 		return settingPanel;
 	}

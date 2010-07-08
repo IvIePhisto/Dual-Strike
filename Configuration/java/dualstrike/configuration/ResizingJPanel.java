@@ -29,7 +29,12 @@ class ResizingJPanel extends JPanel implements Scrollable {
 
 	@Override
 	public Dimension getPreferredScrollableViewportSize() {
-		return getPreferredSize();
+		Dimension preferredSize;
+		
+		preferredSize = getPreferredSize();
+		preferredSize.setSize(preferredSize.getWidth() - 20, preferredSize.getHeight() + 10);
+		
+		return preferredSize;
 	}
 
 	@Override
