@@ -11,12 +11,12 @@ class StatusClearer {
 		this.controller = controller;
 	}
 		
-	private void clear() {
+	private synchronized void clear() {
 		controller.getStatusLabel().setText(" ");
 		cleareanceThread = null;
 	}
 
-	public void setActive() {
+	public synchronized void setActive() {
 		if(cleareanceThread != null)
 			cleareanceThread.interrupt();
 		
@@ -30,9 +30,7 @@ class StatusClearer {
 				catch(InterruptedException e) {}
 			}
 		};
-		/*
-		cleareanceThread = new StatusCleareanceThread(MAXIMUM_CLEAREANCE_DURATION, this);
-		*/
+		
 		cleareanceThread.start();
 	}
 }

@@ -195,6 +195,7 @@ public class ConfigurationEditor {
 	private JPanel glassPanel;
 	private JLabel statusLabel;
 	private final StatusClearer statusClearer;
+	private ConnectionChecker connectionChecker;
 
 	private ConfigurationEditor(final Configuration configuration, final Locale language) {
 		this.configuration = configuration;
@@ -373,16 +374,33 @@ public class ConfigurationEditor {
 		contentPanel.add(tabs, BorderLayout.CENTER);
 		contentPanel.add(statusPanel, BorderLayout.PAGE_END);
 	}
-	
+		
 	private JComponent createStatusPanel() {
 		JPanel statusPanel;
+		JLabel connectedLabel;
+		JLabel disconnectedLabel;
+		JPanel connectionStatusPanel;
+		String connectedMessage;
+		String disconnectedMessage;
 		
 		statusPanel = new JPanel();
 		statusPanel.setLayout(new BorderLayout());
+		connectedMessage = MessageHelper.get(this, "connected");
+		connectedLabel = new JLabel(IconHandler.getIcon("connected", connectedMessage, 16, null));
+		connectedLabel.setVisible(false);
+		connectedLabel.setToolTipText(connectedMessage);
+		disconnectedMessage = MessageHelper.get(this, "disconnected");
+		disconnectedLabel = new JLabel(IconHandler.getIcon("disconnected", disconnectedMessage, 16, null));
+		disconnectedLabel.setToolTipText(disconnectedMessage);
+		connectionStatusPanel = new JPanel();
+		connectionStatusPanel.add(connectedLabel);
+		connectionStatusPanel.add(disconnectedLabel);
+		connectionChecker = new ConnectionChecker(connectedLabel, disconnectedLabel);
 		statusLabel = new JLabel(" ", JLabel.LEFT);
 		statusLabel.setBorder(BorderFactory.createEmptyBorder(1, 4, 1, 4));
 		statusLabel.setFont(DESCRIPTION_FONT);
 		statusPanel.add(statusLabel, BorderLayout.CENTER);
+		statusPanel.add(connectionStatusPanel, BorderLayout.LINE_END);
 		
 		return statusPanel;
 	}
@@ -709,6 +727,10 @@ public class ConfigurationEditor {
 		window.setCursor(null);
 		window.setEnabled(true);
 		window.requestFocus();
+	}
+
+	public ConnectionChecker getConnectionChecker() {
+		return connectionChecker;
 	}
 
 	JLabel getStatusLabel() {

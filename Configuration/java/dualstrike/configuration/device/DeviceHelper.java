@@ -13,19 +13,29 @@ public class DeviceHelper {
 			String[] cmd;
 			int cmdIndex;
 			boolean proccessRunning;
+			int argc;
 			
 			cmdIndex = 1;
+			argc = 1;
 			
-			if(reset) {
-				cmd = new String[4];
-				cmd[cmdIndex++] = "-r"; 
-			}
-			else
-				cmd = new String[3];
+			if(reset)
+				argc++;
 			
+			if(option != null)
+				argc++;
+			
+			if(targetFile != null)
+				argc++;
+			
+			cmd = new String[argc];
 			cmd[0] = executableFile.getPath();
-			cmd[cmdIndex++] = option;
-			cmd[cmdIndex++] = targetFile.getPath();
+			
+			if(option != null)
+				cmd[cmdIndex++] = option;
+			
+			if(targetFile != null)
+				cmd[cmdIndex++] = targetFile.getPath();
+			
 			p = Runtime.getRuntime().exec(cmd);
 			buffer = new ExecutionOutputBuffer(p.getInputStream(), p.getErrorStream());
 			
@@ -52,6 +62,10 @@ public class DeviceHelper {
 		}
 	}
 	
+	public static boolean isConnected() {
+		return !execute(false, null, null).getReturnCode().isError();
+	}
+
 	public static File loadConfiguration(final ExecutionListener listener) {
 		final File tempFile;
 		

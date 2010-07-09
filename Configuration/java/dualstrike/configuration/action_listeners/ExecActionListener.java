@@ -18,6 +18,7 @@ public abstract class ExecActionListener implements ActionListener, ExecutionLis
 	@Override
 	public synchronized void actionPerformed(ActionEvent action) {
 		controller.makeWindowInactive();
+		controller.getConnectionChecker().disable();
 		exec();
 	}
 	
@@ -29,6 +30,7 @@ public abstract class ExecActionListener implements ActionListener, ExecutionLis
 
 	@Override
 	public void executionFinished(ExecutionResult result) {
+		controller.getConnectionChecker().enable();
 		controller.makeWindowActive();
 	}
 
