@@ -45,6 +45,7 @@ import javax.swing.border.EtchedBorder;
 
 import dualstrike.configuration.action_listeners.ActionListenerHandler;
 import dualstrike.configuration.action_listeners.DefaultsActionListener;
+import dualstrike.configuration.action_listeners.ExitActionListener;
 import dualstrike.configuration.action_listeners.LoadActionListener;
 import dualstrike.configuration.action_listeners.SaveActionListener;
 import dualstrike.configuration.definition.BooleanSetting;
@@ -218,7 +219,10 @@ public class ConfigurationEditor {
 		
 		fileHandler = new FileHandler(this);
 		actionListenerHandler.registerActionListener("loadFile", fileHandler.createLoadFileActionListener());
+		actionListenerHandler.registerActionListener("saveFile", fileHandler.createSaveFileActionListener());
+		actionListenerHandler.registerActionListener("saveAsFile", fileHandler.createSaveAsFileActionListener());
 		actionListenerHandler.registerActionListener("forgetFile", fileHandler.createForgetFileActionListener());
+		actionListenerHandler.registerActionListener("exit", new ExitActionListener(this));
 		actionListenerHandler.registerActionListener("save", new SaveActionListener(this));
 		actionListenerHandler.registerActionListener("load", new LoadActionListener(this));
 		actionListenerHandler.registerActionListener("defaults", new DefaultsActionListener(this));
@@ -273,11 +277,30 @@ public class ConfigurationEditor {
 		menu.add(menuItem);
 		actionListenerHandler.registerAction(menuItem, "loadFile");
 
+		menuItem = new JMenuItem(MessageHelper.get(this, "saveFileMenuItemName"));
+		menuItem.setToolTipText(MessageHelper.get(this, "saveFileHelp"));
+		menuItem.setIcon(IconHandler.getIcon("saveFile", null, 16, null));
+		menu.add(menuItem);
+		actionListenerHandler.registerAction(menuItem, "saveFile");
+
+		menuItem = new JMenuItem(MessageHelper.get(this, "saveAsFileMenuItemName"));
+		menuItem.setToolTipText(MessageHelper.get(this, "saveAsFileHelp"));
+		menuItem.setIcon(IconHandler.getIcon("saveAsFile", null, 16, null));
+		menu.add(menuItem);
+		actionListenerHandler.registerAction(menuItem, "saveAsFile");
+
 		menuItem = new JMenuItem(MessageHelper.get(this, "forgetFileMenuItemName"));
 		menuItem.setToolTipText(MessageHelper.get(this, "forgetFileHelp"));
 		menuItem.setIcon(IconHandler.getIcon("forgetFile", null, 16, null));
 		menu.add(menuItem);
 		actionListenerHandler.registerAction(menuItem, "forgetFile");
+		
+		menu.addSeparator();
+		menuItem = new JMenuItem(MessageHelper.get(this, "exitMenuItemName"));
+		menuItem.setToolTipText(MessageHelper.get(this, "exitHelp"));
+		menuItem.setIcon(IconHandler.getIcon("exit", null, 16, null));
+		menu.add(menuItem);
+		actionListenerHandler.registerAction(menuItem, "exit");
 
 		menuBar.add(menu);
 		menu = new JMenu(MessageHelper.get(this, "deviceMenuName"));
@@ -706,5 +729,9 @@ public class ConfigurationEditor {
 		
 		options = new String[]{"OK"};
 		JOptionPane.showOptionDialog(window, message, title, JOptionPane.OK_OPTION , JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+	}
+
+	public synchronized void exit() {
+		System.exit(0);
 	}
 }

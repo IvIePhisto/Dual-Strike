@@ -13,6 +13,7 @@ import dualstrike.configuration.MessageHelper;
 import dualstrike.configuration.model.ByteLoadingException;
 
 public class FileHandler {
+	private static final String DEFAULT_EXTENSION = "mcc";
 	private File file;
 	private final ConfigurationEditor controller;
 	private final JFileChooser fileChooser;
@@ -27,7 +28,7 @@ public class FileHandler {
 					@Override
 					public boolean accept(File file) {
 						if(file.isFile())
-							return file.getName().endsWith(".plain-hex");
+							return file.getName().endsWith("." + DEFAULT_EXTENSION);
 						
 						if(file.isDirectory())
 							return true;
@@ -37,13 +38,41 @@ public class FileHandler {
 
 					@Override
 					public String getDescription() {
-						return "*.plain-hex";
+						return "*." + DEFAULT_EXTENSION;
 					}
 					
 				}
 		);
 	}
 	
+	public ActionListener createLoadFileActionListener() {
+		return new LoadFileActionListener(this);
+	}
+	
+	public ActionListener createForgetFileActionListener() {
+		return new ForgetFileActionListener(this);
+	}
+
+	public ActionListener createSaveFileActionListener() {
+		return new SaveFileActionListener(this, false);
+	}
+
+	public ActionListener createSaveAsFileActionListener() {
+		return new SaveFileActionListener(this, true);
+	}
+
+	ConfigurationEditor getController() {
+		return controller;
+	}
+
+	JFileChooser getFileChooser() {
+		return fileChooser;
+	}
+
+	synchronized boolean isFileActive() {
+		return file != null;
+	}
+
 	synchronized void load(final File file) {
 		if(!file.exists()) {
 			controller.showErrorDialog(MessageHelper.get(this, "fileMissingErrorTitle"), MessageHelper.get(this, "fileMissingErrorMessage", file));
@@ -69,7 +98,7 @@ public class FileHandler {
 			}
 		}
 	}
-	
+
 	synchronized void forget() {
 		if(file != null) {
 			file = null;
@@ -77,20 +106,41 @@ public class FileHandler {
 			controller.setStatusLabelText(MessageHelper.get(this, "fileForgottenStatus"));
 		}
 	}
-
-	public ActionListener createLoadFileActionListener() {
-		return new LoadFileActionListener(this);
-	}
 	
-	public ActionListener createForgetFileActionListener() {
-		return new ForgetFileActionListener(this);
+	private static File addFileExtension(File file) {
+		String name;
+		boolean containsDot;
+		boolean endsWithDot;
+		boolean hasExtension;
+		
+		name = file.getName();
+		containsDot = name.contains(".");
+		endsWithDot = name.charAt(name.length() - 1) == '.';
+		hasExtension = containsDot && !endsWithDot;
+		
+		if(!hasExtension)
+			file = new File(file.getPath() + (endsWithDot ? "" : ".") + DEFAULT_EXTENSION);
+		
+		return file;
 	}
 
-	ConfigurationEditor getController() {
-		return controller;
+	synchronized void save(File file) {
+		try {
+			byte[] data;
+			
+			file = addFileExtension(file);			
+			data = controller.getModel().saveBytes();
+			HexFilesUtility.saveSimpleHexFile(file, data);
+			controller.setWindowTitleAmendment(file.getAbsolutePath());
+			controller.setStatusLabelText(MessageHelper.get(this, "fileSavedStatus"));
+		}
+		catch(IOException e) {
+			controller.showErrorDialog(MessageHelper.get(this, "fileSavingErrorTitle"), MessageHelper.get(this, "fileSavingErrorMessage", file, e.getLocalizedMessage()));
+			controller.setStatusLabelText(MessageHelper.get(this, "saveFileErrorStatus"));
+		}
 	}
 
-	JFileChooser getFileChooser() {
-		return fileChooser;
+	synchronized void save() {
+		save(file);
 	}
 }

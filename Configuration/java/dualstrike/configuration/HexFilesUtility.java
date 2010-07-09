@@ -50,7 +50,7 @@ public class HexFilesUtility {
 				printI8HEXLine(writer, (byte)byteCount, address, IntelRecordType.DATA, data);
 				
 				if(writer.checkError())
-					throw new Error(String.format("An error occured while writing to file \"%s\".", outputFile.getAbsolutePath()));
+					throw new IOException(String.format("An error occured while writing to file \"%s\".", outputFile.getAbsolutePath()));
 				
 				address += byteCount;
 			}
@@ -115,7 +115,7 @@ public class HexFilesUtility {
 				line = line.replaceAll("\\s+", "");
 				
 				if(!line.matches("[0123456789aAbBcCdDeEfF]*"))
-					throw new Error(String.format("Invalid characters (neither whitespace nor HEX value) found in line %d of file \"%s\".", lineNo, file.getAbsolutePath()));
+					throw new IOException(String.format("Invalid characters (neither whitespace nor HEX value) found in line %d of file \"%s\".", lineNo, file.getAbsolutePath()));
 				
 				for(int j = 0; j < line.length(); j += 2) {
 					byte b;
@@ -135,6 +135,27 @@ public class HexFilesUtility {
 		}
 		finally {
 			inputStream.close();
+		}
+	}
+	
+	public static void saveSimpleHexFile(final File outputFile, final byte[] data) throws IOException {
+		PrintStream writer;
+		
+		writer = new PrintStream(outputFile, ENCODING);
+		
+		try {
+			for(int address = 0; address < data.length; address++) {
+				writer.printf("%02X ", data[address]);
+				
+				if(address + 1 % 8 == 0)
+					writer.print("\n");
+				
+				if(writer.checkError())
+					throw new IOException(String.format("An error occured while writing to file \"%s\".", outputFile.getAbsolutePath()));
+			}
+		}
+		finally {
+			writer.close();
 		}
 	}
 	
