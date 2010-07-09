@@ -8,6 +8,7 @@ import dualstrike.configuration.HexFilesUtility;
 import dualstrike.configuration.MessageHelper;
 import dualstrike.configuration.device.DeviceHelper;
 import dualstrike.configuration.device.ExecutionResult;
+import dualstrike.configuration.device.ReturnCode;
 
 public class SaveActionListener extends ExecActionListener {
 	public SaveActionListener(final ConfigurationEditor controller) {
@@ -27,19 +28,32 @@ public class SaveActionListener extends ExecActionListener {
 			DeviceHelper.saveConfiguration(this, file);
 		}
 		catch(IOException e) {
-			throw new Error(e);
+			throw new RuntimeException(e);
 		}
 	}
 
 	@Override
 	public void executionFinished(ExecutionResult result) {
-		if(result.isError()) {
-			getController().showErrorDialog(MessageHelper.get(this, "saveErrorTitle"), MessageHelper.get(this, "saveErrorMessage", ConfigurationEditor.convertTextToHTML(result.getMessage())));
-			getController().setStatusLabelText(MessageHelper.get(this, "saveErrorStatus"));
+		ReturnCode returnCode;
+		
+		returnCode = result.getReturnCode();
+		
+		switch(returnCode) {
+		case COMPLETED_SUCCESSFULLY:
+			break;
+		case OPEN_DEVICE_ERROR:
+		case EEPROM_PROGRAMMING_ERROR:
+			getController().showErrorDialog(returnCode.getTitle(), ConfigurationEditor.convertTextToHTML(returnCode.getMessage()));
+			break;
+		default:
+			getController().showErrorDialog(MessageHelper.get(this, "saveErrorTitle"), MessageHelper.get(this, "saveErrorMessage", result.saveMessage()));
 		}
+		
+		if(returnCode.isError())
+			getController().setStatusLabelText(MessageHelper.get(this, "saveErrorStatus"));
 		else
 			getController().setStatusLabelText(MessageHelper.get(this, "savedStatus"));
-		
+
 		super.executionFinished(result);
 	}
 }

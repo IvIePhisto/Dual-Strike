@@ -36,7 +36,7 @@ public class DeviceHelper {
 					}
 					catch(InterruptedException e) {}
 			
-			return new ExecutionResult(buffer.toString(), p.exitValue() > 0);
+			return new ExecutionResult(buffer.toString(), p.exitValue());
 		} catch (IOException e) {
 			throw new Error(e);
 		}

@@ -8,6 +8,7 @@ import dualstrike.configuration.HexFilesUtility;
 import dualstrike.configuration.MessageHelper;
 import dualstrike.configuration.device.DeviceHelper;
 import dualstrike.configuration.device.ExecutionResult;
+import dualstrike.configuration.device.ReturnCode;
 import dualstrike.configuration.model.ByteLoadingException;
 
 public class LoadActionListener extends ExecActionListener {
@@ -24,11 +25,12 @@ public class LoadActionListener extends ExecActionListener {
 
 	@Override
 	public void executionFinished(ExecutionResult result) {
-		if(result.isError()) {
-			getController().showErrorDialog(MessageHelper.get(this, "loadErrorTitle"), MessageHelper.get(this, "loadErrorMessage", ConfigurationEditor.convertTextToHTML(result.getMessage())));
-			getController().setStatusLabelText(MessageHelper.get(this, "loadErrorStatus"));
-		}
-		else {
+		ReturnCode returnCode;
+		
+		returnCode = result.getReturnCode();
+		
+		switch(returnCode) {
+		case COMPLETED_SUCCESSFULLY:
 			try {
 				byte[] dataBytes;
 
@@ -45,7 +47,17 @@ public class LoadActionListener extends ExecActionListener {
 				getController().showErrorDialog(MessageHelper.get(this, "fileAccessErrorTitle"), MessageHelper.get(this, "fileAccessErrorMessage", ConfigurationEditor.convertTextToHTML(e.getLocalizedMessage())));
 				getController().setStatusLabelText(MessageHelper.get(this, "loadErrorStatus"));
 			}
+			break;
+		case OPEN_DEVICE_ERROR:
+		case EEPROM_DUMPING_ERROR:
+			getController().showErrorDialog(returnCode.getTitle(), ConfigurationEditor.convertTextToHTML(returnCode.getMessage()));
+			break;
+		default:
+			getController().showErrorDialog(MessageHelper.get(this, "loadErrorTitle"), MessageHelper.get(this, "loadErrorMessage", result.saveMessage()));
 		}
+		
+		if(returnCode.isError())
+			getController().setStatusLabelText(MessageHelper.get(this, "loadErrorStatus"));
 		
 		super.executionFinished(result);
 	}
