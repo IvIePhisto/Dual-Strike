@@ -8,7 +8,7 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 
 public class ExecutionResult {
-	private static final File MESSAGE_FILE = new File("hid-programmer_output.txt");
+	private static final File MESSAGE_FILE = new File("hid-programmer_output.txt").getAbsoluteFile();
 	private final String message;
 	private final ReturnCode returnCode;
 	
