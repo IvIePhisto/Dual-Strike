@@ -5,9 +5,11 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
+import java.awt.Event;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Image;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -36,12 +38,12 @@ import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JToolBar;
+import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
-import javax.swing.border.EtchedBorder;
 
 import dualstrike.configuration.action_listeners.ActionListenerHandler;
 import dualstrike.configuration.action_listeners.DefaultsActionListener;
@@ -188,10 +190,11 @@ public class ConfigurationEditor {
 	private final ConfigurationModel model;
 	private final ActionListenerHandler actionListenerHandler;
 	private final String windowTitle;
-	private JFrame window;
+	private final FileHandler fileHandler;
+	private final JFrame window;
 	private JPanel glassPanel;
 	private JLabel statusLabel;
-	private StatusClearer statusClearer;
+	private final StatusClearer statusClearer;
 
 	private ConfigurationEditor(final Configuration configuration, final Locale language) {
 		this.configuration = configuration;
@@ -202,8 +205,8 @@ public class ConfigurationEditor {
 			this.language = language;
 		
 		defaultLanguage = new Locale(configuration.getLang());
-		model = new ConfigurationModel(configuration);
-
+		fileHandler = new FileHandler(this);
+		model = new ConfigurationModel(fileHandler, configuration);
 		windowTitle = getLocalizedInfo(configuration.getTitle(), false);
 		window = new JFrame(windowTitle);
 		window.setIconImage(createApplicationImage(configuration.getIconPath()));
@@ -215,9 +218,6 @@ public class ConfigurationEditor {
 	}
 	
 	private void registerActionHandlers() {
-		FileHandler fileHandler;
-		
-		fileHandler = new FileHandler(this);
 		actionListenerHandler.registerActionListener("loadFile", fileHandler.createLoadFileActionListener());
 		actionListenerHandler.registerActionListener("saveFile", fileHandler.createSaveFileActionListener());
 		actionListenerHandler.registerActionListener("saveAsFile", fileHandler.createSaveAsFileActionListener());
@@ -226,7 +226,6 @@ public class ConfigurationEditor {
 		actionListenerHandler.registerActionListener("save", new SaveActionListener(this));
 		actionListenerHandler.registerActionListener("load", new LoadActionListener(this));
 		actionListenerHandler.registerActionListener("defaults", new DefaultsActionListener(this));
-		
 	}
 
 	private void populateWindow() {
@@ -274,12 +273,14 @@ public class ConfigurationEditor {
 		menuItem = new JMenuItem(MessageHelper.get(this, "loadFileMenuItemName"));
 		menuItem.setToolTipText(MessageHelper.get(this, "loadFileHelp"));
 		menuItem.setIcon(IconHandler.getIcon("loadFile", null, 16, null));
+		menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O,  Event.CTRL_MASK));
 		menu.add(menuItem);
 		actionListenerHandler.registerAction(menuItem, "loadFile");
 
 		menuItem = new JMenuItem(MessageHelper.get(this, "saveFileMenuItemName"));
 		menuItem.setToolTipText(MessageHelper.get(this, "saveFileHelp"));
 		menuItem.setIcon(IconHandler.getIcon("saveFile", null, 16, null));
+		menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S,  Event.CTRL_MASK));
 		menu.add(menuItem);
 		actionListenerHandler.registerAction(menuItem, "saveFile");
 
@@ -292,6 +293,7 @@ public class ConfigurationEditor {
 		menuItem = new JMenuItem(MessageHelper.get(this, "forgetFileMenuItemName"));
 		menuItem.setToolTipText(MessageHelper.get(this, "forgetFileHelp"));
 		menuItem.setIcon(IconHandler.getIcon("forgetFile", null, 16, null));
+		menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F,  Event.CTRL_MASK));
 		menu.add(menuItem);
 		actionListenerHandler.registerAction(menuItem, "forgetFile");
 		
@@ -325,7 +327,6 @@ public class ConfigurationEditor {
 		actionListenerHandler.registerAction(menuItem, "defaults");
 
 		menuBar.add(menu);
-		
 		window.setJMenuBar(menuBar);
 	}
 	
@@ -378,13 +379,12 @@ public class ConfigurationEditor {
 		
 		statusPanel = new JPanel();
 		statusPanel.setLayout(new BorderLayout());
-		statusPanel.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
 		statusLabel = new JLabel(" ", JLabel.LEFT);
 		statusLabel.setBorder(BorderFactory.createEmptyBorder(1, 4, 1, 4));
 		statusLabel.setFont(DESCRIPTION_FONT);
-		statusPanel.add(statusLabel);
+		statusPanel.add(statusLabel, BorderLayout.CENTER);
 		
-		return statusLabel;
+		return statusPanel;
 	}
 	
 	private JComponent createTabs() {
@@ -417,8 +417,6 @@ public class ConfigurationEditor {
 		tabPanel.setAlignmentY(Component.TOP_ALIGNMENT);
 		
 		helpLabel = createLabel(configuration.getHelp(), DESCRIPTION_FONT);
-		helpLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
-		helpLabel.setAlignmentY(Component.TOP_ALIGNMENT);
 		tabPanel.add(helpLabel);	
 
 		imageLabel = createImageLabel(configuration.getImage());
@@ -647,7 +645,7 @@ public class ConfigurationEditor {
 	private JLabel createLabel(List<Info> info, Font font) {
 		JLabel label;
 	
-		label = new JLabel(getLocalizedInfo(info, true));
+		label = new JLabel(getLocalizedInfo(info, true), JLabel.LEFT);
 		label.setFont(font);
 		
 		return label;
@@ -696,6 +694,10 @@ public class ConfigurationEditor {
 		return window;
 	}
 
+	public FileHandler getFileHandler() {
+		return fileHandler;
+	}
+
 	public void makeWindowInactive() {
 		window.setEnabled(false);
 		window.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
@@ -703,7 +705,7 @@ public class ConfigurationEditor {
 	}
 
 	public void makeWindowActive() {
-		glassPanel.setVisible(false);
+		window.getGlassPane().setVisible(false);
 		window.setCursor(null);
 		window.setEnabled(true);
 		window.requestFocus();

@@ -4,6 +4,7 @@ import java.util.List;
 
 import dualstrike.configuration.definition.ChoiceSetting;
 import dualstrike.configuration.definition.Option;
+import dualstrike.configuration.file.FileHandler;
 
 public abstract class ChoiceModel extends SettingModel {
 	private final int[] byteDividers;
@@ -12,8 +13,8 @@ public abstract class ChoiceModel extends SettingModel {
 	private final int defaultValue;
 	private int currentOption;
 	
-	ChoiceModel(final ChoiceSetting choiceSetting) {
-		super((int)choiceSetting.getByteNo(), (int)choiceSetting.getBitNo());
+	ChoiceModel(final FileHandler fileHandler, final ChoiceSetting choiceSetting) {
+		super(fileHandler, (int)choiceSetting.getByteNo(), (int)choiceSetting.getBitNo());
 		List<Option> options;
 		int optionCount;
 		int defaultValue;

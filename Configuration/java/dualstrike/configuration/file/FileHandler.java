@@ -17,6 +17,7 @@ public class FileHandler {
 	private File file;
 	private final ConfigurationEditor controller;
 	private final JFileChooser fileChooser;
+	private boolean modelChanged;
 	
 	public FileHandler(final ConfigurationEditor controller) {
 		this.controller = controller;
@@ -60,6 +61,17 @@ public class FileHandler {
 	public ActionListener createSaveAsFileActionListener() {
 		return new SaveFileActionListener(this, true);
 	}
+	
+	public synchronized void setModelChanged() {
+		if(file != null && !modelChanged) {
+			controller.setWindowTitleAmendment(file.getAbsolutePath() + "*");
+			modelChanged = true;
+		}
+	}
+
+	public synchronized boolean isModelChanged() {
+		return modelChanged;
+	}
 
 	ConfigurationEditor getController() {
 		return controller;
@@ -87,6 +99,7 @@ public class FileHandler {
 				this.file = file;
 				controller.setWindowTitleAmendment(file.getAbsolutePath());
 				controller.setStatusLabelText(MessageHelper.get(this, "fileLoadedStatus"));
+				modelChanged = false;
 			}
 			catch(IOException e) {
 				controller.showErrorDialog(MessageHelper.get(this, "fileLoadingErrorTitle"), MessageHelper.get(this, "fileLoadingErrorMessage", file, e.getLocalizedMessage()));
@@ -104,6 +117,7 @@ public class FileHandler {
 			file = null;
 			controller.setWindowTitleAmendment(null);
 			controller.setStatusLabelText(MessageHelper.get(this, "fileForgottenStatus"));
+			modelChanged = false;
 		}
 	}
 	
@@ -133,6 +147,7 @@ public class FileHandler {
 			HexFilesUtility.saveSimpleHexFile(file, data);
 			controller.setWindowTitleAmendment(file.getAbsolutePath());
 			controller.setStatusLabelText(MessageHelper.get(this, "fileSavedStatus"));
+			modelChanged = false;
 		}
 		catch(IOException e) {
 			controller.showErrorDialog(MessageHelper.get(this, "fileSavingErrorTitle"), MessageHelper.get(this, "fileSavingErrorMessage", file, e.getLocalizedMessage()));
@@ -140,7 +155,7 @@ public class FileHandler {
 		}
 	}
 
-	synchronized void save() {
+	public synchronized void save() {
 		save(file);
 	}
 }

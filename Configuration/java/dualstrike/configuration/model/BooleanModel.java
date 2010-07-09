@@ -6,6 +6,7 @@ import java.awt.event.ActionListener;
 import javax.swing.JRadioButton;
 
 import dualstrike.configuration.definition.BooleanSetting;
+import dualstrike.configuration.file.FileHandler;
 
 public class BooleanModel extends SettingModel implements ActionListener {
 	private final boolean defaultValue;
@@ -13,8 +14,8 @@ public class BooleanModel extends SettingModel implements ActionListener {
 	private final JRadioButton disableButton;
 	private boolean value;
 	
-	BooleanModel(final BooleanSetting booleanSetting, final JRadioButton enableButton, final JRadioButton disableButton) {
-		super((int)booleanSetting.getByteNo(), (int)booleanSetting.getBitNo());
+	BooleanModel(final FileHandler fileHandler, final BooleanSetting booleanSetting, final JRadioButton enableButton, final JRadioButton disableButton) {
+		super(fileHandler, (int)booleanSetting.getByteNo(), (int)booleanSetting.getBitNo());
 		defaultValue = booleanSetting.isDefault();
 		value = defaultValue;
 		this.enableButton = enableButton;
@@ -27,6 +28,7 @@ public class BooleanModel extends SettingModel implements ActionListener {
 	public synchronized void actionPerformed(final ActionEvent event) {
 		if(enableButton.isSelected() != value) {
 			value = enableButton.isSelected();
+			getFileHandler().setModelChanged();
 		}
 	}
 
@@ -35,9 +37,12 @@ public class BooleanModel extends SettingModel implements ActionListener {
 	}
 
 	public synchronized void setValue(final boolean value) {
-		this.value = value;
-		enableButton.setSelected(value);
-		disableButton.setSelected(!value);
+		if(this.value != value) {
+			this.value = value;
+			enableButton.setSelected(value);
+			disableButton.setSelected(!value);
+			getFileHandler().setModelChanged();
+		}
 	}
 
 	public boolean isDefaultValue() {

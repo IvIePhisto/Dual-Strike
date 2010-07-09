@@ -11,14 +11,17 @@ import javax.swing.JRadioButton;
 import dualstrike.configuration.definition.BooleanSetting;
 import dualstrike.configuration.definition.ChoiceSetting;
 import dualstrike.configuration.definition.Configuration;
+import dualstrike.configuration.file.FileHandler;
 
 public class ConfigurationModel {
+	private final FileHandler fileHandler;
 	private final int byteWidth;
 	private final List<SettingModel> settings = new Vector<SettingModel>();
 	private final byte device;
 	private final byte version;
 	
-	public ConfigurationModel(final Configuration configuration) {
+	public ConfigurationModel(final FileHandler fileHandler, final Configuration configuration) {
+		this.fileHandler = fileHandler;
 		this.byteWidth = (int)configuration.getByteWidth();
 		this.device = configuration.getDevice();
 		this.version = configuration.getVersion();
@@ -31,21 +34,21 @@ public class ConfigurationModel {
 	public synchronized void addChoice(final ChoiceSetting choiceSetting, final JList choiceList) {
 		ListChoiceModel choiceModel;
 		
-		choiceModel = new ListChoiceModel(choiceSetting, choiceList);
+		choiceModel = new ListChoiceModel(fileHandler, choiceSetting, choiceList);
 		settings.add(choiceModel);
 	}
 	
 	public synchronized void addChoice(final ChoiceSetting choiceSetting, final ButtonGroup buttons) {
 		RadioButtonsChoiceModel choiceModel;
 		
-		choiceModel = new RadioButtonsChoiceModel(choiceSetting, buttons);
+		choiceModel = new RadioButtonsChoiceModel(fileHandler, choiceSetting, buttons);
 		settings.add(choiceModel);
 	}
 
 	public synchronized void addBoolean(final BooleanSetting booleanSetting, final JRadioButton enableButton, final JRadioButton disableButton) {
 		BooleanModel booleanModel;
 		
-		booleanModel = new BooleanModel(booleanSetting, enableButton, disableButton);
+		booleanModel = new BooleanModel(fileHandler, booleanSetting, enableButton, disableButton);
 		settings.add(booleanModel);
 	}
 	

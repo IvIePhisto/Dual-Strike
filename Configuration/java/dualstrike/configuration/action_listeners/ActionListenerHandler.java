@@ -7,13 +7,12 @@ import java.util.Map;
 import javax.swing.AbstractButton;
 
 public class ActionListenerHandler {
-	private final Map<String, ActionListener> actionListeners = new HashMap<String, ActionListener>();
-	
-	public void registerActionListener(final String name, final ActionListener actionListener) {
+	private final Map<String, ActionListener> actionListeners = new HashMap<String, ActionListener>();	
+	public synchronized void registerActionListener(final String name, final ActionListener actionListener) {
 		actionListeners.put(name, actionListener);
 	}
 	
-	public void registerAction(final AbstractButton button, final String actionListenerName) {
+	private synchronized ActionListener getActionListener(final String actionListenerName) {
 		ActionListener actionListener;
 		
 		actionListener = actionListeners.get(actionListenerName);
@@ -21,6 +20,10 @@ public class ActionListenerHandler {
 		if(actionListener == null)
 			throw new Error(String.format("Action listener \"%s\" not registered.", actionListenerName));
 		
-		button.addActionListener(actionListener);
+		return actionListener;
+	}
+	
+	public synchronized void registerAction(final AbstractButton button, final String actionListenerName) {
+		button.addActionListener(getActionListener(actionListenerName));
 	}
 }

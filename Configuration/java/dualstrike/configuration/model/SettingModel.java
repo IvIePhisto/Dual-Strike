@@ -1,10 +1,14 @@
 package dualstrike.configuration.model;
 
+import dualstrike.configuration.file.FileHandler;
+
 public abstract class SettingModel {
 	private final int byteNo;
 	private final int bitNo;
+	private final FileHandler fileHandler;
 
-	protected SettingModel(final int byteNo, final int bitNo) {
+	protected SettingModel(final FileHandler fileHandler, final int byteNo, final int bitNo) {
+		this.fileHandler = fileHandler;
 		this.byteNo = byteNo;
 		this.bitNo = bitNo;
 	}
@@ -20,4 +24,8 @@ public abstract class SettingModel {
 	abstract void loadDefaults();
 	abstract void loadBytes(byte[] bytes);
 	abstract void saveBytes(byte[] bytes);
+
+	FileHandler getFileHandler() {
+		return fileHandler;
+	}
 }
