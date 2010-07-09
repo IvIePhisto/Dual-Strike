@@ -3,8 +3,8 @@
     <!--this file was created by Eclipse Runnable JAR Export Wizard-->
     <!--ANT 1.7 is required                                        -->
     <target name="create_run_jar">
-        <delete file="ConfigurationEditor.jar"/>
-        <jar destfile="ConfigurationEditor.jar" filesetmanifest="mergewithoutmain">
+        <delete file="mcc.jar"/>
+        <jar destfile="mcc.jar" filesetmanifest="mergewithoutmain">
             <manifest>
                 <attribute name="Main-Class" value="dualstrike.configuration.ConfigurationEditor"/>
                 <attribute name="Class-Path" value="."/>
