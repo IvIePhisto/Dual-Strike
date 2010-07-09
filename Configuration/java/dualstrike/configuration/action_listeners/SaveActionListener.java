@@ -34,7 +34,7 @@ public class SaveActionListener extends ExecActionListener {
 	@Override
 	public void executionFinished(ExecutionResult result) {
 		if(result.isError()) {
-			showError(MessageHelper.get(this, "saveErrorTitle"), MessageHelper.get(this, "saveErrorMessage", ConfigurationEditor.convertTextToHTML(result.getMessage())));
+			getController().showErrorDialog(MessageHelper.get(this, "saveErrorTitle"), MessageHelper.get(this, "saveErrorMessage", ConfigurationEditor.convertTextToHTML(result.getMessage())));
 			getController().setStatusLabelText(MessageHelper.get(this, "saveErrorStatus"));
 		}
 		else

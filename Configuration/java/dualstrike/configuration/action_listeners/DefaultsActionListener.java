@@ -15,9 +15,9 @@ public class DefaultsActionListener implements ActionListener {
 
 	@Override
 	public synchronized void actionPerformed(ActionEvent action) {
-		controller.getView().setEnabled(false);
+		controller.getWindow().setEnabled(false);
 		controller.getModel().loadDefaults();
 		controller.setStatusLabelText(MessageHelper.get(this, "defaultsLoadedStatus"));
-		controller.getView().setEnabled(true);
+		controller.getWindow().setEnabled(true);
 	}
 }

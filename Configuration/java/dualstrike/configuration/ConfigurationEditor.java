@@ -54,6 +54,7 @@ import dualstrike.configuration.definition.DescriptionImage;
 import dualstrike.configuration.definition.Info;
 import dualstrike.configuration.definition.Option;
 import dualstrike.configuration.definition.Page;
+import dualstrike.configuration.file.FileHandler;
 import dualstrike.configuration.icons.IconHandler;
 import dualstrike.configuration.model.ConfigurationModel;
 
@@ -65,100 +66,64 @@ public class ConfigurationEditor {
 	private static final Border BOTTOM_SPACER_BORDER = new EmptyBorder(0, 0, 10, 0);
 	private static final Color WHITE = new Color(255, 255, 255, 150);
 	
-	private final Configuration configuration;
-	private final Locale language;
-	private final Locale defaultLanguage;
-	private final ConfigurationModel model;
-	private final ActionListenerHandler actionListenerHandler;
-	private JFrame view;
-	private JPanel glassPanel;
-	private JLabel statusLabel;
-	private StatusClearer statusCleareance;
-
-	private static URL createFileURL(String path) throws Error {
-		try {
-			return new File(path).toURI().toURL();
-		}
-		catch(MalformedURLException e) {
-			throw new Error(e);
-		}
-	}
-	
-	private ConfigurationEditor(final Configuration configuration, final Locale language) {
-		String title;
-
-		this.configuration = configuration;
+	public static void main(String[] args) {
+		Locale language;
+		URL configurationURL;
 		
-		if(language == null)
-			this.language = new Locale(configuration.getLang());
+		if(args.length == 0)
+			configurationURL = null;
 		else
-			this.language = language;
+			configurationURL = createFileURL(args[0]);
+			
+		if(args.length > 1)
+			language = new Locale(args[1]);
+		else
+			language = Locale.getDefault();
 		
-		defaultLanguage = new Locale(configuration.getLang());
-		model = new ConfigurationModel(configuration);
-
-		title = getLocalizedInfo(configuration.getTitle(), false);
-		view = new JFrame(title);
-		view.setIconImage(createApplicationImage(configuration.getIconPath()));
-		actionListenerHandler = new ActionListenerHandler();
-		createGlassPanel();
-		registerActionHandlers();
-		populateView();
-		statusCleareance = new StatusClearer(this);
-	}
-	
-	private JLabel createImageLabel(final DescriptionImage descriptionImage) {
-		JLabel label;
-		ImageIcon imageIcon;
+		Locale.setDefault(language);
 		
-		if(descriptionImage == null)
-			return null;
-		
-		imageIcon = createFileImageIcon(descriptionImage.getPath());
-		imageIcon.setDescription(getLocalizedInfo(descriptionImage.getTitle(), true));
-		label = new JLabel(imageIcon);
-		label.setToolTipText(getLocalizedInfo(descriptionImage.getHelp(), true));
-		
-		return label;
-	}
-	
-	private static Image createApplicationImage(final String path) {
-		Image image;
-		
-		if(path == null || path.equals(""))
-			image = IconHandler.getIcon("application", null, 64, null).getImage();
-		else {
-			image = createFileImageIcon(path).getImage();
-		}
-		
-		return image;
-	}
-	
-	private static ImageIcon createFileImageIcon(final String path) {
 		try {
-			ImageIcon imageIcon;
-			File file;
-			URL url;
-			
-			file = new File(path);
-			
-			if(!file.exists())
-				throw new Error(String.format("Image \"%s\" not found.", path));
-
-			url = file.toURI().toURL();
-			imageIcon = new ImageIcon(url);
-			
-			return imageIcon;
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		}
-		catch(MalformedURLException e) {
+		catch(UnsupportedLookAndFeelException e) {
 			throw new Error(e);
 		}
+		catch(IllegalAccessException e) {
+			throw new Error(e);
+		}
+		catch(InstantiationException e) {
+			throw new Error(e);
+		}
+		catch(ClassNotFoundException e) {
+			throw new Error(e);
+		}
+
+		try {
+			ConfigurationEditor.newInstance(configurationURL, language);
+		}
+		catch(ConfigurationDefinitionException e) {
+			showExitErrorDialog(e.getLocalizedMessage(), language);
+		}
+		catch(FileNotFoundException e) {
+			showExitErrorDialog(MessageHelper.get(ConfigurationEditor.class, "configurationDefinitionNotFound", language, configurationURL), language);
+		}
+		catch(IOException e) {
+			showExitErrorDialog(MessageHelper.get(ConfigurationEditor.class, "configurationDefinitionLoadingError", language, e.getLocalizedMessage()), language);
+		}
 	}
-	
-	private void registerActionHandlers() {
-		actionListenerHandler.registerActionListener("save", new SaveActionListener(this));
-		actionListenerHandler.registerActionListener("load", new LoadActionListener(this));
-		actionListenerHandler.registerActionListener("defaults", new DefaultsActionListener(this));
+
+	private static void showExitErrorDialog(String message, Locale language) {
+		JFrame frame;
+		String[] options;
+		
+		options = new String[]{"OK"};
+		frame = new JFrame();
+		JOptionPane.showOptionDialog(frame, message, MessageHelper.get(ConfigurationEditor.class, "errorMessageTitle", language), JOptionPane.OK_OPTION , JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+		System.exit(1);
+	}
+
+	public static String convertTextToHTML(String value) {
+		return "<html>" + value.replace("\n", "<br/>") + "</html>";
 	}
 
 	private static ConfigurationEditor newInstance(URL configurationDefinitionURL, final Locale language) throws IOException, ConfigurationDefinitionException {
@@ -173,69 +138,116 @@ public class ConfigurationEditor {
 		
 		return ce;
 	}
+
+	private static URL createFileURL(String path) throws Error {
+		try {
+			return new File(path).toURI().toURL();
+		}
+		catch(MalformedURLException e) {
+			throw new Error(e);
+		}
+	}
 	
-	private String getLocalizedInfo(List<Info> infos, boolean useHTML) {
-		String value;
-		String defaultValue;
-		
-		value = null;
-		defaultValue = null;
-		
-		for(Info currentTitle: infos) {
-			String currentLang;
-			String currentValue;
+	private static ImageIcon createFileImageIcon(final String path) {
+		try {
+			ImageIcon imageIcon;
+			File file;
+			URL url;
 			
-			currentLang = currentTitle.getLang();
-			currentValue = currentTitle.getValue();
+			file = new File(path);
 			
-			if(currentLang == null || currentLang.equals("")) {
-				if(defaultLanguage.equals(language.getLanguage()))
-					value = currentValue;
-				else
-					defaultValue = currentValue;
-			}
-			else if(currentLang.equals(language.getLanguage())) {
-				value = currentValue;
-				break;
-			}
+			if(!file.exists())
+				throw new Error(String.format("Image \"%s\" not found.", path));
+	
+			url = file.toURI().toURL();
+			imageIcon = new ImageIcon(url);
+			
+			return imageIcon;
+		}
+		catch(MalformedURLException e) {
+			throw new Error(e);
+		}
+	}
+
+	private static Image createApplicationImage(final String path) {
+		Image image;
+		
+		if(path == null || path.equals(""))
+			image = IconHandler.getIcon("application", null, 64, null).getImage();
+		else {
+			image = createFileImageIcon(path).getImage();
 		}
 		
-		if(value == null)
-			value = defaultValue;
+		return image;
+	}
+
+	private final Configuration configuration;
+	private final Locale language;
+	private final Locale defaultLanguage;
+	private final ConfigurationModel model;
+	private final ActionListenerHandler actionListenerHandler;
+	private final String windowTitle;
+	private JFrame window;
+	private JPanel glassPanel;
+	private JLabel statusLabel;
+	private StatusClearer statusClearer;
+
+	private ConfigurationEditor(final Configuration configuration, final Locale language) {
+		this.configuration = configuration;
 		
-		if(useHTML)
-			value = convertTextToHTML(value);
+		if(language == null)
+			this.language = new Locale(configuration.getLang());
+		else
+			this.language = language;
 		
-		return value;
+		defaultLanguage = new Locale(configuration.getLang());
+		model = new ConfigurationModel(configuration);
+
+		windowTitle = getLocalizedInfo(configuration.getTitle(), false);
+		window = new JFrame(windowTitle);
+		window.setIconImage(createApplicationImage(configuration.getIconPath()));
+		actionListenerHandler = new ActionListenerHandler();
+		createGlassPanel();
+		registerActionHandlers();
+		populateWindow();
+		statusClearer = new StatusClearer(this);
 	}
 	
-	public static String convertTextToHTML(String value) {
-		return "<html>" + value.replace("\n", "<br/>") + "</html>";
+	private void registerActionHandlers() {
+		FileHandler fileHandler;
+		
+		fileHandler = new FileHandler(this);
+		actionListenerHandler.registerActionListener("loadFile", fileHandler.createLoadFileActionListener());
+		actionListenerHandler.registerActionListener("forgetFile", fileHandler.createForgetFileActionListener());
+		actionListenerHandler.registerActionListener("save", new SaveActionListener(this));
+		actionListenerHandler.registerActionListener("load", new LoadActionListener(this));
+		actionListenerHandler.registerActionListener("defaults", new DefaultsActionListener(this));
+		
 	}
-	
-	private void populateView() {
+
+	private void populateWindow() {
 		createMenuBar();
 		createContentPane();
-		view.pack();
-		view.setLocationRelativeTo(null);
-		view.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		view.setVisible(true);
+		window.pack();
+		window.setLocationRelativeTo(null);
+		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		window.setVisible(true);
 	}
-	
+
 	private void createGlassPanel() {
 		final JPanel glass;
 		
-		glass = (JPanel)view.getGlassPane();
+		glass = (JPanel)window.getGlassPane();
 		glass.setLayout(new BorderLayout());
 		glassPanel = new JPanel() {
 			private static final long serialVersionUID = 1L;
 			@Override
 		    public Dimension getPreferredSize() {
-		        return view.getSize();
+		        return window.getSize();
 		    }
 			@Override
 		    public Dimension getMinimumSize() {
-		        return view.getSize();
+		        return window.getSize();
 		    }
 			@Override
 			protected void paintComponent(Graphics g) {
@@ -247,61 +259,50 @@ public class ConfigurationEditor {
 		glass.add(glassPanel, BorderLayout.CENTER);
 	}
 	
-	public void makeViewInactive() {
-		view.setEnabled(false);
-		view.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-		view.getGlassPane().setVisible(true);
-	}
-	
-	public void makeViewActive() {
-		glassPanel.setVisible(false);
-		view.setCursor(null);
-		view.setEnabled(true);
-		view.requestFocus();
-	}
-
 	private void createMenuBar() {
 		JMenuBar menuBar;
 		JMenu menu;
 		JMenuItem menuItem;
 
 		menuBar = new JMenuBar();
+		menu = new JMenu(MessageHelper.get(this, "fileMenuName"));
+		
+		menuItem = new JMenuItem(MessageHelper.get(this, "loadFileMenuItemName"));
+		menuItem.setToolTipText(MessageHelper.get(this, "loadFileHelp"));
+		menuItem.setIcon(IconHandler.getIcon("loadFile", null, 16, null));
+		menu.add(menuItem);
+		actionListenerHandler.registerAction(menuItem, "loadFile");
+
+		menuItem = new JMenuItem(MessageHelper.get(this, "forgetFileMenuItemName"));
+		menuItem.setToolTipText(MessageHelper.get(this, "forgetFileHelp"));
+		menuItem.setIcon(IconHandler.getIcon("forgetFile", null, 16, null));
+		menu.add(menuItem);
+		actionListenerHandler.registerAction(menuItem, "forgetFile");
+
+		menuBar.add(menu);
 		menu = new JMenu(MessageHelper.get(this, "deviceMenuName"));
+		
 		menuItem = new JMenuItem(MessageHelper.get(this, "loadMenuItemName"));
 		menuItem.setToolTipText(MessageHelper.get(this, "loadHelp"));
 		menuItem.setIcon(IconHandler.getIcon("load", null, 16, null));
 		menu.add(menuItem);
 		actionListenerHandler.registerAction(menuItem, "load");
+
 		menuItem = new JMenuItem(MessageHelper.get(this, "saveMenuItemName"));
 		menuItem.setToolTipText(MessageHelper.get(this, "saveHelp"));
 		menuItem.setIcon(IconHandler.getIcon("save", null, 16, null));
 		menu.add(menuItem);
 		actionListenerHandler.registerAction(menuItem, "save");
-		//menu = new JMenu(MessageHelper.get(this, "defaultsMenuItemName"));
+
 		menuItem = new JMenuItem(MessageHelper.get(this, "defaultsMenuItemName"));
 		menuItem.setToolTipText(MessageHelper.get(this, "defaultsHelp"));
 		menuItem.setIcon(IconHandler.getIcon("defaults", null, 16, null));
 		menu.add(menuItem);
 		actionListenerHandler.registerAction(menuItem, "defaults");
+
 		menuBar.add(menu);
 		
-		view.setJMenuBar(menuBar);
-	}
-	
-	private void createContentPane() {
-		JPanel contentPanel;
-		JComponent buttons;
-		JComponent tabs;
-		JComponent statusPanel;
-		
-		buttons = createToolBar();
-		tabs = createTabs();
-		statusPanel = createStatusPanel();
-
-		contentPanel = (JPanel)view.getContentPane();
-		contentPanel.add(buttons, BorderLayout.PAGE_START);
-		contentPanel.add(tabs, BorderLayout.CENTER);
-		contentPanel.add(statusPanel, BorderLayout.PAGE_END);
+		window.setJMenuBar(menuBar);
 	}
 	
 	private JComponent createToolBar() {
@@ -332,6 +333,22 @@ public class ConfigurationEditor {
 		return toolBar;
 	}
 
+	private void createContentPane() {
+		JPanel contentPanel;
+		JComponent buttons;
+		JComponent tabs;
+		JComponent statusPanel;
+		
+		buttons = createToolBar();
+		tabs = createTabs();
+		statusPanel = createStatusPanel();
+
+		contentPanel = (JPanel)window.getContentPane();
+		contentPanel.add(buttons, BorderLayout.PAGE_START);
+		contentPanel.add(tabs, BorderLayout.CENTER);
+		contentPanel.add(statusPanel, BorderLayout.PAGE_END);
+	}
+	
 	private JComponent createStatusPanel() {
 		JPanel statusPanel;
 		
@@ -504,31 +521,6 @@ public class ConfigurationEditor {
 			return createOptionList(c, defaultOption.getId(), listOptionCount);
 	}
 	
-	private JComponent createOptionRadioButtons(final ChoiceSetting choiceSetting, final String defaultOptionID) {
-		ButtonGroup buttons;
-		JPanel selectorPanel;
-
-		buttons = new ButtonGroup();
-		selectorPanel = new JPanel();
-		selectorPanel.setLayout(new BoxLayout(selectorPanel, BoxLayout.Y_AXIS));
-		selectorPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
-
-		for(Option o: choiceSetting.getOption()) {
-			boolean isSelected;
-			String title;
-			String help;
-			
-			isSelected = o.getId().equals(defaultOptionID);
-			title = getLocalizedInfo(o.getTitle(), true);
-			help = getLocalizedInfo(o.getHelp(), true);
-			addRadioButton(title, buttons, selectorPanel, isSelected).setToolTipText(help);
-		}
-		
-		model.addChoice(choiceSetting, buttons);
-		
-		return selectorPanel;
-	}
-	
 	private JComponent createOptionList(final ChoiceSetting choiceSetting, String defaultOptionID, final int optionListCount) {
 		List<String> titles;
 		List<String> helps;
@@ -575,6 +567,31 @@ public class ConfigurationEditor {
 		return panel;
 	}
 
+	private JComponent createOptionRadioButtons(final ChoiceSetting choiceSetting, final String defaultOptionID) {
+		ButtonGroup buttons;
+		JPanel selectorPanel;
+	
+		buttons = new ButtonGroup();
+		selectorPanel = new JPanel();
+		selectorPanel.setLayout(new BoxLayout(selectorPanel, BoxLayout.Y_AXIS));
+		selectorPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+	
+		for(Option o: choiceSetting.getOption()) {
+			boolean isSelected;
+			String title;
+			String help;
+			
+			isSelected = o.getId().equals(defaultOptionID);
+			title = getLocalizedInfo(o.getTitle(), true);
+			help = getLocalizedInfo(o.getHelp(), true);
+			addRadioButton(title, buttons, selectorPanel, isSelected).setToolTipText(help);
+		}
+		
+		model.addChoice(choiceSetting, buttons);
+		
+		return selectorPanel;
+	}
+
 	private JRadioButton addRadioButton(String text, ButtonGroup buttons, JPanel panel, boolean selected) {
 		JRadioButton button;
 		
@@ -588,77 +605,84 @@ public class ConfigurationEditor {
 		return button;
 	}
 
+	private JLabel createImageLabel(final DescriptionImage descriptionImage) {
+		JLabel label;
+		ImageIcon imageIcon;
+		
+		if(descriptionImage == null)
+			return null;
+		
+		imageIcon = createFileImageIcon(descriptionImage.getPath());
+		imageIcon.setDescription(getLocalizedInfo(descriptionImage.getTitle(), true));
+		label = new JLabel(imageIcon);
+		label.setToolTipText(getLocalizedInfo(descriptionImage.getHelp(), true));
+		
+		return label;
+	}
+
 	private JLabel createLabel(List<Info> info, Font font) {
 		JLabel label;
-
+	
 		label = new JLabel(getLocalizedInfo(info, true));
 		label.setFont(font);
 		
 		return label;
 	}
 
-	private static void showError(String message, Locale language) {
-		JFrame frame;
-		String[] options;
+	private String getLocalizedInfo(List<Info> infos, boolean useHTML) {
+		String value;
+		String defaultValue;
 		
-		options = new String[]{"OK"};
-		frame = new JFrame();
-		JOptionPane.showOptionDialog(frame, message, MessageHelper.get(ConfigurationEditor.class, "errorMessageTitle", language), JOptionPane.OK_OPTION , JOptionPane.ERROR_MESSAGE, null, options, options[0]);
-		System.exit(1);
-	}
-	
-	public static void main(String[] args) {
-		Locale language;
-		URL configurationURL;
+		value = null;
+		defaultValue = null;
 		
-		if(args.length == 0)
-			configurationURL = null;
-		else
-			configurationURL = createFileURL(args[0]);
+		for(Info currentTitle: infos) {
+			String currentLang;
+			String currentValue;
 			
-		if(args.length > 1)
-			language = new Locale(args[1]);
-		else
-			language = Locale.getDefault();
+			currentLang = currentTitle.getLang();
+			currentValue = currentTitle.getValue();
+			
+			if(currentLang == null || currentLang.equals("")) {
+				if(defaultLanguage.equals(language.getLanguage()))
+					value = currentValue;
+				else
+					defaultValue = currentValue;
+			}
+			else if(currentLang.equals(language.getLanguage())) {
+				value = currentValue;
+				break;
+			}
+		}
 		
-		Locale.setDefault(language);
+		if(value == null)
+			value = defaultValue;
 		
-		try {
-			try {
-				UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-			}
-			catch(UnsupportedLookAndFeelException e) {
-				throw new Error(e);
-			}
-			catch(IllegalAccessException e) {
-				throw new Error(e);
-			}
-			catch(InstantiationException e) {
-				throw new Error(e);
-			}
-			catch(ClassNotFoundException e) {
-				throw new Error(e);
-			}
-
-			ConfigurationEditor.newInstance(configurationURL, language);
-		}
-		catch(ConfigurationDefinitionException e) {
-			showError(e.getLocalizedMessage(), language);
-		}
-		catch(FileNotFoundException e) {
-			showError(MessageHelper.get(ConfigurationEditor.class, "configurationDefinitionNotFound", language, configurationURL), language);
-		}
-		catch(IOException e) {
-			showError(MessageHelper.get(ConfigurationEditor.class, "configurationDefinitionLoadingError", language, e.getLocalizedMessage()), language);
-		}
+		if(useHTML)
+			value = convertTextToHTML(value);
+		
+		return value;
 	}
 
 	public ConfigurationModel getModel() {
 		return model;
 	}
 
-	public JFrame getView() {
-		return view;
+	public JFrame getWindow() {
+		return window;
+	}
+
+	public void makeWindowInactive() {
+		window.setEnabled(false);
+		window.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+		window.getGlassPane().setVisible(true);
+	}
+
+	public void makeWindowActive() {
+		glassPanel.setVisible(false);
+		window.setCursor(null);
+		window.setEnabled(true);
+		window.requestFocus();
 	}
 
 	JLabel getStatusLabel() {
@@ -667,6 +691,20 @@ public class ConfigurationEditor {
 	
 	public synchronized void setStatusLabelText(final String text) {
 		statusLabel.setText(text);
-		statusCleareance.setActive();
+		statusClearer.setActive();
+	}
+
+	public synchronized void setWindowTitleAmendment(final String text) {
+		if(text == null)
+			window.setTitle(windowTitle);
+		else
+			window.setTitle(windowTitle + ": " + text);
+	}
+
+	public void showErrorDialog(String title, String message) {
+		String[] options;
+		
+		options = new String[]{"OK"};
+		JOptionPane.showOptionDialog(window, message, title, JOptionPane.OK_OPTION , JOptionPane.ERROR_MESSAGE, null, options, options[0]);
 	}
 }

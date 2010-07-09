@@ -54,19 +54,19 @@ public class ConfigurationModel {
 			setting.loadDefaults();
 	}
 	
-	public synchronized void loadBytes(byte[] bytes) throws ConfigurationException {
+	public synchronized void loadBytes(byte[] bytes) throws ByteLoadingException {
 		if(bytes.length < byteWidth + 2)
-			throw new ConfigurationException(ConfigurationException.Type.BYTE_COUNT);
+			throw new ByteLoadingException(ByteLoadingException.Type.BYTE_COUNT);
 		
 		for(int i = 0; i < byteWidth + 2; i++)
 			if(bytes[i] == 0xFF)
-				throw new ConfigurationException(ConfigurationException.Type.UNITITIALIZED_DATA);				
+				throw new ByteLoadingException(ByteLoadingException.Type.UNITITIALIZED_DATA);				
 		
 		if(bytes[0] != device)
-			throw new ConfigurationException(ConfigurationException.Type.DEVICE);
+			throw new ByteLoadingException(ByteLoadingException.Type.DEVICE);
 
 		if(bytes[1] != version)
-			throw new ConfigurationException(ConfigurationException.Type.VERSION);
+			throw new ByteLoadingException(ByteLoadingException.Type.VERSION);
 		
 		bytes = Arrays.copyOfRange(bytes, 2, bytes.length);
 

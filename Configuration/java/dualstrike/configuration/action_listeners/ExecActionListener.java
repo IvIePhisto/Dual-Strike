@@ -3,8 +3,6 @@ package dualstrike.configuration.action_listeners;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.JOptionPane;
-
 import dualstrike.configuration.ConfigurationEditor;
 import dualstrike.configuration.device.ExecutionListener;
 import dualstrike.configuration.device.ExecutionResult;
@@ -19,7 +17,7 @@ public abstract class ExecActionListener implements ActionListener, ExecutionLis
 
 	@Override
 	public synchronized void actionPerformed(ActionEvent action) {
-		controller.makeViewInactive();
+		controller.makeWindowInactive();
 		exec();
 	}
 	
@@ -31,14 +29,7 @@ public abstract class ExecActionListener implements ActionListener, ExecutionLis
 
 	@Override
 	public void executionFinished(ExecutionResult result) {
-		controller.makeViewActive();
-	}
-	
-	protected void showError(String title, String message) {
-		String[] options;
-		
-		options = new String[]{"OK"};
-		JOptionPane.showOptionDialog(controller.getView(), message, title, JOptionPane.OK_OPTION , JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+		controller.makeWindowActive();
 	}
 
 	ConfigurationEditor getController() {
