@@ -317,6 +317,7 @@ public class ConfigurationEditor {
 		menu.add(menuItem);
 		actionListenerHandler.registerAction(menuItem, "save");
 
+		menu.addSeparator();
 		menuItem = new JMenuItem(MessageHelper.get(this, "defaultsMenuItemName"));
 		menuItem.setToolTipText(MessageHelper.get(this, "defaultsHelp"));
 		menuItem.setIcon(IconHandler.getIcon("defaults", null, 16, null));
