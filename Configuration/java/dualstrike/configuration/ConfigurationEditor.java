@@ -45,6 +45,7 @@ import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 
+import dualstrike.configuration.action_listeners.AboutMessageActionListener;
 import dualstrike.configuration.action_listeners.ActionListenerHandler;
 import dualstrike.configuration.action_listeners.DefaultsActionListener;
 import dualstrike.configuration.action_listeners.ExitActionListener;
@@ -227,6 +228,7 @@ public class ConfigurationEditor {
 		actionListenerHandler.registerActionListener("save", new SaveActionListener(this));
 		actionListenerHandler.registerActionListener("load", new LoadActionListener(this));
 		actionListenerHandler.registerActionListener("defaults", new DefaultsActionListener(this));
+		actionListenerHandler.registerActionListener("about", new AboutMessageActionListener(this));
 	}
 
 	private void populateWindow() {
@@ -328,6 +330,15 @@ public class ConfigurationEditor {
 		actionListenerHandler.registerAction(menuItem, "defaults");
 
 		menuBar.add(menu);
+		menu = new JMenu(MessageHelper.get(this, "helpMenuName"));
+		
+		menuItem = new JMenuItem(MessageHelper.get(this, "aboutMenuItemName"));
+		menuItem.setToolTipText(MessageHelper.get(this, "aboutHelp"));
+		menuItem.setIcon(IconHandler.getIcon("about", null, 16, null));
+		menu.add(menuItem);
+		actionListenerHandler.registerAction(menuItem, "about");
+		menuBar.add(menu);
+
 		window.setJMenuBar(menuBar);
 	}
 	
