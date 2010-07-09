@@ -385,16 +385,16 @@ static void printUsage(char *pname)
 	fprintf(stderr,	" \"<intel-hexfile\" specifies a file to write into the flash.\n");
 	fprintf(stderr,	" \"-e <intel-hexfile>\" specifies a file to write to the EEPROM.\n");
 	fprintf(stderr,	" \"-de <plain-hexfile>\" specifies a file to dump the EEPROM to.\n");
-	fprintf(stderr,	"At least one of the arguments not including \"-r\" must be used.\n");
+	fprintf(stderr,	"At least one of the arguments not including \"-r\" must be used.\nIf no argument is given device availability is tested.\n");
 }
 
 static int testArgs(int argc, char **argv) {
 	int currentIndex;
 	
-	if(argc < 2 || argc > 7)
+	if(argc > 7)
 		return 1;
 		
-	if(argc == 1 && (strcmp(argv[1], "-h") == 0 || strcmp(argv[1], "--help") == 0))
+	if(argc == 1 || (argc == 2 && (strcmp(argv[1], "-h") == 0 || strcmp(argv[1], "--help") == 0)))
 		return 0;
 		
 	if(strcmp(argv[1], "-r") == 0)
@@ -428,19 +428,19 @@ int main(int argc, char **argv) {
         return 1;
     }
 	
-    if(strcmp(argv[1], "-h") == 0 || strcmp(argv[1], "--help") == 0) {
+    if(argc > 1 && (strcmp(argv[1], "-h") == 0 || strcmp(argv[1], "--help") == 0)) {
         printUsage(argv[0]);
         return 0;
     }
-	
-	if(strcmp(argv[1], "-r") == 0) {
+
+	if(argc > 1 && (strcmp(argv[1], "-r") == 0)) {
         leaveBootLoader = 1;
 		currentIndex = 2;
 	}
 	else
 		currentIndex = 1;
 	
-	if(strcmp(argv[currentIndex], "-e") != 0 && strcmp(argv[currentIndex], "-de") != 0) {
+	if(currentIndex < argc && (strcmp(argv[currentIndex], "-e") != 0 && strcmp(argv[currentIndex], "-de") != 0)) {
 		flashFile = argv[currentIndex];
 		currentIndex++;
 	}
@@ -464,24 +464,30 @@ int main(int argc, char **argv) {
 
 	if(eepromDumpFile != NULL)
 		printf("EEPROM dump file: \"%s\"\n", eepromDumpFile);
-	
+		
     if((err = usbOpenDevice(&dev, IDENT_VENDOR_NUM, IDENT_VENDOR_STRING, IDENT_PRODUCT_NUM, IDENT_PRODUCT_STRING, 1)) != 0){
         fprintf(stderr, "Error opening HIDBoot device: %s\n", usbErrorMessage(err));
-		return 1;
+		return 2;
     }
-	
+	else if(argc == 1) {
+		printf("Device available.\nUse argument \"-h\" or \"--help\" for usage information.\n");
+		return 0;
+	}
+
 	if(flashFile != NULL) {
 		startAddress = sizeof(dataBuffer);
 		endAddress = 0;
 		memset(dataBuffer, -1, sizeof(dataBuffer));
 
 		if(parseIntelHex(flashFile, dataBuffer, &startAddress, &endAddress))
-			return 1;
+			return 3;
 		
-		if(startAddress >= endAddress)
+		if(startAddress >= endAddress) {
 			fprintf(stderr, "No data in flash input file.\n");
+			return 4;
+		}
 		else if(uploadFlashData(dataBuffer, startAddress, endAddress))
-				return 1;
+			return 5;
 	}
 	
 	if(eepromFile != NULL) {
@@ -490,14 +496,14 @@ int main(int argc, char **argv) {
 		memset(dataBuffer, -1, sizeof(dataBuffer));
 
 		if(parseIntelHex(eepromFile, dataBuffer, &startAddress, &endAddress))
-			return 1;
+			return 6;
 
 		if(startAddress >= endAddress) {
 			fprintf(stderr, "No data in EEPROM input file.\n");
-			return 1;
+			return 7;
 		}
 		else if(uploadEEPROMData(dataBuffer, startAddress, endAddress))
-			return 1;
+			return 8;
 	}
 	
 	if(eepromDumpFile != NULL) {
@@ -506,10 +512,11 @@ int main(int argc, char **argv) {
 		
 		if(endAddress == 0) {
 			fprintf(stderr, "Error dumping EEPROM data.\n");
-			return 1;
+			return 9;
 		}
 		
-		writePlainHEX(eepromDumpFile, dataBuffer, endAddress);
+		if(writePlainHEX(eepromDumpFile, dataBuffer, endAddress))
+			return 10;
 	}
 	
 	if(leaveBootLoader) {
