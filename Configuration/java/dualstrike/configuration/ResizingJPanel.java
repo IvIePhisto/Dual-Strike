@@ -8,10 +8,10 @@ import javax.swing.JPanel;
 import javax.swing.Scrollable;
 import javax.swing.SwingConstants;
 
-class ResizingJPanel extends JPanel implements Scrollable {
+public class ResizingJPanel extends JPanel implements Scrollable {
 	private static final long serialVersionUID = 1L;
 
-	ResizingJPanel() {
+	public ResizingJPanel() {
 		super();
 	}
 
@@ -56,5 +56,4 @@ class ResizingJPanel extends JPanel implements Scrollable {
 	public int getScrollableUnitIncrement(Rectangle visibleRect, int orientation, int direction) {
 		return 1;
 	}
-
 }
