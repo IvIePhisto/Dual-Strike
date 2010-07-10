@@ -70,6 +70,10 @@ import dualstrike.configuration.icons.IconHandler;
 import dualstrike.configuration.model.ConfigurationModel;
 
 public class ConfigurationEditor implements HyperlinkListener {
+	public static final int MAJOR_VERSION_NO = 1;
+	public static final int MINOR_VERSION_NO = 0;
+	public static final int BUGFIX_VERSION_NO = 0;
+	
 	private static final Desktop desktop = Desktop.isDesktopSupported()?Desktop.getDesktop():null;
 	private static final URL DEFAULT_CONFIGURATION_DEFINITION_FILE_URL = createFileURL("configuration.xml");
 	private static final int FONT_SIZE = 14;

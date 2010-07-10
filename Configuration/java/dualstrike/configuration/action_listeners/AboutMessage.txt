@@ -1,8 +1,12 @@
 <html>
 <h1>Microcontroller Configuration Editor</h1>
-<p><b>Version:</b> 1.0</p>
-<p><b>Author:</b> Michael Pohl (<i>email:</i> <a href="mailto:pohl-michael@gmx.biz">pohl-michael@gmx.biz</a> &#8210; <i>homepage:</i> <a href="http://pohl-michael.gmxhome.de">http://pohl-michael.gmxhome.de</a>)</p>
-<p>This program allows the configuration of according programmed microcontroller devices over USB based on a configuration definition in a XML format.</p>
+<p><b>Version:</b> {0}.{1}.{2}</p>
+<p><b>Author:</b> Michael Pohl<br/>
+<i>Email:</i> <a href="mailto:pohl-michael@gmx.biz">pohl-michael@gmx.biz</a><br/>
+<i>Homepage:</i> <a href="http://pohl-michael.gmxhome.de">http://pohl-michael.gmxhome.de</a></p>
+<p>This program allows the configuration of according programmed microcontroller devices over USB.
+It generates the user interface based on a configuration definition in a XML format which must apply to the connected device.
+It uses a modified version of Objective Development's <a href="http://www.obdev.at/products/vusb/bootloadhid.html">BootloadHID</a> commandline program.</p>
 <p>Thanks go to:
 <ul>
 <li>my wife for her patience and love</li>

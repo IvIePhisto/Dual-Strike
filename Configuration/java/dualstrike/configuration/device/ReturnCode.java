@@ -3,6 +3,9 @@ package dualstrike.configuration.device;
 import dualstrike.configuration.MessageHelper;
 
 public enum ReturnCode {
+	FLASH_AND_EEPROM_PROGRAMMING_AVAILABLE,
+	EEPROM_PROGRAMMING_AVAILABLE,
+	FLASH_PROGRAMMING_AVAILABLE,
 	COMPLETED_SUCCESSFULLY,
 	WRONG_ARGUMENTS,
 	OPEN_DEVICE_ERROR,
@@ -17,6 +20,12 @@ public enum ReturnCode {
 	
 	static ReturnCode newInstance(final int returnCode) throws RuntimeException {
 		switch(returnCode) {
+		case -3:
+			return FLASH_AND_EEPROM_PROGRAMMING_AVAILABLE;
+		case -2:
+			return EEPROM_PROGRAMMING_AVAILABLE;
+		case -1:
+			return FLASH_PROGRAMMING_AVAILABLE;
 		case 0:
 			return COMPLETED_SUCCESSFULLY;
 		case 1:
@@ -45,7 +54,15 @@ public enum ReturnCode {
 	}
 	
 	public boolean isError() {
-		return this != COMPLETED_SUCCESSFULLY;
+		switch(this) {
+		case COMPLETED_SUCCESSFULLY:
+		case FLASH_AND_EEPROM_PROGRAMMING_AVAILABLE:
+		case EEPROM_PROGRAMMING_AVAILABLE:
+		case FLASH_PROGRAMMING_AVAILABLE:
+			return false;
+		default:
+			return true;
+		}
 	}
 	
 	public String getTitle() {

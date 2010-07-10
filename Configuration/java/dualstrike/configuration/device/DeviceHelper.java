@@ -63,7 +63,13 @@ public class DeviceHelper {
 	}
 	
 	public static boolean isConnected() {
-		return !execute(false, null, null).getReturnCode().isError();
+		switch(execute(false, null, null).getReturnCode()) {
+		case EEPROM_PROGRAMMING_AVAILABLE:
+		case FLASH_AND_EEPROM_PROGRAMMING_AVAILABLE:
+			return true;
+		default:
+			return false;
+		}
 	}
 
 	public static File loadConfiguration(final ExecutionListener listener) {

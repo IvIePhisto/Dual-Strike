@@ -1,6 +1,9 @@
 ﻿Return Codes
 ------------
 
+-3: Flash and EEPROM programming available
+-2: EEPROM programming available
+-1: Flash programming available
 0: Completed Successfully
 1: Wrong Arguments
 2: Open Device Error

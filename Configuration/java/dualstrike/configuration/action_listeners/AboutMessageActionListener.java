@@ -13,6 +13,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
+import java.text.MessageFormat;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -32,7 +33,7 @@ public class AboutMessageActionListener implements ActionListener {
 	public AboutMessageActionListener(final ConfigurationEditor controller) {
 		this.controller = controller;
 		this.title = MessageHelper.get(this, "aboutTitle");
-		this.message = readResource(MessageHelper.get(this, "aboutMessagePath"));
+		this.message = MessageFormat.format(readResource(MessageHelper.get(this, "aboutMessagePath")), ConfigurationEditor.MAJOR_VERSION_NO, ConfigurationEditor.MINOR_VERSION_NO, ConfigurationEditor.BUGFIX_VERSION_NO);
 	}
 	
 	private static String readResource(final String path) {
@@ -83,7 +84,7 @@ public class AboutMessageActionListener implements ActionListener {
 		controller.makeWindowInactive();
 		dialog = new JDialog(controller.getWindow(), title, ModalityType.APPLICATION_MODAL);
 		editorPane = controller.createHTMLPane(message);
-		editorPane.setPreferredSize(new Dimension(600, 350));
+		editorPane.setPreferredSize(new Dimension(640, 400));
 		editorPane.setMargin(new Insets(10, 10, 10, 10));
 		editorPane.setFont(ConfigurationEditor.DESCRIPTION_FONT);
 		editorPane.setBackground(dialog.getBackground());
