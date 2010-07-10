@@ -18,7 +18,6 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
@@ -36,11 +35,12 @@ public class ConfigurationUtility {
 	private final static String ANNOTATED_CONFIGURATION_SCHEMA_NAME = "annotated-configuration-def.xsd";
 	private final static SchemaFactory SCHEMA_FACTORY = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
 	private final static TransformerFactory TRANSFORMER_FACTORY = TransformerFactory.newInstance();
-	private final static DocumentBuilderFactory DOCUMENT_BUILDER_FACTORY = DocumentBuilderFactory.newInstance();
+	final static DocumentBuilderFactory DOCUMENT_BUILDER_FACTORY = DocumentBuilderFactory.newInstance();
 	
 	static {
 		DOCUMENT_BUILDER_FACTORY.setXIncludeAware(true);
 		DOCUMENT_BUILDER_FACTORY.setNamespaceAware(true);
+		DOCUMENT_BUILDER_FACTORY.setCoalescing(true);
 	}
 	
 	public final static Schema CONFIGURATION_SCHEMA = createConfigurationSchema();
@@ -164,49 +164,5 @@ public class ConfigurationUtility {
 
 	public static Schema createAnnotatedConfigurationSchema() {
 		return createSchemaFromResource(ANNOTATED_CONFIGURATION_SCHEMA_NAME);
-	}
-
-	public static void main(String[] args) {
-		if(args.length != 3 || !(args[0].equals("annotate") || args[0].equals("2header-file"))) {
-			System.err.print("args: (annotate|2header-file) <configuration file> <output file>");
-			System.exit(1);
-		}
-		
-		try {
-			Source source;
-			Result result;
-			Transformer annotateConfigurationTransformer;
-			Schema configurationSchema;
-
-			source = new StreamSource(args[1]);			
-			result = new StreamResult(args[2]);
-			configurationSchema = createConfigurationSchema();
-			configurationSchema.newValidator().validate(source);
-			annotateConfigurationTransformer = createAnnotateConfigurationTransformer();
-			
-			if(args[0].equals("annotate")) {
-				annotateConfigurationTransformer.transform(source, result);
-			}
-			else {
-				Transformer toHeaderFileTransformer;
-				Schema annotatedConfigurationSchema;
-				DOMResult docResult;
-				Source docSource;
-				Document doc;
-				
-				doc = DOCUMENT_BUILDER_FACTORY.newDocumentBuilder().newDocument();
-				docResult = new DOMResult(doc);
-				annotateConfigurationTransformer.transform(source, docResult);
-				docSource = new DOMSource(doc);
-				annotatedConfigurationSchema = createAnnotatedConfigurationSchema();
-				annotatedConfigurationSchema.newValidator().validate(docSource);
-				toHeaderFileTransformer = createConfigurationToHeaderFileTransformer();
-				toHeaderFileTransformer.transform(docSource, result);
-			}
-		}
-		catch(Throwable t) {
-			t.printStackTrace();
-			System.exit(2);
-		}
 	}
 }

@@ -14,7 +14,6 @@ import java.awt.Insets;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
@@ -44,8 +43,6 @@ import javax.swing.JTabbedPane;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.HyperlinkEvent;
@@ -74,75 +71,19 @@ public class ConfigurationEditor implements HyperlinkListener {
 	public static final int MINOR_VERSION_NO = 0;
 	public static final int BUGFIX_VERSION_NO = 0;
 	
-	private static final Desktop desktop = Desktop.isDesktopSupported()?Desktop.getDesktop():null;
-	private static final URL DEFAULT_CONFIGURATION_DEFINITION_FILE_URL = createFileURL("configuration.xml");
+	private static final Desktop DESKTOP = Desktop.isDesktopSupported()?Desktop.getDesktop():null;
+	static final URL DEFAULT_CONFIGURATION_DEFINITION_FILE_URL = createFileURL("configuration.xml");
 	private static final int FONT_SIZE = 14;
 	private static final Font TITLE_FONT = new Font(Font.SANS_SERIF, Font.BOLD, FONT_SIZE); 
 	public static final Font DESCRIPTION_FONT = new Font(Font.SANS_SERIF, Font.PLAIN, FONT_SIZE); 
 	private static final Border BOTTOM_SPACER_BORDER = new EmptyBorder(0, 0, 10, 0);
 	private static final Color MILK_GLASS = new Color(255, 255, 255, 150);
 
-	public static void main(String[] args) {
-		Locale language;
-		URL configurationURL;
-		
-		if(args.length == 0)
-			configurationURL = null;
-		else
-			configurationURL = createFileURL(args[0]);
-			
-		if(args.length > 1)
-			language = new Locale(args[1]);
-		else
-			language = Locale.getDefault();
-		
-		Locale.setDefault(language);
-		
-		try {
-			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		}
-		catch(UnsupportedLookAndFeelException e) {
-			throw new Error(e);
-		}
-		catch(IllegalAccessException e) {
-			throw new Error(e);
-		}
-		catch(InstantiationException e) {
-			throw new Error(e);
-		}
-		catch(ClassNotFoundException e) {
-			throw new Error(e);
-		}
-
-		try {
-			ConfigurationEditor.newInstance(configurationURL, language);
-		}
-		catch(ConfigurationDefinitionException e) {
-			showExitErrorDialog(e.getLocalizedMessage(), language);
-		}
-		catch(FileNotFoundException e) {
-			showExitErrorDialog(MessageHelper.get(ConfigurationEditor.class, "configurationDefinitionNotFound", language, configurationURL), language);
-		}
-		catch(IOException e) {
-			showExitErrorDialog(MessageHelper.get(ConfigurationEditor.class, "configurationDefinitionLoadingError", language, e.getLocalizedMessage()), language);
-		}
-	}
-
-	private static void showExitErrorDialog(String message, Locale language) {
-		JFrame frame;
-		String[] options;
-		
-		options = new String[]{"OK"};
-		frame = new JFrame();
-		JOptionPane.showOptionDialog(frame, message, MessageHelper.get(ConfigurationEditor.class, "errorMessageTitle", language), JOptionPane.OK_OPTION , JOptionPane.ERROR_MESSAGE, null, options, options[0]);
-		System.exit(1);
-	}
-
 	public static String convertTextToHTML(String value) {
 		return "<html>" + value.replace("\n", "<br/>") + "</html>";
 	}
 
-	private static ConfigurationEditor newInstance(URL configurationDefinitionURL, final Locale language) throws IOException, ConfigurationDefinitionException {
+	static ConfigurationEditor newInstance(URL configurationDefinitionURL, final Locale language) throws IOException, ConfigurationDefinitionException {
 		Configuration configuration;
 		ConfigurationEditor ce;
 		
@@ -155,7 +96,7 @@ public class ConfigurationEditor implements HyperlinkListener {
 		return ce;
 	}
 
-	private static URL createFileURL(String path) throws Error {
+	static URL createFileURL(String path) throws Error {
 		try {
 			return new File(path).toURI().toURL();
 		}
@@ -682,7 +623,7 @@ public class ConfigurationEditor implements HyperlinkListener {
 		editorPane.setEditable(false);
 		editorPane.putClientProperty(JEditorPane.HONOR_DISPLAY_PROPERTIES, true);
 
-		if(desktop != null)
+		if(DESKTOP != null)
 			editorPane.addHyperlinkListener(this);
 
 		return editorPane;
@@ -794,9 +735,9 @@ public class ConfigurationEditor implements HyperlinkListener {
 
 	@Override
 	public void hyperlinkUpdate(final HyperlinkEvent hyperlinkEvent) {
-		if (desktop != null && hyperlinkEvent.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+		if (DESKTOP != null && hyperlinkEvent.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
 			try {
-				desktop.browse(hyperlinkEvent.getURL().toURI());
+				DESKTOP.browse(hyperlinkEvent.getURL().toURI());
 			}
 			catch (URISyntaxException e) {
 				throw new RuntimeException(e);
