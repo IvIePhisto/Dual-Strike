@@ -6,7 +6,7 @@
         <delete file="mcc.jar"/>
         <jar destfile="mcc.jar" filesetmanifest="mergewithoutmain">
             <manifest>
-                <attribute name="Main-Class" value="dualstrike.configuration.ConfigurationEditor"/>
+                <attribute name="Main-Class" value="dualstrike.configuration.Configuration"/>
                 <attribute name="Class-Path" value="."/>
             </manifest>
             <fileset dir="java" excludes="**/*.java"/>
