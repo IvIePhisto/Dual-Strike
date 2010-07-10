@@ -183,11 +183,7 @@ int pageSize, deviceSize = 0;
 
 static int readSizes(int reportID, int deviceSizeCorrection) {
     if((err = usbGetReport(dev, USB_HID_REPORT_TYPE_FEATURE, reportID, buffer.bytes, &len)) != 0) {
-        fprintf(stderr, "Error reading sizes: %s\n", usbErrorMessage(err));
-        
-		if(dev != NULL)
-			usbCloseDevice(dev);
-			
+        fprintf(stderr, "Error reading sizes: %s\n", usbErrorMessage(err));			
 		return err;
 	}
 
@@ -203,7 +199,12 @@ static int uploadFlashData(char *dataBuffer, int startAddr, int endAddr) {
 	int mask;
 
 	printf("Uploading flash data...\n");
-    readSizes(1, -2048);
+    if(readSizes(1, -2048) != 0) {
+		if(dev != NULL)
+			usbCloseDevice(dev);
+
+		return 1;
+	}
 	
     if(len < sizeof(buffer.info)){
         fprintf(stderr, "Not enough bytes in device info report (%d instead of %d)\n", len, (int)sizeof(buffer.info));
@@ -255,7 +256,13 @@ errorOccurred:
 static int uploadEEPROMData(char *dataBuffer, int startAddr, int endAddr) {
 	err = 0;
 	printf("Dumping EEPROM data...\n");
-	readSizes(3, 0);
+
+	if(readSizes(3, 0) != 0) {
+		if(dev != NULL)
+			usbCloseDevice(dev);
+
+		return 1;
+	}
 	
     if(len < sizeof(buffer.info)) {
         fprintf(stderr, "Not enough bytes in EEPROM for data (%d instead of %d)\n", len, (int)sizeof(buffer.info));
@@ -307,7 +314,12 @@ static int  dumpEEPROMData(char *dataBuffer, int dataBufferSize) {
 	printf("Dumping EEPROM data...\n");
 
 	if(pageSize == 0 && deviceSize == 0)
-		readSizes(3, 0);
+		if(readSizes(3, 0) != 0) {
+			if(dev != NULL)
+				usbCloseDevice(dev);
+
+			return 1;
+		}
 	
     if(deviceSize > dataBufferSize) {
         fprintf(stderr, "Not enough bytes in data buffer for EEPROM data (%d instead of %d)\n", dataBufferSize, deviceSize);
@@ -470,8 +482,25 @@ int main(int argc, char **argv) {
 		return 2;
     }
 	else if(argc == 1) {
-		printf("Device available.\nUse argument \"-h\" or \"--help\" for usage information.\n");
-		return 0;
+		int returnValue;
+		
+		returnValue = 0;
+		
+		if(readSizes(1, -2048) == 0) {
+			returnValue -= 1;
+			printf("Flash programming available.\n");
+		}
+		
+		if(readSizes(3, 0) == 0) {
+			returnValue -= 2;
+			printf("EEPROM programming available.\n");
+		}
+		
+		if(dev != NULL)
+			usbCloseDevice(dev);
+
+		printf("Use argument \"-h\" or \"--help\" for usage information.\n");
+		return returnValue;
 	}
 
 	if(flashFile != NULL) {
