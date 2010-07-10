@@ -4,17 +4,20 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
+import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.Event;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Image;
+import java.awt.Insets;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.LinkedList;
 import java.util.List;
@@ -26,6 +29,7 @@ import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -44,11 +48,14 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
 
 import dualstrike.configuration.action_listeners.AboutMessageActionListener;
 import dualstrike.configuration.action_listeners.ActionListenerHandler;
 import dualstrike.configuration.action_listeners.DefaultsActionListener;
 import dualstrike.configuration.action_listeners.ExitActionListener;
+import dualstrike.configuration.action_listeners.HelpActionListener;
 import dualstrike.configuration.action_listeners.LoadActionListener;
 import dualstrike.configuration.action_listeners.SaveActionListener;
 import dualstrike.configuration.definition.BooleanSetting;
@@ -62,14 +69,15 @@ import dualstrike.configuration.file.FileHandler;
 import dualstrike.configuration.icons.IconHandler;
 import dualstrike.configuration.model.ConfigurationModel;
 
-public class ConfigurationEditor {
+public class ConfigurationEditor implements HyperlinkListener {
+	private static final Desktop desktop = Desktop.isDesktopSupported()?Desktop.getDesktop():null;
 	private static final URL DEFAULT_CONFIGURATION_DEFINITION_FILE_URL = createFileURL("configuration.xml");
 	private static final int FONT_SIZE = 14;
 	private static final Font TITLE_FONT = new Font(Font.SANS_SERIF, Font.BOLD, FONT_SIZE); 
-	private static final Font DESCRIPTION_FONT = new Font(Font.SANS_SERIF, Font.PLAIN, FONT_SIZE); 
+	public static final Font DESCRIPTION_FONT = new Font(Font.SANS_SERIF, Font.PLAIN, FONT_SIZE); 
 	private static final Border BOTTOM_SPACER_BORDER = new EmptyBorder(0, 0, 10, 0);
-	private static final Color WHITE = new Color(255, 255, 255, 150);
-	
+	private static final Color MILK_GLASS = new Color(255, 255, 255, 150);
+
 	public static void main(String[] args) {
 		Locale language;
 		URL configurationURL;
@@ -190,7 +198,7 @@ public class ConfigurationEditor {
 	private final Locale defaultLanguage;
 	private final ConfigurationModel model;
 	private final ActionListenerHandler actionListenerHandler;
-	private final String windowTitle;
+	private final String mainTitle;
 	private final FileHandler fileHandler;
 	private final JFrame window;
 	private JPanel glassPanel;
@@ -209,8 +217,8 @@ public class ConfigurationEditor {
 		defaultLanguage = new Locale(configuration.getLang());
 		fileHandler = new FileHandler(this);
 		model = new ConfigurationModel(fileHandler, configuration);
-		windowTitle = getLocalizedInfo(configuration.getTitle(), false);
-		window = new JFrame(windowTitle);
+		mainTitle = getLocalizedInfo(configuration.getTitle(), false);
+		window = new JFrame(mainTitle);
 		window.setIconImage(createApplicationImage(configuration.getIconPath()));
 		actionListenerHandler = new ActionListenerHandler();
 		createGlassPanel();
@@ -228,6 +236,7 @@ public class ConfigurationEditor {
 		actionListenerHandler.registerActionListener("save", new SaveActionListener(this));
 		actionListenerHandler.registerActionListener("load", new LoadActionListener(this));
 		actionListenerHandler.registerActionListener("defaults", new DefaultsActionListener(this));
+		actionListenerHandler.registerActionListener("help", new HelpActionListener(this, getLocalizedInfo(configuration.getHelp(), false)));
 		actionListenerHandler.registerActionListener("about", new AboutMessageActionListener(this));
 	}
 
@@ -261,7 +270,7 @@ public class ConfigurationEditor {
 			}
 		};		
 		glassPanel.setLayout(new BorderLayout());
-		glassPanel.setBackground(WHITE);
+		glassPanel.setBackground(MILK_GLASS);
 		glass.add(glassPanel, BorderLayout.CENTER);
 	}
 	
@@ -273,6 +282,13 @@ public class ConfigurationEditor {
 		menuBar = new JMenuBar();
 		menu = new JMenu(MessageHelper.get(this, "fileMenuName"));
 		
+		menuItem = new JMenuItem(MessageHelper.get(this, "forgetFileMenuItemName"));
+		menuItem.setToolTipText(MessageHelper.get(this, "forgetFileHelp"));
+		menuItem.setIcon(IconHandler.getIcon("forgetFile", null, 16, null));
+		menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F,  Event.CTRL_MASK));
+		menu.add(menuItem);
+		actionListenerHandler.registerAction(menuItem, "forgetFile");
+
 		menuItem = new JMenuItem(MessageHelper.get(this, "loadFileMenuItemName"));
 		menuItem.setToolTipText(MessageHelper.get(this, "loadFileHelp"));
 		menuItem.setIcon(IconHandler.getIcon("loadFile", null, 16, null));
@@ -280,6 +296,7 @@ public class ConfigurationEditor {
 		menu.add(menuItem);
 		actionListenerHandler.registerAction(menuItem, "loadFile");
 
+		menu.addSeparator();
 		menuItem = new JMenuItem(MessageHelper.get(this, "saveFileMenuItemName"));
 		menuItem.setToolTipText(MessageHelper.get(this, "saveFileHelp"));
 		menuItem.setIcon(IconHandler.getIcon("saveFile", null, 16, null));
@@ -292,13 +309,6 @@ public class ConfigurationEditor {
 		menuItem.setIcon(IconHandler.getIcon("saveAsFile", null, 16, null));
 		menu.add(menuItem);
 		actionListenerHandler.registerAction(menuItem, "saveAsFile");
-
-		menuItem = new JMenuItem(MessageHelper.get(this, "forgetFileMenuItemName"));
-		menuItem.setToolTipText(MessageHelper.get(this, "forgetFileHelp"));
-		menuItem.setIcon(IconHandler.getIcon("forgetFile", null, 16, null));
-		menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F,  Event.CTRL_MASK));
-		menu.add(menuItem);
-		actionListenerHandler.registerAction(menuItem, "forgetFile");
 		
 		menu.addSeparator();
 		menuItem = new JMenuItem(MessageHelper.get(this, "exitMenuItemName"));
@@ -332,6 +342,15 @@ public class ConfigurationEditor {
 		menuBar.add(menu);
 		menu = new JMenu(MessageHelper.get(this, "helpMenuName"));
 		
+		menuItem = new JMenuItem(MessageHelper.get(this, "helpMenuItemName"));
+		menuItem.setToolTipText(MessageHelper.get(this, "helpHelp"));
+		menuItem.setIcon(IconHandler.getIcon("help", null, 16, null));
+		menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F1,  0));
+		menu.add(menuItem);
+		actionListenerHandler.registerAction(menuItem, "help");
+		menuBar.add(menu);
+
+		menu.addSeparator();
 		menuItem = new JMenuItem(MessageHelper.get(this, "aboutMenuItemName"));
 		menuItem.setToolTipText(MessageHelper.get(this, "aboutHelp"));
 		menuItem.setIcon(IconHandler.getIcon("about", null, 16, null));
@@ -361,12 +380,20 @@ public class ConfigurationEditor {
 		toolBar.add(button);
 		actionListenerHandler.registerAction(button, "save");
 		
+		toolBar.addSeparator();
 		button = new JButton();
 		button.setToolTipText(MessageHelper.get(this, "defaultsHelp"));
 		button.setIcon(IconHandler.getIcon("defaults", MessageHelper.get(this, "defaultsButtonTitle"), 22, null));
 		toolBar.add(button);
 		actionListenerHandler.registerAction(button, "defaults");
-				
+		
+		toolBar.addSeparator();
+		button = new JButton();
+		button.setToolTipText(MessageHelper.get(this, "helpHelp"));
+		button.setIcon(IconHandler.getIcon("help", MessageHelper.get(this, "helpButtonTitle"), 22, null));
+		toolBar.add(button);
+		actionListenerHandler.registerAction(button, "help");
+		
 		return toolBar;
 	}
 
@@ -384,6 +411,7 @@ public class ConfigurationEditor {
 		contentPanel.add(buttons, BorderLayout.PAGE_START);
 		contentPanel.add(tabs, BorderLayout.CENTER);
 		contentPanel.add(statusPanel, BorderLayout.PAGE_END);
+
 	}
 		
 	private JComponent createStatusPanel() {
@@ -420,86 +448,56 @@ public class ConfigurationEditor {
 		JTabbedPane tabs;
 		
 		tabs = new JTabbedPane(JTabbedPane.TOP, JTabbedPane.SCROLL_TAB_LAYOUT);
-		//helpLabel.setBorder(BorderFactory.createEmptyBorder(5, 5, 0, 5));
-		tabs.addTab(MessageHelper.get(this, "overviewTabTitle"), createOverviewTabContent());
+		tabs.setBackground(new Color(255,0,0));
 		
-		for(Page page: configuration.getPage()) {
-			String tabTitle;
-			
-			tabTitle = getLocalizedInfo(page.getTitle(), true);
-			tabs.addTab(tabTitle, createTabContent(page));
-		}
+		for(Page page: configuration.getPage())
+			tabs.addTab(getLocalizedInfo(page.getTitle(), true), createTabContent(page));
 		
 		return tabs;
 	}
 	
-	private Component createOverviewTabContent() {
-		JLabel helpLabel;
-		JPanel tabPanel;
-		JScrollPane tabContent;
-		JLabel imageLabel;
-
-		tabPanel = new ResizingJPanel();
-		tabPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-		tabPanel.setLayout(new BoxLayout(tabPanel, BoxLayout.X_AXIS));
-		tabPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
-		tabPanel.setAlignmentY(Component.TOP_ALIGNMENT);
-		
-		helpLabel = createLabel(configuration.getHelp(), DESCRIPTION_FONT);
-		tabPanel.add(helpLabel);	
-
-		imageLabel = createImageLabel(configuration.getImage());
-		
-		if(imageLabel != null) {
-			imageLabel.setAlignmentX(Component.RIGHT_ALIGNMENT);
-			imageLabel.setAlignmentY(Component.TOP_ALIGNMENT);
-			imageLabel.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0));
-			tabPanel.add(imageLabel);
-		}
-		
-		tabContent = new JScrollPane(tabPanel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-		
-		return tabContent;
-	}
-	
-	private Component createTabContent(Page page) {
+	private Component createTabContent(final Page page) {
 		JLabel tabHelpLabel;
-		JScrollPane tabContent;
-		JPanel tabPanel;
+		JScrollPane scrollPane;
+		JPanel panel;
 
-		tabPanel = new ResizingJPanel();
-		tabPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-		tabPanel.setLayout(new BoxLayout(tabPanel, BoxLayout.Y_AXIS));
-		tabPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
-		tabPanel.setAlignmentY(Component.TOP_ALIGNMENT);
+		panel = new ResizingJPanel();
+		panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+		panel.setAlignmentX(Component.LEFT_ALIGNMENT);
+		panel.setAlignmentY(Component.TOP_ALIGNMENT);
 		
 		tabHelpLabel = createLabel(page.getHelp(), DESCRIPTION_FONT);
 		tabHelpLabel.setBorder(BOTTOM_SPACER_BORDER);
-		tabPanel.add(tabHelpLabel);
-		
+		tabHelpLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+		tabHelpLabel.setAlignmentY(Component.TOP_ALIGNMENT);
+		panel.add(tabHelpLabel);
+		//tabs.putClientProperty(JEditorPane.HONOR_DISPLAY_PROPERTIES, true);
+
 		for(Object setting: page.getChoiceOrBoolean()) {
 			JComponent settingComponent;
 			
 			settingComponent = createSettingComponent(setting);
-			tabPanel.add(settingComponent);
+			settingComponent.setAlignmentX(Component.LEFT_ALIGNMENT);
+			settingComponent.setAlignmentY(Component.TOP_ALIGNMENT);
+			panel.add(settingComponent);
 		}
+
+		scrollPane = new JScrollPane(panel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		scrollPane.putClientProperty(JEditorPane.HONOR_DISPLAY_PROPERTIES, true);
 		
-		tabContent = new JScrollPane(tabPanel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-		
-		return tabContent;
+		return scrollPane;
 	}
 
-	private JComponent createSettingComponent(Object settingObject) {
+	private JComponent createSettingComponent(final Object settingObject) {
 		JPanel settingPanel;
 		JComponent selectorComponent;
 		JLabel title;
-		JLabel help;
-		JPanel helpPanel;
+		JEditorPane help;
 		JLabel imageLabel;
 
-		settingPanel = new JPanel();
+		settingPanel = new JPanel(new BorderLayout(10, 5));
 		settingPanel.setBorder(BOTTOM_SPACER_BORDER);
-		settingPanel.setLayout(new BorderLayout(10, 5));
 		settingPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
 		settingPanel.setAlignmentY(Component.TOP_ALIGNMENT);
 		
@@ -508,7 +506,7 @@ public class ConfigurationEditor {
 
 			setting = (BooleanSetting)settingObject;
 			title = createLabel(setting.getTitle(), TITLE_FONT);
-			help = createLabel(setting.getHelp(), DESCRIPTION_FONT);
+			help = createHTMLPane(getLocalizedInfo(setting.getHelp(), true));
 			selectorComponent = createSettingComponent(setting);
 			imageLabel = createImageLabel(setting.getImage());
 		}
@@ -517,28 +515,31 @@ public class ConfigurationEditor {
 			
 			setting = (ChoiceSetting)settingObject;
 			title = createLabel(setting.getTitle(), TITLE_FONT);
-			help = createLabel(setting.getHelp(), DESCRIPTION_FONT);
+			help = createHTMLPane(getLocalizedInfo(setting.getHelp(), true));
 			selectorComponent = createSettingComponent(setting);
 			imageLabel = createImageLabel(setting.getImage());
 		}
 		else {
 			throw new Error(String.format("Unexpected class %s of setting object.", settingObject.getClass().getCanonicalName()));
 		}
-		
+
+		help.setFont(DESCRIPTION_FONT);
+		help.setMargin(new Insets(0, 0, 0, 0));
+		help.setBackground(settingPanel.getBackground());
 		settingPanel.add(title, BorderLayout.PAGE_START);
-		helpPanel = new JPanel();
-		helpPanel.setLayout(new BoxLayout(helpPanel, BoxLayout.Y_AXIS));
-		helpPanel.add(help);
-		settingPanel.add(helpPanel, BorderLayout.CENTER);
+		settingPanel.add(help, BorderLayout.CENTER);
 		settingPanel.add(selectorComponent, BorderLayout.LINE_END);
 		
-		if(imageLabel != null)
+		if(imageLabel != null) {
+			imageLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+			imageLabel.setAlignmentY(Component.TOP_ALIGNMENT);
 			settingPanel.add(imageLabel, BorderLayout.LINE_START);
+		}
 		
 		return settingPanel;
 	}
 
-	private JComponent createSettingComponent(BooleanSetting b) {
+	private JComponent createSettingComponent(final BooleanSetting b) {
 		JPanel selectorPanel;
 		ButtonGroup buttons;
 		JRadioButton enableButton;
@@ -648,7 +649,6 @@ public class ConfigurationEditor {
 		
 		button = new JRadioButton(text);
 		button.setFont(DESCRIPTION_FONT);
-		button.setAlignmentX(0);
 		button.setSelected(selected);
 		buttons.add(button);
 		panel.add(button);
@@ -669,6 +669,19 @@ public class ConfigurationEditor {
 		label.setToolTipText(getLocalizedInfo(descriptionImage.getHelp(), true));
 		
 		return label;
+	}
+	
+	public JEditorPane createHTMLPane(final String message) {
+		JEditorPane editorPane;
+		
+		editorPane = new JEditorPane("text/html", message);
+		editorPane.setEditable(false);
+		editorPane.putClientProperty(JEditorPane.HONOR_DISPLAY_PROPERTIES, true);
+
+		if(desktop != null)
+			editorPane.addHyperlinkListener(this);
+
+		return editorPane;
 	}
 
 	private JLabel createLabel(List<Info> info, Font font) {
@@ -715,6 +728,10 @@ public class ConfigurationEditor {
 		return value;
 	}
 
+	public String getMainTitle() {
+		return mainTitle;
+	}
+
 	public ConfigurationModel getModel() {
 		return model;
 	}
@@ -755,9 +772,9 @@ public class ConfigurationEditor {
 
 	public synchronized void setWindowTitleAmendment(final String text) {
 		if(text == null)
-			window.setTitle(windowTitle);
+			window.setTitle(mainTitle);
 		else
-			window.setTitle(windowTitle + ": " + text);
+			window.setTitle(mainTitle + ": " + text);
 	}
 
 	public void showErrorDialog(String title, String message) {
@@ -769,5 +786,20 @@ public class ConfigurationEditor {
 
 	public synchronized void exit() {
 		System.exit(0);
+	}
+
+	@Override
+	public void hyperlinkUpdate(final HyperlinkEvent hyperlinkEvent) {
+		if (desktop != null && hyperlinkEvent.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+			try {
+				desktop.browse(hyperlinkEvent.getURL().toURI());
+			}
+			catch (URISyntaxException e) {
+				throw new RuntimeException(e);
+			}
+			catch (IOException e) {
+				throw new RuntimeException(e);
+			}
+		}
 	}
 }

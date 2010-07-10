@@ -36,6 +36,12 @@ public class ConfigurationUtility {
 	private final static String ANNOTATED_CONFIGURATION_SCHEMA_NAME = "annotated-configuration-def.xsd";
 	private final static SchemaFactory SCHEMA_FACTORY = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
 	private final static TransformerFactory TRANSFORMER_FACTORY = TransformerFactory.newInstance();
+	private final static DocumentBuilderFactory DOCUMENT_BUILDER_FACTORY = DocumentBuilderFactory.newInstance();
+	
+	static {
+		DOCUMENT_BUILDER_FACTORY.setXIncludeAware(true);
+		DOCUMENT_BUILDER_FACTORY.setNamespaceAware(true);
+	}
 	
 	public final static Schema CONFIGURATION_SCHEMA = createConfigurationSchema();
 	public final static Schema ANNOTATED_CONFIGURATION_SCHEMA = createAnnotatedConfigurationSchema();
@@ -66,8 +72,10 @@ public class ConfigurationUtility {
 			Result annotatedConfigurationResult;
 			Document annotatedConfigurationDocument;
 			Transformer annotateConfigurationTransformer;
+			Document doc;
 			
-			configurationSource = new StreamSource(url.toExternalForm());
+			doc = DOCUMENT_BUILDER_FACTORY.newDocumentBuilder().parse(url.toExternalForm());
+			configurationSource = new DOMSource(doc);
 			configurationValidator = CONFIGURATION_SCHEMA.newValidator();
 			configurationValidator.validate(configurationSource);
 			annotatedConfigurationDocument = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
@@ -186,7 +194,7 @@ public class ConfigurationUtility {
 				Source docSource;
 				Document doc;
 				
-				doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
+				doc = DOCUMENT_BUILDER_FACTORY.newDocumentBuilder().newDocument();
 				docResult = new DOMResult(doc);
 				annotateConfigurationTransformer.transform(source, docResult);
 				docSource = new DOMSource(doc);

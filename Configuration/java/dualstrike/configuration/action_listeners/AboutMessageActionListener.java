@@ -1,7 +1,6 @@
 package dualstrike.configuration.action_listeners;
 
 import java.awt.BorderLayout;
-import java.awt.Desktop;
 import java.awt.Dialog.ModalityType;
 import java.awt.Dimension;
 import java.awt.Insets;
@@ -14,22 +13,19 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
-import java.net.URISyntaxException;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JEditorPane;
 import javax.swing.JPanel;
-import javax.swing.event.HyperlinkEvent;
-import javax.swing.event.HyperlinkListener;
+import javax.swing.JScrollPane;
 
 import dualstrike.configuration.ConfigurationEditor;
 import dualstrike.configuration.MessageHelper;
 
-public class AboutMessageActionListener implements ActionListener, HyperlinkListener {
+public class AboutMessageActionListener implements ActionListener {
 	private final ConfigurationEditor controller;
-	private static final Desktop desktop = Desktop.isDesktopSupported()?Desktop.getDesktop():null;
 	private final String title;
 	private final String message;
 	
@@ -75,7 +71,8 @@ public class AboutMessageActionListener implements ActionListener, HyperlinkList
 	public synchronized void actionPerformed(final ActionEvent actionEvent) {
 		final JDialog dialog;
 		JEditorPane editorPane;
-		JPanel panel;
+		JScrollPane scrollPane;
+		JPanel buttonPanel;
 		Point windowLocation;
 		Dimension windowSize;
 		Dimension dialogSize;
@@ -84,16 +81,15 @@ public class AboutMessageActionListener implements ActionListener, HyperlinkList
 		JButton button;
 		
 		controller.makeWindowInactive();
-		editorPane = new JEditorPane("text/html", message);
-		editorPane.setEditable(false);
-		editorPane.setMargin(new Insets(10, 10, 10, 10));
-		editorPane.setPreferredSize(new Dimension(600, 300));
-		editorPane.addHyperlinkListener(this);
-		panel = new JPanel(new BorderLayout(10, 10));
-		panel.add(editorPane);
-		panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 		dialog = new JDialog(controller.getWindow(), title, ModalityType.APPLICATION_MODAL);
-		dialog.add(panel, BorderLayout.CENTER);
+		editorPane = controller.createHTMLPane(message);
+		editorPane.setPreferredSize(new Dimension(600, 350));
+		editorPane.setMargin(new Insets(10, 10, 10, 10));
+		editorPane.setFont(ConfigurationEditor.DESCRIPTION_FONT);
+		editorPane.setBackground(dialog.getBackground());
+		scrollPane = new JScrollPane(editorPane, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		scrollPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+		dialog.add(scrollPane, BorderLayout.CENTER);
 		button = new JButton(MessageHelper.get(this, "okButtonTitle"));
 		button.addActionListener(
 				new ActionListener() {
@@ -103,9 +99,9 @@ public class AboutMessageActionListener implements ActionListener, HyperlinkList
 					}
 				}
 		);
-		panel = new JPanel();
-		panel.add(button);
-		dialog.add(panel, BorderLayout.PAGE_END);
+		buttonPanel = new JPanel();
+		buttonPanel.add(button);
+		dialog.add(buttonPanel, BorderLayout.PAGE_END);
 		dialog.pack();
 		windowLocation = controller.getWindow().getLocation();
 		dialogSize = dialog.getSize();
@@ -115,20 +111,5 @@ public class AboutMessageActionListener implements ActionListener, HyperlinkList
 		dialog.setLocation(x, y);
 		dialog.setVisible(true);
 		controller.makeWindowActive();
-	}
-
-	@Override
-	public void hyperlinkUpdate(final HyperlinkEvent hyperlinkEvent) {
-		if (desktop != null && hyperlinkEvent.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-			try {
-				desktop.browse(hyperlinkEvent.getURL().toURI());
-			}
-			catch (URISyntaxException e) {
-				throw new RuntimeException(e);
-			}
-			catch (IOException e) {
-				throw new RuntimeException(e);
-			}
-		}
 	}
 }

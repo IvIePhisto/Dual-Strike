@@ -5,7 +5,6 @@
   <xs:complexType name="Configuration">
     <xs:sequence>
       <xs:group ref="c:Infos"/>
-      <xs:element name="image" type="c:DescriptionImage" minOccurs="0"/>
       <xs:sequence>
         <xs:element name="device" type="c:Field"/>
         <xs:element name="version" type="c:Field"/>

@@ -6,17 +6,13 @@
   def-lang-version="1"
   lang="en"
   prefix="CFG_"
-  icon-path="configuration.png">
+  icon-path="configuration.png"
+  xmlns:xi="http://www.w3.org/2001/XInclude">
   
   <title>Dual Strike Configuration</title>
   <title lang="de">Dual Strike Konfiguration</title>
-  <help>The configuration of the Dual Strike PCB.</help>
-  <help lang="de">Die Konfiguration des Dual Strike PCBs.</help>
-  <image path="overview.jpg">
-    <title>Arcade Stick</title>
-    <help>A picture of an arcade stick.</help>
-    <help lang="de">Bild eines Arcade Sticks.</help>
-  </image>
+  <help><xi:include href="configuration-help.html" parse="text" encoding="utf-8"/></help>
+  <help lang="de"><xi:include href="configuration-help_de.html" parse="text" encoding="utf-8"/></help>
   
   <device>1</device>
   <version>1</version>
@@ -32,11 +28,6 @@
       <title lang="de">Standard Arbeitsmodus</title>
       <help>The working mode which is activated on plugging in if no button to change the working mode is pressed.</help>
       <help lang="de">Der Arbeitsmodus welcher aktiviert wird, falls kein Button um den Arbeitsmodus zu ändern gedrückt wird.</help>
-      <image path="overview.jpg">
-        <title>Arcade Stick</title>
-        <help>A picture of an arcade stick.</help>
-        <help lang="de">Bild eines Arcade Sticks.</help>
-      </image>
       
       <option id="PS3">
         <title>PS3/PC Controller</title>

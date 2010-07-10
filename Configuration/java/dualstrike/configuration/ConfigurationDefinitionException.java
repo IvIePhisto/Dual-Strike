@@ -7,7 +7,7 @@ public class ConfigurationDefinitionException extends Exception {
 	private final String url;
 	
 	public ConfigurationDefinitionException(final String url, final Exception cause, final Locale language) {
-		super(MessageHelper.get(ConfigurationDefinitionException.class, "invalidConfigurationDefinition", language, cause.getLocalizedMessage()), cause);
+		super(MessageHelper.get(ConfigurationDefinitionException.class, "invalidConfigurationDefinition", language, url, cause.getLocalizedMessage()), cause);
 		this.url = url;
 	}
 
