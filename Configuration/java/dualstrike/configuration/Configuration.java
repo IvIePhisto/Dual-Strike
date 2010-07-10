@@ -9,13 +9,12 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
+import javax.xml.parsers.DocumentBuilder;
 import javax.xml.transform.Result;
-import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 
 import org.w3c.dom.Document;
@@ -31,7 +30,7 @@ public class Configuration {
 			if(args.length == currentIndex || (args.length == currentIndex + 1 || args.length == currentIndex + 2) && (args[currentIndex].equals("-e") || args[currentIndex].equals("--editor")))
 				return EDIT;
 			
-			if((args.length == currentIndex + 2 || args.length == currentIndex + 3) && (args[currentIndex].equals("-ghf") || args[currentIndex].equals("--gen_headerfile")))
+			if((args.length == currentIndex + 2 || args.length == currentIndex + 3) && (args[currentIndex].equals("-ghf") || args[currentIndex].equals("--generate_headerfile")))
 				return GENERATE_HEADER_FILE;
 			
 			if((args.length == currentIndex + 2 || args.length == currentIndex + 3) && (args[currentIndex].equals("-a") || args[currentIndex].equals("--annotate")))
@@ -94,6 +93,7 @@ public class Configuration {
 			message = MessageHelper.get(Configuration.class, "argSyntax", language)
 			 		+ MessageHelper.get(Configuration.class, "argHelp", language);
 			showMessage(message, language, false);
+			break;
 			
 		case EDIT:
 			if(currentIndex == args.length)
@@ -102,10 +102,11 @@ public class Configuration {
 				inPath = args[++currentIndex];
 			
 			edit(inPath, language);
-			
+			break;
+
 		case ANNOTATE:
 		case GENERATE_HEADER_FILE:
-			if(currentIndex == args.length + 1) {
+			if(currentIndex + 2 == args.length) {
 				inPath = null;
 				outPath = args[++currentIndex];
 			}
@@ -115,6 +116,7 @@ public class Configuration {
 			}
 			
 			transform(inPath, outPath, mode == Mode.ANNOTATE, language);
+			break;
 		}	
 	}
 	
@@ -126,7 +128,7 @@ public class Configuration {
 		try {
 			ConfigurationEditor.newInstance(configurationURL, language);
 		}
-		catch(ConfigurationDefinitionException e) {
+		catch(ConfigurationDefException e) {
 			showMessage(e.getLocalizedMessage(), language, true);
 		}
 		catch(FileNotFoundException e) {
@@ -154,34 +156,36 @@ public class Configuration {
 		configurationURL = createConfigurationURL(configurationPath);
 
 		try {
-			Source source;
+			DOMSource docSource;
+			Document doc;
 			Result result;
 			Transformer annotateConfigurationTransformer;
 			Schema configurationSchema;
+			DocumentBuilder documentBuilder;
 	
-			source = new StreamSource(configurationURL.toExternalForm());			
+			documentBuilder = ConfigurationDefUtility.DOCUMENT_BUILDER_FACTORY.newDocumentBuilder();
+			doc = documentBuilder.parse(configurationURL.toExternalForm());
+			docSource = new DOMSource(doc);
 			result = new StreamResult(destinationPath);
-			configurationSchema = ConfigurationUtility.createConfigurationSchema();
-			configurationSchema.newValidator().validate(source);
-			annotateConfigurationTransformer = ConfigurationUtility.createAnnotateConfigurationTransformer();
+			configurationSchema = ConfigurationDefUtility.createConfigurationDefSchema();
+			configurationSchema.newValidator().validate(docSource);
+			annotateConfigurationTransformer = ConfigurationDefUtility.createAnnotateConfigurationDefTransformer();
 			
 			if(onlyAnnotate) {
-				annotateConfigurationTransformer.transform(source, result);
+				annotateConfigurationTransformer.transform(docSource, result);
 			}
 			else {
 				Transformer toHeaderFileTransformer;
 				Schema annotatedConfigurationSchema;
 				DOMResult docResult;
-				Source docSource;
-				Document doc;
-				
-				doc = ConfigurationUtility.DOCUMENT_BUILDER_FACTORY.newDocumentBuilder().newDocument();
+
+				doc = ConfigurationDefUtility.DOCUMENT_BUILDER_FACTORY.newDocumentBuilder().newDocument();
 				docResult = new DOMResult(doc);
-				annotateConfigurationTransformer.transform(source, docResult);
+				annotateConfigurationTransformer.transform(docSource, docResult);
 				docSource = new DOMSource(doc);
-				annotatedConfigurationSchema = ConfigurationUtility.createAnnotatedConfigurationSchema();
+				annotatedConfigurationSchema = ConfigurationDefUtility.createAnnotatedConfigurationDefSchema();
 				annotatedConfigurationSchema.newValidator().validate(docSource);
-				toHeaderFileTransformer = ConfigurationUtility.createConfigurationToHeaderFileTransformer();
+				toHeaderFileTransformer = ConfigurationDefUtility.createConfigurationDefToHeaderFileTransformer();
 				toHeaderFileTransformer.transform(docSource, result);
 			}
 

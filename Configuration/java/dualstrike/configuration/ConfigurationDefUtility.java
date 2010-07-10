@@ -28,26 +28,24 @@ import org.xml.sax.SAXException;
 
 import dualstrike.configuration.definition.Configuration;
 
-public class ConfigurationUtility {
-	private final static String ANNOTATE_CONFIGURATION_STYLESHEET = "annotate-configuration-def.xsl";
-	private final static String CONFIGURATION_TO_HEADER_FILE_STYLESHEET = "configuration-def2header-file.xsl";
-	private final static String CONFIGURATION_SCHEMA_NAME = "configuration-def.xsd";
-	private final static String ANNOTATED_CONFIGURATION_SCHEMA_NAME = "annotated-configuration-def.xsd";
+public class ConfigurationDefUtility {
+	private final static String ANNOTATE_CONFIGURATION_DEF_STYLESHEET = "annotate-configuration-def.xsl";
+	private final static String CONFIGURATION_DEF_TO_HEADER_FILE_STYLESHEET = "configuration-def2header-file.xsl";
+	private final static String CONFIGURATION_DEF_SCHEMA_NAME = "configuration-def.xsd";
+	private final static String ANNOTATED_CONFIGURATION_DEF_SCHEMA_NAME = "annotated-configuration-def.xsd";
 	private final static SchemaFactory SCHEMA_FACTORY = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
 	private final static TransformerFactory TRANSFORMER_FACTORY = TransformerFactory.newInstance();
+	public final static Schema CONFIGURATION_DEF_SCHEMA = createConfigurationDefSchema();
+	public final static Schema ANNOTATED_CONFIGURATION_DEF_SCHEMA = createAnnotatedConfigurationDefSchema();
+
 	final static DocumentBuilderFactory DOCUMENT_BUILDER_FACTORY = DocumentBuilderFactory.newInstance();
-	
 	static {
 		DOCUMENT_BUILDER_FACTORY.setXIncludeAware(true);
 		DOCUMENT_BUILDER_FACTORY.setNamespaceAware(true);
 		DOCUMENT_BUILDER_FACTORY.setCoalescing(true);
 	}
 	
-	public final static Schema CONFIGURATION_SCHEMA = createConfigurationSchema();
-	public final static Schema ANNOTATED_CONFIGURATION_SCHEMA = createAnnotatedConfigurationSchema();
-	
-	
-	public final static Unmarshaller MODEL_UNMARSHALLER = createUnmarshaller();
+	public final static Unmarshaller DEFINITION_UNMARSHALLER = createUnmarshaller();
 
 	private final static Unmarshaller createUnmarshaller() {
 		try {
@@ -56,7 +54,7 @@ public class ConfigurationUtility {
 			
 			context = JAXBContext.newInstance(Configuration.class.getPackage().getName());
 			unmarshaller = context.createUnmarshaller();
-			unmarshaller.setSchema(ANNOTATED_CONFIGURATION_SCHEMA);
+			unmarshaller.setSchema(ANNOTATED_CONFIGURATION_DEF_SCHEMA);
 			
 			return unmarshaller;
 		}
@@ -65,7 +63,7 @@ public class ConfigurationUtility {
 		}
 	}
 	
-	public static Document annotateConfiguration(final URL url) throws IOException, ConfigurationDefinitionException {
+	public static Document annotateConfiguration(final URL url) throws IOException, ConfigurationDefException {
 		try {
 			Source configurationSource;
 			Validator configurationValidator;
@@ -76,11 +74,11 @@ public class ConfigurationUtility {
 			
 			doc = DOCUMENT_BUILDER_FACTORY.newDocumentBuilder().parse(url.toExternalForm());
 			configurationSource = new DOMSource(doc);
-			configurationValidator = CONFIGURATION_SCHEMA.newValidator();
+			configurationValidator = CONFIGURATION_DEF_SCHEMA.newValidator();
 			configurationValidator.validate(configurationSource);
 			annotatedConfigurationDocument = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
 			annotatedConfigurationResult = new DOMResult(annotatedConfigurationDocument);
-			annotateConfigurationTransformer = createAnnotateConfigurationTransformer();
+			annotateConfigurationTransformer = createAnnotateConfigurationDefTransformer();
 			annotateConfigurationTransformer.transform(configurationSource, annotatedConfigurationResult);
 			
 			return annotatedConfigurationDocument;
@@ -92,12 +90,12 @@ public class ConfigurationUtility {
 			throw new Error(e);
 		}
 		catch(SAXException e) {
-			throw new ConfigurationDefinitionException(url.toExternalForm(), e, Locale.getDefault());
+			throw new ConfigurationDefException(url.toExternalForm(), e, Locale.getDefault());
 		}
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static Configuration unmarshallConfiguration(final URL url) throws IOException, ConfigurationDefinitionException {
+	public static Configuration unmarshallConfigurationDef(final URL url) throws IOException, ConfigurationDefException {
 		try {
 			Object configurationObject;
 			Configuration configuration;
@@ -107,7 +105,7 @@ public class ConfigurationUtility {
 			
 			annotatedConfigurationDocument = annotateConfiguration(url);
 			annotatedConfigurationSource = new DOMSource(annotatedConfigurationDocument);
-			configurationObject = MODEL_UNMARSHALLER.unmarshal(annotatedConfigurationSource);
+			configurationObject = DEFINITION_UNMARSHALLER.unmarshal(annotatedConfigurationSource);
 			jaxbElement = (JAXBElement<Configuration>)configurationObject;
 			configuration = jaxbElement.getValue();
 			
@@ -124,7 +122,7 @@ public class ConfigurationUtility {
 			Source source;
 			URL resourceURL;
 			
-			resourceURL = ConfigurationUtility.class.getResource(resourceName);			
+			resourceURL = ConfigurationDefUtility.class.getResource(resourceName);			
 			source = new StreamSource(resourceURL.toExternalForm());
 			transformer = TRANSFORMER_FACTORY.newTransformer(source);
 			
@@ -140,7 +138,7 @@ public class ConfigurationUtility {
 			Schema schema;
 			URL resourceURL;
 			
-			resourceURL = ConfigurationUtility.class.getResource(resourceName);
+			resourceURL = ConfigurationDefUtility.class.getResource(resourceName);
 			schema = SCHEMA_FACTORY.newSchema(resourceURL);
 			
 			return schema;
@@ -150,19 +148,19 @@ public class ConfigurationUtility {
 		}
 	}
 	
-	public static Transformer createAnnotateConfigurationTransformer() {
-		return createTransformerFromResource(ANNOTATE_CONFIGURATION_STYLESHEET);
+	public static Transformer createAnnotateConfigurationDefTransformer() {
+		return createTransformerFromResource(ANNOTATE_CONFIGURATION_DEF_STYLESHEET);
 	}
 
-	public static Transformer createConfigurationToHeaderFileTransformer() {
-		return createTransformerFromResource(CONFIGURATION_TO_HEADER_FILE_STYLESHEET);
+	public static Transformer createConfigurationDefToHeaderFileTransformer() {
+		return createTransformerFromResource(CONFIGURATION_DEF_TO_HEADER_FILE_STYLESHEET);
 	}
 	
-	public static Schema createConfigurationSchema() {
-		return createSchemaFromResource(CONFIGURATION_SCHEMA_NAME);
+	public static Schema createConfigurationDefSchema() {
+		return createSchemaFromResource(CONFIGURATION_DEF_SCHEMA_NAME);
 	}
 
-	public static Schema createAnnotatedConfigurationSchema() {
-		return createSchemaFromResource(ANNOTATED_CONFIGURATION_SCHEMA_NAME);
+	public static Schema createAnnotatedConfigurationDefSchema() {
+		return createSchemaFromResource(ANNOTATED_CONFIGURATION_DEF_SCHEMA_NAME);
 	}
 }

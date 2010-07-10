@@ -83,14 +83,14 @@ public class ConfigurationEditor implements HyperlinkListener {
 		return "<html>" + value.replace("\n", "<br/>") + "</html>";
 	}
 
-	static ConfigurationEditor newInstance(URL configurationDefinitionURL, final Locale language) throws IOException, ConfigurationDefinitionException {
+	static ConfigurationEditor newInstance(URL configurationDefinitionURL, final Locale language) throws IOException, ConfigurationDefException {
 		Configuration configuration;
 		ConfigurationEditor ce;
 		
 		if(configurationDefinitionURL == null)
 			configurationDefinitionURL = DEFAULT_CONFIGURATION_DEFINITION_FILE_URL;
 		
-		configuration = ConfigurationUtility.unmarshallConfiguration(configurationDefinitionURL);
+		configuration = ConfigurationDefUtility.unmarshallConfigurationDef(configurationDefinitionURL);
 		ce = new ConfigurationEditor(configuration, language);
 		
 		return ce;
