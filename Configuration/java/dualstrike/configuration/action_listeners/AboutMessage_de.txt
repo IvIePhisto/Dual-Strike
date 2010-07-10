@@ -10,6 +10,6 @@ Es verwendet eine modifizierte Version des <a href="http://www.obdev.at/products
 <p>Dank geht an:
 <ul>
 <li>meine Frau für ihre Geduld und Liebe</li>
-<li>Jochen Zurborg für seine Ideen, Hilfe beim Testen und seine tollen Geräte</li>
+<li>Jochen Zurborg für seine Ideen, Hilfe und seine tollen Geräte</li>
 </ul></p>
 </html>

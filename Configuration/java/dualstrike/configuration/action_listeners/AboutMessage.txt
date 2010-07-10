@@ -10,6 +10,6 @@ It uses a modified version of Objective Development's <a href="http://www.obdev.
 <p>Thanks go to:
 <ul>
 <li>my wife for her patience and love</li>
-<li>Jochen Zurborg for his ideas, help with testing and his great devices</li>
+<li>Jochen Zurborg for his ideas, help and his great devices</li>
 </ul></p>
 </html>
