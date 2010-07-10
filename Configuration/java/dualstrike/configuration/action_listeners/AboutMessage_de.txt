@@ -1,0 +1,11 @@
+<html>
+<h1>Microcontroller Configuration Editor</h1>
+<p><b>Version:</b> 1.0</p>
+<p><b>Autor:</b> Michael Pohl (<i>E-Mail:</i> <a href="mailto:pohl-michael@gmx.biz">pohl-michael@gmx.biz</a> &#8210; <i>Homepage:</i> <a href="http://pohl-michael.gmxhome.de">http://pohl-michael.gmxhome.de</a>)</p>
+<p>Dieses Programm erlaubt die Konfiguration von entsprechend programmierten Mikrocontroller-Geräten über USB basierend auf einer Konfigurationsdefinition in einem XML Format.</p>
+<p>Dank geht an:
+<ul>
+<li>meine Frau für ihre Geduld und Liebe</li>
+<li>Jochen Zurborg für seine Ideen, Hilfe beim Testen und seine tollen Geräte</li>
+</ul></p>
+</html>
