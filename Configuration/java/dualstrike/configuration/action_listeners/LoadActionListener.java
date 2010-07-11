@@ -44,13 +44,13 @@ public class LoadActionListener extends ExecActionListener {
 				getController().setStatusLabelText(MessageHelper.get(this, "loadErrorStatus"));
 			}
 			catch(IOException e) {
-				getController().showErrorDialog(MessageHelper.get(this, "fileAccessErrorTitle"), MessageHelper.get(this, "fileAccessErrorMessage", ConfigurationEditor.convertTextToHTML(e.getLocalizedMessage())));
+				getController().showErrorDialog(MessageHelper.get(this, "fileAccessErrorTitle"), MessageHelper.get(this, "fileAccessErrorMessage", ConfigurationEditor.convertTextToHTML(e.getLocalizedMessage(), null)));
 				getController().setStatusLabelText(MessageHelper.get(this, "loadErrorStatus"));
 			}
 			break;
 		case OPEN_DEVICE_ERROR:
 		case EEPROM_DUMPING_ERROR:
-			getController().showErrorDialog(returnCode.getTitle(), ConfigurationEditor.convertTextToHTML(returnCode.getMessage()));
+			getController().showErrorDialog(returnCode.getTitle(), ConfigurationEditor.convertTextToHTML(returnCode.getMessage(), null));
 			break;
 		default:
 			getController().showErrorDialog(MessageHelper.get(this, "loadErrorTitle"), MessageHelper.get(this, "loadErrorMessage", result.saveMessage()));

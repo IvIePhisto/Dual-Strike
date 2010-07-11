@@ -1,5 +1,5 @@
-Microcontroller Configuration Engine Developer Readme
-=====================================================
+Microcontroller Configuration Engine for Developers
+===================================================
 
 Author:    Michael Pohl
  Email:    pohl-michael@gmx.biz
@@ -7,12 +7,44 @@ Author:    Michael Pohl
 
 License: GNU General Public License V3
   (see "gpl-3.0.txt" or http://www.gnu.org/licenses/gpl-3.0.html)
+Some files were released under different licenses, see the appropiate text
+files for more information.
 
 This configuration engine is a framework for bit-based configurations.
 It is aimed at usage with AVR microcontrollers to read out, modify and update
 EEPROM data. It makes heavy use of the XML technologies XML Schema and XSL
 Transformations.
-The Java files were developed with Eclipse Helios for Java 6.
+
+The PC software part requires a Java 6 Runtime Environment. On all systems
+except Windows custom compilation of the "HID Programmer" is necessary. See
+"HID_Programmer/Readme.txt" for more information on custom compilation.
+
+
+Usage for Projects
+~~~~~~~~~~~~~~~~~~
+All you need is to write a configuration definition file, generate a header file
+from it which you have to use in your microcontroller firmware. You also have
+to include the required HID functionality, see the Bootload HID 2.0 project for
+details. 
+Then you can bundle the definition file with the "mcc-*.*.*.jar" file together
+with documentation (at least "Readme.txt" containing information about your
+project) and other resources (like pictures used in the documentation).
+All the user has to do apart from installing a Java 6+ Runtime Environment is to
+start the "mcc-*.*.*.jar" (under most system including Windows a double click is
+enough).
+
+Start the "mcc-*.*.*.jar" file with the argument -h or --h to information how
+to generate a header file. Any errors in your configuration file will be
+displayed.
+
+See "configuration-def.xml" for more information about the syntax and semantics.
+
+
+Modifications to the Framework
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+This is a Eclipse Helios project.
+The most important components are described in the following sections.
+For packaging use the "build.xml" Ant build file.
 
 
 Important XML files:
@@ -51,7 +83,7 @@ All Java source files reside in the directory "java".
  Class with methods to read and write plain HEX files to byte arrays and to
  write byte arrays to Intel 8-bit HEX files.
 
-See the Javadoc for more information.
+See the JavaDocs for more information.
 
 
 Generating JAXB Configuration Definition Classes

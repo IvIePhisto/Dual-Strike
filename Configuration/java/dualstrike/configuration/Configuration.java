@@ -50,26 +50,7 @@ public class Configuration {
 	public static void main(String[] args) {
 		Locale language;
 		int currentIndex;
-		Mode mode;
-		String inPath;
-		String outPath;
 		
-		try {
-			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		}
-		catch(UnsupportedLookAndFeelException e) {
-			throw new Error(e);
-		}
-		catch(IllegalAccessException e) {
-			throw new Error(e);
-		}
-		catch(InstantiationException e) {
-			throw new Error(e);
-		}
-		catch(ClassNotFoundException e) {
-			throw new Error(e);
-		}
-
 		currentIndex = 0;		
 		language = Locale.getDefault();
 		
@@ -83,43 +64,68 @@ public class Configuration {
 			}
 		}
 
-		mode = Mode.newInstance(args, currentIndex);
-		
-		if(mode == null)
-			showMessage(MessageHelper.get(Configuration.class, "argSyntax", language), language, true);
-
-		switch(mode) {
-		case HELP:
-			String message;
+		try {
+			Mode mode;
+			String inPath;
+			String outPath;
 			
-			message = MessageHelper.get(Configuration.class, "argSyntax", language)
-			 		+ MessageHelper.get(Configuration.class, "argHelp", language);
-			showMessage(message, language, false);
-			break;
-			
-		case EDIT:
-			if(currentIndex == args.length)
-				inPath = null;
-			else
-				inPath = args[++currentIndex];
-			
-			edit(inPath, language);
-			break;
-
-		case ANNOTATE:
-		case GENERATE_HEADER_FILE:
-			if(currentIndex + 2 == args.length) {
-				inPath = null;
-				outPath = args[++currentIndex];
+			try {
+				UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 			}
-			else {
-				inPath = args[++currentIndex];
-				outPath = args[++currentIndex];
+			catch(UnsupportedLookAndFeelException e) {
+				throw new Error(e);
 			}
+			catch(IllegalAccessException e) {
+				throw new Error(e);
+			}
+			catch(InstantiationException e) {
+				throw new Error(e);
+			}
+			catch(ClassNotFoundException e) {
+				throw new Error(e);
+			}
+	
+			mode = Mode.newInstance(args, currentIndex);
 			
-			transform(inPath, outPath, mode == Mode.ANNOTATE, language);
-			break;
-		}	
+			if(mode == null)
+				showMessage(MessageHelper.get(Configuration.class, "argSyntax", language), language, true);
+	
+			switch(mode) {
+			case HELP:
+				String message;
+				
+				message = MessageHelper.get(Configuration.class, "argSyntax", language)
+				 		+ MessageHelper.get(Configuration.class, "argHelp", language);
+				showMessage(message, language, false);
+				break;
+				
+			case EDIT:
+				if(currentIndex == args.length)
+					inPath = null;
+				else
+					inPath = args[++currentIndex];
+				
+				edit(inPath, language);
+				break;
+	
+			case ANNOTATE:
+			case GENERATE_HEADER_FILE:
+				if(currentIndex + 2 == args.length) {
+					inPath = null;
+					outPath = args[++currentIndex];
+				}
+				else {
+					inPath = args[++currentIndex];
+					outPath = args[++currentIndex];
+				}
+				
+				transform(inPath, outPath, mode == Mode.ANNOTATE, language);
+				break;
+			}
+		}
+		catch(Throwable t) {
+			showMessage(MessageHelper.get(Configuration.class, "generalError", language, t.getLocalizedMessage()), language, true);
+		}
 	}
 	
 	private static void edit(final String configurationPath, final Locale language) {

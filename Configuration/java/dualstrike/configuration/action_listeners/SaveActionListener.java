@@ -43,7 +43,7 @@ public class SaveActionListener extends ExecActionListener {
 			break;
 		case OPEN_DEVICE_ERROR:
 		case EEPROM_PROGRAMMING_ERROR:
-			getController().showErrorDialog(returnCode.getTitle(), ConfigurationEditor.convertTextToHTML(returnCode.getMessage()));
+			getController().showErrorDialog(returnCode.getTitle(), ConfigurationEditor.convertTextToHTML(returnCode.getMessage(), null));
 			break;
 		default:
 			getController().showErrorDialog(MessageHelper.get(this, "saveErrorTitle"), MessageHelper.get(this, "saveErrorMessage", result.saveMessage()));

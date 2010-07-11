@@ -53,7 +53,7 @@
   <xsl:template match="c:help">
     <xsl:choose> 
       <xsl:when test="@path">
-        <xsl:apply-templates select="document(@href)/html/node()" mode="import"/>
+        <xsl:apply-templates select="document(@path)/html/node()" mode="import"/>
       </xsl:when>
       <xsl:otherwise>
         <xsl:value-of select="node()" disable-output-escaping="yes"/>

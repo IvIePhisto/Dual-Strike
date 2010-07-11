@@ -90,10 +90,6 @@ public class ConfigurationEditor implements HyperlinkListener {
 	public static final Font DESCRIPTION_FONT = new Font(Font.SANS_SERIF, Font.PLAIN, FONT_SIZE); 
 	
 
-	public static String convertTextToHTML(String value) {
-		return "<html>" + value.replace("\n", "<br/>") + "</html>";
-	}
-
 	static ConfigurationEditor newInstance(URL configurationDefinitionURL, final Locale language) throws IOException, ConfigurationDefException {
 		ConfigurationEditor ce;
 		
@@ -193,7 +189,7 @@ public class ConfigurationEditor implements HyperlinkListener {
 		actionListenerHandler.registerActionListener("save", new SaveActionListener(this));
 		actionListenerHandler.registerActionListener("load", new LoadActionListener(this));
 		actionListenerHandler.registerActionListener("defaults", new DefaultsActionListener(this));
-		actionListenerHandler.registerActionListener("help", new HelpActionListener(this, getLocalizedInfo(configuration.getHelp(), false)));
+		actionListenerHandler.registerActionListener("help", new HelpActionListener(this, getLocalizedInfo(configuration.getHelp(), true)));
 		actionListenerHandler.registerActionListener("about", new AboutMessageActionListener(this));
 	}
 
@@ -650,7 +646,7 @@ public class ConfigurationEditor implements HyperlinkListener {
 		return label;
 	}
 
-	private <T extends Info> String getLocalizedInfo(List<T> infos, boolean convertToHTML) {
+	private <T extends Info> String getLocalizedInfo(final List<T> infos, final boolean convertToHTML) {
 		String value;
 		String defaultValue;
 		
@@ -662,7 +658,7 @@ public class ConfigurationEditor implements HyperlinkListener {
 			String currentValue;
 			
 			currentLang = currentInfo.getLang();
-			currentValue = getText(currentInfo);
+			currentValue = getText(currentInfo, convertToHTML);
 			
 			if(currentLang == null || currentLang.equals("")) {
 				if(defaultLanguage.equals(language.getLanguage())) {
@@ -681,13 +677,14 @@ public class ConfigurationEditor implements HyperlinkListener {
 		if(value == null)
 			value = defaultValue;
 		
-		if(convertToHTML)
-			value = convertTextToHTML(value);
-		
 		return value;
 	}
 	
-	private static <T extends Info> String getText(T info) {
+	private <T extends Info> String getText(final T info, final boolean convertToHTML) {
+		String value;
+
+		value = null;
+		
 		if(info instanceof PathInfo) {
 			PathInfo pathInfo;
 			String path;
@@ -699,17 +696,43 @@ public class ConfigurationEditor implements HyperlinkListener {
 				InputStream inputStream;
 				
 				try {
-					inputStream = new FileInputStream(path);
+					File file;
 					
-					return readUTF8String(inputStream);
+					file = new File(path);
+					inputStream = new FileInputStream(file);
+					value = readUTF8String(inputStream);
+					
+					if(convertToHTML)
+						value = convertTextToHTML(value, file.toURI().toURL().toExternalForm());
 				}
 				catch(FileNotFoundException e) {
 					throw new Error(e);
 				}
+				catch(MalformedURLException e) {
+					throw new Error(e);
+				}
 			}
 		}
+
+		if(value == null) {
+			value = info.getValue();
+			
+			if(convertToHTML)
+				value = convertTextToHTML(value, configurationDefinitionURL.toExternalForm());
+		}
 		
-		return info.getValue();
+		return value;
+	}
+
+	public static String convertTextToHTML(String value, final String baseURL) {
+		
+		if(!value.matches(".*<html>.*</html>.*"))
+			value = "<html>" + value + "</html>";
+		
+		if(baseURL != null && !value.matches("<html>.*<head>.*<base .*/>.*</head>.*</html>.*"))
+			value = value.replace("<html>", "<html><head><base href=\"" + baseURL + "\"/></head>");
+	
+		return value;
 	}
 
 	public String getMainTitle() {
