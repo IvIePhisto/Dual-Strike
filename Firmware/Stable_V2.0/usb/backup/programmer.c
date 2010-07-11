@@ -1,0 +1,170 @@
+#include <avr/eeprom.h>
+
+PROGMEM int  usbDescriptorStringVendorHIDBoot[] = {
+    USB_STRING_DESCRIPTOR_HEADER(8),
+    'o', 'b', 'd', 'e', 'v', '.', 'a', 't'
+};
+
+PROGMEM int  usbDescriptorStringDeviceHIDBoot[] = {
+    USB_STRING_DESCRIPTOR_HEADER(7),
+    'H', 'I', 'D', 'B', 'o', 'o', 't'
+};
+
+PROGMEM char usbDescriptorDeviceHIDBoot[] = {    /* USB device descriptor */
+    18,         /* sizeof(usbDescriptorDevice): length of descriptor in bytes */
+    USBDESCR_DEVICE,        /* descriptor type */
+    0x10, 0x01,             /* USB version supported */
+    USB_CFG_DEVICE_CLASS,
+    USB_CFG_DEVICE_SUBCLASS,
+    0,                      /* protocol */
+    8,                      /* max packet size */
+    /* the following two casts affect the first byte of the constant only, but
+     * that's sufficient to avoid a warning with the default values.
+     */
+    0xc0, 0x16,/* Objective Development */
+    0xdf, 0x05,/* Shared USB HID ID */
+    USB_CFG_DEVICE_VERSION, /* 2 bytes */
+    1,          /* manufacturer string index */
+    2,          /* product string index */
+    0,          /* serial number string index */
+    1,          /* number of configurations */
+};
+
+PROGMEM char usbDescriptorConfigurationProgrammer[] = {
+    /* HID USB configuration descriptor */
+    9,          				/* sizeof(usbDescriptorConfiguration): length of descriptor in bytes */
+    USBDESCR_CONFIG,   	 		/* descriptor type */
+    34, 0,      				/* total length of data returned (including inlined descriptors) */
+    1,          				/* number of interfaces in this configuration */
+    1,          				/* index of this configuration */
+    0,          				/* configuration name string index */
+    (char)USBATTR_BUSPOWER, 	/* attributes */
+    USB_CFG_MAX_BUS_POWER/2,	/* max USB current in 2mA units */
+/* interface descriptor follows inline: */
+    9,   			 	    	/* sizeof(usbDescrInterface): length of descriptor in bytes */
+    USBDESCR_INTERFACE,			/* descriptor type */
+    0,          				/* index of this interface */
+    0,							/* alternate setting for this interface */
+    1, 							/* endpoints excl 0: number of endpoint descriptors to follow */
+    3,							/* USB interface class: HID */
+    0,							/* USB interface subclass */
+    0,							/* USB interface protocol */
+    0,          				/* string index for interface */
+    9,          				/* sizeof(usbDescrHID): length of descriptor in bytes */
+    USBDESCR_HID,   			/* descriptor type: HID */
+    0x01, 0x01,					/* BCD representation of HID version */
+    0x00,       				/* target country code */
+    0x01,       				/* number of HID Report (or other HID class) Descriptor infos to follow */
+    0x22,       				/* descriptor type: report */
+    33, 0,						/* total length of report descriptor */
+    7,          				/* sizeof(usbDescrEndpoint) */
+    USBDESCR_ENDPOINT,			/* descriptor type = endpoint */
+    0x81,						/* IN endpoint number 1 */
+    0x03,						/* attrib: Interrupt endpoint */
+    8, 0,						/* maximum packet size */
+    200, 							/* interrupt poll interval in ms */
+};
+
+#define EEPROM_SIZE_QUERY_REPORT_ID 3
+#define EEPROM_PROGRAMMING_REPORT_ID 4
+
+PROGMEM char usbHidReportDescriptorProgrammer[33] = {
+    0x06, 0x00, 0xff,              		// USAGE_PAGE (Generic Desktop)
+    0x09, 0x01,                    		// USAGE (Vendor Usage 1)
+    0xa1, 0x01,                    		// COLLECTION (Application)
+    0x15, 0x00,                    		//   LOGICAL_MINIMUM (0)
+    0x26, 0xff, 0x00,              		//   LOGICAL_MAXIMUM (255)
+    0x75, 0x08,                    		//   REPORT_SIZE (8)
+
+    0x85, EEPROM_SIZE_QUERY_REPORT_ID,	//   REPORT_ID (EEPROM_SIZE_QUERY_REPORT_ID)
+    0x95, 0x06,                    		//   REPORT_COUNT (6)
+    0x09, 0x00,                    		//   USAGE (Undefined)
+    0xb2, 0x02, 0x01,              		//   FEATURE (Data,Var,Abs,Buf)
+
+    0x85, EEPROM_PROGRAMMING_REPORT_ID, //   REPORT_ID (EEPROM_PROGRAMMING_REPORT_ID)
+    0x95, 0x83,                    		//   REPORT_COUNT (131)
+    0x09, 0x00,                    		//   USAGE (Undefined)
+    0xb2, 0x02, 0x01,              		//   FEATURE (Data,Var,Abs,Buf)
+
+    0xc0                           		// END_COLLECTION
+};
+
+static uchar eepromOffset = 0xFF;
+static uchar writeReportID = 0;
+
+usbMsgLen_t usbFunctionSetupProgrammer(uchar receivedData[8]) {
+	usbRequest_t* rq = (void *)receivedData;
+	uchar reportType = rq->wValue.bytes[1];
+	uchar reportID = rq->wValue.bytes[0];
+
+	if((rq->bmRequestType & USBRQ_TYPE_MASK) == USBRQ_TYPE_CLASS) {
+	    if(rq->bRequest == USBRQ_HID_SET_REPORT){
+	        if(reportType == HID_REPORT_TYPE_FEATURE
+			&& reportID == EEPROM_PROGRAMMING_REPORT_ID) {
+	            eepromOffset = 0;
+				writeReportID = EEPROM_PROGRAMMING_REPORT_ID;
+
+	            return USB_NO_MSG; // use usbFunctionWrite()
+	        }
+	    }
+		else if(rq->bRequest == USBRQ_HID_GET_REPORT) {
+	        if(reportType == HID_REPORT_TYPE_FEATURE
+			&& reportID == EEPROM_SIZE_QUERY_REPORT_ID) {
+				data[0] = EEPROM_SIZE_QUERY_REPORT_ID;
+				data[1] = E2PAGESIZE  & 0xff;
+				data[2] = E2PAGESIZE >> 8;
+				data[3] = ((long)E2END + 1) & 0xff;
+				data[4] = (((long)E2END + 1) >> 8) & 0xff;
+				data[5] = (((long)E2END + 1) >> 16) & 0xff;
+				data[6] = (((long)E2END + 1) >> 24) & 0xff;
+		        usbMsgPtr = data;
+
+		        return 7;
+	        }
+	    }
+	}
+
+	return 0;
+}
+
+static size_t currentEEPROMAddress;
+
+// NOT FINISHED:
+uchar usbFunctionWriteProgrammer(uchar *receivedData, uchar len) {
+	uchar   isLast;
+
+	if(writeReportID == EEPROM_PROGRAMMING_REPORT_ID) {
+		size_t eepromAddress;
+
+	    if(eepromOffset == 0) {
+			eepromAddress = receivedData[1];
+	        receivedData += 4;
+	        len -= 4;
+	    }
+		else {
+		    eepromAddress = currentEEPROMAddress;
+		}
+
+	    eepromOffset += len;
+	    isLast = eepromOffset & 0x80; /* != 0 if last block received */
+        cli();
+		eeprom_write_block(receivedData, (void*)eepromAddress, len);
+        sei();
+	    currentEEPROMAddress = eepromAddress + len;
+
+	    return isLast;
+	}
+
+	return 0;
+}
+
+
+void programmer_setup() {
+	mode = USB_MODE_PROGRAMMER;
+	usbPrepare();
+}
+
+void programmer_poll() {
+    if(usbInterruptIsReady())
+		usbPoll();
+}
