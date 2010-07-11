@@ -12,6 +12,26 @@
 static void (*wm_sample_event)();
 */
 
+#if USE_WII
+	#define Stick_Up			(PIND & (1<<0))
+	#define Stick_Down			(PIND & (1<<3))
+#else
+	#define Stick_Up			(PINC & (1<<4))
+	#define Stick_Down			(PINC & (1<<5))
+#endif
+
+
+int setModeWii() {
+	PORTD |= 0b00001001; // enable pull-up for S1 and S2
+	DDRD  &= 0b11110110; // make S1 and S2 input
+
+	PORTC &= 0b11001111; // disable pull-up for SDA and SCL
+	DDRC  |= 0b00110000; // make SDA and SCL output
+
+	return WORKING_MODE_WII;
+}
+
+
 // crypto data
 static volatile unsigned char wm_rand[10];
 static volatile unsigned char wm_key[6];

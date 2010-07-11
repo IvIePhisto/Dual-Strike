@@ -12,10 +12,15 @@
 Configuration Mode
 ==================
 In the configuration mode the behaviour of the Dual Strike can be changed,
-see Startup Behaviour for how to enter it. Leave it by pressing Start.
+see Startup Behaviour for how to enter it. Leave it by pressing Start. 
+When first entering configuration mode, it is in USB configuration mode, 
+which means it is ready to be updated from a PC.
 
-While in configuration mode pressing a button and/or a joystick
-direction, changes part of the configuration:
+If you want to change the configuration without a PC first press one of the
+action buttons (any other than Start, Select and Home). Then pressing 
+entering the following button-joystick combinations changes the 
+configuration:
+
 
 Dual Strike default stick mode:
 -------------------------------
@@ -28,18 +33,11 @@ Default Working Mode:
 ---------------------
 Button: LK
 Left  = Dual Strike PS3 [default]
-Up    = XBox
 Right = pass-through
 
 revert to defaults:
 -------------------
 Button: MK
-
-Programming Mode:
------------------
-Button: HK
-Left  = enter
-Right = leave
 
 Start+Select=Home:
 ------------------
@@ -62,9 +60,7 @@ Down  = inverted triggers for pass-through
 */
 
 #define WORKING_MODE_PS3	0
-#define WORKING_MODE_XBOX	1
-#define WORKING_MODE_PT		2
-#define WORKING_MODE_WII	3
+#define WORKING_MODE_PT		1
 
 // declares config and config_EEPROM
 CFG_DECLARATION
@@ -113,22 +109,27 @@ void configInit() {
 	if(!Stick_Select) {
 		/* enter configuration modification mode */
 
+		enableUsbLines();
+		programmer_setup();
+
+		while( Stick_Start
+		 	|| Stick_Jab
+			|| Stick_Strong
+			|| Stick_Fierce
+			|| Stick_Short
+			|| Stick_Forward
+			|| Stick_Roundhouse
+#ifdef EXTRA_BUTTONS
+			|| Stick_Extra0
+			|| Stick_Extra1
+#endif
+)
+			programmer_poll();
+
+		disableUsbLines();
+		readConfig(newConfig);
+
 		while(Stick_Start) {
-			if(!Stick_Roundhouse) {
-				writeConfig(newConfig);
-
-				if(!Stick_Left) {
-					enableUsbLines();
-					programmer_setup();
-
-					while(Stick_Right)
-						programmer_poll();
-
-					disableUsbLines();
-					readConfig(newConfig);
-				}
-			}
-			
 			if(!Stick_Forward) {
 				// revert to defaults
 				CONFIG_SET_DEFAULTS(newConfig)
@@ -147,17 +148,12 @@ void configInit() {
 			}
 
 			if(!Stick_Short) {
-#if USE_PS3
 				if(!Stick_Left) {
 					CFG_SET_DEF_WORK_MODE_PS3(newConfig)
 				}
-#endif
-
-#if USE_PT
 				if(!Stick_Right) {
 					CFG_SET_DEF_WORK_MODE_PT(newConfig)
 				}
-#endif
 			}
 			
 			if(!Stick_Jab) {
@@ -191,35 +187,12 @@ void configInit() {
 	writeConfig(newConfig);
 }
 
-#if USE_PS3
 int setModePS3() {
 	enableUsbLines();
 
 	return WORKING_MODE_PS3;
 }
-#endif
 
-#if USE_XBOX
-int setModeXBox() {
-	enableUsbLines();
-
-	return WORKING_MODE_XBOX;
-}
-#endif
-
-#if USE_WII
-int setModeWii() {
-	PORTD |= 0b00001001; // enable pull-up for S1 and S2
-	DDRD  &= 0b11110110; // make S1 and S2 input
-
-	PORTC &= 0b11001111; // disable pull-up for SDA and SCL
-	DDRC  |= 0b00110000; // make SDA and SCL output
-
-	return WORKING_MODE_WII;
-}
-#endif
-
-#if USE_PT
 int setModePT() {	
 	if(CFG_HOME_EMU)
 		SET_HOME_OUTPUT
@@ -233,7 +206,6 @@ int setModePT() {
 
 	return WORKING_MODE_PT;
 }
-#endif
 
 // README
 /*
@@ -288,9 +260,6 @@ int hardwareInit() {
 		PORTC |= (1<<6); // pin S4 is high
 	}
 
-#if USE_WII
-	return setModeWii();
-#else
 	if(!Stick_Short)
 		return setModePS3();
 	else if(!Stick_Jab)
@@ -301,7 +270,6 @@ int hardwareInit() {
 		else
 			return setModePT();
 	}
-#endif
 }
 
 /* ------------------------------------------------------------------------- */
@@ -339,9 +307,6 @@ uchar* data[132];
 
 int main(void)
 {
-#if USE_WII
-	wiimote_extension_controller();
-#else
 	switch(hardwareInit()) {
 	case WORKING_MODE_PS3:
 	  ps3_controller();
@@ -351,7 +316,6 @@ int main(void)
 	  pass_through();
 	  break;
 	}
-#endif
 
     return 0;
 }

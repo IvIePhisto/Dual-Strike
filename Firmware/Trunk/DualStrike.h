@@ -1,38 +1,8 @@
 #ifndef __DualStrike_h_included__
 #define __DualStrike_h_included__
 
-// base 576 bytes
-#ifndef USE_PS3
-#define USE_PS3 1
-#endif
-
-#ifndef USE_XBOX
-#define USE_XBOX 1
-#endif
-// 2114 bytes
-#ifndef USE_WII
-#define USE_WII 0
-#endif
-// 5000+ bytes
-#ifndef USE_PT
-#define USE_PT 1
-// 110 bytes
-#endif
-
 #include "usb/usb_controller.h"
-
-#if USE_WII
-#include "wii/wiimote_extension_controller.h"
-#endif
-
-#if USE_PT
 #include "pass-through/pass-through.h"
-#endif
-
-#if USE_WII && (USE_PS3 || USE_PT)
-#error Wii working mode can only be used alone, as S1/S2 are used for the buttons at PinC 4 and 5.
-#endif
-
 #include "configuration.h"
 
 // BUTTON DEFINITIONS
@@ -53,13 +23,6 @@
 #define Stick_Start			(PINC & (1<<0))
 
 #if DUAL_STRIKE_SMD
-	#if USE_WII
-		#define Stick_Up			(PIND & (1<<0))
-		#define Stick_Down			(PIND & (1<<3))
-	#else
-		#define Stick_Up			(PINC & (1<<4))
-		#define Stick_Down			(PINC & (1<<5))
-	#endif
 
 	#define SET_HOME_OUTPUT DDRB |= (1<<5);
 	#define SWITCH_HOME_LOW PORTB &= ~(1<<5);
