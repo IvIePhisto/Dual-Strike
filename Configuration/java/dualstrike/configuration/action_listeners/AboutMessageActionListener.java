@@ -7,12 +7,7 @@ import java.awt.Insets;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.BufferedInputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.io.UnsupportedEncodingException;
 import java.text.MessageFormat;
 
 import javax.swing.BorderFactory;
@@ -37,35 +32,11 @@ public class AboutMessageActionListener implements ActionListener {
 	}
 	
 	private static String readResource(final String path) {
-		StringBuilder sb;
 		InputStream inputStream;
-		Reader reader;
 		
 		inputStream = AboutMessageActionListener.class.getResourceAsStream(path);
-		sb = new StringBuilder();
 		
-		try {
-			int readByte;
-			
-			reader = new InputStreamReader(new BufferedInputStream(inputStream), "UTF-8");
-			
-			try {
-				while((readByte = reader.read()) != -1) {
-					sb.append((char)readByte);
-				}
-			}
-			finally {
-				reader.close();
-			}
-		}
-		catch(UnsupportedEncodingException e) {
-			throw new Error(e);
-		}
-		catch(IOException e) {
-			throw new Error(e);
-		}
-		
-		return sb.toString();
+		return ConfigurationEditor.readUTF8String(inputStream);
 	}
 	
 	@Override

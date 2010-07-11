@@ -12,8 +12,8 @@
   
   <title>Dual Strike Configuration</title>
   <title lang="de">Dual Strike Konfiguration</title>
-  <help href="configuration-help.html"/>
-  <help lang="de" href="configuration-help_de.html"/>
+  <help path="configuration-help.html"/>
+  <help lang="de" path="configuration-help_de.html"/>
   
   <device>1</device>
   <version>1</version>

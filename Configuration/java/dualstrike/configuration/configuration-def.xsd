@@ -26,7 +26,7 @@
   <xs:group name="Infos">
     <xs:sequence>
       <xs:element name="title" maxOccurs="unbounded" type="c:Info"/>
-      <xs:element name="help" minOccurs="0" maxOccurs="unbounded" type="c:Info"/>
+      <xs:element name="help" minOccurs="0" maxOccurs="unbounded" type="c:PathInfo"/>
     </xs:sequence>
   </xs:group>
   
@@ -36,6 +36,14 @@
         <xs:attribute name="lang" type="xs:language"/>
       </xs:extension>
     </xs:simpleContent>
+  </xs:complexType>
+  
+  <xs:complexType name="PathInfo">
+    <xs:complexContent>
+      <xs:extension base="c:Info">
+        <xs:attribute name="path" type="c:RelativePath"/>
+      </xs:extension>
+    </xs:complexContent>
   </xs:complexType>
   
   <xs:complexType name="Page">

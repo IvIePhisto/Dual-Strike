@@ -52,7 +52,7 @@
   
   <xsl:template match="c:help">
     <xsl:choose> 
-      <xsl:when test="@href">
+      <xsl:when test="@path">
         <xsl:apply-templates select="document(@href)/html/node()" mode="import"/>
       </xsl:when>
       <xsl:otherwise>

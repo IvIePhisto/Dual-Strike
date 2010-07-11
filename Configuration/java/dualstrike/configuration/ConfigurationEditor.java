@@ -13,8 +13,15 @@ import java.awt.Image;
 import java.awt.Insets;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -62,6 +69,7 @@ import dualstrike.configuration.definition.DescriptionImage;
 import dualstrike.configuration.definition.Info;
 import dualstrike.configuration.definition.Option;
 import dualstrike.configuration.definition.Page;
+import dualstrike.configuration.definition.PathInfo;
 import dualstrike.configuration.file.FileHandler;
 import dualstrike.configuration.icons.IconHandler;
 import dualstrike.configuration.model.ConfigurationModel;
@@ -629,7 +637,7 @@ public class ConfigurationEditor implements HyperlinkListener {
 		return editorPane;
 	}
 
-	private JLabel createLabel(List<Info> info, Font font) {
+	private JLabel createLabel(List<? extends Info> info, Font font) {
 		JLabel label;
 	
 		label = new JLabel(getLocalizedInfo(info, true), JLabel.LEFT);
@@ -638,23 +646,25 @@ public class ConfigurationEditor implements HyperlinkListener {
 		return label;
 	}
 
-	private String getLocalizedInfo(List<Info> infos, boolean useHTML) {
+	private <T extends Info> String getLocalizedInfo(List<T> infos, boolean convertToHTML) {
 		String value;
 		String defaultValue;
 		
 		value = null;
 		defaultValue = null;
 		
-		for(Info currentTitle: infos) {
+		for(T currentInfo: infos) {
 			String currentLang;
 			String currentValue;
 			
-			currentLang = currentTitle.getLang();
-			currentValue = currentTitle.getValue();
+			currentLang = currentInfo.getLang();
+			currentValue = getText(currentInfo);
 			
 			if(currentLang == null || currentLang.equals("")) {
-				if(defaultLanguage.equals(language.getLanguage()))
+				if(defaultLanguage.equals(language.getLanguage())) {
 					value = currentValue;
+					break;
+				}
 				else
 					defaultValue = currentValue;
 			}
@@ -667,10 +677,35 @@ public class ConfigurationEditor implements HyperlinkListener {
 		if(value == null)
 			value = defaultValue;
 		
-		if(useHTML)
+		if(convertToHTML)
 			value = convertTextToHTML(value);
 		
 		return value;
+	}
+	
+	private static <T extends Info> String getText(T info) {
+		if(info instanceof PathInfo) {
+			PathInfo pathInfo;
+			String path;
+			
+			pathInfo = (PathInfo)info;
+			path = pathInfo.getPath();
+			
+			if(path != null && !path.equals("")) {
+				InputStream inputStream;
+				
+				try {
+					inputStream = new FileInputStream(path);
+					
+					return readUTF8String(inputStream);
+				}
+				catch(FileNotFoundException e) {
+					throw new Error(e);
+				}
+			}
+		}
+		
+		return info.getValue();
 	}
 
 	public String getMainTitle() {
@@ -746,5 +781,35 @@ public class ConfigurationEditor implements HyperlinkListener {
 				throw new RuntimeException(e);
 			}
 		}
+	}
+
+	public static String readUTF8String(final InputStream inputStream) {
+		StringBuilder sb;
+		Reader reader;
+		
+		sb = new StringBuilder();
+		
+		try {
+			int readByte;
+			
+			reader = new InputStreamReader(new BufferedInputStream(inputStream), "UTF-8");
+			
+			try {
+				while((readByte = reader.read()) != -1) {
+					sb.append((char)readByte);
+				}
+			}
+			finally {
+				reader.close();
+			}
+		}
+		catch(UnsupportedEncodingException e) {
+			throw new Error(e);
+		}
+		catch(IOException e) {
+			throw new Error(e);
+		}
+		
+		return sb.toString();
 	}
 }

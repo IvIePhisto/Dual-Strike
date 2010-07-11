@@ -232,19 +232,4 @@ public class Configuration {
 		else
 			System.exit(0);
 	}
-
-	public static void bla(String[] args) {
-		if(args.length != 3 || !(args[0].equals("annotate") || args[0].equals("2header-file"))) {
-			System.err.print("args: (annotate|2header-file) <configuration file> <output file>");
-			System.exit(1);
-		}
-		
-		try {
-		}
-		catch(Throwable t) {
-			t.printStackTrace();
-			System.exit(2);
-		}
-	}
-
 }
