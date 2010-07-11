@@ -37,13 +37,6 @@ public class ConfigurationDefUtility {
 	private final static TransformerFactory TRANSFORMER_FACTORY = TransformerFactory.newInstance();
 	public final static Schema CONFIGURATION_DEF_SCHEMA = createConfigurationDefSchema();
 	public final static Schema ANNOTATED_CONFIGURATION_DEF_SCHEMA = createAnnotatedConfigurationDefSchema();
-
-	final static DocumentBuilderFactory DOCUMENT_BUILDER_FACTORY = DocumentBuilderFactory.newInstance();
-	static {
-		DOCUMENT_BUILDER_FACTORY.setXIncludeAware(true);
-		DOCUMENT_BUILDER_FACTORY.setNamespaceAware(true);
-		DOCUMENT_BUILDER_FACTORY.setCoalescing(true);
-	}
 	
 	public final static Unmarshaller DEFINITION_UNMARSHALLER = createUnmarshaller();
 
@@ -70,10 +63,8 @@ public class ConfigurationDefUtility {
 			Result annotatedConfigurationResult;
 			Document annotatedConfigurationDocument;
 			Transformer annotateConfigurationTransformer;
-			Document doc;
 			
-			doc = DOCUMENT_BUILDER_FACTORY.newDocumentBuilder().parse(url.toExternalForm());
-			configurationSource = new DOMSource(doc);
+			configurationSource = new StreamSource(url.toExternalForm());
 			configurationValidator = CONFIGURATION_DEF_SCHEMA.newValidator();
 			configurationValidator.validate(configurationSource);
 			annotatedConfigurationDocument = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();

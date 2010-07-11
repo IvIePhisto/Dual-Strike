@@ -9,12 +9,14 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
-import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.Result;
+import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 
 import org.w3c.dom.Document;
@@ -156,37 +158,39 @@ public class Configuration {
 		configurationURL = createConfigurationURL(configurationPath);
 
 		try {
-			DOMSource docSource;
-			Document doc;
-			Result result;
+			Source fileSource;
+			Result fileResult;
 			Transformer annotateConfigurationTransformer;
 			Schema configurationSchema;
-			DocumentBuilder documentBuilder;
 	
-			documentBuilder = ConfigurationDefUtility.DOCUMENT_BUILDER_FACTORY.newDocumentBuilder();
-			doc = documentBuilder.parse(configurationURL.toExternalForm());
-			docSource = new DOMSource(doc);
-			result = new StreamResult(destinationPath);
+			fileSource = new StreamSource(configurationURL.toExternalForm());
+			fileResult = new StreamResult(destinationPath);
 			configurationSchema = ConfigurationDefUtility.createConfigurationDefSchema();
-			configurationSchema.newValidator().validate(docSource);
+			configurationSchema.newValidator().validate(fileSource);
 			annotateConfigurationTransformer = ConfigurationDefUtility.createAnnotateConfigurationDefTransformer();
 			
 			if(onlyAnnotate) {
-				annotateConfigurationTransformer.transform(docSource, result);
+				annotateConfigurationTransformer.transform(fileSource, fileResult);
 			}
 			else {
+				DocumentBuilderFactory documentBuilderFactory;
 				Transformer toHeaderFileTransformer;
 				Schema annotatedConfigurationSchema;
+				DOMSource docSource;
+				Document doc;
 				DOMResult docResult;
 
-				doc = ConfigurationDefUtility.DOCUMENT_BUILDER_FACTORY.newDocumentBuilder().newDocument();
+				documentBuilderFactory = DocumentBuilderFactory.newInstance();
+				documentBuilderFactory.setNamespaceAware(true);
+				documentBuilderFactory.setCoalescing(true);
+				doc = documentBuilderFactory.newDocumentBuilder().newDocument();
 				docResult = new DOMResult(doc);
-				annotateConfigurationTransformer.transform(docSource, docResult);
 				docSource = new DOMSource(doc);
+				annotateConfigurationTransformer.transform(fileSource, docResult);
 				annotatedConfigurationSchema = ConfigurationDefUtility.createAnnotatedConfigurationDefSchema();
 				annotatedConfigurationSchema.newValidator().validate(docSource);
 				toHeaderFileTransformer = ConfigurationDefUtility.createConfigurationDefToHeaderFileTransformer();
-				toHeaderFileTransformer.transform(docSource, result);
+				toHeaderFileTransformer.transform(docSource, fileResult);
 			}
 
 			System.exit(0);
