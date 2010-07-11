@@ -1,7 +1,9 @@
 package dualstrike.configuration;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Locale;
 
@@ -124,23 +126,30 @@ public class Configuration {
 			}
 		}
 		catch(Throwable t) {
+			t.printStackTrace();
 			showMessage(MessageHelper.get(Configuration.class, "generalError", language, t.getLocalizedMessage()), language, true);
 		}
 	}
 	
 	private static void edit(final String configurationPath, final Locale language) {
-		URL configurationURL;
+		File configurationDefinitionFile;
 		
-		configurationURL = createConfigurationURL(configurationPath);
+		if(configurationPath == null)
+			configurationDefinitionFile = null;
+		else
+			configurationDefinitionFile = new File(configurationPath);
+
+		if(configurationDefinitionFile != null && !configurationDefinitionFile.exists())
+			showMessage(MessageHelper.get(Configuration.class, "configurationDefinitionNotFound", language, configurationDefinitionFile), language, true);
 
 		try {
-			ConfigurationEditor.newInstance(configurationURL, language);
+			ConfigurationEditor.newInstance(configurationDefinitionFile, language);
 		}
 		catch(ConfigurationDefException e) {
 			showMessage(e.getLocalizedMessage(), language, true);
 		}
 		catch(FileNotFoundException e) {
-			showMessage(MessageHelper.get(Configuration.class, "configurationDefinitionNotFound", language, configurationURL), language, true);
+			showMessage(MessageHelper.get(Configuration.class, "configurationDefinitionNotFound", language, configurationDefinitionFile), language, true);
 		}
 		catch(IOException e) {
 			showMessage(MessageHelper.get(Configuration.class, "configurationDefinitionLoadingError", language, e.getLocalizedMessage()), language, true);
@@ -148,14 +157,20 @@ public class Configuration {
 	}
 	
 	private static URL createConfigurationURL(String configurationPath) {
-		URL configurationURL;
+		URL configurationDefinitionFile;
 		
-		if(configurationPath == null)
-			configurationURL = ConfigurationEditor.DEFAULT_CONFIGURATION_DEFINITION_FILE_URL;
+		if(configurationPath == null) {
+			try {
+				configurationDefinitionFile = ConfigurationEditor.DEFAULT_CONFIGURATION_DEFINITION_FILE.toURI().toURL();
+			}
+			catch(MalformedURLException e) {
+				throw new Error(e);
+			}
+		}
 		else
-			configurationURL = ConfigurationEditor.createFileURL(configurationPath);
+			configurationDefinitionFile = ConfigurationEditor.createFileURL(configurationPath);
 		
-		return configurationURL;
+		return configurationDefinitionFile;
 	}
 	
 	private static void transform(final String configurationPath, final String destinationPath, final boolean onlyAnnotate, final Locale language) {

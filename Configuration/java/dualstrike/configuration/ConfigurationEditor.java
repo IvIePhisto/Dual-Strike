@@ -79,7 +79,7 @@ public class ConfigurationEditor implements HyperlinkListener {
 	public static final int MINOR_VERSION_NO = 0;
 	public static final int BUGFIX_VERSION_NO = 0;
 
-	static final URL DEFAULT_CONFIGURATION_DEFINITION_FILE_URL = createFileURL("configuration.xml");
+	static final File DEFAULT_CONFIGURATION_DEFINITION_FILE = new File("configuration.xml");
 
 	private static final Desktop DESKTOP = Desktop.isDesktopSupported()?Desktop.getDesktop():null;
 	private static final int FONT_SIZE = 14;
@@ -90,13 +90,13 @@ public class ConfigurationEditor implements HyperlinkListener {
 	public static final Font DESCRIPTION_FONT = new Font(Font.SANS_SERIF, Font.PLAIN, FONT_SIZE); 
 	
 
-	static ConfigurationEditor newInstance(URL configurationDefinitionURL, final Locale language) throws IOException, ConfigurationDefException {
+	static ConfigurationEditor newInstance(File configurationDefinitionFile, final Locale language) throws IOException, ConfigurationDefException {
 		ConfigurationEditor ce;
 		
-		if(configurationDefinitionURL == null)
-			configurationDefinitionURL = DEFAULT_CONFIGURATION_DEFINITION_FILE_URL;
+		if(configurationDefinitionFile == null)
+			configurationDefinitionFile = DEFAULT_CONFIGURATION_DEFINITION_FILE;
 		
-		ce = new ConfigurationEditor(configurationDefinitionURL, language);
+		ce = new ConfigurationEditor(configurationDefinitionFile, language);
 		
 		return ce;
 	}
@@ -144,6 +144,7 @@ public class ConfigurationEditor implements HyperlinkListener {
 	}
 
 	private final URL configurationDefinitionURL;
+	private final URL configurationDefDirectoryURL;
 	private final Configuration configuration;
 	private final Locale language;
 	private final Locale defaultLanguage;
@@ -158,9 +159,10 @@ public class ConfigurationEditor implements HyperlinkListener {
 	private JLabel statusLabel;
 	private ConnectionChecker connectionChecker;
 
-	private ConfigurationEditor(final URL configurationDefinitionURL, final Locale language) throws ConfigurationDefException, IOException {
-		this.configurationDefinitionURL = configurationDefinitionURL;
-		this.configuration = ConfigurationDefUtility.unmarshallConfigurationDef(configurationDefinitionURL);
+	private ConfigurationEditor(final File configurationDefinitionFile, final Locale language) throws ConfigurationDefException, IOException {
+		configurationDefinitionURL = configurationDefinitionFile.toURI().toURL();
+		configurationDefDirectoryURL = configurationDefinitionFile.getAbsoluteFile().getParentFile().toURI().toURL();
+		configuration = ConfigurationDefUtility.unmarshallConfigurationDef(configurationDefinitionURL);
 		
 		if(language == null)
 			this.language = new Locale(configuration.getLang());
@@ -703,7 +705,7 @@ public class ConfigurationEditor implements HyperlinkListener {
 					value = readUTF8String(inputStream);
 					
 					if(convertToHTML)
-						value = convertTextToHTML(value, file.toURI().toURL().toExternalForm());
+						value = convertTextToHTML(value, file.getAbsoluteFile().getParentFile().toURI().toURL().toExternalForm());
 				}
 				catch(FileNotFoundException e) {
 					throw new Error(e);
@@ -718,7 +720,7 @@ public class ConfigurationEditor implements HyperlinkListener {
 			value = info.getValue();
 			
 			if(convertToHTML)
-				value = convertTextToHTML(value, configurationDefinitionURL.toExternalForm());
+				value = convertTextToHTML(value, configurationDefDirectoryURL.toExternalForm());
 		}
 		
 		return value;
