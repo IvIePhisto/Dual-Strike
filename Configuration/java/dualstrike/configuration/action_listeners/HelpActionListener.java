@@ -4,8 +4,6 @@ import java.awt.BorderLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
-import java.net.MalformedURLException;
 
 import javax.swing.JEditorPane;
 import javax.swing.JFrame;
@@ -24,12 +22,11 @@ public class HelpActionListener implements ActionListener {
 	public HelpActionListener(final ConfigurationEditor controller, final String message) {
 		this.controller = controller;
 		this.title = controller.getMainTitle() + " - " + MessageHelper.get(this, "helpTitle");
-		try {
-			this.message = message.replace("<html>", "<html><head><base href=\"" + (new File("")).toURI().toURL() + "\"/></head>");
-		}
-		catch(MalformedURLException e) {
-			throw new Error(e);
-		}
+		
+		if(message.matches("<html>.*<head>.*<base .*/>.*</head>.*</html>.*"))
+			this.message = message;
+		else
+			this.message = message.replace("<html>", "<html><head><base href=\"" + controller.getConfigurationDefinitionURL().toExternalForm() + "\"/></head>");
 	}
 	
 	@Override

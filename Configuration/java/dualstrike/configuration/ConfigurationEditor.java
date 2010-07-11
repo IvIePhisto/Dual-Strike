@@ -78,28 +78,29 @@ public class ConfigurationEditor implements HyperlinkListener {
 	public static final int MAJOR_VERSION_NO = 1;
 	public static final int MINOR_VERSION_NO = 0;
 	public static final int BUGFIX_VERSION_NO = 0;
-	
-	private static final Desktop DESKTOP = Desktop.isDesktopSupported()?Desktop.getDesktop():null;
+
 	static final URL DEFAULT_CONFIGURATION_DEFINITION_FILE_URL = createFileURL("configuration.xml");
+
+	private static final Desktop DESKTOP = Desktop.isDesktopSupported()?Desktop.getDesktop():null;
 	private static final int FONT_SIZE = 14;
 	private static final Font TITLE_FONT = new Font(Font.SANS_SERIF, Font.BOLD, FONT_SIZE); 
-	public static final Font DESCRIPTION_FONT = new Font(Font.SANS_SERIF, Font.PLAIN, FONT_SIZE); 
 	private static final Border BOTTOM_SPACER_BORDER = new EmptyBorder(0, 0, 10, 0);
 	private static final Color MILK_GLASS = new Color(255, 255, 255, 150);
+	
+	public static final Font DESCRIPTION_FONT = new Font(Font.SANS_SERIF, Font.PLAIN, FONT_SIZE); 
+	
 
 	public static String convertTextToHTML(String value) {
 		return "<html>" + value.replace("\n", "<br/>") + "</html>";
 	}
 
 	static ConfigurationEditor newInstance(URL configurationDefinitionURL, final Locale language) throws IOException, ConfigurationDefException {
-		Configuration configuration;
 		ConfigurationEditor ce;
 		
 		if(configurationDefinitionURL == null)
 			configurationDefinitionURL = DEFAULT_CONFIGURATION_DEFINITION_FILE_URL;
 		
-		configuration = ConfigurationDefUtility.unmarshallConfigurationDef(configurationDefinitionURL);
-		ce = new ConfigurationEditor(configuration, language);
+		ce = new ConfigurationEditor(configurationDefinitionURL, language);
 		
 		return ce;
 	}
@@ -146,6 +147,7 @@ public class ConfigurationEditor implements HyperlinkListener {
 		return image;
 	}
 
+	private final URL configurationDefinitionURL;
 	private final Configuration configuration;
 	private final Locale language;
 	private final Locale defaultLanguage;
@@ -154,13 +156,15 @@ public class ConfigurationEditor implements HyperlinkListener {
 	private final String mainTitle;
 	private final FileHandler fileHandler;
 	private final JFrame window;
+	private final StatusClearer statusClearer;
+
 	private JPanel glassPanel;
 	private JLabel statusLabel;
-	private final StatusClearer statusClearer;
 	private ConnectionChecker connectionChecker;
 
-	private ConfigurationEditor(final Configuration configuration, final Locale language) {
-		this.configuration = configuration;
+	private ConfigurationEditor(final URL configurationDefinitionURL, final Locale language) throws ConfigurationDefException, IOException {
+		this.configurationDefinitionURL = configurationDefinitionURL;
+		this.configuration = ConfigurationDefUtility.unmarshallConfigurationDef(configurationDefinitionURL);
 		
 		if(language == null)
 			this.language = new Locale(configuration.getLang());
@@ -710,6 +714,10 @@ public class ConfigurationEditor implements HyperlinkListener {
 
 	public String getMainTitle() {
 		return mainTitle;
+	}
+
+	public URL getConfigurationDefinitionURL() {
+		return configurationDefinitionURL;
 	}
 
 	public ConfigurationModel getModel() {
