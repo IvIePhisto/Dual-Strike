@@ -1,0 +1,860 @@
+
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+
+<html>
+
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<base target="_top">
+<style type="text/css">
+  
+
+/* default css */
+
+table {
+  font-size: 1em;
+  line-height: inherit;
+  border-collapse: collapse;
+}
+
+
+tr {
+  
+  text-align: left;
+  
+}
+
+
+div, address, ol, ul, li, option, select {
+  margin-top: 0px;
+  margin-bottom: 0px;
+}
+
+p {
+  margin: 0px;
+}
+
+
+pre {
+  font-family: Courier New;
+  white-space: pre-wrap;
+  margin:0;
+}
+
+body {
+  margin: 6px;
+  padding: 0px;
+  font-family: Verdana, sans-serif;
+  font-size: 10pt;
+  background-color: #ffffff;
+  color: #000;
+}
+
+
+img {
+  -moz-force-broken-image-icon: 1;
+}
+
+@media screen {
+  html.pageview {
+    background-color: #f3f3f3 !important;
+    overflow-x: hidden;
+    overflow-y: scroll;
+  }
+
+  
+
+  body {
+    min-height: 1100px;
+    
+    counter-reset: __goog_page__;
+  }
+  
+  * html body {
+    height: 1100px;
+  }
+  /* Prevent repaint errors when scrolling in Safari. This "Star-7" css hack
+     targets Safari 3.1, but not WebKit nightlies and presumably Safari 4.
+     That's OK because this bug is fixed in WebKit nightlies/Safari 4 :-). */
+  html*#wys_frame::before {
+    content: '\A0';
+    position: fixed;
+    overflow: hidden;
+    width: 0;
+    height: 0;
+    top: 0;
+    left: 0;
+  }
+  
+  .pageview body {
+    border-top: 1px solid #ccc;
+    border-left: 1px solid #ccc;
+    border-right: 2px solid #bbb;
+    border-bottom: 2px solid #bbb;
+    width: 648px !important;
+    margin: 15px auto 25px;
+    padding: 40px 50px;
+  }
+  /* IE6 */
+  * html {
+    overflow-y: scroll;
+  }
+  * html.pageview body {
+    overflow-x: auto;
+  }
+  
+
+  
+    
+    .writely-callout-data {
+      display: none;
+    }
+    
+
+    .writely-footnote-marker {
+      background-image: url('MISSING');
+      background-color: transparent;
+      background-repeat: no-repeat;
+      width: 7px;
+      overflow: hidden;
+      height: 16px;
+      vertical-align: top;
+
+      
+      -moz-user-select: none;
+    }
+    .editor .writely-footnote-marker {
+      cursor: move;
+    }
+    .writely-footnote-marker-highlight {
+      background-position: -15px 0;
+      -moz-user-select: text;
+    }
+    .writely-footnote-hide-selection ::-moz-selection, .writely-footnote-hide-selection::-moz-selection {
+      background: transparent;
+    }
+    .writely-footnote-hide-selection ::selection, .writely-footnote-hide-selection::selection {
+      background: transparent;
+    }
+    .writely-footnote-hide-selection {
+      cursor: move;
+    }
+
+    /* Comments */
+    .writely-comment-yellow {
+      background-color: #ffffd7;
+    }
+    .writely-comment-orange {
+      background-color: #ffe3c0;
+    }
+    .writely-comment-pink {
+      background-color: #ffd7ff;
+    }
+    .writely-comment-green {
+      background-color: #d7ffd7;
+    }
+    .writely-comment-blue {
+      background-color: #d7ffff;
+    }
+    .writely-comment-purple {
+      background-color: #eed7ff;
+    }
+
+  
+
+
+  
+  .br_fix span+br:not(:-moz-last-node) {
+    
+    position:relative;
+    
+    left: -1ex
+    
+  }
+
+  
+  #cb-p-tgt {
+    font-size: 8pt;
+    padding: .4em;
+    background-color: #ddd;
+    color: #333;
+  }
+  #cb-p-tgt-can {
+    text-decoration: underline;
+    color: #36c;
+    font-weight: bold;
+    margin-left: 2em;
+  }
+  #cb-p-tgt .spin {
+    width: 16px;
+    height: 16px;
+    background: url(//ssl.gstatic.com/docs/clipboard/spin_16o.gif) no-repeat;
+  }
+}
+
+h6 { font-size: 8pt }
+h5 { font-size: 8pt }
+h4 { font-size: 10pt }
+h3 { font-size: 12pt }
+h2 { font-size: 14pt }
+h1 { font-size: 18pt }
+
+blockquote {padding: 10px; border: 1px #DDD dashed }
+
+.webkit-indent-blockquote { border: none; }
+
+a img {border: 0}
+
+.pb {
+  border-width: 0;
+  page-break-after: always;
+  /* We don't want this to be resizeable, so enforce a width and height
+     using !important */
+  height: 1px !important;
+  width: 100% !important;
+}
+
+.editor .pb {
+  border-top: 1px dashed #C0C0C0;
+  border-bottom: 1px dashed #C0C0C0;
+}
+
+div.google_header, div.google_footer {
+  position: relative;
+  margin-top: 1em;
+  margin-bottom: 1em;
+}
+
+
+/* Table of contents */
+.editor div.writely-toc {
+  background-color: #f3f3f3;
+  border: 1px solid #ccc;
+}
+.writely-toc > ol {
+  padding-left: 3em;
+  font-weight: bold;
+}
+ol.writely-toc-subheading {
+  padding-left: 1em;
+  font-weight: normal;
+}
+/* IE6 only */
+* html writely-toc ol {
+  list-style-position: inside;
+}
+.writely-toc-none {
+  list-style-type: none;
+}
+.writely-toc-decimal {
+  list-style-type: decimal;
+}
+.writely-toc-upper-alpha {
+  list-style-type: upper-alpha;
+}
+.writely-toc-lower-alpha {
+  list-style-type: lower-alpha;
+}
+.writely-toc-upper-roman {
+  list-style-type: upper-roman;
+}
+.writely-toc-lower-roman {
+  list-style-type: lower-roman;
+}
+.writely-toc-disc {
+  list-style-type: disc;
+}
+
+/* Ordered lists converted to numbered lists can preserve ordered types, and
+   vice versa. This is confusing, so disallow it */
+ul[type="i"], ul[type="I"], ul[type="1"], ul[type="a"], ul[type="A"] {
+  list-style-type: disc;
+}
+
+ol[type="disc"], ol[type="circle"], ol[type="square"] {
+  list-style-type: decimal;
+}
+
+/* end default css */
+
+
+  /* default print css */
+  @media print {
+    body {
+      padding: 0;
+      margin: 0;
+    }
+
+    div.google_header, div.google_footer {
+      display: block;
+      min-height: 0;
+      border: none;
+    }
+
+    div.google_header {
+      flow: static(header);
+    }
+
+    /* used to insert page numbers */
+    div.google_header::before, div.google_footer::before {
+      position: absolute;
+      top: 0;
+    }
+
+    div.google_footer {
+      flow: static(footer);
+    }
+
+    /* always consider this element at the start of the doc */
+    div#google_footer {
+      flow: static(footer, start);
+    }
+
+    span.google_pagenumber {
+      content: counter(page);
+    }
+
+    span.google_pagecount {
+      content: counter(pages);
+    }
+
+    .endnotes {
+      page: endnote;
+    }
+
+    /* MLA specifies that endnotes title should be 1" margin from the top of the page. */
+    @page endnote {
+      margin-top: 1in;
+    }
+
+    callout.google_footnote {
+      
+      display: prince-footnote;
+      footnote-style-position: inside;
+      /* These styles keep the footnote from taking on the style of the text
+         surrounding the footnote marker. They can be overridden in the
+         document CSS. */
+      color: #000;
+      font-family: Verdana;
+      font-size: 10.0pt;
+      font-weight: normal;
+    }
+
+    /* Table of contents */
+    #WritelyTableOfContents a::after {
+      content: leader('.') target-counter(attr(href), page);
+    }
+
+    #WritelyTableOfContents a {
+      text-decoration: none;
+      color: black;
+    }
+
+    /* Comments */
+    .writely-comment-yellow {
+      background-color: #ffffd7;
+    }
+    .writely-comment-orange {
+      background-color: #ffe3c0;
+    }
+    .writely-comment-pink {
+      background-color: #ffd7ff;
+    }
+    .writely-comment-green {
+      background-color: #d7ffd7;
+    }
+    .writely-comment-blue {
+      background-color: #d7ffff;
+    }
+    .writely-comment-purple {
+      background-color: #eed7ff;
+    }
+  }
+
+  @page {
+    @top {
+      content: flow(header);
+    }
+    @bottom {
+      content: flow(footer);
+    }
+    @footnotes {
+      border-top: solid black thin;
+      padding-top: 8pt;
+    }
+  }
+  /* end default print css */
+
+
+/* custom css */
+
+
+/* end custom css */
+
+/* ui edited css */
+
+body {
+  font-family: Verdana;
+  
+  font-size: 10.0pt;
+  line-height: normal;
+  background-color: #ffffff;
+}
+/* end ui edited css */
+
+
+/* editor CSS */
+.editor a:visited {color: #551A8B}
+.editor table.zeroBorder {border: 1px dotted gray}
+.editor table.zeroBorder td {border: 1px dotted gray}
+.editor table.zeroBorder th {border: 1px dotted gray}
+
+
+.editor div.google_header, .editor div.google_footer {
+  border: 2px #DDDDDD dashed;
+  position: static;
+  width: 100%;
+  min-height: 2em;
+}
+
+.editor .misspell {background-color: yellow}
+
+.editor .writely-comment {
+  font-size: 9pt;
+  line-height: 1.4;
+  padding: 1px;
+  border: 1px dashed #C0C0C0
+}
+
+
+/* end editor CSS */
+
+</style>
+
+  
+  <title>Dual Strike 2.0.0</title>
+
+</head>
+
+<body 
+    
+    >
+    
+    
+    
+<h1 style=TEXT-ALIGN:center>
+  Dual Strike
+</h1>
+<div style=TEXT-ALIGN:center>
+  Copyright 2009 Jochen Zurborg and Michael Pohl<br>
+</div>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;<br>
+<div style=TEXT-ALIGN:center>
+  <a href=http://www.zurborg.info title=http://www.zurborg.info>http://www.zurborg.info</a><br>
+</div>
+<br>
+The firmwares and other files of this project are released under the <a href=http://www.gnu.org/licenses/gpl.html title="GNU Public License V3">GNU General Public License V3</a>, if they were not previously released under a different license.<br>
+<h2>
+  Introduction
+</h2>
+The Dual Strike PCB is a completely solderless controller board for your arcade stick.<br>
+Every connection to buttons or directions screw in directly to the side of the<br>
+board, so installation requires nothing more than a screwdriver. The Dual Strike<br>
+works on any PC (including Windows 7/Vista/XP/2K/98, Mac OS and Linux) as well as<br>
+Playstation 3 systems. It also has a pass-through dual mod function supporting USB interfaces (or similar) like XBox360 or Dreamcast.<br>
+<br>
+This makes the Dual Strike the perfect solution for customers who want to build<br>
+or dual mod an arcade stick .<br>
+<h2>
+  Features
+</h2>
+<ul>
+  <li>
+    20 screw terminal ports for connecting all of your wires
+  </li>
+  <li>
+    No soldering required
+  </li>
+  <li>
+    USB Type B jack for connecting any standard USB cable
+  </li>
+  <li>
+    Easy to use pass-through dual mod function supporting USB interfaces (or similar) like XBox360 or Dreamcast<br>
+  </li>
+  <li>
+    Piggyback interface for even easier installation of pass-through PCBs<br>
+  </li>
+  <li>
+    Integrated switch interface for easy configuration between pass-through PCB and Dual Strike controller<br>
+  </li>
+  <li>
+    Seperate connection points for all power lines and signals
+  </li>
+  <li>
+    Mounting holes for easy installation inside your arcade board
+  </li>
+  <li>
+    Works as a game controller on HID-compatible USB hosts like Playstation 3 (PS button is supported) and PC (including Windows 7/Vista/XP/2K/98, Mac OS and Linux)
+  </li>
+  <li>
+    Firmware update is supported for Windows systems, on other systems by compiling the source
+  </li>
+  <li>
+    Configuration from a PC (needs a Java 6 Runtime Environment), works out of the box for Windows, needs custom compilation under other systems<br>
+  </li>
+  <li>
+    By connecting the pins S3 and S4 and configuring the Dual Strike accordingly one of the following is supported:
+  </li>
+  <ul>
+    <li>
+      joystick mode switch (SPCO) support (like on MadCatz Fightsticks and Fightpads)
+    </li>
+    <li>
+      emulation of a joystick mode switch (SPCO) for the pass-through device (like MadCatz Fightstick and Fightpad PCBs)
+    </li>
+    <li>
+      pass-through PCBs with inverted (active high) triggers
+    </li>
+  </ul>
+</ul>
+<h2>
+  Installation
+</h2>
+Connect all wires/pins to the buttons and the joystick and connect the USB lines to the PCB to pass through (e.g. by soldering).<br>
+<br>
+For the pins S3 and S4 you have four options:<br>
+<ul>
+  <li>
+    let them unconnected
+  </li>
+</ul>
+<ul>
+  <li>
+    connect them to the pins of a joystick mode switch (S3=left stick, S3=right stick) to read the setting
+  </li>
+</ul>
+<ul>
+  <li>
+    connect them to the pins on the pass-through PCB of a joystick mode switch (S3=left stick, S4=right stick) to emulate the switch (if the left or right joystick is enabled together with the digital pad, for the pass-through device the digitial pad will not be activated)<br>
+  </li>
+</ul>
+<ul>
+  <li>
+    connect them to the trigger pins on a pass-through PCB with active low triggers (S3=left trigger, S4=right trigger)
+  </li>
+</ul>
+<br>
+See Extra Pins Mode in the Configuration Mode section for how to configure the Dual Strike accordingly.<br>
+<h2>
+  Startup Behaviour
+</h2>
+If a button or joystick direction is pressed, when the Dual Strike controller is activated (if the machine it is plugged in is turned on or the controller gets plugged into the machine), then special functions are activated:<br>
+<br>
+If the Select button is pressed, then configuration mode is entered (see below).<br>
+<br>
+If the Start button is pressed, then firmware update mode is entered (see below).<br>
+<br style=BACKGROUND-COLOR:#ffff00>
+<font style=BACKGROUND-COLOR:#ffffff>If at least one of the buttons X/Cross, Y/Circle, A/Square or B/Triangle </font><font style=BACKGROUND-COLOR:#ffffff>is pressed then the non-default mode is activated. </font>Otherwise the default working mode is activated.<br>
+<br>
+If the joystick is moved to the up direction, the joystick is acting as a digital pad when in Dual Strike working mode (default). If the joystick is moved to the left direction, the joystick is acting as a left analogue stick when in Dual Strike working mode. If the joystick is moved to the right direction, the joystick is acting as a right analogue stick when in Dual Strike working mode.<br>
+<h2>
+  Configuration Mode
+</h2>
+In the configuration mode the behaviour of the Dual Strike can be changed, see Startup Behaviour for how to enter it. Leave it by pressing Start. When first entering configuration mode, it is in USB configuration mode, which means it is ready to be updated from a PC.<br>
+<br>
+If you want to change the configuration without a PC first press one of the action buttons (any other than Start, Select and Home). Then pressing entering the following button-joystick combinations changes the configuration:<br>
+<br>
+<p>
+  <b>Dual Strike default stick mode:</b>
+</p>
+<ul>
+  <li>
+    <i>Up</i> = digital pad only (precedence over Left and Right) [default]
+  </li>
+  <li>
+    <i>Left</i> = left analogue stick only
+  </li>
+  <li>
+    <i>Right</i> = right analogue stick only
+  </li>
+  <li>
+    <i>Down</i> = activate digital pad additionallly to left or right analogue stick
+  </li>
+</ul>
+<br>
+<b>Default Working Mode:</b><br>
+<i>Button:</i> LK<br>
+<ul>
+  <li>
+    <i>Left</i> = Dual Strike PS3 [default]
+  </li>
+  <li>
+    <i>Right</i> = pass-through
+  </li>
+</ul>
+<br>
+<b>Revert to defaults:</b><br>
+<i>Button:</i> MK<br>
+<ul>
+  <li>
+    <i>Any direction</i> = reverts to defaults<br>
+  </li>
+</ul>
+<br>
+<b>Start+Select=Home:</b><br>
+<i>Button:</i> LP<br>
+<ul>
+  <li>
+    <i>Left</i> = disabled [default]
+  </li>
+  <li>
+    <i>Right</i> = enabled
+  </li>
+</ul>
+<b><br>
+Extra Pins Mode</b>:<br>
+<i>Button:</i> MP<br>
+<ul>
+  <li>
+    <i>Up</i> = deactivated (precedence over Left and Right) [default]
+  </li>
+  <li>
+    <i>Left</i> = read joystick mode switch (precedence over Down) S3 and S4 have to be connected to a triple switch
+  </li>
+  <li>
+    <i>Right</i> = emulate joystick mode switch for pass-through (precedence over Down) S3 and S4 have to be connected to joystick mode pins on the pass-through PCB
+  </li>
+  <li>
+    <i>Down</i> = inverted triggers for pass-through S3 and S4 have to be connected to trigger pins with active high on the pass-through PCB
+  </li>
+</ul>
+<h2>
+  Firmware
+</h2>
+To update the firmware of your Dual Strike press and hold Start to switch to the firmware update mode, then you can execute the firmware update file to update the firmware (two command prompt windows should open with UAC, one without UAC). After releasing the Start button, firmware update mode is left.<br>
+After updating the firmware it is strongly recommended to enter configurationmode and load the defaults!<br>
+<br>
+The firmware update files are the following:<br>
+<table border=1 bordercolor=#000000 cellpadding=3 cellspacing=0>
+  <tbody>
+  <tr>
+    <td style=BACKGROUND-COLOR:#000000;COLOR:#ffffff;TEXT-ALIGN:center>
+      <b>Filename<br>
+      </b>
+    </td>
+    <td style=BACKGROUND-COLOR:#000000;COLOR:#ffffff;TEXT-ALIGN:center>
+      <b>Dual Strike type<br>
+      </b>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      update_firmware.bat<br>
+    </td>
+    <td>
+      classic<br>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      update_firmware_smd.bat<br>
+    </td>
+    <td>
+      SMD
+    </td>
+  </tr>
+  </tbody>
+</table>
+<h2>
+  History
+</h2>
+<table border=1 bordercolor=#000000 cellpadding=3 cellspacing=0>
+  <tbody>
+  <tr align=center style=BACKGROUND-COLOR:#000000;COLOR:#ffffff>
+    <td style=TEXT-ALIGN:center>
+      <b>Version Number<br>
+      </b>
+    </td>
+    <td style=TEXT-ALIGN:center>
+      <b>Changes<br>
+      </b>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      2.0.0<br>
+    </td>
+    <td>
+      <ul>
+        <li>
+          USB configuration mode, allowing configuration from a PC<br>
+        </li>
+      </ul>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      1.7.1<br>
+    </td>
+    <td>
+      <ul>
+        <li>
+          Bug Fixes<br>
+        </li>
+      </ul>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      1.7.0<br>
+    </td>
+    <td>
+      <ul>
+        <li>
+          PS3 mode: added support for analogue button/dpad values (like in SSFIITHDR and the on-screen keyboard)
+        </li>
+      </ul>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      1.6.2<br>
+    </td>
+    <td>
+      <ul>
+        <li>
+          merged SMD design code into source code
+        </li>
+      </ul>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      1.6.1<br>
+    </td>
+    <td>
+      <ul>
+        <li>
+          bug solved: triggers not working after being used to switch to non-default mode
+        </li>
+      </ul>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      1.6<br>
+    </td>
+    <td>
+      <ul>
+        <li>
+          changed configuration mode behaviour again
+        </li>
+        <li>
+          re-introduced inverted trigger configurablity
+        </li>
+        <li>
+          added joystick mode switch support
+        </li>
+        <li>
+          added joystick mode switch emulation
+        </li>
+        <li>
+          Dual Stick USB polling interval is now 1ms
+        </li>
+      </ul>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      1.5<br>
+    </td>
+    <td>
+      <ul>
+        <li>
+          changed configuration mode behaviour
+        </li>
+        <li>
+          added possibility to reset to the defaults
+        </li>
+      </ul>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      1.4<br>
+    </td>
+    <td>
+      <ul>
+        <li>
+          added right stick support
+        </li>
+        <li>
+          removed configuration possibility of inverted triggers
+        </li>
+      </ul>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      1.3<br>
+    </td>
+    <td>
+      <ul>
+        <li>
+          added configuration capabilities
+        </li>
+        <li>
+          PS3 Home Button support
+        </li>
+        <li>
+          inverted trigger support removed from build, still usable through recompilation
+        </li>
+      </ul>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      1.2<br>
+    </td>
+    <td>
+      <ul>
+        <li>
+          HID Device extended
+        </li>
+        <li>
+          Inverted Trigger Support
+        </li>
+      </ul>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      1.1<br>
+    </td>
+    <td>
+      <ul>
+        <li>
+          HID Device extended
+        </li>
+      </ul>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      1.0<br>
+    </td>
+    <td>
+      <ul>
+        <li>
+          initial release
+        </li>
+      </ul>
+    </td>
+  </tr>
+  </tbody>
+</table>
+<br></body>
+</html>

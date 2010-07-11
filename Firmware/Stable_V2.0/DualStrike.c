@@ -21,7 +21,6 @@ action buttons (any other than Start, Select and Home). Then pressing
 entering the following button-joystick combinations changes the 
 configuration:
 
-
 Dual Strike default stick mode:
 -------------------------------
 Up    = digital pad only (precedence over Left and Right) [default]
