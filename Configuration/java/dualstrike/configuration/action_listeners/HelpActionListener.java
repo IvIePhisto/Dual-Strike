@@ -22,11 +22,7 @@ public class HelpActionListener implements ActionListener {
 	public HelpActionListener(final ConfigurationEditor controller, final String message) {
 		this.controller = controller;
 		this.title = controller.getMainTitle() + " - " + MessageHelper.get(this, "helpTitle");
-		
-		if(message.matches("<html>.*<head>.*<base .*/>.*</head>.*</html>.*"))
-			this.message = message;
-		else
-			this.message = message.replace("<html>", "<html><head><base href=\"" + controller.getConfigurationDefinitionURL().toExternalForm() + "\"/></head>");
+		this.message = message;
 	}
 	
 	@Override
