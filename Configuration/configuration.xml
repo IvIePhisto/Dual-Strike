@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet href="configuration2html.xsl" type="text/xsl"?>
 <configuration
   xmlns="urn:strike-devices:configuration"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -11,8 +12,8 @@
   
   <title>Dual Strike Configuration</title>
   <title lang="de">Dual Strike Konfiguration</title>
-  <help><xi:include href="configuration-help.html" parse="text" encoding="utf-8"/></help>
-  <help lang="de"><xi:include href="configuration-help_de.html" parse="text" encoding="utf-8"/></help>
+  <help href="configuration-help.html"/>
+  <help lang="de" href="configuration-help_de.html"/>
   
   <device>1</device>
   <version>1</version>
