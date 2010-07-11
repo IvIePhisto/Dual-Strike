@@ -113,15 +113,15 @@ void configInit() {
 		programmer_setup();
 
 		while( Stick_Start
-		 	|| Stick_Jab
-			|| Stick_Strong
-			|| Stick_Fierce
-			|| Stick_Short
-			|| Stick_Forward
-			|| Stick_Roundhouse
+		 	&& Stick_Jab
+			&& Stick_Strong
+			&& Stick_Fierce
+			&& Stick_Short
+			&& Stick_Forward
+			&& Stick_Roundhouse
 #ifdef EXTRA_BUTTONS
-			|| Stick_Extra0
-			|| Stick_Extra1
+			&& Stick_Extra0
+			&& Stick_Extra1
 #endif
 )
 			programmer_poll();

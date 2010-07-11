@@ -1,3 +1,3 @@
 @ECHO OFF
-updateds.exe -r "dual_strike_firmware_V1.8.0.hex"
+hid-programmer.exe -r "dual_strike_firmware_V2.0.0.hex"
 Pause

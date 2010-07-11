@@ -23,11 +23,12 @@
 #define Stick_Start			(PINC & (1<<0))
 
 #if DUAL_STRIKE_SMD
-
 	#define SET_HOME_OUTPUT DDRB |= (1<<5);
 	#define SWITCH_HOME_LOW PORTB &= ~(1<<5);
 	#define SWITCH_HOME_HIGH PORTB |= (1<<5);
 
+	#define Stick_Up			(PINC & (1<<4))
+	#define Stick_Down			(PINC & (1<<5))
 	#define Stick_Left			(PINC & (1<<3))
 	#define Stick_Right			(PINC & (1<<2))
 
@@ -53,26 +54,16 @@
 		#define Stick_Extra1		(PINB & (1<<3))
 	#endif
 #else
-	#if USE_WII
-		//PC Button 13 - Home
-		#define Stick_Home			(PIND & (1<<0))
+	#define SET_HOME_OUTPUT DDRC |= (1<<5);
+	#define SWITCH_HOME_LOW PORTC &= ~(1<<5);
+	#define SWITCH_HOME_HIGH PORTC |= (1<<5);
 
-		#if EXTRA_BUTTONS
-			//PC Button 7 - L2 - 4K
-			#define Stick_Extra1		(PIND & (1<<3))
-		#endif
-	#else
-		//PC Button 13 - Home
-		#define Stick_Home			(PINC & (1<<5))
+	//PC Button 13 - Home
+	#define Stick_Home			(PINC & (1<<5))
 
-		#if EXTRA_BUTTONS
-			//PC Button 7 - L2 - 4K
-			#define Stick_Extra1		(PINC & (1<<4))
-		#endif
-
-		#define SET_HOME_OUTPUT DDRC |= (1<<5);
-		#define SWITCH_HOME_LOW PORTC &= ~(1<<5);
-		#define SWITCH_HOME_HIGH PORTC |= (1<<5);
+	#if EXTRA_BUTTONS
+		//PC Button 7 - L2 - 4K
+		#define Stick_Extra1		(PINC & (1<<4))
 	#endif
 
 	#define Stick_Up			(PIND & (1<<6))
