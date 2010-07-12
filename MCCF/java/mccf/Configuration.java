@@ -135,10 +135,12 @@ public class Configuration {
 		File configurationDefinitionFile;
 		
 		if(configurationPath == null)
-			configurationDefinitionFile = null;
+			configurationDefinitionFile = ConfigurationEditor.DEFAULT_CONFIGURATION_DEFINITION_FILE;
 		else
 			configurationDefinitionFile = new File(configurationPath);
 
+		configurationDefinitionFile = configurationDefinitionFile.getAbsoluteFile();
+		
 		if(configurationDefinitionFile != null && !configurationDefinitionFile.exists())
 			showMessage(MessageHelper.get(Configuration.class, "configurationDefinitionNotFound", language, configurationDefinitionFile), language, true);
 
@@ -152,7 +154,7 @@ public class Configuration {
 			showMessage(MessageHelper.get(Configuration.class, "configurationDefinitionNotFound", language, configurationDefinitionFile), language, true);
 		}
 		catch(IOException e) {
-			showMessage(MessageHelper.get(Configuration.class, "configurationDefinitionLoadingError", language, e.getLocalizedMessage()), language, true);
+			showMessage(MessageHelper.get(Configuration.class, "configurationDefinitionLoadingError", language, configurationDefinitionFile), language, true);
 		}
 	}
 	

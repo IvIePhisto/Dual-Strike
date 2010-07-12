@@ -28,6 +28,8 @@ import java.net.URL;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -154,8 +156,17 @@ public class ConfigurationEditor implements HyperlinkListener {
 		
 		if(tooltip == null || tooltip.equals(""))
 			tooltip = postfix;
-		else
-			tooltip += " " + postfix;
+		else {
+			Matcher matcher;
+			
+			matcher = Pattern.compile("(.*<html>.*)(</html>.*)").matcher(tooltip);
+			
+			if(matcher.matches()) {
+				tooltip = matcher.group(1) + " " + postfix + matcher.group(2);
+			}
+			else
+				tooltip += " " + postfix;
+		}
 		
 		defaultSetting.setToolTipText(tooltip);
 	}
@@ -523,13 +534,8 @@ public class ConfigurationEditor implements HyperlinkListener {
 		selectorPanel.setLayout(new BoxLayout(selectorPanel, BoxLayout.Y_AXIS));
 		selectorPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
 		isEnabled = b.isDefault();
-		enableButton = addRadioButton(MessageHelper.get(this, "trueButtonText", language), buttons, selectorPanel, isEnabled);
-		disableButton = addRadioButton(MessageHelper.get(this, "falseButtonText", language), buttons, selectorPanel, !isEnabled);
-		
-		if(isEnabled)
-			makeDefault(enableButton);
-		else
-			makeDefault(disableButton);
+		enableButton = addRadioButton(MessageHelper.get(this, "trueButtonText", language), null, buttons, selectorPanel, isEnabled);
+		disableButton = addRadioButton(MessageHelper.get(this, "falseButtonText", language), null, buttons, selectorPanel, !isEnabled);
 		
 		model.addBoolean(b, enableButton, disableButton);
 		
@@ -620,14 +626,14 @@ public class ConfigurationEditor implements HyperlinkListener {
 		selectorPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
 	
 		for(Option o: choiceSetting.getOption()) {
-			boolean isSelected;
+			boolean selected;
 			String title;
 			String help;
 			
-			isSelected = o.getId().equals(defaultOptionID);
+			selected = o.getId().equals(defaultOptionID);
 			title = getLocalizedInfo(o.getTitle(), true);
 			help = getLocalizedInfo(o.getHelp(), true);
-			addRadioButton(title, buttons, selectorPanel, isSelected).setToolTipText(help);
+			addRadioButton(title, help, buttons, selectorPanel, selected);
 		}
 		
 		model.addChoice(choiceSetting, buttons);
@@ -635,12 +641,15 @@ public class ConfigurationEditor implements HyperlinkListener {
 		return selectorPanel;
 	}
 
-	private JRadioButton addRadioButton(String text, ButtonGroup buttons, JPanel panel, boolean selected) {
+	private JRadioButton addRadioButton(final String text, final String toolTip, final ButtonGroup buttons, final JPanel panel, final boolean selected) {
 		JRadioButton button;
 		
 		button = new JRadioButton(text);
 		button.setFont(DESCRIPTION_FONT);
 		button.setSelected(selected);
+		
+		if(toolTip != null)
+			button.setToolTipText(toolTip);
 		
 		if(selected)
 			makeDefault(button);

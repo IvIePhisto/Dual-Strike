@@ -5,13 +5,12 @@
     <property file="local.build.properties"/>
 	
   <target name="javac" description="Compile Java source files.">
-    <javac target="1.6" srcdir="${src.dir}" destdir="${src.dir}" debug="${javac.debug}"/>
+  	<mkdir dir="${javac.dest.dir}"/>
+    <javac target="1.6" srcdir="${src.dir}" optimize="true" destdir="${javac.dest.dir}" debug="${javac.debug}"/>
   </target>
 
   <target name="javac.clean" description="Delete generated Java binary files.">
-    <delete>
-      <fileset dir="${src.dir}" includes="**/*.class"/>
-    </delete>
+    <delete dir="${javac.dest.dir}"/>
   </target>
   
   <target name="javac.recompile" depends="javac.clean, javac" description="Recompile all Java source files."/>
@@ -38,17 +37,21 @@
         <mkdir dir="${pack.dir}"/>
     </target>
 
-  <target name="pack.jar" depends="javac, pack.init" description="Create the JAR package.">
+  <target name="pack.jar" depends="javac.clean, javac, pack.init" description="Create the JAR package.">
         <delete file="${pack.dir}/${project.name.short}-${project.version}.jar"/>
         <jar destfile="${pack.dir}/${project.name.short}-${project.version}.jar" filesonly="true">
             <manifest>
                 <attribute name="Sealed" value="true"/>
                 <attribute name="Main-Class" value="${pack.jar.class}"/>
             </manifest>
-            <fileset dir="${src.dir}">
+          <fileset dir="${src.dir}">
+              <include name="**/*"/>
+              <exclude name="**/*.class"/>
+              <exclude name="**/*.java"/>
+              <exclude name="**/*.html"/>
+          </fileset>
+            <fileset dir="${javac.dest.dir}">
                 <include name="**/*"/>
-                <exclude name="**/*.java"/>
-                <exclude name="**/*.html"/>
             </fileset>
         </jar>
   </target>
