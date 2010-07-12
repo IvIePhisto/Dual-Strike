@@ -97,7 +97,8 @@
         <include name="configuration-*.html"/>
         <include name="configuration.*"/>
         <include name="dualstrike.png"/>
-        <include name="*.txt"/>
+        <include name="Readme.txt"/>
+        <include name="mcc_Readme.txt"/>
         <include name="hid-programmer.exe"/>
         <include name="HID_Programmer/**/*"/>
   		</fileset>
