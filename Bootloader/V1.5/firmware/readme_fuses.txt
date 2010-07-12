@@ -1,3 +1,24 @@
-For disablin reset line use
+NOTE: If you are just updating the firmware, you don't need to worry about any of this.
 
-0x40 high and 0x9f low 
+Fuse settings for the ATmega168
+===============================
+
+extended:	0xf8
+high:		0xdf
+low:		0xef
+
+
+
+Disable Reset Line
+
+extended:	0xf8
+high:		0x5f
+low:		0xef
+
+
+
+To program with avrdude use the following command line:
+
+> avrdude -c <your programmer> -p atmega168 -U lfuse:w:0xef:m -U hfuse:w:0xdf:m -U efuse:w:0xf8:m
+
+Ignore warnings about the efuse not being set properly, it is a limitation of avrdude.
