@@ -1,0 +1,17 @@
+﻿Return Codes
+------------
+
+-3: Flash and EEPROM programming available
+-2: EEPROM programming available
+-1: Flash programming available
+0: Completed Successfully
+1: Wrong Arguments
+2: Open Device Error
+3: Open Flash File Error
+4: Empty Flash File
+5: Flash Programming Error
+6: Open EEPROM File Error
+7: Empty EEPROM File
+8: EEPROM Programming Error
+9: EEPROM Dumping Error
+10: Writing EEPROM Dump File Error

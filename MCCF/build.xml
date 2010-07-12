@@ -84,7 +84,38 @@
   	
   <target name="build" depends="javac, javadoc" description="Compile files and generate API documentation."/>
   <target name="build.clean" depends="javac.clean, javadoc.clean" description="Delete compilation output and API documentation."/>
+	
   <target name="clean" description="Delete all generated files.">
     <delete dir="${build.dir}"/>
   </target>
+	
+	<target name="dist" depends="pack.jar">
+		<delete file="${pack.dir}/${project.name.short}-${project.version}-example.zip"/>
+	  <zip destfile="${pack.dir}/${project.name.short}-${project.version}-example.zip">
+	  	<fileset dir=".">
+  	  	<include name="arcadestick.jpg"/>
+        <include name="configuration-*.html"/>
+        <include name="configuration.*"/>
+        <include name="dualstrike.png"/>
+        <include name="*.txt"/>
+        <include name="hid-programmer.exe"/>
+        <include name="HID_Programmer/**/*"/>
+  		</fileset>
+	  	<fileset dir="${pack.dir}">
+	  	  <filename name="${project.name.short}-${project.version}.jar"/>
+	  	</fileset>
+	  	<!--
+	    <fileset dir=".">
+        <include name="arcadestick.jpg"/>
+        <include name="configuration-*.html"/>
+        <include name="configuration.*"/>
+        <include name="dualstrike.png"/>
+        <include name="*.txt"/>
+        <include name="hid-programmer.exe"/>
+        <include name="${pack.dir}/${project.name.short}-${project.version}.jar"/>
+        <exclude name="build/**/*"/>
+    	</fileset>
+    	-->
+	  </zip>
+	</target>
 </project>
