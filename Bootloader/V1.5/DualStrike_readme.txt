@@ -1,3 +1,7 @@
+Bootloader V1.5
+
+This bootloader is for ATMEGA168 MCU.
+
 01.07.2010
 
 Update of DUal Strike Firmware
