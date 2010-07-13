@@ -1,3 +1,5 @@
+http://www.obdev.at/products/vusb/bootloadhid.html
+
 http://www.mikrocontroller.net/articles/Bootloader
 http://www.fischl.de/usbasp/
 http://www.obdev.at/products/vusb/usbasploader.html

@@ -21,8 +21,8 @@
   <page>
     <title>Defaults</title>
     <title lang="de">Standards</title>
-    <help>Defaults for settings of the Dual Strike.</help>
-    <help lang="de">Standards für Einstellungen des Dual Strike.</help>
+    <help>Config the default settings of the Dual Strike.</help>
+    <help lang="de">Konfiguration der Dual Strike Standardeinstellungen.</help>
     
     <choice prefix="DEF_WORK_MODE_" default="PS3">
       <title>Default Working Mode</title>
@@ -38,10 +38,10 @@
       </option>
       
       <option id="PT">
-        <title>Pass-Through</title>
-        <title lang="de">Durchschleifen</title>
+        <title>Pass-Through (XBox360 or other)</title>
+        <title lang="de">Durchschleifen (XBox360 oder andere)</title>
         <help>The pass-through data connections are routed to the USB data connections on the Dual Strike PCB.</help>
-        <help lang="de">Die Durschleif-Datenanschlüsse werden auf die USB Datenanschlüsse auf dem Dual Strike PCB geleitet.</help>
+        <help lang="de">Die Durschleif-Datenanschlüsse werden auf die USB Datenanschlüsse des Dual Strike PCB geleitet.</help>
       </option>
     </choice>
     
