@@ -150,7 +150,7 @@ public class ConfigurationEditor implements HyperlinkListener {
 		String tooltip;
 		String postfix;
 		
-		defaultSetting.setFont(defaultSetting.getFont().deriveFont(Font.BOLD));
+		defaultSetting.setFont(defaultSetting.getFont().deriveFont(Font.ITALIC));
 		tooltip = defaultSetting.getToolTipText();
 		postfix = MessageHelper.get(ConfigurationEditor.class, "default");
 		
@@ -467,8 +467,7 @@ public class ConfigurationEditor implements HyperlinkListener {
 		}
 
 		scrollPane = new JScrollPane(panel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-		scrollPane.putClientProperty(JEditorPane.HONOR_DISPLAY_PROPERTIES, true);
-		
+
 		return scrollPane;
 	}
 
@@ -681,7 +680,8 @@ public class ConfigurationEditor implements HyperlinkListener {
 		editorPane = new JEditorPane("text/html", message);
 		editorPane.setEditable(false);
 		editorPane.putClientProperty(JEditorPane.HONOR_DISPLAY_PROPERTIES, true);
-
+		editorPane.setCaretPosition(0);
+		
 		if(DESKTOP != null)
 			editorPane.addHyperlinkListener(this);
 
