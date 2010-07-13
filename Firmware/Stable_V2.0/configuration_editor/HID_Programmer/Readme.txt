@@ -16,3 +16,5 @@ Differences to bootloadHID
 Addition of EEPROM programming capabilities.
 Different return codes (except 0 and 1) depending on the processing outcome.
 See "return_codes.txt" for a list of them.
+Also works for devices with the Retro Adapter's <http://retro.world3.net/> 
+bootloader Vendor and Product information.

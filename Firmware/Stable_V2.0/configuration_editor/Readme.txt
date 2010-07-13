@@ -1,7 +1,7 @@
 Dual Strike Configuration
 =========================
-You need the firmware 2.0 installed on your Dual Strike. You also need a Java 6
-Runtime Environment (for example from Oracle: http://www.java.com/download/)
+You need the firmware 2.0.0 installed on your Dual Strike. You also need a Java
+6 Runtime Environment (for example from Oracle: http://www.java.com/download/)
 installed on your PC. Non-Windows users please read "mcc_Readme.txt".
 
 Start the configuration editor by double-clicking on "mcc-1.0.0.jar".

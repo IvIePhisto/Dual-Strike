@@ -10,10 +10,11 @@ License: GNU General Public License V3
 Some files were released under different licenses, see the appropiate text
 files for more information.
 
-This configuration engine is a framework for bit-based configurations.
+This is a framework for bit-based configurations giving the end user a
+comfortable GUI and the developer easy handling of persistent settings.
 It is aimed at usage with AVR microcontrollers to read out, modify and update
-EEPROM data. It makes heavy use of the XML technologies XML Schema and XSL
-Transformations.
+EEPROM configuration data. It makes heavy use of the XML technologies XML 
+Schema and XSL Transformations.
 
 The PC software part requires a Java 6 Runtime Environment. On all systems
 except Windows custom compilation of the "HID Programmer" is necessary. See
@@ -22,10 +23,10 @@ except Windows custom compilation of the "HID Programmer" is necessary. See
 
 Usage for Projects
 ~~~~~~~~~~~~~~~~~~
-All you need is to write a configuration definition file, generate a header file
-from it which you have to use in your microcontroller firmware. You also have
-to include the required HID functionality, see the Bootload HID 2.0 project for
-details. 
+All you need is to write a configuration definition file and generate a header
+file from it which you have to use in your microcontroller firmware. You also 
+have to include the required HID functionality, see the "Bootload_HID_V2" 
+directory for details. 
 Then you can bundle the definition file with the "mcc-*.*.*.jar" file together
 with documentation (at least "Readme.txt" containing information about your
 project) and other resources (like pictures used in the documentation).

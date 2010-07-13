@@ -1,5 +1,5 @@
-Microcontroller Configuration Engine for Developers
-===================================================
+Microcontroller Configuration Framework
+=======================================
 
 Author:    Michael Pohl
  Email:    pohl-michael@gmx.biz
@@ -10,10 +10,11 @@ License: GNU General Public License V3
 Some files were released under different licenses, see the appropiate text
 files for more information.
 
-This configuration engine is a framework for bit-based configurations.
+This is a framework for bit-based configurations giving the end user a
+comfortable GUI and the developer easy handling of persistent settings.
 It is aimed at usage with AVR microcontrollers to read out, modify and update
-EEPROM data. It makes heavy use of the XML technologies XML Schema and XSL
-Transformations.
+EEPROM configuration data. It makes heavy use of the XML technologies XML 
+Schema and XSL Transformations.
 
 The PC software part requires a Java 6 Runtime Environment. On all systems
 except Windows custom compilation of the "HID Programmer" is necessary. See

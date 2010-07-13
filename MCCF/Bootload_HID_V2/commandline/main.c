@@ -19,15 +19,10 @@
 #include <errno.h>
 #include "usbcalls.h"
 
-#define IDENT_VENDOR_NUM_0        0x16c0
-#define IDENT_VENDOR_STRING_0     "obdev.at"
-#define IDENT_PRODUCT_NUM_0       1503
-#define IDENT_PRODUCT_STRING_0    "HIDBoot"
-
-#define IDENT_VENDOR_NUM_1        0x8282
-#define IDENT_VENDOR_STRING_1     "MoJo"
-#define IDENT_PRODUCT_NUM_1       0x2301
-#define IDENT_PRODUCT_STRING_1    "RA Update Mode"
+#define IDENT_VENDOR_NUM        0x16c0
+#define IDENT_VENDOR_STRING     "obdev.at"
+#define IDENT_PRODUCT_NUM       1503
+#define IDENT_PRODUCT_STRING    "HIDBoot"
 
 /* ------------------------------------------------------------------------- */
 
@@ -482,12 +477,10 @@ int main(int argc, char **argv) {
 	if(eepromDumpFile != NULL)
 		printf("EEPROM dump file: \"%s\"\n", eepromDumpFile);
 		
-    if((err = usbOpenDevice(&dev, IDENT_VENDOR_NUM_0, IDENT_VENDOR_STRING_0, IDENT_PRODUCT_NUM_0, IDENT_PRODUCT_STRING_0, 1)) != 0){
-		if((err = usbOpenDevice(&dev, IDENT_VENDOR_NUM_1, IDENT_VENDOR_STRING_1, IDENT_PRODUCT_NUM_1, IDENT_PRODUCT_STRING_1, 1)) != 0){
-			fprintf(stderr, "Error opening HIDBoot device: %s\n", usbErrorMessage(err));
-			return 2;
-		}
-	}
+    if((err = usbOpenDevice(&dev, IDENT_VENDOR_NUM, IDENT_VENDOR_STRING, IDENT_PRODUCT_NUM, IDENT_PRODUCT_STRING, 1)) != 0){
+        fprintf(stderr, "Error opening HIDBoot device: %s\n", usbErrorMessage(err));
+		return 2;
+    }
 	else if(argc == 1) {
 		int returnValue;
 		
