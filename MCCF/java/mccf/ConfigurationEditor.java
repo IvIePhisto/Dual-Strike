@@ -431,7 +431,6 @@ public class ConfigurationEditor implements HyperlinkListener {
 		JTabbedPane tabs;
 		
 		tabs = new JTabbedPane(JTabbedPane.TOP, JTabbedPane.SCROLL_TAB_LAYOUT);
-		tabs.setBackground(new Color(255,0,0));
 		
 		for(Page page: configuration.getPage())
 			tabs.addTab(getLocalizedInfo(page.getTitle(), true), createTabContent(page));
