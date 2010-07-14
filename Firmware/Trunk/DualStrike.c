@@ -33,6 +33,7 @@ Default Working Mode:
 ---------------------
 Button: LK
 Left  = Dual Strike PS3 [default]
+Up    = Dual Strike MAME
 Right = pass-through
 
 revert to defaults:
@@ -59,8 +60,10 @@ Down  = inverted triggers for pass-through
 		pass-through PCB		
 */
 
-#define WORKING_MODE_PS3	0
-#define WORKING_MODE_PT		1
+#define WORKING_MODE_PT		0
+#define WORKING_MODE_PS3	1
+#define WORKING_MODE_MAME	2
+
 
 // declares config and config_EEPROM
 CFG_DECLARATION
@@ -151,7 +154,10 @@ void configInit() {
 				if(!Stick_Left) {
 					CFG_SET_DEF_WORK_MODE_PS3(newConfig)
 				}
-				if(!Stick_Right) {
+				else if(!Stick_Up) {
+					CFG_SET_DEF_WORK_MODE_MAME(newConfig)
+				}
+				else if(!Stick_Right) {
 					CFG_SET_DEF_WORK_MODE_PT(newConfig)
 				}
 			}
@@ -193,7 +199,7 @@ int setModePS3() {
 	return WORKING_MODE_PS3;
 }
 
-int setModePT() {	
+void setModeUSB() {	
 	if(CFG_HOME_EMU)
 		SET_HOME_OUTPUT
 
@@ -203,8 +209,18 @@ int setModePT() {
 	}
 
 	PORTD |= (1<<3); // enable pass-through usb lines
+}
+
+int setModePT() {	
+	setModeUSB();
 
 	return WORKING_MODE_PT;
+}
+
+int setModeMAME() {	
+	setModeUSB();
+
+	return WORKING_MODE_MAME;
 }
 
 // README
@@ -220,7 +236,7 @@ If the Select button is pressed, then configuration mode is entered (see below).
 If the Start button is pressed, then firmware update mode is entered (see below).
 
 If the button A/Cross is pressed, then the PS3 mode is activated.
-If the button B/Circle is pressed, then the XBox mode is activated.
+If the button B/Circle is pressed, then the MAME mode is activated.
 If the button X/Square is pressed, then the pass-through mode is activated.
 Otherwise the default working mode is activated.
 
@@ -264,9 +280,13 @@ int hardwareInit() {
 		return setModePS3();
 	else if(!Stick_Jab)
 		return setModePT();
+	else if(!Stick_Forward)
+		return setModeMAME();
 	else {
 		if(CFG_DEF_WORK_MODE_PS3)
 			return setModePS3();
+		else if(CFG_DEF_WORK_MODE_MAME)
+			return setModeMAME();
 		else
 			return setModePT();
 	}
@@ -308,12 +328,16 @@ uchar* data[132];
 int main(void)
 {
 	switch(hardwareInit()) {
+	case WORKING_MODE_PT:
+	  pass_through();
+	  break;
+
 	case WORKING_MODE_PS3:
 	  ps3_controller();
 	  break;
 
-	case WORKING_MODE_PT:
-	  pass_through();
+	case WORKING_MODE_MAME:
+	  mame_controller();
 	  break;
 	}
 

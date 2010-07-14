@@ -21,9 +21,15 @@ typedef struct {
 	uchar	analogue_buttons[12];
 } ps3report_t;
 
+typedef struct {
+	uchar	reportID;
+	uchar	reportData[2];
+} mame_report_t;
+
 typedef union {
 	uchar array[132];
 	ps3report_t ps3report;
+	mame_report_t mame_report;
 } usb_data_t;
 
 extern usb_data_t data;
@@ -32,10 +38,11 @@ extern usb_data_t data;
 #define HID_REPORT_TYPE_OUTPUT 2
 #define HID_REPORT_TYPE_FEATURE 3
 
-uchar usbMode = 0;
+uchar usbMode = -1;
 
+#define USB_MODE_PROGRAMMER 0
 #define USB_MODE_PS3 1
-#define USB_MODE_PROGRAMMER 2
+#define USB_MODE_MAME 2
 
 #include "descriptors.c"
 
@@ -231,5 +238,6 @@ void setupUSB() {
 	usbPoll();
 }
 
-#include "ps3.c"
 #include "programmer.c"
+#include "ps3.c"
+#include "mame.c"

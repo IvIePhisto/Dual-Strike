@@ -1,10 +1,10 @@
 ###############################################################################
-# Makefile for Dual Strike Wii Firmware
+# Makefile for Dual Strike PS3 and Pass-Through Firmware
 ###############################################################################
 
 ## General Flags
 PROJECT = DualStrike
-MCU = atmega8
+MCU = atmega168
 TARGET = DualStrike.elf
 CC = avr-gcc
 
@@ -15,7 +15,7 @@ COMMON = -mmcu=$(MCU)
 
 ## Compile options common for all C compilation units.
 CFLAGS = $(COMMON)
-CFLAGS += -Wall -std=c99 -DF_CPU=12000000UL -DUSE_WII=1 -DUSE_PS3=0 -DUSE_PT=0 -O2 -fsigned-char
+CFLAGS += -Wall -std=c99 -DF_CPU=12000000UL -O3 -fsigned-char
 CFLAGS += -MD -MP -MT $(*F).o -MF dep/$(@F).d 
 
 ## Assembly specific flags
@@ -37,23 +37,29 @@ HEX_EEPROM_FLAGS += --change-section-lma .eeprom=0 --no-change-warnings
 
 
 ## Objects that must be built in order to link
-OBJECTS = DualStrike.o wiimote_extension_controller.o wiimote.o 
+OBJECTS = DualStrike.o pass-through.o usb_controller.o usbdrv.o usbdrvasm.o 
 
 ## Objects explicitly added by the user
 LINKONLYOBJECTS = 
 
 ## Build
-all: $(TARGET) dual_strike_firmware_wii.hex dual_strike_firmware_wii.eep size
+all: $(TARGET) dual_strike_firmware.hex dual_strike_firmware.eep size
 
 ## Compile
 DualStrike.o: ../DualStrike.c
 	$(CC) $(INCLUDES) $(CFLAGS) -c  $<
 
-wiimote_extension_controller.o: ../wii/wiimote_extension_controller.c
+pass-through.o: ../pass-through/pass-through.c
 	$(CC) $(INCLUDES) $(CFLAGS) -c  $<
 
-wiimote.o: ../wii/wiimote.c
+usb_controller.o: ../usb/usb_controller.c
 	$(CC) $(INCLUDES) $(CFLAGS) -c  $<
+
+usbdrv.o: ../usb/usbdrv/usbdrv.c
+	$(CC) $(INCLUDES) $(CFLAGS) -c  $<
+
+usbdrvasm.o: ../usb/usbdrv/usbdrvasm.S
+	$(CC) $(INCLUDES) $(ASMFLAGS) -c  $<
 
 ##Link
 $(TARGET): $(OBJECTS)

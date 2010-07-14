@@ -135,6 +135,112 @@ PROGMEM char usbDescriptorConfigurationPS3[] = {
     1 							/* interrupt poll interval in ms */
 };
 
+// MAME
+
+PROGMEM char usbHidReportDescriptorMAME[131] = {
+    0x05, 0x07,                    // USAGE_PAGE (Keyboard)
+    0xa1, 0x01,                    // COLLECTION (Application)
+    0x15, 0x00,                    //   LOGICAL_MINIMUM (0)
+    0x25, 0x01,                    //   LOGICAL_MAXIMUM (1)
+    0x75, 0x01,                    //   REPORT_SIZE (1)
+    0x85, 0x01,                    //   REPORT_ID (1)
+    0x09, 0x52,                    //   USAGE (Keyboard UpArrow)
+    0x09, 0x4f,                    //   USAGE (Keyboard RightArrow)
+    0x09, 0x51,                    //   USAGE (Keyboard DownArrow)
+    0x09, 0x50,                    //   USAGE (Keyboard LeftArrow)
+    0x09, 0xe1,                    //   USAGE (Keyboard LeftShift)
+    0x09, 0x1b,                    //   USAGE (Keyboard x and X)
+    0x09, 0x1c,                    //   USAGE (Keyboard y and Y)
+    0x09, 0x00,                    //   USAGE (Reserved (no event indicated))
+    0x09, 0xe0,                    //   USAGE (Keyboard LeftControl)
+    0x09, 0xe2,                    //   USAGE (Keyboard LeftAlt)
+    0x09, 0x2c,                    //   USAGE (Keyboard Spacebar)
+    0x09, 0xe1,                    //   USAGE (Keyboard LeftShift)
+    0x09, 0x22,                    //   USAGE (Keyboard 5 and %)
+    0x09, 0x1e,                    //   USAGE (Keyboard 1 and !)
+    0x09, 0x13,                    //   USAGE (Keyboard p and P)
+    0x95, 0x0f,                    //   REPORT_COUNT (15)
+    0x81, 0x00,                    //   INPUT (Data,Ary,Abs)
+    0x95, 0x01,                    //   REPORT_COUNT (1)
+    0x81, 0x01,                    //   INPUT (Cnst,Ary,Abs)
+    0x85, 0x02,                    //   REPORT_ID (2)
+    0x09, 0x15,                    //   USAGE (Keyboard r and R)
+    0x09, 0x0a,                    //   USAGE (Keyboard g and G)
+    0x09, 0x09,                    //   USAGE (Keyboard f and F)
+    0x09, 0x07,                    //   USAGE (Keyboard d and D)
+    0x09, 0x1a,                    //   USAGE (Keyboard w and W)
+    0x09, 0x0e,                    //   USAGE (Keyboard k and K)
+    0x09, 0x0c,                    //   USAGE (Keyboard i and I)
+    0x09, 0x00,                    //   USAGE (Reserved (no event indicated))
+    0x09, 0x04,                    //   USAGE (Keyboard a and A)
+    0x09, 0x16,                    //   USAGE (Keyboard s and S)
+    0x09, 0x14,                    //   USAGE (Keyboard q and Q)
+    0x09, 0x1a,                    //   USAGE (Keyboard w and W)
+    0x09, 0x23,                    //   USAGE (Keyboard 6 and ^)
+    0x09, 0x1f,                    //   USAGE (Keyboard 2 and @)
+    0x09, 0x13,                    //   USAGE (Keyboard p and P)
+    0x95, 0x0f,                    //   REPORT_COUNT (15)
+    0x81, 0x00,                    //   INPUT (Data,Ary,Abs)
+    0x95, 0x01,                    //   REPORT_COUNT (1)
+    0x81, 0x01,                    //   INPUT (Cnst,Ary,Abs)
+    0x85, 0x03,                    //   REPORT_ID (3)
+    0x09, 0x52,                    //   USAGE (Keyboard UpArrow)
+    0x09, 0x4f,                    //   USAGE (Keyboard RightArrow)
+    0x09, 0x51,                    //   USAGE (Keyboard DownArrow)
+    0x09, 0x50,                    //   USAGE (Keyboard LeftArrow)
+    0x09, 0x3b,                    //   USAGE (Keyboard F2)
+    0x09, 0x3c,                    //   USAGE (Keyboard F3)
+    0x09, 0x00,                    //   USAGE (Reserved (no event indicated))
+    0x09, 0x81,                    //   USAGE (Keyboard Volume Down)
+    0x09, 0x28,                    //   USAGE (Keyboard Return (ENTER))
+    0x09, 0x29,                    //   USAGE (Keyboard ESCAPE)
+    0x09, 0x00,                    //   USAGE (Reserved (no event indicated))
+    0x09, 0x80,                    //   USAGE (Keyboard Volume Up)
+    0x09, 0x26,                    //   USAGE (Keyboard 9 and ()
+    0x09, 0x2b,                    //   USAGE (Keyboard Tab)
+    0x09, 0x00,                    //   USAGE (Reserved (no event indicated))
+    0x95, 0x0f,                    //   REPORT_COUNT (15)
+    0x81, 0x00,                    //   INPUT (Data,Ary,Abs)
+    0x95, 0x01,                    //   REPORT_COUNT (1)
+    0x81, 0x01,                    //   INPUT (Cnst,Ary,Abs)
+    0xc0                           // END_COLLECTION
+};
+
+PROGMEM char usbDescriptorConfigurationMAME[] = {
+    /* HID USB configuration descriptor */
+    9,          				/* sizeof(usbDescriptorConfiguration): length of descriptor in bytes */
+    USBDESCR_CONFIG,   	 		/* descriptor type */
+    34, 0,      				/* total length of data returned (including inlined descriptors) */
+    1,          				/* number of interfaces in this configuration */
+    1,          				/* index of this configuration */
+    0,          				/* configuration name string index */
+    (char)USBATTR_BUSPOWER, 	/* attributes */
+    USB_CFG_MAX_BUS_POWER/2,	/* max USB current in 2mA units */
+/* interface descriptor follows inline: */
+    9,   			 	    	/* sizeof(usbDescrInterface): length of descriptor in bytes */
+    USBDESCR_INTERFACE,			/* descriptor type */
+    0,          				/* index of this interface */
+    0,							/* alternate setting for this interface */
+    1, 							/* endpoints excl 0: number of endpoint descriptors to follow */
+    3,							/* USB interface class: HID */
+    0,							/* USB interface subclass */
+    0,							/* USB interface protocol */
+    0,          				/* string index for interface */
+    9,          				/* sizeof(usbDescrHID): length of descriptor in bytes */
+    USBDESCR_HID,   			/* descriptor type: HID */
+    0x01, 0x01,					/* BCD representation of HID version */
+    0x00,       				/* target country code */
+    0x01,       				/* number of HID Report (or other HID class) Descriptor infos to follow */
+    0x22,       				/* descriptor type: report */
+    sizeof(usbHidReportDescriptorMAME), 0, /* total length of report descriptor */
+    7,          				/* sizeof(usbDescrEndpoint) */
+    USBDESCR_ENDPOINT,			/* descriptor type = endpoint */
+    0x81,						/* IN endpoint number 1 */
+    0x03,						/* attrib: Interrupt endpoint */
+    8, 0,						/* maximum packet size */
+    1 							/* interrupt poll interval in ms */
+};
+
 // PROGRAMMER
 
 PROGMEM char usbDescriptorDeviceHIDBoot[] = {    /* USB device descriptor */
@@ -275,6 +381,46 @@ usbMsgLen_t usbFunctionDescriptor(struct usbRequest *rq) {
 	    case USBDESCR_HID_REPORT:
 			usbMsgPtr = (uchar*)usbHidReportDescriptorPS3;
 			len = sizeof(usbHidReportDescriptorPS3);
+
+			break;
+	    }
+	}
+	if(usbMode == USB_MODE_MAME) {
+	    switch(rq->wValue.bytes[1]) {
+	    case USBDESCR_DEVICE:
+			usbMsgPtr = (uchar *)(usbDescriptorDeviceDS);
+			len = sizeof(usbDescriptorDeviceDS);
+			break;
+
+	    case USBDESCR_STRING:
+			switch(rq->wValue.bytes[0]) {
+			case 1: // Vendor
+				usbMsgPtr = (uchar *)(usbDescriptorStringVendorDS);
+				len = sizeof(usbDescriptorStringVendorDS);
+				break;
+			case 2: // Device
+				usbMsgPtr = (uchar *)(usbDescriptorStringDeviceDS);
+				len = sizeof(usbDescriptorStringDeviceDS);
+				break;
+			}
+
+			break;
+
+	    case USBDESCR_CONFIG:
+			usbMsgPtr = (uchar*)usbDescriptorConfigurationMAME;
+			len = sizeof(usbDescriptorConfigurationMAME);
+
+			break;
+
+	    case USBDESCR_HID:
+			usbMsgPtr = (uchar *)(usbDescriptorConfigurationMAME + 18);
+			len = usbDescriptorConfigurationMAME[18];
+
+			break;
+
+	    case USBDESCR_HID_REPORT:
+			usbMsgPtr = (uchar*)usbHidReportDescriptorMAME;
+			len = sizeof(usbHidReportDescriptorMAME);
 
 			break;
 	    }
