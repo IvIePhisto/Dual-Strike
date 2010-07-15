@@ -43,7 +43,7 @@ OBJECTS = DualStrike.o pass-through.o usb_controller.o usbdrv.o usbdrvasm.o
 LINKONLYOBJECTS = 
 
 ## Build
-all: $(TARGET) dual_strike_firmware.hex dual_strike_firmware.eep size
+all: $(TARGET) dual_strike_168_firmware.hex dual_strike_168_firmware.eep size
 
 ## Compile
 DualStrike.o: ../DualStrike.c
