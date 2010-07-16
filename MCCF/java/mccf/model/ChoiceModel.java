@@ -112,7 +112,9 @@ public abstract class ChoiceModel extends SettingModel {
 			}
 			
 			bit = ConfigurationModel.getBit(bytes, currentByte, currentBitInByte);
-			option += bit?1:0 << currentBit; 
+			
+			if(bit)
+				option += 1<<currentBit;
 		}
 		
 		setCurrentOption(option);

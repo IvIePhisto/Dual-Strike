@@ -100,7 +100,7 @@ public class ConfigurationModel {
 		boolean bit;
 		
 		value = (byte)(bytes[byteNo] >> bitNo);
-		value &= ~0xFE;
+		value &= 1;
 		bit = value == 1;
 		
 		return bit;

@@ -30,3 +30,7 @@ see "Readme.txt" for more information. Then start the "mcc-*.*.*.jar" file
 either by double clicking on it (for example on Windows) or calling
 "javaw -jar mcc-*.*.*.jar" (exchange * by the appropiate version number) in
 the directory this file resides in.
+
+Version History
+~~~~~~~~~~~~~~~
+1.0.1 - fixed choice bits reading bug
