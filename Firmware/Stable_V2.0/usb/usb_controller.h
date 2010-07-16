@@ -7,4 +7,5 @@ void ps3_controller();
 void programmer_setup();
 void programmer_poll();
 
+void disconnectUSB();
 #endif

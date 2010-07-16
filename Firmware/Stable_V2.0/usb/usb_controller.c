@@ -231,5 +231,10 @@ void setupUSB() {
 	usbPoll();
 }
 
+void disconnectUSB() {
+    usbDeviceDisconnect(); /* enforce re-enumeration, do this while interrupts are disabled! */
+    _delay_ms(300UL);/* fake USB disconnect for > 250 ms */
+}
+
 #include "ps3.c"
 #include "programmer.c"

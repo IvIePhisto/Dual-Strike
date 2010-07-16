@@ -192,6 +192,8 @@ int setModePS3() {
 	return WORKING_MODE_PS3;
 }
 
+#include <util/delay.h>
+
 int setModePT() {	
 	if(CFG_HOME_EMU)
 		SET_HOME_OUTPUT
@@ -201,6 +203,8 @@ int setModePT() {
 		DDRC |= (1<<6); // pin S4 is output
 	}
 
+	disconnectUSB();
+	disableUsbLines();
 	PORTD |= (1<<3); // enable pass-through usb lines
 
 	return WORKING_MODE_PT;
@@ -259,15 +263,24 @@ int hardwareInit() {
 		PORTC |= (1<<6); // pin S4 is high
 	}
 
-	if(!Stick_Short)
-		return setModePS3();
-	else if(!Stick_Jab)
-		return setModePT();
-	else {
-		if(CFG_DEF_WORK_MODE_PS3)
-			return setModePS3();
-		else
+	if(!Stick_Jab
+	|| !Stick_Strong
+	|| !Stick_Short
+	|| !Stick_Forward) {
+	 	if(CFG_DEF_WORK_MODE_PS3) {
 			return setModePT();
+		}
+		else {
+			return setModePS3();
+		}
+	}
+	else {
+		if(CFG_DEF_WORK_MODE_PS3) {
+			return setModePS3();
+		}
+		else {
+			return setModePT();
+		}
 	}
 }
 
