@@ -241,6 +241,43 @@ PROGMEM char usbDescriptorConfigurationMAME[] = {
     1 							/* interrupt poll interval in ms */
 };
 
+// XBOX
+
+PROGMEM const unsigned char usbDescriptorConfigurationXBox[] = {
+    9,          				// sizeof(usbDescriptorConfiguration): length of descriptor in bytes 
+    USBDESCR_CONFIG,   	 		// descriptor type 
+    32-7, 0,      				// total length of data returned (including inlined descriptors) 
+    1,          				// number of interfaces in this configuration 
+    1,          				// index of this configuration 
+    0,          				// configuration name string index 
+    (char)USBATTR_BUSPOWER, 	// attributes 
+    USB_CFG_MAX_BUS_POWER/2,	// max USB current in 2mA units 
+// interface descriptor follows inline: 
+    9,   			 	    	// sizeof(usbDescrInterface): length of descriptor in bytes 
+    USBDESCR_INTERFACE,			// descriptor type 
+    0,          				// index of this interface 
+    0,							// alternate setting for this interface 
+    1, 							// endpoints excl 0: number of endpoint descriptors to follow  | ORIGINALLY: 2
+    0x58,						// USB interface class: Unknown 
+    0x42,						// USB interface subclass 
+    0,							// USB interface protocol 
+    0,          				// string index for interface 
+    7,          				// sizeof(usbDescrEndpoint): length of descriptor in bytes 
+    USBDESCR_ENDPOINT,			// descriptor type = endpoint 
+    0x81,						// IN endpoint number 1 | ORIGINALLY: 0x82
+    0x03,						// attrib: Interrupt endpoint 
+    8, 0,						// maximum packet size 
+    4, 							// interrupt poll interval in ms 
+	/*
+    7,          				// sizeof(usbDescrEndpoint): length of descriptor in bytes 
+    USBDESCR_ENDPOINT,			// descriptor type = endpoint 
+    0x02,						// OUT endpoint number 2 
+    0x03,						// attrib: Interrupt endpoint 
+    8, 0,						// maximum packet size 
+    4, 							// interrupt poll interval in ms 
+	*/
+};
+
 // PROGRAMMER
 
 PROGMEM char usbDescriptorDeviceHIDBoot[] = {    /* USB device descriptor */
@@ -345,7 +382,8 @@ PROGMEM char usbDescriptorConfigurationProgrammer[] = {
 usbMsgLen_t usbFunctionDescriptor(struct usbRequest *rq) {
 	usbMsgLen_t len = 0;
 
-	if(usbMode == USB_MODE_PS3) {
+	switch(usbMode) {
+	case USB_MODE_PS3:
 	    switch(rq->wValue.bytes[1]) {
 	    case USBDESCR_DEVICE:
 			usbMsgPtr = (uchar *)(usbDescriptorDeviceDS);
@@ -363,29 +401,25 @@ usbMsgLen_t usbFunctionDescriptor(struct usbRequest *rq) {
 				len = sizeof(usbDescriptorStringDeviceDS);
 				break;
 			}
-
 			break;
 
 	    case USBDESCR_CONFIG:
 			usbMsgPtr = (uchar*)usbDescriptorConfigurationPS3;
 			len = sizeof(usbDescriptorConfigurationPS3);
-
 			break;
 
 	    case USBDESCR_HID:
 			usbMsgPtr = (uchar *)(usbDescriptorConfigurationPS3 + 18);
 			len = usbDescriptorConfigurationPS3[18];
-
 			break;
 
 	    case USBDESCR_HID_REPORT:
 			usbMsgPtr = (uchar*)usbHidReportDescriptorPS3;
 			len = sizeof(usbHidReportDescriptorPS3);
-
 			break;
-	    }
-	}
-	if(usbMode == USB_MODE_MAME) {
+		}
+		break;
+	case USB_MODE_MAME:
 	    switch(rq->wValue.bytes[1]) {
 	    case USBDESCR_DEVICE:
 			usbMsgPtr = (uchar *)(usbDescriptorDeviceDS);
@@ -403,29 +437,53 @@ usbMsgLen_t usbFunctionDescriptor(struct usbRequest *rq) {
 				len = sizeof(usbDescriptorStringDeviceDS);
 				break;
 			}
-
 			break;
 
 	    case USBDESCR_CONFIG:
 			usbMsgPtr = (uchar*)usbDescriptorConfigurationMAME;
 			len = sizeof(usbDescriptorConfigurationMAME);
-
 			break;
 
 	    case USBDESCR_HID:
 			usbMsgPtr = (uchar *)(usbDescriptorConfigurationMAME + 18);
 			len = usbDescriptorConfigurationMAME[18];
-
 			break;
 
 	    case USBDESCR_HID_REPORT:
 			usbMsgPtr = (uchar*)usbHidReportDescriptorMAME;
 			len = sizeof(usbHidReportDescriptorMAME);
-
 			break;
 	    }
-	}
-	else if(usbMode == USB_MODE_PROGRAMMER) {
+		break;
+
+	case USB_MODE_XBOX:
+	    switch(rq->wValue.bytes[1]) {
+	    case USBDESCR_DEVICE:
+			usbMsgPtr = (uchar *)(usbDescriptorDeviceDS);
+			len = sizeof(usbDescriptorDeviceDS);
+			break;
+
+	    case USBDESCR_STRING:
+			switch(rq->wValue.bytes[0]) {
+			case 1: // Vendor
+				usbMsgPtr = (uchar *)(usbDescriptorStringVendorDS);
+				len = sizeof(usbDescriptorStringVendorDS);
+				break;
+			case 2: // Device
+				usbMsgPtr = (uchar *)(usbDescriptorStringDeviceDS);
+				len = sizeof(usbDescriptorStringDeviceDS);
+				break;
+			}
+			break;
+
+	    case USBDESCR_CONFIG:
+			usbMsgPtr = (uchar*)usbDescriptorConfigurationXBox;
+			len = sizeof(usbDescriptorConfigurationXBox);
+			break;
+		}
+		break;
+
+	case USB_MODE_PROGRAMMER:
 	    switch(rq->wValue.bytes[1]) {
 	    case USBDESCR_DEVICE:
 	        usbMsgPtr = (uchar *)(usbDescriptorDeviceHIDBoot);
@@ -461,6 +519,7 @@ usbMsgLen_t usbFunctionDescriptor(struct usbRequest *rq) {
 			len = sizeof(usbHidReportDescriptorProgrammer);
 			break;
 	    }
+		break;
 	}
 
     return len;

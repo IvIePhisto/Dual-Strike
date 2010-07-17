@@ -11,16 +11,14 @@
 /* 
 Configuration Mode
 ==================
-In the configuration mode the behaviour of the Dual Strike can be changed,
-see Startup Behaviour for how to enter it. Leave it by pressing Start. 
-When first entering configuration mode, it is in USB configuration mode, 
-which means it is ready to be updated from a PC.
+In the configuration mode the behaviour of the Dual Strike can be changed. 
+While plugging in the USB Cable just press Select. Leave it by pressing Start. 
+When first entering configuration mode, it is in USB configuration mode, which 
+means it is ready to be updated from a PC.
 
-If you want to change the configuration without a PC first press one of the
-action buttons (any other than Start, Select and Home). Then pressing 
-entering the following button-joystick combinations changes the 
-configuration:
-
+If you want to change the configuration without a PC first press one of the 
+action buttons (any other than Start, Select and Home). Then pressing entering 
+the following button-joystick combinations changes the configuration:
 
 Dual Strike default stick mode:
 -------------------------------
@@ -34,7 +32,8 @@ Default Working Mode:
 Button: LK
 Left  = Dual Strike PS3 [default]
 Up    = Dual Strike MAME
-Right = pass-through
+Right = Dual Strike XBox1
+Down  = pass-through
 
 revert to defaults:
 -------------------
@@ -63,7 +62,7 @@ Down  = inverted triggers for pass-through
 #define WORKING_MODE_PT		0
 #define WORKING_MODE_PS3	1
 #define WORKING_MODE_MAME	2
-
+#define WORKING_MODE_XBOX	3
 
 // declares config and config_EEPROM
 CFG_DECLARATION
@@ -158,6 +157,9 @@ void configInit() {
 					CFG_SET_DEF_WORK_MODE_MAME(newConfig)
 				}
 				else if(!Stick_Right) {
+					CFG_SET_DEF_WORK_MODE_XBOX(newConfig)
+				}
+				else if(!Stick_Down) {
 					CFG_SET_DEF_WORK_MODE_PT(newConfig)
 				}
 			}
@@ -199,7 +201,19 @@ int setModePS3() {
 	return WORKING_MODE_PS3;
 }
 
-void setModeUSB() {	
+int setModeMAME() {	
+	enableUsbLines();
+
+	return WORKING_MODE_MAME;
+}
+
+int setModeXBox() {	
+	enableUsbLines();
+
+	return WORKING_MODE_XBOX;
+}
+
+int setModePT() {	
 	if(CFG_HOME_EMU)
 		SET_HOME_OUTPUT
 
@@ -208,20 +222,14 @@ void setModeUSB() {
 		DDRC |= (1<<6); // pin S4 is output
 	}
 
+	disconnectUSB();
+	disableUsbLines();
 	PORTD |= (1<<3); // enable pass-through usb lines
-}
-
-int setModePT() {	
-	setModeUSB();
 
 	return WORKING_MODE_PT;
 }
 
-int setModeMAME() {	
-	setModeUSB();
 
-	return WORKING_MODE_MAME;
-}
 
 // README
 /*
@@ -237,7 +245,8 @@ If the Start button is pressed, then firmware update mode is entered (see below)
 
 If the button A/Cross is pressed, then the PS3 mode is activated.
 If the button B/Circle is pressed, then the MAME mode is activated.
-If the button X/Square is pressed, then the pass-through mode is activated.
+If the button X/Square is pressed, then the XBox1 mode is activated.
+If the button Y/Triangle is pressed, then the pass-through mode is activated.
 Otherwise the default working mode is activated.
 
 If the joystick is moved to the up direction, the joystick is acting as a digital pad
@@ -276,12 +285,14 @@ int hardwareInit() {
 		PORTC |= (1<<6); // pin S4 is high
 	}
 
-	if(!Stick_Short)
+	if(!Stick_Jab)
 		return setModePS3();
-	else if(!Stick_Jab)
-		return setModePT();
-	else if(!Stick_Forward)
+	else if(!Stick_Strong)
 		return setModeMAME();
+	else if(!Stick_Short)
+		return setModeXBox();
+	else if(!Stick_Forward)
+		return setModePT();
 	else {
 		if(CFG_DEF_WORK_MODE_PS3)
 			return setModePS3();
@@ -338,6 +349,10 @@ int main(void)
 
 	case WORKING_MODE_MAME:
 	  mame_controller();
+	  break;
+
+	case WORKING_MODE_XBOX:
+	  xbox_controller();
 	  break;
 	}
 

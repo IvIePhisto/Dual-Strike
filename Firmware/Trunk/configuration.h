@@ -39,7 +39,8 @@ uint8_t config[CONFIG_BYTE_WIDTH + 2] = {CONFIG_EMPTY, CONFIG_EMPTY, CONFIG_EMPT
 /* CONFIG TESTS: */
 #define CFG_DEF_WORK_MODE_PS3 (((config[0 + 2] >> 0) & 0b00000011)  == 0b00)
 #define CFG_DEF_WORK_MODE_MAME (((config[0 + 2] >> 0) & 0b00000011)  == 0b01)
-#define CFG_DEF_WORK_MODE_PT (((config[0 + 2] >> 0) & 0b00000011)  == 0b10)
+#define CFG_DEF_WORK_MODE_XBOX (((config[0 + 2] >> 0) & 0b00000011)  == 0b10)
+#define CFG_DEF_WORK_MODE_PT (((config[0 + 2] >> 0) & 0b00000011)  == 0b11)
 #define CFG_DIGITAL_PAD (((config[0 + 2] >> 2) & 0b00000011)  == 0b00)
 #define CFG_LEFT_STICK (((config[0 + 2] >> 2) & 0b00000011)  == 0b01)
 #define CFG_RIGHT_STICK (((config[0 + 2] >> 2) & 0b00000011)  == 0b10)
@@ -52,7 +53,8 @@ uint8_t config[CONFIG_BYTE_WIDTH + 2] = {CONFIG_EMPTY, CONFIG_EMPTY, CONFIG_EMPT
 /* CONFIG SETTERS: */
 #define CFG_SET_DEF_WORK_MODE_PS3(CONFIG) CONFIG[0 + 2] &= ~(0b11 << 0);
 #define CFG_SET_DEF_WORK_MODE_MAME(CONFIG) CONFIG[0 + 2] |= (0b01 << 0); CONFIG[0 + 2] &= ((0b01 << 0)| ~(0b10 << 0));
-#define CFG_SET_DEF_WORK_MODE_PT(CONFIG) CONFIG[0 + 2] |= (0b10 << 0); CONFIG[0 + 2] &= ((0b10 << 0)| ~(0b01 << 0));
+#define CFG_SET_DEF_WORK_MODE_XBOX(CONFIG) CONFIG[0 + 2] |= (0b10 << 0); CONFIG[0 + 2] &= ((0b10 << 0)| ~(0b01 << 0));
+#define CFG_SET_DEF_WORK_MODE_PT(CONFIG) CONFIG[0 + 2] |= (0b11 << 0);
 #define CFG_SET_DIGITAL_PAD(CONFIG) CONFIG[0 + 2] &= ~(0b11 << 2);
 #define CFG_SET_LEFT_STICK(CONFIG) CONFIG[0 + 2] |= (0b01 << 2); CONFIG[0 + 2] &= ((0b01 << 2)| ~(0b10 << 2));
 #define CFG_SET_RIGHT_STICK(CONFIG) CONFIG[0 + 2] |= (0b10 << 2); CONFIG[0 + 2] &= ((0b10 << 2)| ~(0b01 << 2));

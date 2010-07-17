@@ -43,6 +43,12 @@
         <help>The Dual Strike works as a MAME compatible keyboard.</help>
         <help lang="de">Das Dual Strike arbeitet als eine MAME kompatible Tastatur.</help>
       </option>
+
+      <option id="XBOX">
+        <title>XBox Controller</title>
+        <help>The Dual Strike works as a XBox1 controller.</help>
+        <help lang="de">Das Dual Strike arbeitet als eine XBox1 Controller.</help>
+      </option>
       
       <option id="PT">
         <title>Pass-Through (XBox360 or other)</title>

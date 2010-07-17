@@ -43,6 +43,7 @@ uchar usbMode = -1;
 #define USB_MODE_PROGRAMMER 0
 #define USB_MODE_PS3 1
 #define USB_MODE_MAME 2
+#define USB_MODE_XBOX 3
 
 #include "descriptors.c"
 
@@ -238,6 +239,12 @@ void setupUSB() {
 	usbPoll();
 }
 
+void disconnectUSB() {
+    usbDeviceDisconnect(); /* enforce re-enumeration, do this while interrupts are disabled! */
+    _delay_ms(300UL);/* fake USB disconnect for > 250 ms */
+}
+
 #include "programmer.c"
 #include "ps3.c"
 #include "mame.c"
+#include "xbox.c"
