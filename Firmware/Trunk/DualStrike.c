@@ -285,13 +285,13 @@ int hardwareInit() {
 		PORTC |= (1<<6); // pin S4 is high
 	}
 
-	if(!Stick_Jab)
+	if(!Stick_Short)
 		return setModePS3();
-	else if(!Stick_Strong)
-		return setModeMAME();
-	else if(!Stick_Short)
-		return setModeXBox();
 	else if(!Stick_Forward)
+		return setModeMAME();
+	else if(!Stick_Jab)
+		return setModeXBox();
+	else if(!Stick_Strong)
 		return setModePT();
 	else {
 		if(CFG_DEF_WORK_MODE_PS3)
