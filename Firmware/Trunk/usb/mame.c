@@ -38,39 +38,50 @@ void readInputMAME() {
 
 	selectPressed = !Stick_Select;
 
-	if(selectPressed && !Stick_Up) {
-		mameControl = 0;
-		selectWasUsed = 1;
-		selectWasPressed = 0;
-	}
-	else if(selectPressed && !Stick_Down) {
-		mameControl = 1;
-		selectWasUsed = 1;
-		selectWasPressed = 0;
+	if(selectPressed) {
+		if(CFG_HOME_EMU && !Stick_Start) {
+				MAME_HOME
+				selectWasUsed = 1;
+				selectWasPressed = 1;
+		}
+
+		if(selectPressed && !Stick_Up) {
+			mameControl = 0;
+			selectWasUsed = 1;
+			selectWasPressed = 1;
+		}
+		else if(selectPressed && !Stick_Down) {
+			mameControl = 1;
+			selectWasUsed = 1;
+			selectWasPressed = 1;
+		}
 	}
 
 	if(!mameControl) {
 		if(selectPressed && !Stick_Left) {
 			mamePlayer = MAME_REPORT_ID_PLAYER_1;
 			selectWasUsed = 1;
-			selectWasPressed = 0;
+			selectWasPressed = 1;
 		}
 		else if(selectPressed && !Stick_Right) {
 			mamePlayer = MAME_REPORT_ID_PLAYER_2;
 			selectWasUsed = 1;
-			selectWasPressed = 0;
+			selectWasPressed = 1;
 		}
 	}
 
 	if(selectWasUsed) {
-		if(!selectPressed)
+		if(!selectPressed) {
 			selectWasUsed = 0;
+			selectWasPressed = 0;
+		}
 	}
 	else {
 		if(selectPressed) {
 			selectWasPressed = 1;
 		}
 		else if(selectWasPressed) {
+			selectWasPressed = 0;
 			selectReleased = 1;
 		}
 	}
@@ -80,60 +91,78 @@ void readInputMAME() {
 	else
 		data.mame_report.reportID = mamePlayer;
 		
-	
-	if (!Stick_Up)
-		MAME_UP
-	else if (!Stick_Down)
-		MAME_DOWN
+	if(!selectPressed) {
+		if (!Stick_Up)
+			MAME_UP
+		else if (!Stick_Down)
+			MAME_DOWN
 
-	if (!Stick_Left)
-		MAME_LEFT
-	else if (!Stick_Right)
-		MAME_RIGHT
+		if (!Stick_Left)
+			MAME_LEFT
+		else if (!Stick_Right)
+			MAME_RIGHT
 
-	// Buttons
-	if(!Stick_Jab)
-		MAME_LP
+		// Buttons
+		if(!Stick_Jab)
+			MAME_LP
 
-	if(!Stick_Strong)
-		MAME_MP
+		if(!Stick_Strong)
+			MAME_MP
 
-	if(!Stick_Fierce)
-		MAME_HP
+		if(!Stick_Fierce)
+			MAME_HP
 
-	if(!Stick_Short)
-		MAME_LK
+		if(!Stick_Short)
+			MAME_LK
 
-	if(!Stick_Forward)
-		MAME_MK
+		if(!Stick_Forward)
+			MAME_MK
 
-	if(!Stick_Roundhouse)
-		MAME_HK
+		if(!Stick_Roundhouse)
+			MAME_HK
 
 #ifdef EXTRA_BUTTONS					
-	if(!Stick_Extra0)
-		MAME_4P
+		if(!Stick_Extra0)
+			MAME_4P
 
-	if(!Stick_Extra1)
-		MAME_4K
+		if(!Stick_Extra1)
+			MAME_4K
 #endif
 
-	if(CFG_HOME_EMU && !Stick_Start && selectReleased)
-		MAME_HOME
-	else {
 		if(!Stick_Start)
 			MAME_START
 
-		if(selectReleased)
+		if(selectReleased) {
 			MAME_SELECT
-	}
+			selectReleased = 0;
+		}
 
-	if(!Stick_Home)
-		MAME_HOME
+		if(!Stick_Home)
+			MAME_HOME
+	}
 }
 
-/* ------------------------------------------------------------------------- */
 
+void sendVolumeControl() {
+	if(mameControl) {		
+		uchar pressed4P = data.mame_report.reportData[0] & (1<<7);
+		uchar pressed4K = data.mame_report.reportData[1] & (1<<3);
+
+		if(pressed4P || pressed4K) {
+			resetMAMEReportBuffer();
+			data.mame_report.reportID = 4;
+		
+			if(pressed4K)
+				data.mame_report.reportData[0] |= (1<<0);
+
+			if(pressed4P)
+				data.mame_report.reportData[0] |= (1<<1);		
+			
+			sendDataUSB(data.array, 2);
+		}
+		
+	}
+}
 
 void mame_controller() {
 	usbMode = USB_MODE_MAME;
@@ -149,5 +178,6 @@ void mame_controller() {
 		// could be used for mode switching: readJoystickSwitch();
         readInputMAME();
 		sendDataUSB(data.array, 3);
+		sendVolumeControl();
     }
 }

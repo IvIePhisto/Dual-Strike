@@ -298,6 +298,8 @@ int hardwareInit() {
 			return setModePS3();
 		else if(CFG_DEF_WORK_MODE_MAME)
 			return setModeMAME();
+		else if(CFG_DEF_WORK_MODE_XBOX)
+			return setModeXBox();
 		else
 			return setModePT();
 	}
@@ -315,7 +317,7 @@ void readJoystickSwitch() {
         }
         else if((PIND & (1<<4)) && (PINC & (1<<6))) { // S3 high and S4 high
 			CFG_SET_DIGITAL_PAD(config)
-       }
+        }
     }
 }
 

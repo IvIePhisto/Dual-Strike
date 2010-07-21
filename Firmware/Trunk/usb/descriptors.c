@@ -27,13 +27,12 @@ PROGMEM int  usbDescriptorStringVendorDS[] = {
     USB_CFG_VENDOR_NAME
 };
 
-PROGMEM int  usbDescriptorStringDeviceDS[] = {
-    USB_STRING_DESCRIPTOR_HEADER(USB_CFG_DEVICE_NAME_LEN),
-    USB_CFG_DEVICE_NAME
-};
-
-
 // PS3
+
+PROGMEM int  usbDescriptorStringDevicePS3[] = {
+    USB_STRING_DESCRIPTOR_HEADER(USB_CFG_DEVICE_NAME_LEN + 6),
+    USB_CFG_DEVICE_NAME, ' ', '(', 'P', 'S', '3', ')'
+};
 
 PROGMEM char usbHidReportDescriptorPS3[124] = {
     0x05, 0x01,                    // USAGE_PAGE (Generic Desktop)
@@ -137,71 +136,147 @@ PROGMEM char usbDescriptorConfigurationPS3[] = {
 
 // MAME
 
-PROGMEM char usbHidReportDescriptorMAME[131] = {
-    0x05, 0x07,                    // USAGE_PAGE (Keyboard)
+PROGMEM char usbDescriptorDeviceMAME[] = {    /* USB device descriptor */
+    18,         /* sizeof(usbDescriptorDevice): length of descriptor in bytes */
+    USBDESCR_DEVICE,        /* descriptor type */
+    0x10, 0x01,             /* USB version supported */
+    USB_CFG_DEVICE_CLASS,
+    USB_CFG_DEVICE_SUBCLASS,
+    0,                      /* protocol */
+    8,                      /* max packet size */
+    /* the following two casts affect the first byte of the constant only, but
+     * that's sufficient to avoid a warning with the default values.
+     */
+    USB_CFG_VENDOR_ID,/* 2 bytes */
+    0xFF, 0xFF,			/* 2 bytes */
+    USB_CFG_DEVICE_VERSION, /* 2 bytes */
+    1,          			/* manufacturer string index */
+    2,         				/* product string index */
+    0,          			/* serial number string index */
+    1,          			/* number of configurations */
+};
+
+PROGMEM int  usbDescriptorStringDeviceMAME[] = {
+    USB_STRING_DESCRIPTOR_HEADER(USB_CFG_DEVICE_NAME_LEN + 7),
+    USB_CFG_DEVICE_NAME, ' ', '(', 'M', 'A', 'M', 'E', ')'
+};
+
+
+PROGMEM char usbHidReportDescriptorMAME[230] = {
+    0x05, 0x01,                    // USAGE_PAGE (Generic Desktop)
+    0x09, 0x06,                    // USAGE (Keyboard)
     0xa1, 0x01,                    // COLLECTION (Application)
+    0x05, 0x07,                    //   USAGE_PAGE (Keyboard)
     0x15, 0x00,                    //   LOGICAL_MINIMUM (0)
     0x25, 0x01,                    //   LOGICAL_MAXIMUM (1)
+    0x35, 0x00,                    //   PHYSICAL_MINIMUM (0)
+    0x45, 0x01,                    //   PHYSICAL_MAXIMUM (1)
     0x75, 0x01,                    //   REPORT_SIZE (1)
+    0x95, 0x01,                    //   REPORT_COUNT (1)
     0x85, 0x01,                    //   REPORT_ID (1)
     0x09, 0x52,                    //   USAGE (Keyboard UpArrow)
-    0x09, 0x4f,                    //   USAGE (Keyboard RightArrow)
-    0x09, 0x51,                    //   USAGE (Keyboard DownArrow)
-    0x09, 0x50,                    //   USAGE (Keyboard LeftArrow)
-    0x09, 0xe1,                    //   USAGE (Keyboard LeftShift)
-    0x09, 0x1b,                    //   USAGE (Keyboard x and X)
-    0x09, 0x1c,                    //   USAGE (Keyboard y and Y)
-    0x09, 0x00,                    //   USAGE (Reserved (no event indicated))
-    0x09, 0xe0,                    //   USAGE (Keyboard LeftControl)
-    0x09, 0xe2,                    //   USAGE (Keyboard LeftAlt)
-    0x09, 0x2c,                    //   USAGE (Keyboard Spacebar)
-    0x09, 0xe1,                    //   USAGE (Keyboard LeftShift)
-    0x09, 0x22,                    //   USAGE (Keyboard 5 and %)
-    0x09, 0x1e,                    //   USAGE (Keyboard 1 and !)
-    0x09, 0x13,                    //   USAGE (Keyboard p and P)
-    0x95, 0x0f,                    //   REPORT_COUNT (15)
     0x81, 0x00,                    //   INPUT (Data,Ary,Abs)
-    0x95, 0x01,                    //   REPORT_COUNT (1)
+    0x09, 0x4f,                    //   USAGE (Keyboard RightArrow)
+    0x81, 0x00,                    //   INPUT (Data,Ary,Abs)
+    0x09, 0x51,                    //   USAGE (Keyboard DownArrow)
+    0x81, 0x00,                    //   INPUT (Data,Ary,Abs)
+    0x09, 0x50,                    //   USAGE (Keyboard LeftArrow)
+    0x81, 0x00,                    //   INPUT (Data,Ary,Abs)
+    0x09, 0xe1,                    //   USAGE (Keyboard LeftShift)
+    0x81, 0x00,                    //   INPUT (Data,Ary,Abs)
+    0x09, 0x1b,                    //   USAGE (Keyboard x and X)
+    0x81, 0x00,                    //   INPUT (Data,Ary,Abs)
+    0x09, 0x1c,                    //   USAGE (Keyboard y and Y)
+    0x81, 0x00,                    //   INPUT (Data,Ary,Abs)
+    0x81, 0x01,                    //   INPUT (Cnst,Ary,Abs)
+    0x09, 0xe0,                    //   USAGE (Keyboard LeftControl)
+    0x81, 0x00,                    //   INPUT (Data,Ary,Abs)
+    0x09, 0xe2,                    //   USAGE (Keyboard LeftAlt)
+    0x81, 0x00,                    //   INPUT (Data,Ary,Abs)
+    0x09, 0x2c,                    //   USAGE (Keyboard Spacebar)
+    0x81, 0x00,                    //   INPUT (Data,Ary,Abs)
+    0x09, 0xe1,                    //   USAGE (Keyboard LeftShift)
+    0x81, 0x00,                    //   INPUT (Data,Ary,Abs)
+    0x09, 0x22,                    //   USAGE (Keyboard 5 and %)
+    0x81, 0x00,                    //   INPUT (Data,Ary,Abs)
+    0x09, 0x1e,                    //   USAGE (Keyboard 1 and !)
+    0x81, 0x00,                    //   INPUT (Data,Ary,Abs)
+    0x09, 0x13,                    //   USAGE (Keyboard p and P)
+    0x81, 0x00,                    //   INPUT (Data,Ary,Abs)
     0x81, 0x01,                    //   INPUT (Cnst,Ary,Abs)
     0x85, 0x02,                    //   REPORT_ID (2)
     0x09, 0x15,                    //   USAGE (Keyboard r and R)
-    0x09, 0x0a,                    //   USAGE (Keyboard g and G)
-    0x09, 0x09,                    //   USAGE (Keyboard f and F)
-    0x09, 0x07,                    //   USAGE (Keyboard d and D)
-    0x09, 0x1a,                    //   USAGE (Keyboard w and W)
-    0x09, 0x0e,                    //   USAGE (Keyboard k and K)
-    0x09, 0x0c,                    //   USAGE (Keyboard i and I)
-    0x09, 0x00,                    //   USAGE (Reserved (no event indicated))
-    0x09, 0x04,                    //   USAGE (Keyboard a and A)
-    0x09, 0x16,                    //   USAGE (Keyboard s and S)
-    0x09, 0x14,                    //   USAGE (Keyboard q and Q)
-    0x09, 0x1a,                    //   USAGE (Keyboard w and W)
-    0x09, 0x23,                    //   USAGE (Keyboard 6 and ^)
-    0x09, 0x1f,                    //   USAGE (Keyboard 2 and @)
-    0x09, 0x13,                    //   USAGE (Keyboard p and P)
-    0x95, 0x0f,                    //   REPORT_COUNT (15)
     0x81, 0x00,                    //   INPUT (Data,Ary,Abs)
-    0x95, 0x01,                    //   REPORT_COUNT (1)
+    0x09, 0x0a,                    //   USAGE (Keyboard g and G)
+    0x81, 0x00,                    //   INPUT (Data,Ary,Abs)
+    0x09, 0x09,                    //   USAGE (Keyboard f and F)
+    0x81, 0x00,                    //   INPUT (Data,Ary,Abs)
+    0x09, 0x07,                    //   USAGE (Keyboard d and D)
+    0x81, 0x00,                    //   INPUT (Data,Ary,Abs)
+    0x09, 0x1a,                    //   USAGE (Keyboard w and W)
+    0x81, 0x00,                    //   INPUT (Data,Ary,Abs)
+    0x09, 0x0e,                    //   USAGE (Keyboard k and K)
+    0x81, 0x00,                    //   INPUT (Data,Ary,Abs)
+    0x09, 0x0c,                    //   USAGE (Keyboard i and I)
+    0x81, 0x00,                    //   INPUT (Data,Ary,Abs)
+    0x81, 0x01,                    //   INPUT (Cnst,Ary,Abs)
+    0x09, 0x04,                    //   USAGE (Keyboard a and A)
+    0x81, 0x00,                    //   INPUT (Data,Ary,Abs)
+    0x09, 0x16,                    //   USAGE (Keyboard s and S)
+    0x81, 0x00,                    //   INPUT (Data,Ary,Abs)
+    0x09, 0x14,                    //   USAGE (Keyboard q and Q)
+    0x81, 0x00,                    //   INPUT (Data,Ary,Abs)
+    0x09, 0x1a,                    //   USAGE (Keyboard w and W)
+    0x81, 0x00,                    //   INPUT (Data,Ary,Abs)
+    0x09, 0x23,                    //   USAGE (Keyboard 6 and ^)
+    0x81, 0x00,                    //   INPUT (Data,Ary,Abs)
+    0x09, 0x1f,                    //   USAGE (Keyboard 2 and @)
+    0x81, 0x00,                    //   INPUT (Data,Ary,Abs)
+    0x09, 0x13,                    //   USAGE (Keyboard p and P)
+    0x81, 0x00,                    //   INPUT (Data,Ary,Abs)
     0x81, 0x01,                    //   INPUT (Cnst,Ary,Abs)
     0x85, 0x03,                    //   REPORT_ID (3)
     0x09, 0x52,                    //   USAGE (Keyboard UpArrow)
-    0x09, 0x4f,                    //   USAGE (Keyboard RightArrow)
-    0x09, 0x51,                    //   USAGE (Keyboard DownArrow)
-    0x09, 0x50,                    //   USAGE (Keyboard LeftArrow)
-    0x09, 0x3b,                    //   USAGE (Keyboard F2)
-    0x09, 0x3c,                    //   USAGE (Keyboard F3)
-    0x09, 0x00,                    //   USAGE (Reserved (no event indicated))
-    0x09, 0x81,                    //   USAGE (Keyboard Volume Down)
-    0x09, 0x28,                    //   USAGE (Keyboard Return (ENTER))
-    0x09, 0x29,                    //   USAGE (Keyboard ESCAPE)
-    0x09, 0x00,                    //   USAGE (Reserved (no event indicated))
-    0x09, 0x80,                    //   USAGE (Keyboard Volume Up)
-    0x09, 0x26,                    //   USAGE (Keyboard 9 and ()
-    0x09, 0x2b,                    //   USAGE (Keyboard Tab)
-    0x09, 0x00,                    //   USAGE (Reserved (no event indicated))
-    0x95, 0x0f,                    //   REPORT_COUNT (15)
     0x81, 0x00,                    //   INPUT (Data,Ary,Abs)
-    0x95, 0x01,                    //   REPORT_COUNT (1)
+    0x09, 0x4f,                    //   USAGE (Keyboard RightArrow)
+    0x81, 0x00,                    //   INPUT (Data,Ary,Abs)
+    0x09, 0x51,                    //   USAGE (Keyboard DownArrow)
+    0x81, 0x00,                    //   INPUT (Data,Ary,Abs)
+    0x09, 0x50,                    //   USAGE (Keyboard LeftArrow)
+    0x81, 0x00,                    //   INPUT (Data,Ary,Abs)
+    0x09, 0x3b,                    //   USAGE (Keyboard F2)
+    0x81, 0x00,                    //   INPUT (Data,Ary,Abs)
+    0x09, 0x3c,                    //   USAGE (Keyboard F3)
+    0x81, 0x00,                    //   INPUT (Data,Ary,Abs)
+    0x81, 0x01,                    //   INPUT (Cnst,Ary,Abs)
+    0x81, 0x01,                    //   INPUT (Cnst,Ary,Abs)
+    0x09, 0x28,                    //   USAGE (Keyboard Return (ENTER))
+    0x81, 0x00,                    //   INPUT (Data,Ary,Abs)
+    0x09, 0x29,                    //   USAGE (Keyboard ESCAPE)
+    0x81, 0x00,                    //   INPUT (Data,Ary,Abs)
+    0x81, 0x01,                    //   INPUT (Cnst,Ary,Abs)
+    0x81, 0x01,                    //   INPUT (Cnst,Ary,Abs)
+    0x09, 0x26,                    //   USAGE (Keyboard 9 and ()
+    0x81, 0x00,                    //   INPUT (Data,Ary,Abs)
+    0x09, 0x2b,                    //   USAGE (Keyboard Tab)
+    0x81, 0x00,                    //   INPUT (Data,Ary,Abs)
+    0x81, 0x01,                    //   INPUT (Cnst,Ary,Abs)
+    0x81, 0x01,                    //   INPUT (Cnst,Ary,Abs)
+    0xc0,                          // END_COLLECTION
+    0x05, 0x0c,                    // USAGE_PAGE (Consumer Devices)
+    0x09, 0x01,                    // USAGE (Consumer Control)
+    0xa1, 0x01,                    // COLLECTION (Application)
+    0x85, 0x04,                    //   REPORT_ID (4)
+    0x15, 0x00,                    //   LOGICAL_MINIMUM (0)
+    0x25, 0x01,                    //   LOGICAL_MAXIMUM (1)
+    0x35, 0x00,                    //   PHYSICAL_MINIMUM (0)
+    0x45, 0x01,                    //   PHYSICAL_MAXIMUM (1)
+    0x09, 0xe9,                    //   USAGE (Volume Up)
+    0x09, 0xea,                    //   USAGE (Volume Down)
+    0x75, 0x01,                    //   REPORT_SIZE (1)
+    0x95, 0x02,                    //   REPORT_COUNT (2)
+    0x81, 0x02,                    //   INPUT (Data,Var,Abs)
+    0x95, 0x06,                    //   REPORT_COUNT (6)
     0x81, 0x01,                    //   INPUT (Cnst,Ary,Abs)
     0xc0                           // END_COLLECTION
 };
@@ -242,6 +317,31 @@ PROGMEM char usbDescriptorConfigurationMAME[] = {
 };
 
 // XBOX
+
+PROGMEM char usbDescriptorDeviceXBox[] = {    /* USB device descriptor */
+    18,         /* sizeof(usbDescriptorDevice): length of descriptor in bytes */
+    USBDESCR_DEVICE,        /* descriptor type */
+    0x10, 0x01,             /* USB version supported */
+    USB_CFG_DEVICE_CLASS,
+    USB_CFG_DEVICE_SUBCLASS,
+    0,                      /* protocol */
+    8,                      /* max packet size */
+    /* the following two casts affect the first byte of the constant only, but
+     * that's sufficient to avoid a warning with the default values.
+     */
+    USB_CFG_VENDOR_ID,/* 2 bytes */
+    0xFE, 0xFF,/* 2 bytes */
+    USB_CFG_DEVICE_VERSION, /* 2 bytes */
+    1,          /* manufacturer string index */
+    2,          /* product string index */
+    0,          /* serial number string index */
+    1,          /* number of configurations */
+};
+
+PROGMEM int  usbDescriptorStringDeviceXBox[] = {
+    USB_STRING_DESCRIPTOR_HEADER(USB_CFG_DEVICE_NAME_LEN + 7),
+    USB_CFG_DEVICE_NAME, ' ', '(', 'X', 'B', 'o', 'x', ')'
+};
 
 PROGMEM const unsigned char usbDescriptorConfigurationXBox[] = {
     9,          				// sizeof(usbDescriptorConfiguration): length of descriptor in bytes 
@@ -397,8 +497,8 @@ usbMsgLen_t usbFunctionDescriptor(struct usbRequest *rq) {
 				len = sizeof(usbDescriptorStringVendorDS);
 				break;
 			case 2: // Device
-				usbMsgPtr = (uchar *)(usbDescriptorStringDeviceDS);
-				len = sizeof(usbDescriptorStringDeviceDS);
+				usbMsgPtr = (uchar *)(usbDescriptorStringDevicePS3);
+				len = sizeof(usbDescriptorStringDevicePS3);
 				break;
 			}
 			break;
@@ -419,11 +519,12 @@ usbMsgLen_t usbFunctionDescriptor(struct usbRequest *rq) {
 			break;
 		}
 		break;
+
 	case USB_MODE_MAME:
 	    switch(rq->wValue.bytes[1]) {
 	    case USBDESCR_DEVICE:
-			usbMsgPtr = (uchar *)(usbDescriptorDeviceDS);
-			len = sizeof(usbDescriptorDeviceDS);
+			usbMsgPtr = (uchar *)(usbDescriptorDeviceMAME);
+			len = sizeof(usbDescriptorDeviceMAME);
 			break;
 
 	    case USBDESCR_STRING:
@@ -433,8 +534,8 @@ usbMsgLen_t usbFunctionDescriptor(struct usbRequest *rq) {
 				len = sizeof(usbDescriptorStringVendorDS);
 				break;
 			case 2: // Device
-				usbMsgPtr = (uchar *)(usbDescriptorStringDeviceDS);
-				len = sizeof(usbDescriptorStringDeviceDS);
+				usbMsgPtr = (uchar *)(usbDescriptorStringDeviceMAME);
+				len = sizeof(usbDescriptorStringDeviceMAME);
 				break;
 			}
 			break;
@@ -459,8 +560,8 @@ usbMsgLen_t usbFunctionDescriptor(struct usbRequest *rq) {
 	case USB_MODE_XBOX:
 	    switch(rq->wValue.bytes[1]) {
 	    case USBDESCR_DEVICE:
-			usbMsgPtr = (uchar *)(usbDescriptorDeviceDS);
-			len = sizeof(usbDescriptorDeviceDS);
+			usbMsgPtr = (uchar *)(usbDescriptorDeviceXBox);
+			len = sizeof(usbDescriptorDeviceXBox);
 			break;
 
 	    case USBDESCR_STRING:
@@ -470,8 +571,8 @@ usbMsgLen_t usbFunctionDescriptor(struct usbRequest *rq) {
 				len = sizeof(usbDescriptorStringVendorDS);
 				break;
 			case 2: // Device
-				usbMsgPtr = (uchar *)(usbDescriptorStringDeviceDS);
-				len = sizeof(usbDescriptorStringDeviceDS);
+				usbMsgPtr = (uchar *)(usbDescriptorStringDeviceXBox);
+				len = sizeof(usbDescriptorStringDeviceXBox);
 				break;
 			}
 			break;

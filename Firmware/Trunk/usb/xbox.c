@@ -44,13 +44,13 @@ void resetDataXBox() {
 #define XBOX_LT			{ data.array[10] |= 0xFF; }
 #define XBOX_RT			{ data.array[11] |= 0xFF; }
 #define XBOX_LS_RIGHT	{ data.array[12] |= 0xFF; data.array[13] |= 0b01111111; }
-#define XBOX_LS_LEFT	{ data.array[13] &= 0b10000000; }
+#define XBOX_LS_LEFT	{ data.array[13] |= 0b10000000; }
 #define XBOX_LS_UP		{ data.array[14] |= 0xFF; data.array[15] |= 0b01111111; }
-#define XBOX_LS_DOWN	{ data.array[15] &= 0b10000000; }
+#define XBOX_LS_DOWN	{ data.array[15] |= 0b10000000; }
 #define XBOX_RS_RIGHT	{ data.array[16] |= 0xFF; data.array[17] |= 0b01111111; }
-#define XBOX_RS_LEFT	{ data.array[17] &= 0b10000000; }
+#define XBOX_RS_LEFT	{ data.array[17] |= 0b10000000; }
 #define XBOX_RS_UP		{ data.array[18] |= 0xFF; data.array[19] |= 0b01111111; }
-#define XBOX_RS_DOWN	{ data.array[19] &= 0b10000000; }
+#define XBOX_RS_DOWN	{ data.array[19] |= 0b10000000; }
 
 void readInputXBox() {
 	resetDataXBox();
@@ -89,7 +89,8 @@ void readInputXBox() {
 		else if (!Stick_Down) {
 			XBOX_DPAD_DOWN
 		}
-		else if (!Stick_Left)
+		
+		if (!Stick_Left)
 			XBOX_DPAD_LEFT
 		else if (!Stick_Right)
 			XBOX_DPAD_RIGHT
@@ -112,7 +113,7 @@ void readInputXBox() {
 		XBOX_B
 
 	if(!Stick_Roundhouse)
-		XBOX_BLACK
+		XBOX_WHITE
 
 #ifdef EXTRA_BUTTONS					
 	if(!Stick_Extra0)
