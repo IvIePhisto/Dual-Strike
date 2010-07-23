@@ -1,3 +1,6 @@
+
+#define USB_CFG_FTDI_VENDOR_ID 0x03, 0x04
+
 // DUAL STRIKE
 
 PROGMEM char usbDescriptorDeviceDS[] = {    /* USB device descriptor */
@@ -147,8 +150,8 @@ PROGMEM char usbDescriptorDeviceMAME[] = {    /* USB device descriptor */
     /* the following two casts affect the first byte of the constant only, but
      * that's sufficient to avoid a warning with the default values.
      */
-    USB_CFG_VENDOR_ID,/* 2 bytes */
-    0xFF, 0xFF,			/* 2 bytes */
+    USB_CFG_FTDI_VENDOR_ID,	/* 2 bytes */
+    0x28, 0x8E,				/* product ID (2 bytes) */
     USB_CFG_DEVICE_VERSION, /* 2 bytes */
     1,          			/* manufacturer string index */
     2,         				/* product string index */
@@ -329,8 +332,8 @@ PROGMEM char usbDescriptorDeviceXBox[] = {    /* USB device descriptor */
     /* the following two casts affect the first byte of the constant only, but
      * that's sufficient to avoid a warning with the default values.
      */
-    USB_CFG_VENDOR_ID,/* 2 bytes */
-    0xFE, 0xFF,/* 2 bytes */
+    USB_CFG_FTDI_VENDOR_ID,	/* 2 bytes */
+    0x29, 0x8E,				/* product ID (2 bytes) */
     USB_CFG_DEVICE_VERSION, /* 2 bytes */
     1,          /* manufacturer string index */
     2,          /* product string index */
