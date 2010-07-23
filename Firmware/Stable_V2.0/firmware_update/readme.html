@@ -435,7 +435,7 @@ body {
 </style>
 
   
-  <title>Dual Strike 2.0.0</title>
+  <title>Dual Strike 2.0</title>
 
 </head>
 
@@ -451,7 +451,7 @@ body {
 <div style=TEXT-ALIGN:center>
   Copyright 2009 Jochen Zurborg and Michael Pohl<br>
 </div>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;<br>
+<br>
 <div style=TEXT-ALIGN:center>
   <a href=http://www.zurborg.info title=http://www.zurborg.info>http://www.zurborg.info</a><br>
 </div>
@@ -580,9 +580,6 @@ If you want to change the configuration without a PC first press one of the acti
   <li>
     <i>Right</i> = right analogue stick only
   </li>
-  <li>
-    <i>Down</i> = activate digital pad additionallly to left or right analogue stick
-  </li>
 </ul>
 <br>
 <b>Default Working Mode:</b><br>
@@ -634,7 +631,7 @@ Extra Pins Mode</b>:<br>
 <h2>
   Firmware
 </h2>
-To update the firmware of your Dual Strike press and hold Start to switch to the firmware update mode, then you can execute the firmware update file to update the firmware (two command prompt windows should open with UAC, one without UAC). After releasing the Start button, firmware update mode is left.<br>
+To update the firmware of your Dual Strike press and hold Start to switch to the firmware update mode, then you can execute the firmware update file to update the firmware. After releasing the Start button, firmware update mode is left.<br>
 After updating the firmware it is strongly recommended to enter configurationmode and load the defaults!<br>
 <br>
 The firmware update files are the following:<br>
@@ -693,6 +690,21 @@ The firmware update files are the following:<br>
   </tr>
   <tr>
     <td>
+      2.0.1<br>
+    </td>
+    <td>
+      <ul>
+        <li>
+          fixed: default mode switching didn't work as documented
+        </li>
+        <li>
+          fixed: pass-through device not working after configuration mode<br>
+        </li>
+      </ul>
+    </td>
+  </tr>
+  <tr>
+    <td>
       2.0.0<br>
     </td>
     <td>
@@ -746,7 +758,7 @@ The firmware update files are the following:<br>
     <td>
       <ul>
         <li>
-          bug solved: triggers not working after being used to switch to non-default mode
+          fixed: triggers not working after being used to switch to non-default mode
         </li>
       </ul>
     </td>
