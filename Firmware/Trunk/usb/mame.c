@@ -177,7 +177,10 @@ void mame_controller() {
 		usbPoll();
 		// could be used for mode switching: readJoystickSwitch();
         readInputMAME();
-		sendDataUSB(data.array, 3);
-		sendVolumeControl();
+
+		if(data.mame_report.reportData[0] || data.mame_report.reportData[1]) {
+			sendDataUSB(data.array, 3);
+			sendVolumeControl();
+		}
     }
 }
