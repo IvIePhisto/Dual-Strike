@@ -80,7 +80,7 @@ import mccf.model.ConfigurationModel;
 public class ConfigurationEditor implements HyperlinkListener {
 	public static final int MAJOR_VERSION_NO = 1;
 	public static final int MINOR_VERSION_NO = 0;
-	public static final int BUGFIX_VERSION_NO = 0;
+	public static final int BUGFIX_VERSION_NO = 1;
 
 	static final File DEFAULT_CONFIGURATION_DEFINITION_FILE = new File("configuration.xml");
 
