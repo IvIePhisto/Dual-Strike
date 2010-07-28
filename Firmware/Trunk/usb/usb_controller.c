@@ -24,12 +24,24 @@ typedef struct {
 typedef struct {
 	uchar	reportID;
 	uchar	reportData[2];
-} mame_report_t;
+} mame_report_size2_t;
+
+typedef struct {
+	uchar	reportID;
+	uchar	reportData;
+} mame_report_size1_t;
+
+typedef struct {
+	mame_report_size2_t report1;
+	mame_report_size2_t report2;
+	mame_report_size1_t report3;
+	mame_report_size1_t report4;
+} mame_reports_t;
 
 typedef union {
 	uchar array[132];
 	ps3report_t ps3report;
-	mame_report_t mame_report;
+	mame_reports_t mame_reports;
 } usb_data_t;
 
 extern usb_data_t data;
