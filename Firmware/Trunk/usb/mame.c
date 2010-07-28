@@ -85,6 +85,11 @@ void sendMAMEReportPlayer1() {
 	resetMAMEReport1();
 
 	if(selectPressed) {
+		if(!Stick_Short) {
+			MAME_R1_ENTER
+			selectWasUsed = 1;
+		}
+
 		if(!Stick_Forward) {
 			MAME_R1_ESCAPE	
 			selectWasUsed = 1;
@@ -106,10 +111,8 @@ void sendMAMEReportPlayer1() {
 		else if (!Stick_Right)
 			MAME_R1_RIGHT
 
-		if(!Stick_Short) {
+		if(!Stick_Short)
 			MAME_R1_LSHIFT
-			MAME_R1_ENTER
-		}
 
 		if(!Stick_Forward)
 			MAME_R1_X
