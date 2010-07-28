@@ -34,7 +34,7 @@ typedef struct {
 typedef struct {
 	mame_report_size2_t report1;
 	mame_report_size2_t report2;
-	mame_report_size1_t report3;
+	mame_report_size2_t report3;
 	mame_report_size1_t report4;
 } mame_reports_t;
 

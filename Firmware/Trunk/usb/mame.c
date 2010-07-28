@@ -16,7 +16,8 @@ void resetMAMEReport2() {
 }
 
 void resetMAMEReport3() {
-	data.mame_reports.report3.reportData = 0;
+	data.mame_reports.report3.reportData[0] =
+	data.mame_reports.report3.reportData[1] = 0;
 }
 
 void resetMAMEReport4() {
@@ -57,10 +58,18 @@ void resetMAMEReport4() {
 #define MAME_R2_6		{ data.mame_reports.report2.reportData[1] |= (1<<4); }
 
 
-#define MAME_R3_TAB		{ data.mame_reports.report3.reportData |= (1<<0); }
-#define MAME_R3_F2		{ data.mame_reports.report3.reportData |= (1<<1); }
-#define MAME_R3_F3		{ data.mame_reports.report3.reportData |= (1<<2); }
-#define MAME_R3_9		{ data.mame_reports.report3.reportData |= (1<<3); }
+#define MAME_R3_UP		{ data.mame_reports.report3.reportData[0] |= (1<<0); }
+#define MAME_R3_RIGHT	{ data.mame_reports.report3.reportData[0] |= (1<<1); }
+#define MAME_R3_DOWN	{ data.mame_reports.report3.reportData[0] |= (1<<2); }
+#define MAME_R3_LEFT	{ data.mame_reports.report3.reportData[0] |= (1<<3); }
+#define MAME_R3_ENTER	{ data.mame_reports.report3.reportData[0] |= (1<<4); }
+#define MAME_R3_ESCAPE	{ data.mame_reports.report3.reportData[0] |= (1<<5); }
+#define MAME_R3_TAB		{ data.mame_reports.report3.reportData[0] |= (1<<6); }
+#define MAME_R3_F2		{ data.mame_reports.report3.reportData[0] |= (1<<7); }
+
+#define MAME_R3_F3		{ data.mame_reports.report3.reportData[1] |= (1<<0); }
+#define MAME_R3_9		{ data.mame_reports.report3.reportData[1] |= (1<<1); }
+
 
 #define MAME_R4_VOL_UP	 { data.mame_reports.report4.reportData |= (1<<0); }
 #define MAME_R4_VOL_DOWN { data.mame_reports.report4.reportData |= (1<<1); }
@@ -193,25 +202,24 @@ void sendMAMEReportPlayer2() {
 }
 
 void sendMAMEReportsControl() {
-	resetMAMEReport1();
 	resetMAMEReport3();
 	resetMAMEReport4();
 
 	if (!Stick_Up)
-		MAME_R1_UP
+		MAME_R3_UP
 	else if (!Stick_Down)
-		MAME_R1_DOWN
+		MAME_R3_DOWN
 
 	if (!Stick_Left)
-		MAME_R1_LEFT
+		MAME_R3_LEFT
 	else if (!Stick_Right)
-		MAME_R1_RIGHT
+		MAME_R3_RIGHT
 
 	if(!Stick_Jab)
-		MAME_R1_ENTER
+		MAME_R3_ENTER
 
 	if(!Stick_Strong)
-		MAME_R1_ESCAPE
+		MAME_R3_ESCAPE
 
 	if(!Stick_Short)
 		MAME_R3_F2
@@ -235,8 +243,7 @@ void sendMAMEReportsControl() {
 		MAME_R4_VOL_DOWN
 #endif
 
-	sendDataUSB((void*)&data.mame_reports.report1, 3);
-	sendDataUSB((void*)&data.mame_reports.report3, 2);
+	sendDataUSB((void*)&data.mame_reports.report3, 3);
 	sendDataUSB((void*)&data.mame_reports.report4, 2);
 }
 

@@ -165,7 +165,7 @@ PROGMEM int  usbDescriptorStringDeviceMAME[] = {
 };
 
 
-PROGMEM char usbHidReportDescriptorMAME[146] = {
+PROGMEM char usbHidReportDescriptorMAME[158] = {
     0x05, 0x01,                    // USAGE_PAGE (Generic Desktop)
     0x09, 0x06,                    // USAGE (Keyboard)
     0xa1, 0x01,                    // COLLECTION (Application)
@@ -214,14 +214,20 @@ PROGMEM char usbHidReportDescriptorMAME[146] = {
     0x95, 0x02,                    //   REPORT_COUNT (2)
     0x81, 0x01,                    //   INPUT (Cnst,Ary,Abs)
     0x85, 0x03,                    //   REPORT_ID (3)
+    0x09, 0x52,                    //   USAGE (Keyboard UpArrow)
+    0x09, 0x4f,                    //   USAGE (Keyboard RightArrow)
+    0x09, 0x51,                    //   USAGE (Keyboard DownArrow)
+    0x09, 0x50,                    //   USAGE (Keyboard LeftArrow)
+    0x09, 0x28,                    //   USAGE (Keyboard Return (ENTER))
+    0x09, 0x29,                    //   USAGE (Keyboard ESCAPE)
     0x09, 0x2b,                    //   USAGE (Keyboard Tab)
     0x09, 0x3b,                    //   USAGE (Keyboard F2)
     0x09, 0x3c,                    //   USAGE (Keyboard F3)
     0x09, 0x26,                    //   USAGE (Keyboard 9 and ()
     0x09, 0x01,                    //   USAGE (Keyboard ErrorRollOver)
-    0x95, 0x05,                    //   REPORT_COUNT (5)
+    0x95, 0x0b,                    //   REPORT_COUNT (11)
     0x81, 0x02,                    //   INPUT (Data,Var,Abs)
-    0x95, 0x03,                    //   REPORT_COUNT (3)
+    0x95, 0x05,                    //   REPORT_COUNT (5)
     0x81, 0x01,                    //   INPUT (Cnst,Ary,Abs)
     0xc0,                          // END_COLLECTION
     0x05, 0x0c,                    // USAGE_PAGE (Consumer Devices)
@@ -241,6 +247,7 @@ PROGMEM char usbHidReportDescriptorMAME[146] = {
     0x81, 0x01,                    //   INPUT (Cnst,Ary,Abs)
     0xc0                           // END_COLLECTION
 };
+
 
 PROGMEM char usbDescriptorConfigurationMAME[] = {
     /* HID USB configuration descriptor */
