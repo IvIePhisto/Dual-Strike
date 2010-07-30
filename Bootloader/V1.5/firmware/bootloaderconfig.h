@@ -139,7 +139,7 @@ static inline void  bootLoaderInit(void)
 #define enterBootLoaderCondition() (!(PINC & (1<<0)))
 
 // Home or Start+Select
-#define exitBootLoaderCondition() ( (!(PINC & (1<<5))) || ( (!(PINC & (1<<0))) &&  (!(PINC & (1<<1))) ))
+#define exitBootLoaderCondition() (!(PINC & (1<<5)))
 
 #endif
 
