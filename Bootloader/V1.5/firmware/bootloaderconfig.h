@@ -128,7 +128,9 @@ static inline void  bootLoaderInit(void)
 
 	// make PD0 and PD3 outputs
 	DDRD |= (1<<0) | (1<<3);
-    _delay_us(10);  /* wait for levels to stabilize */
+    //_delay_us(10);  /* wait for levels to stabilize */
+	//_delay_ms(1);
+	for(unsigned char i = 0x55; i;i--) __asm__ __volatile__("nop");
 }
 
 //PC5 = HOME
@@ -138,7 +140,7 @@ static inline void  bootLoaderInit(void)
 // Start
 #define enterBootLoaderCondition() (!(PINC & (1<<0)))
 
-// Home or Start+Select
+// Home
 #define exitBootLoaderCondition() (!(PINC & (1<<5)))
 
 #endif

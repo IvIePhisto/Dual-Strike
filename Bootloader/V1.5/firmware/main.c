@@ -11,7 +11,7 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <avr/pgmspace.h>
-#include <avr/wdt.h>
+//#include <avr/wdt.h>
 #include <avr/boot.h>
 #include <string.h>
 #include <util/delay.h>
@@ -68,7 +68,7 @@ PROGMEM char usbHidReportDescriptor[33] = {
 #   define bootLoaderInit()         BOOTLOADER_INIT
 #endif
 #ifdef BOOTLOADER_CONDITION
-#   define bootLoaderCondition()    BOOTLOADER_CONDITION
+#   define enterBootLoaderCondition()    BOOTLOADER_CONDITION
 #endif
 
 /* compatibility with ATMega88 and other new devices: */
@@ -208,7 +208,7 @@ uchar   i = 0;
     /* enforce USB re-enumerate: */
     usbDeviceDisconnect();  /* do this while interrupts are disabled */
     do{             /* fake USB disconnect for > 250 ms */
-        wdt_reset();
+        //wdt_reset();
         _delay_ms(1);
     }while(--i);
     usbDeviceConnect();
@@ -229,21 +229,24 @@ int main(void)
         GICR = (1 << IVSEL); /* move interrupts to boot flash section */
 #endif
         initForUsbConnectivity();
-        do{ /* main event loop */
-            wdt_reset();
+        do { /* main event loop */
+            //wdt_reset();
             usbPoll();
 #if BOOTLOADER_CAN_EXIT
             if(exitMainloop){
+				break;
+/*
 #if F_CPU == 12800000
-                break;  /* memory is tight at 12.8 MHz, save exit delay below */
+                break;  // memory is tight at 12.8 MHz, save exit delay below
 #endif
                 if(--i == 0){
                     if(--j == 0)
                         break;
                 }
+*/
             }
 #endif
-        }while(!exitBootLoaderCondition());
+        } while (!exitBootLoaderCondition());
     }
     leaveBootloader();
     return 0;
