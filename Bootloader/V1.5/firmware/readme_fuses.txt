@@ -20,7 +20,7 @@ SPIEN		?
 WDTON		O
 EESAVE		O
 BODLEVEL	"Brown-out detection disabled"
-CKDIV		8
+CKDIV8		O
 CKOUT		O
 SUT_CKSEL	"Ext. Crystal Osc. 8.0-   MHz; Start-up time PWRDWN/RESET: 16 CK/14 CK + 4.1 ms"
 
