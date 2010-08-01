@@ -196,7 +196,7 @@ Damit funkionieren die entsprechenden Buttons mit Active-High Trigger PCBs.</hel
       </option>
     </choice>
 
-    <choice default="MAME_BL1_MK_NOTHING">
+    <choice default="MAME_BL1_MK_BUTTON4">
       <title>MK</title>
         
       <option id="MAME_BL1_MK_NOTHING">
@@ -229,7 +229,7 @@ Damit funkionieren die entsprechenden Buttons mit Active-High Trigger PCBs.</hel
       </option>
     </choice>
 	
-    <choice default="MAME_BL1_HK_NOTHING">
+    <choice default="MAME_BL1_HK_BUTTON6">
       <title>HK</title>
         
       <option id="MAME_BL1_HK_NOTHING">
@@ -295,7 +295,7 @@ Damit funkionieren die entsprechenden Buttons mit Active-High Trigger PCBs.</hel
       </option>
     </choice>
 
-    <choice default="MAME_BL1_LP_NOTHING">
+    <choice default="MAME_BL1_LP_BUTTON1">
       <title>LP</title>
         
       <option id="MAME_BL1_LP_NOTHING">
@@ -328,7 +328,7 @@ Damit funkionieren die entsprechenden Buttons mit Active-High Trigger PCBs.</hel
       </option>
     </choice>
 
-    <choice default="MAME_BL1_MP_NOTHING">
+    <choice default="MAME_BL1_MP_BUTTON2">
       <title>MP</title>
         
       <option id="MAME_BL1_MP_NOTHING">
@@ -361,7 +361,7 @@ Damit funkionieren die entsprechenden Buttons mit Active-High Trigger PCBs.</hel
       </option>
     </choice>
 	
-    <choice default="MAME_BL1_HP_NOTHING">
+    <choice default="MAME_BL1_HP_BUTTON5">
       <title>HP</title>
         
       <option id="MAME_BL1_HP_NOTHING">
@@ -434,7 +434,7 @@ Damit funkionieren die entsprechenden Buttons mit Active-High Trigger PCBs.</hel
     <help>The MAME button layout number 2. It is selected in MAME mode by pressing Select, LP and joystick right.</help>
     <help lang="de">Die MAME Button Anordnung Nummer 2. Sie wird im MAME Modus durch drücken von Select, LK und Joystick rechts aktiviert.</help>
 
-    <choice default="MAME_BL2_LK_NOTHING">
+    <choice default="MAME_BL2_LK_BUTTON4">
       <title>LK</title>
         
       <option id="MAME_BL2_LK_NOTHING">
@@ -467,7 +467,7 @@ Damit funkionieren die entsprechenden Buttons mit Active-High Trigger PCBs.</hel
       </option>
     </choice>
 
-    <choice default="MAME_BL2_MK_NOTHING">
+    <choice default="MAME_BL2_MK_BUTTON5">
       <title>MK</title>
         
       <option id="MAME_BL2_MK_NOTHING">
@@ -500,7 +500,7 @@ Damit funkionieren die entsprechenden Buttons mit Active-High Trigger PCBs.</hel
       </option>
     </choice>
 	
-    <choice default="MAME_BL2_HK_NOTHING">
+    <choice default="MAME_BL2_HK_BUTTON6">
       <title>HK</title>
         
       <option id="MAME_BL2_HK_NOTHING">
@@ -566,7 +566,7 @@ Damit funkionieren die entsprechenden Buttons mit Active-High Trigger PCBs.</hel
       </option>
     </choice>
 
-    <choice default="MAME_BL2_LP_NOTHING">
+    <choice default="MAME_BL2_LP_BUTTON1">
       <title>LP</title>
         
       <option id="MAME_BL2_LP_NOTHING">
@@ -599,7 +599,7 @@ Damit funkionieren die entsprechenden Buttons mit Active-High Trigger PCBs.</hel
       </option>
     </choice>
 
-    <choice default="MAME_BL2_MP_NOTHING">
+    <choice default="MAME_BL2_MP_BUTTON2">
       <title>MP</title>
         
       <option id="MAME_BL2_MP_NOTHING">
@@ -632,7 +632,7 @@ Damit funkionieren die entsprechenden Buttons mit Active-High Trigger PCBs.</hel
       </option>
     </choice>
 	
-    <choice default="MAME_BL2_HP_NOTHING">
+    <choice default="MAME_BL2_HP_BUTTON3">
       <title>HP</title>
         
       <option id="MAME_BL2_HP_NOTHING">
@@ -705,7 +705,7 @@ Damit funkionieren die entsprechenden Buttons mit Active-High Trigger PCBs.</hel
     <help>The MAME button layout number 3. It is selected in MAME mode by pressing Select, LP and joystick down.</help>
     <help lang="de">Die MAME Button Anordnung Nummer 3. Sie wird im MAME Modus durch drücken von Select, LK und Joystick runter aktiviert.</help>
 
-    <choice default="MAME_BL3_LK_NOTHING">
+    <choice default="MAME_BL3_LK_BUTTON5">
       <title>LK</title>
         
       <option id="MAME_BL3_LK_NOTHING">
@@ -738,7 +738,7 @@ Damit funkionieren die entsprechenden Buttons mit Active-High Trigger PCBs.</hel
       </option>
     </choice>
 
-    <choice default="MAME_BL3_MK_NOTHING">
+    <choice default="MAME_BL3_MK_BUTTON6">
       <title>MK</title>
         
       <option id="MAME_BL3_MK_NOTHING">
@@ -837,7 +837,7 @@ Damit funkionieren die entsprechenden Buttons mit Active-High Trigger PCBs.</hel
       </option>
     </choice>
 
-    <choice default="MAME_BL3_LP_NOTHING">
+    <choice default="MAME_BL3_LP_BUTTON1">
       <title>LP</title>
         
       <option id="MAME_BL3_LP_NOTHING">
@@ -870,7 +870,7 @@ Damit funkionieren die entsprechenden Buttons mit Active-High Trigger PCBs.</hel
       </option>
     </choice>
 
-    <choice default="MAME_BL3_MP_NOTHING">
+    <choice default="MAME_BL3_MP_BUTTON2">
       <title>MP</title>
         
       <option id="MAME_BL3_MP_NOTHING">
@@ -903,7 +903,7 @@ Damit funkionieren die entsprechenden Buttons mit Active-High Trigger PCBs.</hel
       </option>
     </choice>
 	
-    <choice default="MAME_BL3_HP_NOTHING">
+    <choice default="MAME_BL3_HP_BUTTON3">
       <title>HP</title>
         
       <option id="MAME_BL3_HP_NOTHING">
@@ -936,7 +936,7 @@ Damit funkionieren die entsprechenden Buttons mit Active-High Trigger PCBs.</hel
       </option>
     </choice>
 
-    <choice default="MAME_BL3_4P_NOTHING">
+    <choice default="MAME_BL3_4P_BUTTON4">
       <title>4P</title>
         
       <option id="MAME_BL3_4P_NOTHING">
@@ -976,7 +976,7 @@ Damit funkionieren die entsprechenden Buttons mit Active-High Trigger PCBs.</hel
     <help>The MAME button layout number 4. It is selected in MAME mode by pressing Select, LP and joystick left.</help>
     <help lang="de">Die MAME Button Anordnung Nummer 4. Sie wird im MAME Modus durch drücken von Select, LK und Joystick links aktiviert.</help>
 
-    <choice default="MAME_BL4_LK_NOTHING">
+    <choice default="MAME_BL4_LK_BUTTON4">
       <title>LK</title>
         
       <option id="MAME_BL4_LK_NOTHING">
@@ -1009,7 +1009,7 @@ Damit funkionieren die entsprechenden Buttons mit Active-High Trigger PCBs.</hel
       </option>
     </choice>
 
-    <choice default="MAME_BL4_MK_NOTHING">
+    <choice default="MAME_BL4_MK_BUTTON5">
       <title>MK</title>
         
       <option id="MAME_BL4_MK_NOTHING">
@@ -1042,7 +1042,7 @@ Damit funkionieren die entsprechenden Buttons mit Active-High Trigger PCBs.</hel
       </option>
     </choice>
 	
-    <choice default="MAME_BL4_HK_NOTHING">
+    <choice default="MAME_BL4_HK_BUTTON6">
       <title>HK</title>
         
       <option id="MAME_BL4_HK_NOTHING">
@@ -1108,7 +1108,7 @@ Damit funkionieren die entsprechenden Buttons mit Active-High Trigger PCBs.</hel
       </option>
     </choice>
 
-    <choice default="MAME_BL4_LP_NOTHING">
+    <choice default="MAME_BL4_LP_BUTTON1">
       <title>LP</title>
         
       <option id="MAME_BL4_LP_NOTHING">
@@ -1141,7 +1141,7 @@ Damit funkionieren die entsprechenden Buttons mit Active-High Trigger PCBs.</hel
       </option>
     </choice>
 
-    <choice default="MAME_BL4_MP_NOTHING">
+    <choice default="MAME_BL4_MP_BUTTON2">
       <title>MP</title>
         
       <option id="MAME_BL4_MP_NOTHING">
@@ -1174,7 +1174,7 @@ Damit funkionieren die entsprechenden Buttons mit Active-High Trigger PCBs.</hel
       </option>
     </choice>
 	
-    <choice default="MAME_BL4_HP_NOTHING">
+    <choice default="MAME_BL4_HP_BUTTON3">
       <title>HP</title>
         
       <option id="MAME_BL4_HP_NOTHING">
@@ -1207,7 +1207,7 @@ Damit funkionieren die entsprechenden Buttons mit Active-High Trigger PCBs.</hel
       </option>
     </choice>
 
-    <choice default="MAME_BL4_4P_NOTHING">
+    <choice default="MAME_BL4_4P_BUTTON4">
       <title>4P</title>
         
       <option id="MAME_BL4_4P_NOTHING">
