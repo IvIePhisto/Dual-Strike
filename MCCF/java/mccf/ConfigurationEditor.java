@@ -586,7 +586,9 @@ public class ConfigurationEditor implements HyperlinkListener {
 			}
 
 			titles.add(getLocalizedInfo(o.getTitle(), true));
-			helps.add(convertTextToHTML(help, null));
+			
+			if(help != null)
+				helps.add(convertTextToHTML(help, null));
 		}
 		
 		helpsArray = helps.toArray(new String[]{});
