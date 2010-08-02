@@ -188,7 +188,7 @@ PROGMEM char usbHidReportDescriptorMAME[158] = {
     0x09, 0x2c,                    //   USAGE (Keyboard Spacebar)
     0x09, 0x13,                    //   USAGE (Keyboard p and P)
     0x09, 0x1b,                    //   USAGE (Keyboard x and X)
-    0x09, 0x1c,                    //   USAGE (Keyboard y and Y)
+    0x09, 0x1d,                    //   USAGE (Keyboard z and Z)
     0x09, 0x1e,                    //   USAGE (Keyboard 1 and !)
     0x09, 0x22,                    //   USAGE (Keyboard 5 and %)
     0x09, 0x01,                    //   USAGE (Keyboard ErrorRollOver)
