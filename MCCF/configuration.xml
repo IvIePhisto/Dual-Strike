@@ -163,7 +163,7 @@ Damit funkionieren die entsprechenden Buttons mit Active-High Trigger PCBs.</hel
     <help>The MAME button layout number 1. It is selected in MAME mode by pressing Select, LP and joystick up.</help>
     <help lang="de">Die MAME Button Anordnung Nummer 1. Sie wird im MAME Modus durch drücken von Select, LK und Joystick hoch aktiviert.</help>
 
-    <choice default="MAME_BL1_LK_NOTHING">
+    <choice default="MAME_BL1_LK_BUTTON3">
       <title>LK</title>
         
       <option id="MAME_BL1_LK_NOTHING">
