@@ -28,34 +28,53 @@ void resetMAMEReport4() {
 #define MAME_R1_RIGHT	{ data.mame_reports.report1.reportData[0] |= (1<<1); }
 #define MAME_R1_DOWN	{ data.mame_reports.report1.reportData[0] |= (1<<2); }
 #define MAME_R1_LEFT	{ data.mame_reports.report1.reportData[0] |= (1<<3); }
-#define MAME_R1_LCTRL	{ data.mame_reports.report1.reportData[0] |= (1<<4); }
-#define MAME_R1_LALT	{ data.mame_reports.report1.reportData[0] |= (1<<5); }
-#define MAME_R1_LSHIFT	{ data.mame_reports.report1.reportData[0] |= (1<<6); }
 #define MAME_R1_ENTER	{ data.mame_reports.report1.reportData[0] |= (1<<7); }
-
 #define MAME_R1_ESCAPE	{ data.mame_reports.report1.reportData[1] |= (1<<0); }
-#define MAME_R1_SPACE	{ data.mame_reports.report1.reportData[1] |= (1<<1); }
 #define MAME_R1_P		{ data.mame_reports.report1.reportData[1] |= (1<<2); }
-#define MAME_R1_X		{ data.mame_reports.report1.reportData[1] |= (1<<3); }
-#define MAME_R1_Y		{ data.mame_reports.report1.reportData[1] |= (1<<4); }
 #define MAME_R1_1		{ data.mame_reports.report1.reportData[1] |= (1<<5); }
 #define MAME_R1_5		{ data.mame_reports.report1.reportData[1] |= (1<<6); }
 
+#define MAME_R1_LCTRL_ARRAY 	0
+#define MAME_R1_LALT_ARRAY		0
+#define MAME_R1_LSHIFT_ARRAY	0
 
-#define MAME_R2_A		{ data.mame_reports.report2.reportData[0] |= (1<<0); }
+#define MAME_R1_LCTRL_BIT		4
+#define MAME_R1_LALT_BIT		5
+#define MAME_R1_LSHIFT_BIT		6
+
+#define MAME_R1_SPACE_ARRAY		1
+#define MAME_R1_X_ARRAY			1
+#define MAME_R1_Y_ARRAY			1
+
+#define MAME_R1_SPACE_BIT		1
+#define MAME_R1_X_BIT			3
+#define MAME_R1_Y_BIT			4
+
+
+
 #define MAME_R2_D		{ data.mame_reports.report2.reportData[0] |= (1<<1); }
 #define MAME_R2_F		{ data.mame_reports.report2.reportData[0] |= (1<<2); }
 #define MAME_R2_G		{ data.mame_reports.report2.reportData[0] |= (1<<3); }
-#define MAME_R2_I		{ data.mame_reports.report2.reportData[0] |= (1<<4); }
-#define MAME_R2_K		{ data.mame_reports.report2.reportData[0] |= (1<<5); }
 #define MAME_R2_P		{ data.mame_reports.report2.reportData[0] |= (1<<6); }
-
-#define MAME_R2_Q		{ data.mame_reports.report2.reportData[0] |= (1<<7); }
 #define MAME_R2_R		{ data.mame_reports.report2.reportData[1] |= (1<<0); }
-#define MAME_R2_S		{ data.mame_reports.report2.reportData[1] |= (1<<1); }
-#define MAME_R2_W		{ data.mame_reports.report2.reportData[1] |= (1<<2); }
 #define MAME_R2_2		{ data.mame_reports.report2.reportData[1] |= (1<<3); }
 #define MAME_R2_6		{ data.mame_reports.report2.reportData[1] |= (1<<4); }
+
+#define MAME_R2_A_ARRAY	0
+#define MAME_R2_I_ARRAY	0
+#define MAME_R2_K_ARRAY	0
+#define MAME_R2_Q_ARRAY	0
+
+#define MAME_R2_A_BIT	0
+#define MAME_R2_I_BIT	4
+#define MAME_R2_K_BIT	5
+#define MAME_R2_Q_BIT	7
+
+#define MAME_R2_S_ARRAY	1
+#define MAME_R2_W_ARRAY	1
+
+#define MAME_R2_S_BIT	1
+#define MAME_R2_W_BIT	2
 
 
 #define MAME_R3_UP		{ data.mame_reports.report3.reportData[0] |= (1<<0); }
@@ -73,6 +92,41 @@ void resetMAMEReport4() {
 
 #define MAME_R4_VOL_UP	 { data.mame_reports.report4.reportData |= (1<<0); }
 #define MAME_R4_VOL_DOWN { data.mame_reports.report4.reportData |= (1<<1); }
+
+
+#define MAME_SET_REPORT_BIT_FUNCTION(functionName, reportNo, array, bit) void functionName() { data.mame_reports.report##reportNo.reportData[array] |= (1<<bit); }
+
+MAME_SET_REPORT_BIT_FUNCTION(mamePlayer1Button1, 1, MAME_R1_LCTRL_ARRAY, MAME_R1_LCTRL_BIT)
+MAME_SET_REPORT_BIT_FUNCTION(mamePlayer1Button2, 1, MAME_R1_LALT_ARRAY, MAME_R1_LALT_BIT)
+MAME_SET_REPORT_BIT_FUNCTION(mamePlayer1Button3, 1, MAME_R1_SPACE_ARRAY, MAME_R1_SPACE_BIT)
+MAME_SET_REPORT_BIT_FUNCTION(mamePlayer1Button4, 1, MAME_R1_LSHIFT_ARRAY, MAME_R1_LSHIFT_BIT)
+MAME_SET_REPORT_BIT_FUNCTION(mamePlayer1Button5, 1, MAME_R1_X_ARRAY, MAME_R1_X_BIT)
+MAME_SET_REPORT_BIT_FUNCTION(mamePlayer1Button6, 1, MAME_R1_Y_ARRAY, MAME_R1_Y_BIT)
+
+void (*player1Buttons[6])() = {mamePlayer1Button1, mamePlayer1Button2, mamePlayer1Button3, mamePlayer1Button4, mamePlayer1Button5, mamePlayer1Button6 };
+
+MAME_SET_REPORT_BIT_FUNCTION(mamePlayer2Button1, 2, MAME_R2_A_ARRAY, MAME_R2_A_BIT)
+MAME_SET_REPORT_BIT_FUNCTION(mamePlayer2Button2, 2, MAME_R2_S_ARRAY, MAME_R2_S_BIT)
+MAME_SET_REPORT_BIT_FUNCTION(mamePlayer2Button3, 2, MAME_R2_Q_ARRAY, MAME_R2_Q_BIT)
+MAME_SET_REPORT_BIT_FUNCTION(mamePlayer2Button4, 2, MAME_R2_W_ARRAY, MAME_R2_W_BIT)
+MAME_SET_REPORT_BIT_FUNCTION(mamePlayer2Button5, 2, MAME_R2_K_ARRAY, MAME_R2_K_BIT)
+MAME_SET_REPORT_BIT_FUNCTION(mamePlayer2Button6, 2, MAME_R2_I_ARRAY, MAME_R2_I_BIT)
+
+void (*player2Buttons[6])() = {mamePlayer2Button1, mamePlayer2Button2, mamePlayer2Button3, mamePlayer2Button4, mamePlayer2Button5, mamePlayer2Button6 };
+
+// meaning: LK, MK, HK, 4K, LP, MP, HP, 4P
+int buttonMapping[8] = {3, 4, 5, -1, 0, 1, 2, 3};
+
+#define MAME_LK 0
+#define MAME_MK 1
+#define MAME_HK 2
+#define MAME_4K 3
+#define MAME_LP 4
+#define MAME_MP 5
+#define MAME_HP 6
+#define MAME_4P 7
+
+#define MAME_SET_BUTTON(playerNo, buttonID) { if(buttonID >= 0) (*player##playerNo##Buttons[buttonMapping[buttonID]])(); }
 
 uchar selectPressed;
 uchar selectWasPressed = 0;
@@ -112,26 +166,29 @@ void sendMAMEReportPlayer1() {
 			MAME_R1_RIGHT
 
 		if(!Stick_LK)
-			MAME_R1_LSHIFT
+			MAME_SET_BUTTON(1, MAME_LK)
 
 		if(!Stick_MK)
-			MAME_R1_X
+			MAME_SET_BUTTON(1, MAME_MK)
 
 		if(!Stick_HK)
-			MAME_R1_Y
+			MAME_SET_BUTTON(1, MAME_HK)
 
 		if(!Stick_LP)
-			MAME_R1_LCTRL
+			MAME_SET_BUTTON(1, MAME_LP)
 
 		if(!Stick_MP)
-			MAME_R1_LALT
+			MAME_SET_BUTTON(1, MAME_MP)
 
 		if(!Stick_HP)
-			MAME_R1_SPACE
+			MAME_SET_BUTTON(1, MAME_HP)
 
-	#ifdef EXTRA_BUTTONS					
+	#ifdef EXTRA_BUTTONS
+		if(!Stick_4K)
+			MAME_SET_BUTTON(1, MAME_4K)
+
 		if(!Stick_4P)
-			MAME_R1_LSHIFT
+			MAME_SET_BUTTON(1, MAME_4P)
 	#endif
 
 		if(!Stick_Start)
@@ -163,26 +220,29 @@ void sendMAMEReportPlayer2() {
 		MAME_R2_G
 
 	if(!Stick_LK)
-		MAME_R2_W
+		MAME_SET_BUTTON(2, MAME_LK)
 
 	if(!Stick_MK)
-		MAME_R2_K
+		MAME_SET_BUTTON(2, MAME_MK)
 
 	if(!Stick_HK)
-		MAME_R2_I
+		MAME_SET_BUTTON(2, MAME_HK)
 
 	if(!Stick_LP)
-		MAME_R2_A
+		MAME_SET_BUTTON(2, MAME_LP)
 
 	if(!Stick_MP)
-		MAME_R2_S
+		MAME_SET_BUTTON(2, MAME_MP)
 
 	if(!Stick_HP)
-		MAME_R2_Q
+		MAME_SET_BUTTON(2, MAME_HP)
 
-#ifdef EXTRA_BUTTONS					
+#ifdef EXTRA_BUTTONS
+	if(!Stick_4K)
+		MAME_SET_BUTTON(2, MAME_4K)
+
 	if(!Stick_4P)
-		MAME_R2_W
+		MAME_SET_BUTTON(2, MAME_4P)
 #endif
 
 	if(!Stick_Start)
