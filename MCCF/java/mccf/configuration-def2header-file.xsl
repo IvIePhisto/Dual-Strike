@@ -122,7 +122,7 @@ uint8_t config[CONFIG_BYTE_WIDTH + 2] = {</xsl:text>
       <xsl:text>] = </xsl:text>
       <xsl:text>CONFIG_DEF_</xsl:text><xsl:value-of select="$byte-index + 1"/>
         <xsl:text>;\&#xA;</xsl:text>
-        <xsl:call-template name="create-config-defaults">
+        <xsl:call-template name="create-set-defaults">
           <xsl:with-param name="default-bits" select="$default-bits"/>
           <xsl:with-param name="byte-count" select="$byte-count"/>
           <xsl:with-param name="byte-index" select="$byte-index + 1"/>

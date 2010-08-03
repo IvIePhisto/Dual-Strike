@@ -12,7 +12,6 @@ import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Insets;
 import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -34,13 +33,14 @@ import java.util.regex.Pattern;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
+import javax.swing.DefaultListCellRenderer;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -51,7 +51,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
-import javax.swing.ListSelectionModel;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.HyperlinkEvent;
@@ -80,7 +79,7 @@ import mccf.model.ConfigurationModel;
 public class ConfigurationEditor implements HyperlinkListener {
 	public static final int MAJOR_VERSION_NO = 1;
 	public static final int MINOR_VERSION_NO = 0;
-	public static final int BUGFIX_VERSION_NO = 1;
+	public static final int BUGFIX_VERSION_NO = 2;
 
 	static final File DEFAULT_CONFIGURATION_DEFINITION_FILE = new File("configuration.xml");
 
@@ -552,17 +551,16 @@ public class ConfigurationEditor implements HyperlinkListener {
 		if(options.size() <= listOptionCount)
 			return createOptionRadioButtons(c, defaultOption.getId());
 		else
-			return createOptionList(c, defaultOption.getId(), listOptionCount);
+			return createOptionComboBox(c, defaultOption.getId());
 	}
 	
-	private JComponent createOptionList(final ChoiceSetting choiceSetting, String defaultOptionID, final int optionListCount) {
+	private JComponent createOptionComboBox(final ChoiceSetting choiceSetting, String defaultOptionID) {
 		List<String> titles;
 		List<String> helps;
 		final String[] helpsArray;
-		JList list;
+		JComboBox comboBox;
 		int selectedIndex;
-		JScrollPane scrollPane;
-		JPanel panel;
+		DefaultListCellRenderer listCellRenderer;
 		
 		titles = new LinkedList<String>();
 		helps = new LinkedList<String>();
@@ -587,33 +585,21 @@ public class ConfigurationEditor implements HyperlinkListener {
 
 			titles.add(getLocalizedInfo(o.getTitle(), true));
 			
-			if(help != null)
+			if(help == null)
+				helps.add(null);
+			else
 				helps.add(convertTextToHTML(help, null));
 		}
 		
 		helpsArray = helps.toArray(new String[]{});
-		
-		list = new JList(titles.toArray()) {
-			private static final long serialVersionUID = 1L;
-			private String[] helps = helpsArray;
-	
-			@Override
-			public String getToolTipText(MouseEvent event) {
-				return helps[locationToIndex(event.getPoint())];
-			}
-		};
-	
-		list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		list.setLayoutOrientation(JList.VERTICAL);
-		list.setVisibleRowCount(optionListCount);
-		list.setSelectedIndex(selectedIndex);
-		list.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
-		scrollPane = new JScrollPane(list, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-		panel = new JPanel();
-		panel.add(scrollPane);
-		model.addChoice(choiceSetting, list);
+		listCellRenderer = new TooltipListCellRenderer(helpsArray);
+		comboBox = new JComboBox(titles.toArray());
+		comboBox.setRenderer(listCellRenderer);
+		comboBox.setSelectedIndex(selectedIndex);
+		comboBox.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
+		model.addChoice(choiceSetting, comboBox);
 
-		return panel;
+		return comboBox;
 	}
 
 	private JComponent createOptionRadioButtons(final ChoiceSetting choiceSetting, final String defaultOptionID) {

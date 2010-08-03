@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Vector;
 
 import javax.swing.ButtonGroup;
-import javax.swing.JList;
+import javax.swing.JComboBox;
 import javax.swing.JRadioButton;
 
 import mccf.definition.BooleanSetting;
@@ -32,10 +32,10 @@ public class ConfigurationModel {
 		return byteWidth;
 	}
 	
-	public synchronized void addChoice(final ChoiceSetting choiceSetting, final JList choiceList) {
-		ListChoiceModel choiceModel;
+	public synchronized void addChoice(final ChoiceSetting choiceSetting, final JComboBox comboBox) {
+		ComboBoxChoiceModel choiceModel;
 		
-		choiceModel = new ListChoiceModel(fileHandler, choiceSetting, choiceList);
+		choiceModel = new ComboBoxChoiceModel(fileHandler, choiceSetting, comboBox);
 		settings.add(choiceModel);
 	}
 	
