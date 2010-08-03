@@ -97,29 +97,29 @@ void readInputXBox() {
 	}
 
 	// Buttons
-	if(!Stick_Jab)
+	if(!Stick_LP)
 		XBOX_X
 
-	if(!Stick_Strong)
+	if(!Stick_MP)
 		XBOX_Y
 
-	if(!Stick_Fierce)
+	if(!Stick_HP)
 		XBOX_BLACK
 
-	if(!Stick_Short)
+	if(!Stick_LK)
 		XBOX_A
 
-	if(!Stick_Forward)
+	if(!Stick_MK)
 		XBOX_B
 
-	if(!Stick_Roundhouse)
+	if(!Stick_HK)
 		XBOX_WHITE
 
 #ifdef EXTRA_BUTTONS					
-	if(!Stick_Extra0)
+	if(!Stick_4P)
 		XBOX_LT
 
-	if(!Stick_Extra1)
+	if(!Stick_4K)
 		XBOX_RT
 #endif
 

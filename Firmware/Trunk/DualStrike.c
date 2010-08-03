@@ -115,15 +115,15 @@ void configInit() {
 		programmer_setup();
 
 		while( Stick_Start
-		 	&& Stick_Jab
-			&& Stick_Strong
-			&& Stick_Fierce
-			&& Stick_Short
-			&& Stick_Forward
-			&& Stick_Roundhouse
+		 	&& Stick_LP
+			&& Stick_MP
+			&& Stick_HP
+			&& Stick_LK
+			&& Stick_MK
+			&& Stick_HK
 #ifdef EXTRA_BUTTONS
-			&& Stick_Extra0
-			&& Stick_Extra1
+			&& Stick_4P
+			&& Stick_4K
 #endif
 )
 			programmer_poll();
@@ -132,12 +132,12 @@ void configInit() {
 		readConfig(newConfig);
 
 		while(Stick_Start) {
-			if(!Stick_Forward) {
+			if(!Stick_MK) {
 				// revert to defaults
 				CONFIG_SET_DEFAULTS(newConfig)
 			}
 
-			if(Stick_Short && Stick_Forward && Stick_Jab && Stick_Strong && Stick_Roundhouse) {
+			if(Stick_LK && Stick_MK && Stick_LP && Stick_MP && Stick_HK) {
 				if(!Stick_Up) {
 					CFG_SET_DIGITAL_PAD(newConfig)
 				}
@@ -149,7 +149,7 @@ void configInit() {
 				}
 			}
 
-			if(!Stick_Short) {
+			if(!Stick_LK) {
 				if(!Stick_Left) {
 					CFG_SET_DEF_WORK_MODE_PS3(newConfig)
 				}
@@ -164,7 +164,7 @@ void configInit() {
 				}
 			}
 			
-			if(!Stick_Jab) {
+			if(!Stick_LP) {
 				if(!Stick_Left) {
 					CFG_DISABLE_HOME_EMU(newConfig)
 				}
@@ -174,7 +174,7 @@ void configInit() {
 				}
 			}
 
-			if(!Stick_Strong) {
+			if(!Stick_MP) {
 				if(!Stick_Up) {
 					CFG_SET_NO_EXTRA_PINS(newConfig)
 				}
@@ -285,13 +285,13 @@ int hardwareInit() {
 		PORTC |= (1<<6); // pin S4 is high
 	}
 
-	if(!Stick_Short)
+	if(!Stick_LK)
 		return setModePS3();
-	else if(!Stick_Forward)
+	else if(!Stick_MK)
 		return setModeMAME();
-	else if(!Stick_Jab)
+	else if(!Stick_LP)
 		return setModeXBox();
-	else if(!Stick_Strong)
+	else if(!Stick_MP)
 		return setModePT();
 	else {
 		if(CFG_DEF_WORK_MODE_PS3)

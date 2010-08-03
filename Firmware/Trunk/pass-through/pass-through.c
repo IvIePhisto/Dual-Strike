@@ -31,13 +31,13 @@ void pass_through() {
 
         if(CFG_INVERTED_TRIGGERS) {
             // if LT is pressed then invert trigger and make it high (pressed)
-            if(!Stick_Extra1)
+            if(!Stick_4K)
                 PORTD |= (1<<4);
             else
                 PORTD &= ~(1<<4);
     
             // if RT is pressed then invert trigger and make it high (pressed)
-            if(!Stick_Roundhouse)
+            if(!Stick_HK)
                 PORTC |= (1<<6);
             // else keep trigger low
             else

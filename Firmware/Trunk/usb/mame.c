@@ -85,12 +85,12 @@ void sendMAMEReportPlayer1() {
 	resetMAMEReport1();
 
 	if(selectPressed) {
-		if(!Stick_Short) {
+		if(!Stick_LK) {
 			MAME_R1_ENTER
 			selectWasUsed = 1;
 		}
 
-		if(!Stick_Forward) {
+		if(!Stick_MK) {
 			MAME_R1_ESCAPE	
 			selectWasUsed = 1;
 		}
@@ -111,26 +111,26 @@ void sendMAMEReportPlayer1() {
 		else if (!Stick_Right)
 			MAME_R1_RIGHT
 
-		if(!Stick_Short)
+		if(!Stick_LK)
 			MAME_R1_LSHIFT
 
-		if(!Stick_Forward)
+		if(!Stick_MK)
 			MAME_R1_X
 
-		if(!Stick_Roundhouse)
+		if(!Stick_HK)
 			MAME_R1_Y
 
-		if(!Stick_Jab)
+		if(!Stick_LP)
 			MAME_R1_LCTRL
 
-		if(!Stick_Strong)
+		if(!Stick_MP)
 			MAME_R1_LALT
 
-		if(!Stick_Fierce)
+		if(!Stick_HP)
 			MAME_R1_SPACE
 
 	#ifdef EXTRA_BUTTONS					
-		if(!Stick_Extra0)
+		if(!Stick_4P)
 			MAME_R1_LSHIFT
 	#endif
 
@@ -162,26 +162,26 @@ void sendMAMEReportPlayer2() {
 	else if (!Stick_Right)
 		MAME_R2_G
 
-	if(!Stick_Short)
+	if(!Stick_LK)
 		MAME_R2_W
 
-	if(!Stick_Forward)
+	if(!Stick_MK)
 		MAME_R2_K
 
-	if(!Stick_Roundhouse)
+	if(!Stick_HK)
 		MAME_R2_I
 
-	if(!Stick_Jab)
+	if(!Stick_LP)
 		MAME_R2_A
 
-	if(!Stick_Strong)
+	if(!Stick_MP)
 		MAME_R2_S
 
-	if(!Stick_Fierce)
+	if(!Stick_HP)
 		MAME_R2_Q
 
 #ifdef EXTRA_BUTTONS					
-	if(!Stick_Extra0)
+	if(!Stick_4P)
 		MAME_R2_W
 #endif
 
@@ -218,16 +218,16 @@ void sendMAMEReportsControl() {
 	else if (!Stick_Right)
 		MAME_R3_RIGHT
 
-	if(!Stick_Jab)
+	if(!Stick_LP)
 		MAME_R3_ENTER
 
-	if(!Stick_Strong)
+	if(!Stick_MP)
 		MAME_R3_ESCAPE
 
-	if(!Stick_Short)
+	if(!Stick_LK)
 		MAME_R3_F2
 
-	if(!Stick_Forward)
+	if(!Stick_MK)
 		MAME_R3_F3
 
 	if(!Stick_Start)
@@ -239,10 +239,10 @@ void sendMAMEReportsControl() {
 	}
 
 #ifdef EXTRA_BUTTONS		
-	if(!Stick_Extra0)
+	if(!Stick_4P)
 		MAME_R4_VOL_UP
 
-	if(!Stick_Extra1)
+	if(!Stick_4K)
 		MAME_R4_VOL_DOWN
 #endif
 

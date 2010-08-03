@@ -206,32 +206,32 @@ void readInputWiiClassicController() {
 	}
 
 	// Buttons
-	if(!Stick_Jab)
+	if(!Stick_LP)
 		WII_CC_X
 
-	if(!Stick_Short)
+	if(!Stick_LK)
 		WII_CC_Y
 
-	if(!Stick_Strong)
+	if(!Stick_MP)
 		WII_CC_ZL
 
-	if(!Stick_Forward)
+	if(!Stick_MK)
 		WII_CC_B
 
-	if(!Stick_Fierce)
+	if(!Stick_HP)
 		WII_CC_A
 
-	if(!Stick_Roundhouse) {
+	if(!Stick_HK) {
 		WII_CC_RT
 		wiiData->lt2_0Rt &= ~0b00011111;
 	}
 
 #ifdef EXTRA_BUTTONS					
 	/* COMMENT FOR LED DEBUG: */
-	if(!Stick_Extra0)
+	if(!Stick_4P)
 		WII_CC_ZL
 
-	if(!Stick_Extra1) {
+	if(!Stick_4K) {
 		WII_CC_LT
 		wiiData->rx0Lt4_3Ry &= ~0b01100000;
 		wiiData->lt2_0Rt &= ~0b11100000;
@@ -316,22 +316,22 @@ void readInputWiiDrum() {
 		WII_DRUM_RIGHT
 
 	// Buttons
-	if(!Stick_Jab)
+	if(!Stick_LP)
 		WII_DRUM_ORANGE
 
-	if(!Stick_Short)
+	if(!Stick_LK)
 		WII_DRUM_YELLOW
 
-	if(!Stick_Strong)
+	if(!Stick_MP)
 		WII_DRUM_PEDAL
 
-	if(!Stick_Forward)
+	if(!Stick_MK)
 		WII_DRUM_RED
 
-	if(!Stick_Fierce)
+	if(!Stick_HP)
 		WII_DRUM_BLUE
 
-	if(!Stick_Roundhouse)
+	if(!Stick_HK)
 		WII_DRUM_GREEN
 
 	if(!Stick_Start)

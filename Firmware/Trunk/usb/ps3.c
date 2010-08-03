@@ -105,29 +105,29 @@ void readInputPS3() {
 	}
 
 	// Buttons
-	if(!Stick_Jab)
+	if(!Stick_LP)
 		PS3_SQUARE
 
-	if(!Stick_Strong)
+	if(!Stick_MP)
 		PS3_TRIANGLE
 
-	if(!Stick_Fierce)
+	if(!Stick_HP)
 		PS3_R1
 
-	if(!Stick_Short)
+	if(!Stick_LK)
 		PS3_CROSS
 
-	if(!Stick_Forward)
+	if(!Stick_MK)
 		PS3_CIRCLE
 
-	if(!Stick_Roundhouse)
+	if(!Stick_HK)
 		PS3_R2
 
 #ifdef EXTRA_BUTTONS					
-	if(!Stick_Extra0)
+	if(!Stick_4P)
 		PS3_L1
 
-	if(!Stick_Extra1)
+	if(!Stick_4K)
 		PS3_L2
 #endif
 
