@@ -473,7 +473,7 @@ public class ConfigurationEditor implements HyperlinkListener {
 		JPanel settingPanel;
 		JComponent selectorComponent;
 		JLabel title;
-		JEditorPane help;
+		String helpString;
 		JLabel imageLabel;
 
 		settingPanel = new JPanel(new BorderLayout(10, 5));
@@ -484,9 +484,10 @@ public class ConfigurationEditor implements HyperlinkListener {
 		if(settingObject instanceof BooleanSetting) {
 			BooleanSetting setting;
 
+			
 			setting = (BooleanSetting)settingObject;
 			title = createLabel(setting.getTitle(), TITLE_FONT);
-			help = createHTMLPane(getLocalizedInfo(setting.getHelp(), true));
+			helpString = getLocalizedInfo(setting.getHelp(), true);
 			selectorComponent = createSettingComponent(setting);
 			imageLabel = createImageLabel(setting.getImage());
 		}
@@ -495,7 +496,7 @@ public class ConfigurationEditor implements HyperlinkListener {
 			
 			setting = (ChoiceSetting)settingObject;
 			title = createLabel(setting.getTitle(), TITLE_FONT);
-			help = createHTMLPane(getLocalizedInfo(setting.getHelp(), true));
+			helpString = getLocalizedInfo(setting.getHelp(), true);
 			selectorComponent = createSettingComponent(setting);
 			imageLabel = createImageLabel(setting.getImage());
 		}
@@ -503,12 +504,21 @@ public class ConfigurationEditor implements HyperlinkListener {
 			throw new Error(String.format("Unexpected class %s of setting object.", settingObject.getClass().getCanonicalName()));
 		}
 
-		help.setFont(DESCRIPTION_FONT);
-		help.setMargin(new Insets(0, 0, 0, 0));
-		help.setBackground(settingPanel.getBackground());
 		settingPanel.add(title, BorderLayout.PAGE_START);
-		settingPanel.add(help, BorderLayout.CENTER);
-		settingPanel.add(selectorComponent, BorderLayout.LINE_END);
+		
+		if(helpString == null) {
+			settingPanel.add(selectorComponent, BorderLayout.LINE_START);
+		}
+		else {
+			JEditorPane help;
+
+			help = createHTMLPane(helpString);
+			help.setFont(DESCRIPTION_FONT);
+			help.setMargin(new Insets(0, 0, 0, 0));
+			help.setBackground(settingPanel.getBackground());
+			settingPanel.add(help, BorderLayout.CENTER);
+			settingPanel.add(selectorComponent, BorderLayout.LINE_END);
+		}
 		
 		if(imageLabel != null) {
 			imageLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -561,6 +571,7 @@ public class ConfigurationEditor implements HyperlinkListener {
 		JComboBox comboBox;
 		int selectedIndex;
 		DefaultListCellRenderer listCellRenderer;
+		JPanel panel;
 		
 		titles = new LinkedList<String>();
 		helps = new LinkedList<String>();
@@ -598,8 +609,10 @@ public class ConfigurationEditor implements HyperlinkListener {
 		comboBox.setSelectedIndex(selectedIndex);
 		comboBox.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
 		model.addChoice(choiceSetting, comboBox);
+		panel = new JPanel();
+		panel.add(comboBox);
 
-		return comboBox;
+		return panel;
 	}
 
 	private JComponent createOptionRadioButtons(final ChoiceSetting choiceSetting, final String defaultOptionID) {
