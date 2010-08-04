@@ -80,7 +80,7 @@ e2addr_t eepromOffset = -1;
 uchar writeReportID = 0;
 e2addr_t currentEEPROMAddress;
 
-uchar mameIdleRate = 125; // 500ms
+uchar mameIdleRate = 1; // 4ms
 
 usbMsgLen_t usbFunctionSetup(uchar receivedData[8]) {
 	usbRequest_t    *rq = (void *)receivedData;
@@ -160,12 +160,16 @@ usbMsgLen_t usbFunctionSetup(uchar receivedData[8]) {
 	}
 	else if(usbMode == USB_MODE_MAME) {
 		if ((rq-> bmRequestType & USBRQ_TYPE_MASK) == USBRQ_TYPE_CLASS) {
-			if (rq->bRequest == USBRQ_HID_GET_IDLE) {		
-		    	usbMsgPtr = &mameIdleRate;
-		    	return 1;
+			if (rq->bRequest == USBRQ_HID_GET_IDLE) {
+				if((reportID == 0) || (reportID == 1)) {
+		    		usbMsgPtr = &mameIdleRate;
+			    	return 1;
+				}
 		    }
 			else if(rq->bRequest == USBRQ_HID_SET_IDLE) {
-				mameIdleRate = reportType;
+				if((reportID == 0) || (reportID == 1)) {	
+					mameIdleRate = reportType;
+				}
 		    }
 		}
 	}

@@ -257,7 +257,7 @@ PROGMEM char usbDescriptorConfigurationMAME[] = {
     0x81,						/* IN endpoint number 1 */
     0x03,						/* attrib: Interrupt endpoint */
     8, 0,						/* maximum packet size */
-    1 							/* interrupt poll interval in ms */
+    4 							/* interrupt poll interval in ms */
 };
 
 // XBOX

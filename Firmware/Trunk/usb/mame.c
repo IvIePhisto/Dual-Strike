@@ -22,7 +22,6 @@ void resetMAMEReports() {
 ||	(data.mame_reports.keyboard.previousData[1] != data.mame_reports.keyboard.data[1])\
 ||	(data.mame_reports.keyboard.previousData[2] != data.mame_reports.keyboard.data[2])\
 ||	(data.mame_reports.keyboard.previousData[3] != data.mame_reports.keyboard.data[3])\
-||	(data.mame_reports.consumer.data != data.mame_reports.consumer.data)\
 )
 
 
@@ -177,6 +176,9 @@ void resetIdleTimer() {
 }
 
 uchar hasIdlePeriodPassed() {
+	if(mameIdleRate == 0)
+		return 0;
+
 	if(idleRateCount == 255)
 		return 1;
 
@@ -448,12 +450,11 @@ void sendMAMEReports() {
 
 	if(hasIdlePeriodPassed() || MAME_IS_NOT_IDLE) {
 		sendDataUSB((void*)&data.mame_reports.keyboard, 5);
-	
-		if(data.mame_reports.consumer.data)
-			sendDataUSB((void*)&data.mame_reports.consumer, 2);
-
 		resetIdleTimer();
 	}
+
+	if(data.mame_reports.consumer.data)
+		sendDataUSB((void*)&data.mame_reports.consumer, 2);
 }
 
 
