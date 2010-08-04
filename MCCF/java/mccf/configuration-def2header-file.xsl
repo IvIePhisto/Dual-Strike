@@ -204,11 +204,11 @@ uint8_t config[CONFIG_BYTE_WIDTH + 2] = {</xsl:text>
         <xsl:variable name="rest-dividers" select="substring-after($dividers, ' ')"/>
         <xsl:apply-templates select="." mode="create-option-test">
           <xsl:with-param name="dividers"></xsl:with-param>
-          <xsl:with-param name="bits" select="substring($bits, 1, $divider)"/>
+          <xsl:with-param name="bits" select="substring($bits, string-length($bits) - $divider + 1)"/>
           <xsl:with-param name="bit-no" select="$bit-no"/>
           <xsl:with-param name="byte-no" select="$byte-no"/>
         </xsl:apply-templates>
-        <xsl:variable name="rest-bits" select="substring($bits, $divider + 1)"/>
+        <xsl:variable name="rest-bits" select="substring($bits, 1, string-length($bits) - $divider)"/>
         <xsl:if test="$rest-bits != ''">
           <xsl:text> &amp;&amp; </xsl:text>
           <xsl:apply-templates select="." mode="create-option-test">
@@ -322,11 +322,11 @@ uint8_t config[CONFIG_BYTE_WIDTH + 2] = {</xsl:text>
         <xsl:variable name="rest-dividers" select="substring-after($dividers, ' ')"/>
         <xsl:apply-templates select="." mode="create-option-setters">
           <xsl:with-param name="dividers"></xsl:with-param>
-          <xsl:with-param name="bits" select="substring($bits, 1, $divider)"/>
+          <xsl:with-param name="bits" select="substring($bits, string-length($bits) - $divider + 1)"/>
           <xsl:with-param name="bit-no" select="$bit-no"/>
           <xsl:with-param name="byte-no" select="$byte-no"/>
         </xsl:apply-templates>
-        <xsl:variable name="rest-bits" select="substring($bits, $divider + 1)"/>
+        <xsl:variable name="rest-bits" select="substring($bits, 1, string-length($bits) - $divider)"/>
         <xsl:if test="$rest-bits != ''">
           <xsl:text> </xsl:text>
           <xsl:apply-templates select="." mode="create-option-setters">

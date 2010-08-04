@@ -34,6 +34,7 @@ the directory this file resides in.
 Version History
 ~~~~~~~~~~~~~~~
 1.0.2 - fixed default setter bug
-      - changed appeareance of bigger choices to drop-down lists
+      - appeareance changes
+      - fixed choice byte splitting bugs
       
 1.0.1 - fixed choice bits reading bug

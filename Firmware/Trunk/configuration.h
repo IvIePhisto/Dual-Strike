@@ -92,12 +92,12 @@ uint8_t config[CONFIG_BYTE_WIDTH + 2] = {CONFIG_EMPTY, CONFIG_EMPTY, CONFIG_EMPT
 #define CFG_MAME_BL1_MK_BUTTON5 (((config[1 + 2] >> 3) & 0b00000111)  == 0b101)
 #define CFG_MAME_BL1_MK_BUTTON6 (((config[1 + 2] >> 3) & 0b00000111)  == 0b110)
 #define CFG_MAME_BL1_HK_NOTHING ((((config[1 + 2] >> 6) & 0b00000001)  == 0b0) && (((config[2 + 2] >> 0) & 0b00000011)  == 0b00))
-#define CFG_MAME_BL1_HK_BUTTON1 ((((config[1 + 2] >> 6) & 0b00000001)  == 0b0) && (((config[2 + 2] >> 0) & 0b00000011)  == 0b01))
-#define CFG_MAME_BL1_HK_BUTTON2 ((((config[1 + 2] >> 6) & 0b00000001)  == 0b0) && (((config[2 + 2] >> 0) & 0b00000011)  == 0b10))
-#define CFG_MAME_BL1_HK_BUTTON3 ((((config[1 + 2] >> 6) & 0b00000001)  == 0b0) && (((config[2 + 2] >> 0) & 0b00000011)  == 0b11))
-#define CFG_MAME_BL1_HK_BUTTON4 ((((config[1 + 2] >> 6) & 0b00000001)  == 0b1) && (((config[2 + 2] >> 0) & 0b00000011)  == 0b00))
-#define CFG_MAME_BL1_HK_BUTTON5 ((((config[1 + 2] >> 6) & 0b00000001)  == 0b1) && (((config[2 + 2] >> 0) & 0b00000011)  == 0b01))
-#define CFG_MAME_BL1_HK_BUTTON6 ((((config[1 + 2] >> 6) & 0b00000001)  == 0b1) && (((config[2 + 2] >> 0) & 0b00000011)  == 0b10))
+#define CFG_MAME_BL1_HK_BUTTON1 ((((config[1 + 2] >> 6) & 0b00000001)  == 0b1) && (((config[2 + 2] >> 0) & 0b00000011)  == 0b00))
+#define CFG_MAME_BL1_HK_BUTTON2 ((((config[1 + 2] >> 6) & 0b00000001)  == 0b0) && (((config[2 + 2] >> 0) & 0b00000011)  == 0b01))
+#define CFG_MAME_BL1_HK_BUTTON3 ((((config[1 + 2] >> 6) & 0b00000001)  == 0b1) && (((config[2 + 2] >> 0) & 0b00000011)  == 0b01))
+#define CFG_MAME_BL1_HK_BUTTON4 ((((config[1 + 2] >> 6) & 0b00000001)  == 0b0) && (((config[2 + 2] >> 0) & 0b00000011)  == 0b10))
+#define CFG_MAME_BL1_HK_BUTTON5 ((((config[1 + 2] >> 6) & 0b00000001)  == 0b1) && (((config[2 + 2] >> 0) & 0b00000011)  == 0b10))
+#define CFG_MAME_BL1_HK_BUTTON6 ((((config[1 + 2] >> 6) & 0b00000001)  == 0b0) && (((config[2 + 2] >> 0) & 0b00000011)  == 0b11))
 #define CFG_MAME_BL1_4K_NOTHING (((config[2 + 2] >> 2) & 0b00000111)  == 0b000)
 #define CFG_MAME_BL1_4K_BUTTON1 (((config[2 + 2] >> 2) & 0b00000111)  == 0b001)
 #define CFG_MAME_BL1_4K_BUTTON2 (((config[2 + 2] >> 2) & 0b00000111)  == 0b010)
@@ -106,12 +106,12 @@ uint8_t config[CONFIG_BYTE_WIDTH + 2] = {CONFIG_EMPTY, CONFIG_EMPTY, CONFIG_EMPT
 #define CFG_MAME_BL1_4K_BUTTON5 (((config[2 + 2] >> 2) & 0b00000111)  == 0b101)
 #define CFG_MAME_BL1_4K_BUTTON6 (((config[2 + 2] >> 2) & 0b00000111)  == 0b110)
 #define CFG_MAME_BL1_LP_NOTHING ((((config[2 + 2] >> 5) & 0b00000011)  == 0b00) && (((config[3 + 2] >> 0) & 0b00000001)  == 0b0))
-#define CFG_MAME_BL1_LP_BUTTON1 ((((config[2 + 2] >> 5) & 0b00000011)  == 0b00) && (((config[3 + 2] >> 0) & 0b00000001)  == 0b1))
-#define CFG_MAME_BL1_LP_BUTTON2 ((((config[2 + 2] >> 5) & 0b00000011)  == 0b01) && (((config[3 + 2] >> 0) & 0b00000001)  == 0b0))
-#define CFG_MAME_BL1_LP_BUTTON3 ((((config[2 + 2] >> 5) & 0b00000011)  == 0b01) && (((config[3 + 2] >> 0) & 0b00000001)  == 0b1))
-#define CFG_MAME_BL1_LP_BUTTON4 ((((config[2 + 2] >> 5) & 0b00000011)  == 0b10) && (((config[3 + 2] >> 0) & 0b00000001)  == 0b0))
-#define CFG_MAME_BL1_LP_BUTTON5 ((((config[2 + 2] >> 5) & 0b00000011)  == 0b10) && (((config[3 + 2] >> 0) & 0b00000001)  == 0b1))
-#define CFG_MAME_BL1_LP_BUTTON6 ((((config[2 + 2] >> 5) & 0b00000011)  == 0b11) && (((config[3 + 2] >> 0) & 0b00000001)  == 0b0))
+#define CFG_MAME_BL1_LP_BUTTON1 ((((config[2 + 2] >> 5) & 0b00000011)  == 0b01) && (((config[3 + 2] >> 0) & 0b00000001)  == 0b0))
+#define CFG_MAME_BL1_LP_BUTTON2 ((((config[2 + 2] >> 5) & 0b00000011)  == 0b10) && (((config[3 + 2] >> 0) & 0b00000001)  == 0b0))
+#define CFG_MAME_BL1_LP_BUTTON3 ((((config[2 + 2] >> 5) & 0b00000011)  == 0b11) && (((config[3 + 2] >> 0) & 0b00000001)  == 0b0))
+#define CFG_MAME_BL1_LP_BUTTON4 ((((config[2 + 2] >> 5) & 0b00000011)  == 0b00) && (((config[3 + 2] >> 0) & 0b00000001)  == 0b1))
+#define CFG_MAME_BL1_LP_BUTTON5 ((((config[2 + 2] >> 5) & 0b00000011)  == 0b01) && (((config[3 + 2] >> 0) & 0b00000001)  == 0b1))
+#define CFG_MAME_BL1_LP_BUTTON6 ((((config[2 + 2] >> 5) & 0b00000011)  == 0b10) && (((config[3 + 2] >> 0) & 0b00000001)  == 0b1))
 #define CFG_MAME_BL1_MP_NOTHING (((config[3 + 2] >> 1) & 0b00000111)  == 0b000)
 #define CFG_MAME_BL1_MP_BUTTON1 (((config[3 + 2] >> 1) & 0b00000111)  == 0b001)
 #define CFG_MAME_BL1_MP_BUTTON2 (((config[3 + 2] >> 1) & 0b00000111)  == 0b010)
@@ -141,12 +141,12 @@ uint8_t config[CONFIG_BYTE_WIDTH + 2] = {CONFIG_EMPTY, CONFIG_EMPTY, CONFIG_EMPT
 #define CFG_MAME_BL2_LK_BUTTON5 (((config[4 + 2] >> 3) & 0b00000111)  == 0b101)
 #define CFG_MAME_BL2_LK_BUTTON6 (((config[4 + 2] >> 3) & 0b00000111)  == 0b110)
 #define CFG_MAME_BL2_MK_NOTHING ((((config[4 + 2] >> 6) & 0b00000001)  == 0b0) && (((config[5 + 2] >> 0) & 0b00000011)  == 0b00))
-#define CFG_MAME_BL2_MK_BUTTON1 ((((config[4 + 2] >> 6) & 0b00000001)  == 0b0) && (((config[5 + 2] >> 0) & 0b00000011)  == 0b01))
-#define CFG_MAME_BL2_MK_BUTTON2 ((((config[4 + 2] >> 6) & 0b00000001)  == 0b0) && (((config[5 + 2] >> 0) & 0b00000011)  == 0b10))
-#define CFG_MAME_BL2_MK_BUTTON3 ((((config[4 + 2] >> 6) & 0b00000001)  == 0b0) && (((config[5 + 2] >> 0) & 0b00000011)  == 0b11))
-#define CFG_MAME_BL2_MK_BUTTON4 ((((config[4 + 2] >> 6) & 0b00000001)  == 0b1) && (((config[5 + 2] >> 0) & 0b00000011)  == 0b00))
-#define CFG_MAME_BL2_MK_BUTTON5 ((((config[4 + 2] >> 6) & 0b00000001)  == 0b1) && (((config[5 + 2] >> 0) & 0b00000011)  == 0b01))
-#define CFG_MAME_BL2_MK_BUTTON6 ((((config[4 + 2] >> 6) & 0b00000001)  == 0b1) && (((config[5 + 2] >> 0) & 0b00000011)  == 0b10))
+#define CFG_MAME_BL2_MK_BUTTON1 ((((config[4 + 2] >> 6) & 0b00000001)  == 0b1) && (((config[5 + 2] >> 0) & 0b00000011)  == 0b00))
+#define CFG_MAME_BL2_MK_BUTTON2 ((((config[4 + 2] >> 6) & 0b00000001)  == 0b0) && (((config[5 + 2] >> 0) & 0b00000011)  == 0b01))
+#define CFG_MAME_BL2_MK_BUTTON3 ((((config[4 + 2] >> 6) & 0b00000001)  == 0b1) && (((config[5 + 2] >> 0) & 0b00000011)  == 0b01))
+#define CFG_MAME_BL2_MK_BUTTON4 ((((config[4 + 2] >> 6) & 0b00000001)  == 0b0) && (((config[5 + 2] >> 0) & 0b00000011)  == 0b10))
+#define CFG_MAME_BL2_MK_BUTTON5 ((((config[4 + 2] >> 6) & 0b00000001)  == 0b1) && (((config[5 + 2] >> 0) & 0b00000011)  == 0b10))
+#define CFG_MAME_BL2_MK_BUTTON6 ((((config[4 + 2] >> 6) & 0b00000001)  == 0b0) && (((config[5 + 2] >> 0) & 0b00000011)  == 0b11))
 #define CFG_MAME_BL2_HK_NOTHING (((config[5 + 2] >> 2) & 0b00000111)  == 0b000)
 #define CFG_MAME_BL2_HK_BUTTON1 (((config[5 + 2] >> 2) & 0b00000111)  == 0b001)
 #define CFG_MAME_BL2_HK_BUTTON2 (((config[5 + 2] >> 2) & 0b00000111)  == 0b010)
@@ -155,12 +155,12 @@ uint8_t config[CONFIG_BYTE_WIDTH + 2] = {CONFIG_EMPTY, CONFIG_EMPTY, CONFIG_EMPT
 #define CFG_MAME_BL2_HK_BUTTON5 (((config[5 + 2] >> 2) & 0b00000111)  == 0b101)
 #define CFG_MAME_BL2_HK_BUTTON6 (((config[5 + 2] >> 2) & 0b00000111)  == 0b110)
 #define CFG_MAME_BL2_4K_NOTHING ((((config[5 + 2] >> 5) & 0b00000011)  == 0b00) && (((config[6 + 2] >> 0) & 0b00000001)  == 0b0))
-#define CFG_MAME_BL2_4K_BUTTON1 ((((config[5 + 2] >> 5) & 0b00000011)  == 0b00) && (((config[6 + 2] >> 0) & 0b00000001)  == 0b1))
-#define CFG_MAME_BL2_4K_BUTTON2 ((((config[5 + 2] >> 5) & 0b00000011)  == 0b01) && (((config[6 + 2] >> 0) & 0b00000001)  == 0b0))
-#define CFG_MAME_BL2_4K_BUTTON3 ((((config[5 + 2] >> 5) & 0b00000011)  == 0b01) && (((config[6 + 2] >> 0) & 0b00000001)  == 0b1))
-#define CFG_MAME_BL2_4K_BUTTON4 ((((config[5 + 2] >> 5) & 0b00000011)  == 0b10) && (((config[6 + 2] >> 0) & 0b00000001)  == 0b0))
-#define CFG_MAME_BL2_4K_BUTTON5 ((((config[5 + 2] >> 5) & 0b00000011)  == 0b10) && (((config[6 + 2] >> 0) & 0b00000001)  == 0b1))
-#define CFG_MAME_BL2_4K_BUTTON6 ((((config[5 + 2] >> 5) & 0b00000011)  == 0b11) && (((config[6 + 2] >> 0) & 0b00000001)  == 0b0))
+#define CFG_MAME_BL2_4K_BUTTON1 ((((config[5 + 2] >> 5) & 0b00000011)  == 0b01) && (((config[6 + 2] >> 0) & 0b00000001)  == 0b0))
+#define CFG_MAME_BL2_4K_BUTTON2 ((((config[5 + 2] >> 5) & 0b00000011)  == 0b10) && (((config[6 + 2] >> 0) & 0b00000001)  == 0b0))
+#define CFG_MAME_BL2_4K_BUTTON3 ((((config[5 + 2] >> 5) & 0b00000011)  == 0b11) && (((config[6 + 2] >> 0) & 0b00000001)  == 0b0))
+#define CFG_MAME_BL2_4K_BUTTON4 ((((config[5 + 2] >> 5) & 0b00000011)  == 0b00) && (((config[6 + 2] >> 0) & 0b00000001)  == 0b1))
+#define CFG_MAME_BL2_4K_BUTTON5 ((((config[5 + 2] >> 5) & 0b00000011)  == 0b01) && (((config[6 + 2] >> 0) & 0b00000001)  == 0b1))
+#define CFG_MAME_BL2_4K_BUTTON6 ((((config[5 + 2] >> 5) & 0b00000011)  == 0b10) && (((config[6 + 2] >> 0) & 0b00000001)  == 0b1))
 #define CFG_MAME_BL2_LP_NOTHING (((config[6 + 2] >> 1) & 0b00000111)  == 0b000)
 #define CFG_MAME_BL2_LP_BUTTON1 (((config[6 + 2] >> 1) & 0b00000111)  == 0b001)
 #define CFG_MAME_BL2_LP_BUTTON2 (((config[6 + 2] >> 1) & 0b00000111)  == 0b010)
@@ -190,12 +190,12 @@ uint8_t config[CONFIG_BYTE_WIDTH + 2] = {CONFIG_EMPTY, CONFIG_EMPTY, CONFIG_EMPT
 #define CFG_MAME_BL2_4P_BUTTON5 (((config[7 + 2] >> 3) & 0b00000111)  == 0b101)
 #define CFG_MAME_BL2_4P_BUTTON6 (((config[7 + 2] >> 3) & 0b00000111)  == 0b110)
 #define CFG_MAME_BL3_LK_NOTHING ((((config[7 + 2] >> 6) & 0b00000001)  == 0b0) && (((config[8 + 2] >> 0) & 0b00000011)  == 0b00))
-#define CFG_MAME_BL3_LK_BUTTON1 ((((config[7 + 2] >> 6) & 0b00000001)  == 0b0) && (((config[8 + 2] >> 0) & 0b00000011)  == 0b01))
-#define CFG_MAME_BL3_LK_BUTTON2 ((((config[7 + 2] >> 6) & 0b00000001)  == 0b0) && (((config[8 + 2] >> 0) & 0b00000011)  == 0b10))
-#define CFG_MAME_BL3_LK_BUTTON3 ((((config[7 + 2] >> 6) & 0b00000001)  == 0b0) && (((config[8 + 2] >> 0) & 0b00000011)  == 0b11))
-#define CFG_MAME_BL3_LK_BUTTON4 ((((config[7 + 2] >> 6) & 0b00000001)  == 0b1) && (((config[8 + 2] >> 0) & 0b00000011)  == 0b00))
-#define CFG_MAME_BL3_LK_BUTTON5 ((((config[7 + 2] >> 6) & 0b00000001)  == 0b1) && (((config[8 + 2] >> 0) & 0b00000011)  == 0b01))
-#define CFG_MAME_BL3_LK_BUTTON6 ((((config[7 + 2] >> 6) & 0b00000001)  == 0b1) && (((config[8 + 2] >> 0) & 0b00000011)  == 0b10))
+#define CFG_MAME_BL3_LK_BUTTON1 ((((config[7 + 2] >> 6) & 0b00000001)  == 0b1) && (((config[8 + 2] >> 0) & 0b00000011)  == 0b00))
+#define CFG_MAME_BL3_LK_BUTTON2 ((((config[7 + 2] >> 6) & 0b00000001)  == 0b0) && (((config[8 + 2] >> 0) & 0b00000011)  == 0b01))
+#define CFG_MAME_BL3_LK_BUTTON3 ((((config[7 + 2] >> 6) & 0b00000001)  == 0b1) && (((config[8 + 2] >> 0) & 0b00000011)  == 0b01))
+#define CFG_MAME_BL3_LK_BUTTON4 ((((config[7 + 2] >> 6) & 0b00000001)  == 0b0) && (((config[8 + 2] >> 0) & 0b00000011)  == 0b10))
+#define CFG_MAME_BL3_LK_BUTTON5 ((((config[7 + 2] >> 6) & 0b00000001)  == 0b1) && (((config[8 + 2] >> 0) & 0b00000011)  == 0b10))
+#define CFG_MAME_BL3_LK_BUTTON6 ((((config[7 + 2] >> 6) & 0b00000001)  == 0b0) && (((config[8 + 2] >> 0) & 0b00000011)  == 0b11))
 #define CFG_MAME_BL3_MK_NOTHING (((config[8 + 2] >> 2) & 0b00000111)  == 0b000)
 #define CFG_MAME_BL3_MK_BUTTON1 (((config[8 + 2] >> 2) & 0b00000111)  == 0b001)
 #define CFG_MAME_BL3_MK_BUTTON2 (((config[8 + 2] >> 2) & 0b00000111)  == 0b010)
@@ -204,12 +204,12 @@ uint8_t config[CONFIG_BYTE_WIDTH + 2] = {CONFIG_EMPTY, CONFIG_EMPTY, CONFIG_EMPT
 #define CFG_MAME_BL3_MK_BUTTON5 (((config[8 + 2] >> 2) & 0b00000111)  == 0b101)
 #define CFG_MAME_BL3_MK_BUTTON6 (((config[8 + 2] >> 2) & 0b00000111)  == 0b110)
 #define CFG_MAME_BL3_HK_NOTHING ((((config[8 + 2] >> 5) & 0b00000011)  == 0b00) && (((config[9 + 2] >> 0) & 0b00000001)  == 0b0))
-#define CFG_MAME_BL3_HK_BUTTON1 ((((config[8 + 2] >> 5) & 0b00000011)  == 0b00) && (((config[9 + 2] >> 0) & 0b00000001)  == 0b1))
-#define CFG_MAME_BL3_HK_BUTTON2 ((((config[8 + 2] >> 5) & 0b00000011)  == 0b01) && (((config[9 + 2] >> 0) & 0b00000001)  == 0b0))
-#define CFG_MAME_BL3_HK_BUTTON3 ((((config[8 + 2] >> 5) & 0b00000011)  == 0b01) && (((config[9 + 2] >> 0) & 0b00000001)  == 0b1))
-#define CFG_MAME_BL3_HK_BUTTON4 ((((config[8 + 2] >> 5) & 0b00000011)  == 0b10) && (((config[9 + 2] >> 0) & 0b00000001)  == 0b0))
-#define CFG_MAME_BL3_HK_BUTTON5 ((((config[8 + 2] >> 5) & 0b00000011)  == 0b10) && (((config[9 + 2] >> 0) & 0b00000001)  == 0b1))
-#define CFG_MAME_BL3_HK_BUTTON6 ((((config[8 + 2] >> 5) & 0b00000011)  == 0b11) && (((config[9 + 2] >> 0) & 0b00000001)  == 0b0))
+#define CFG_MAME_BL3_HK_BUTTON1 ((((config[8 + 2] >> 5) & 0b00000011)  == 0b01) && (((config[9 + 2] >> 0) & 0b00000001)  == 0b0))
+#define CFG_MAME_BL3_HK_BUTTON2 ((((config[8 + 2] >> 5) & 0b00000011)  == 0b10) && (((config[9 + 2] >> 0) & 0b00000001)  == 0b0))
+#define CFG_MAME_BL3_HK_BUTTON3 ((((config[8 + 2] >> 5) & 0b00000011)  == 0b11) && (((config[9 + 2] >> 0) & 0b00000001)  == 0b0))
+#define CFG_MAME_BL3_HK_BUTTON4 ((((config[8 + 2] >> 5) & 0b00000011)  == 0b00) && (((config[9 + 2] >> 0) & 0b00000001)  == 0b1))
+#define CFG_MAME_BL3_HK_BUTTON5 ((((config[8 + 2] >> 5) & 0b00000011)  == 0b01) && (((config[9 + 2] >> 0) & 0b00000001)  == 0b1))
+#define CFG_MAME_BL3_HK_BUTTON6 ((((config[8 + 2] >> 5) & 0b00000011)  == 0b10) && (((config[9 + 2] >> 0) & 0b00000001)  == 0b1))
 #define CFG_MAME_BL3_4K_NOTHING (((config[9 + 2] >> 1) & 0b00000111)  == 0b000)
 #define CFG_MAME_BL3_4K_BUTTON1 (((config[9 + 2] >> 1) & 0b00000111)  == 0b001)
 #define CFG_MAME_BL3_4K_BUTTON2 (((config[9 + 2] >> 1) & 0b00000111)  == 0b010)
@@ -239,12 +239,12 @@ uint8_t config[CONFIG_BYTE_WIDTH + 2] = {CONFIG_EMPTY, CONFIG_EMPTY, CONFIG_EMPT
 #define CFG_MAME_BL3_HP_BUTTON5 (((config[10 + 2] >> 3) & 0b00000111)  == 0b101)
 #define CFG_MAME_BL3_HP_BUTTON6 (((config[10 + 2] >> 3) & 0b00000111)  == 0b110)
 #define CFG_MAME_BL3_4P_NOTHING ((((config[10 + 2] >> 6) & 0b00000001)  == 0b0) && (((config[11 + 2] >> 0) & 0b00000011)  == 0b00))
-#define CFG_MAME_BL3_4P_BUTTON1 ((((config[10 + 2] >> 6) & 0b00000001)  == 0b0) && (((config[11 + 2] >> 0) & 0b00000011)  == 0b01))
-#define CFG_MAME_BL3_4P_BUTTON2 ((((config[10 + 2] >> 6) & 0b00000001)  == 0b0) && (((config[11 + 2] >> 0) & 0b00000011)  == 0b10))
-#define CFG_MAME_BL3_4P_BUTTON3 ((((config[10 + 2] >> 6) & 0b00000001)  == 0b0) && (((config[11 + 2] >> 0) & 0b00000011)  == 0b11))
-#define CFG_MAME_BL3_4P_BUTTON4 ((((config[10 + 2] >> 6) & 0b00000001)  == 0b1) && (((config[11 + 2] >> 0) & 0b00000011)  == 0b00))
-#define CFG_MAME_BL3_4P_BUTTON5 ((((config[10 + 2] >> 6) & 0b00000001)  == 0b1) && (((config[11 + 2] >> 0) & 0b00000011)  == 0b01))
-#define CFG_MAME_BL3_4P_BUTTON6 ((((config[10 + 2] >> 6) & 0b00000001)  == 0b1) && (((config[11 + 2] >> 0) & 0b00000011)  == 0b10))
+#define CFG_MAME_BL3_4P_BUTTON1 ((((config[10 + 2] >> 6) & 0b00000001)  == 0b1) && (((config[11 + 2] >> 0) & 0b00000011)  == 0b00))
+#define CFG_MAME_BL3_4P_BUTTON2 ((((config[10 + 2] >> 6) & 0b00000001)  == 0b0) && (((config[11 + 2] >> 0) & 0b00000011)  == 0b01))
+#define CFG_MAME_BL3_4P_BUTTON3 ((((config[10 + 2] >> 6) & 0b00000001)  == 0b1) && (((config[11 + 2] >> 0) & 0b00000011)  == 0b01))
+#define CFG_MAME_BL3_4P_BUTTON4 ((((config[10 + 2] >> 6) & 0b00000001)  == 0b0) && (((config[11 + 2] >> 0) & 0b00000011)  == 0b10))
+#define CFG_MAME_BL3_4P_BUTTON5 ((((config[10 + 2] >> 6) & 0b00000001)  == 0b1) && (((config[11 + 2] >> 0) & 0b00000011)  == 0b10))
+#define CFG_MAME_BL3_4P_BUTTON6 ((((config[10 + 2] >> 6) & 0b00000001)  == 0b0) && (((config[11 + 2] >> 0) & 0b00000011)  == 0b11))
 #define CFG_MAME_BL4_LK_NOTHING (((config[11 + 2] >> 2) & 0b00000111)  == 0b000)
 #define CFG_MAME_BL4_LK_BUTTON1 (((config[11 + 2] >> 2) & 0b00000111)  == 0b001)
 #define CFG_MAME_BL4_LK_BUTTON2 (((config[11 + 2] >> 2) & 0b00000111)  == 0b010)
@@ -253,12 +253,12 @@ uint8_t config[CONFIG_BYTE_WIDTH + 2] = {CONFIG_EMPTY, CONFIG_EMPTY, CONFIG_EMPT
 #define CFG_MAME_BL4_LK_BUTTON5 (((config[11 + 2] >> 2) & 0b00000111)  == 0b101)
 #define CFG_MAME_BL4_LK_BUTTON6 (((config[11 + 2] >> 2) & 0b00000111)  == 0b110)
 #define CFG_MAME_BL4_MK_NOTHING ((((config[11 + 2] >> 5) & 0b00000011)  == 0b00) && (((config[12 + 2] >> 0) & 0b00000001)  == 0b0))
-#define CFG_MAME_BL4_MK_BUTTON1 ((((config[11 + 2] >> 5) & 0b00000011)  == 0b00) && (((config[12 + 2] >> 0) & 0b00000001)  == 0b1))
-#define CFG_MAME_BL4_MK_BUTTON2 ((((config[11 + 2] >> 5) & 0b00000011)  == 0b01) && (((config[12 + 2] >> 0) & 0b00000001)  == 0b0))
-#define CFG_MAME_BL4_MK_BUTTON3 ((((config[11 + 2] >> 5) & 0b00000011)  == 0b01) && (((config[12 + 2] >> 0) & 0b00000001)  == 0b1))
-#define CFG_MAME_BL4_MK_BUTTON4 ((((config[11 + 2] >> 5) & 0b00000011)  == 0b10) && (((config[12 + 2] >> 0) & 0b00000001)  == 0b0))
-#define CFG_MAME_BL4_MK_BUTTON5 ((((config[11 + 2] >> 5) & 0b00000011)  == 0b10) && (((config[12 + 2] >> 0) & 0b00000001)  == 0b1))
-#define CFG_MAME_BL4_MK_BUTTON6 ((((config[11 + 2] >> 5) & 0b00000011)  == 0b11) && (((config[12 + 2] >> 0) & 0b00000001)  == 0b0))
+#define CFG_MAME_BL4_MK_BUTTON1 ((((config[11 + 2] >> 5) & 0b00000011)  == 0b01) && (((config[12 + 2] >> 0) & 0b00000001)  == 0b0))
+#define CFG_MAME_BL4_MK_BUTTON2 ((((config[11 + 2] >> 5) & 0b00000011)  == 0b10) && (((config[12 + 2] >> 0) & 0b00000001)  == 0b0))
+#define CFG_MAME_BL4_MK_BUTTON3 ((((config[11 + 2] >> 5) & 0b00000011)  == 0b11) && (((config[12 + 2] >> 0) & 0b00000001)  == 0b0))
+#define CFG_MAME_BL4_MK_BUTTON4 ((((config[11 + 2] >> 5) & 0b00000011)  == 0b00) && (((config[12 + 2] >> 0) & 0b00000001)  == 0b1))
+#define CFG_MAME_BL4_MK_BUTTON5 ((((config[11 + 2] >> 5) & 0b00000011)  == 0b01) && (((config[12 + 2] >> 0) & 0b00000001)  == 0b1))
+#define CFG_MAME_BL4_MK_BUTTON6 ((((config[11 + 2] >> 5) & 0b00000011)  == 0b10) && (((config[12 + 2] >> 0) & 0b00000001)  == 0b1))
 #define CFG_MAME_BL4_HK_NOTHING (((config[12 + 2] >> 1) & 0b00000111)  == 0b000)
 #define CFG_MAME_BL4_HK_BUTTON1 (((config[12 + 2] >> 1) & 0b00000111)  == 0b001)
 #define CFG_MAME_BL4_HK_BUTTON2 (((config[12 + 2] >> 1) & 0b00000111)  == 0b010)
@@ -288,12 +288,12 @@ uint8_t config[CONFIG_BYTE_WIDTH + 2] = {CONFIG_EMPTY, CONFIG_EMPTY, CONFIG_EMPT
 #define CFG_MAME_BL4_MP_BUTTON5 (((config[13 + 2] >> 3) & 0b00000111)  == 0b101)
 #define CFG_MAME_BL4_MP_BUTTON6 (((config[13 + 2] >> 3) & 0b00000111)  == 0b110)
 #define CFG_MAME_BL4_HP_NOTHING ((((config[13 + 2] >> 6) & 0b00000001)  == 0b0) && (((config[14 + 2] >> 0) & 0b00000011)  == 0b00))
-#define CFG_MAME_BL4_HP_BUTTON1 ((((config[13 + 2] >> 6) & 0b00000001)  == 0b0) && (((config[14 + 2] >> 0) & 0b00000011)  == 0b01))
-#define CFG_MAME_BL4_HP_BUTTON2 ((((config[13 + 2] >> 6) & 0b00000001)  == 0b0) && (((config[14 + 2] >> 0) & 0b00000011)  == 0b10))
-#define CFG_MAME_BL4_HP_BUTTON3 ((((config[13 + 2] >> 6) & 0b00000001)  == 0b0) && (((config[14 + 2] >> 0) & 0b00000011)  == 0b11))
-#define CFG_MAME_BL4_HP_BUTTON4 ((((config[13 + 2] >> 6) & 0b00000001)  == 0b1) && (((config[14 + 2] >> 0) & 0b00000011)  == 0b00))
-#define CFG_MAME_BL4_HP_BUTTON5 ((((config[13 + 2] >> 6) & 0b00000001)  == 0b1) && (((config[14 + 2] >> 0) & 0b00000011)  == 0b01))
-#define CFG_MAME_BL4_HP_BUTTON6 ((((config[13 + 2] >> 6) & 0b00000001)  == 0b1) && (((config[14 + 2] >> 0) & 0b00000011)  == 0b10))
+#define CFG_MAME_BL4_HP_BUTTON1 ((((config[13 + 2] >> 6) & 0b00000001)  == 0b1) && (((config[14 + 2] >> 0) & 0b00000011)  == 0b00))
+#define CFG_MAME_BL4_HP_BUTTON2 ((((config[13 + 2] >> 6) & 0b00000001)  == 0b0) && (((config[14 + 2] >> 0) & 0b00000011)  == 0b01))
+#define CFG_MAME_BL4_HP_BUTTON3 ((((config[13 + 2] >> 6) & 0b00000001)  == 0b1) && (((config[14 + 2] >> 0) & 0b00000011)  == 0b01))
+#define CFG_MAME_BL4_HP_BUTTON4 ((((config[13 + 2] >> 6) & 0b00000001)  == 0b0) && (((config[14 + 2] >> 0) & 0b00000011)  == 0b10))
+#define CFG_MAME_BL4_HP_BUTTON5 ((((config[13 + 2] >> 6) & 0b00000001)  == 0b1) && (((config[14 + 2] >> 0) & 0b00000011)  == 0b10))
+#define CFG_MAME_BL4_HP_BUTTON6 ((((config[13 + 2] >> 6) & 0b00000001)  == 0b0) && (((config[14 + 2] >> 0) & 0b00000011)  == 0b11))
 #define CFG_MAME_BL4_4P_NOTHING (((config[14 + 2] >> 2) & 0b00000111)  == 0b000)
 #define CFG_MAME_BL4_4P_BUTTON1 (((config[14 + 2] >> 2) & 0b00000111)  == 0b001)
 #define CFG_MAME_BL4_4P_BUTTON2 (((config[14 + 2] >> 2) & 0b00000111)  == 0b010)
@@ -331,12 +331,12 @@ uint8_t config[CONFIG_BYTE_WIDTH + 2] = {CONFIG_EMPTY, CONFIG_EMPTY, CONFIG_EMPT
 #define CFG_SET_MAME_BL1_MK_BUTTON5(CONFIG) CONFIG[1 + 2] |= (0b101 << 3); CONFIG[1 + 2] &= ((0b101 << 3)| ~(0b010 << 3));
 #define CFG_SET_MAME_BL1_MK_BUTTON6(CONFIG) CONFIG[1 + 2] |= (0b110 << 3); CONFIG[1 + 2] &= ((0b110 << 3)| ~(0b001 << 3));
 #define CFG_SET_MAME_BL1_HK_NOTHING(CONFIG) CONFIG[1 + 2] &= ~(0b1 << 6); CONFIG[2 + 2] &= ~(0b11 << 0);
-#define CFG_SET_MAME_BL1_HK_BUTTON1(CONFIG) CONFIG[1 + 2] &= ~(0b1 << 6); CONFIG[2 + 2] |= (0b01 << 0); CONFIG[2 + 2] &= ((0b01 << 0)| ~(0b10 << 0));
-#define CFG_SET_MAME_BL1_HK_BUTTON2(CONFIG) CONFIG[1 + 2] &= ~(0b1 << 6); CONFIG[2 + 2] |= (0b10 << 0); CONFIG[2 + 2] &= ((0b10 << 0)| ~(0b01 << 0));
-#define CFG_SET_MAME_BL1_HK_BUTTON3(CONFIG) CONFIG[1 + 2] &= ~(0b1 << 6); CONFIG[2 + 2] |= (0b11 << 0);
-#define CFG_SET_MAME_BL1_HK_BUTTON4(CONFIG) CONFIG[1 + 2] |= (0b1 << 6); CONFIG[2 + 2] &= ~(0b11 << 0);
-#define CFG_SET_MAME_BL1_HK_BUTTON5(CONFIG) CONFIG[1 + 2] |= (0b1 << 6); CONFIG[2 + 2] |= (0b01 << 0); CONFIG[2 + 2] &= ((0b01 << 0)| ~(0b10 << 0));
-#define CFG_SET_MAME_BL1_HK_BUTTON6(CONFIG) CONFIG[1 + 2] |= (0b1 << 6); CONFIG[2 + 2] |= (0b10 << 0); CONFIG[2 + 2] &= ((0b10 << 0)| ~(0b01 << 0));
+#define CFG_SET_MAME_BL1_HK_BUTTON1(CONFIG) CONFIG[1 + 2] |= (0b1 << 6); CONFIG[2 + 2] &= ~(0b11 << 0);
+#define CFG_SET_MAME_BL1_HK_BUTTON2(CONFIG) CONFIG[1 + 2] &= ~(0b1 << 6); CONFIG[2 + 2] |= (0b01 << 0); CONFIG[2 + 2] &= ((0b01 << 0)| ~(0b10 << 0));
+#define CFG_SET_MAME_BL1_HK_BUTTON3(CONFIG) CONFIG[1 + 2] |= (0b1 << 6); CONFIG[2 + 2] |= (0b01 << 0); CONFIG[2 + 2] &= ((0b01 << 0)| ~(0b10 << 0));
+#define CFG_SET_MAME_BL1_HK_BUTTON4(CONFIG) CONFIG[1 + 2] &= ~(0b1 << 6); CONFIG[2 + 2] |= (0b10 << 0); CONFIG[2 + 2] &= ((0b10 << 0)| ~(0b01 << 0));
+#define CFG_SET_MAME_BL1_HK_BUTTON5(CONFIG) CONFIG[1 + 2] |= (0b1 << 6); CONFIG[2 + 2] |= (0b10 << 0); CONFIG[2 + 2] &= ((0b10 << 0)| ~(0b01 << 0));
+#define CFG_SET_MAME_BL1_HK_BUTTON6(CONFIG) CONFIG[1 + 2] &= ~(0b1 << 6); CONFIG[2 + 2] |= (0b11 << 0);
 #define CFG_SET_MAME_BL1_4K_NOTHING(CONFIG) CONFIG[2 + 2] &= ~(0b111 << 2);
 #define CFG_SET_MAME_BL1_4K_BUTTON1(CONFIG) CONFIG[2 + 2] |= (0b001 << 2); CONFIG[2 + 2] &= ((0b001 << 2)| ~(0b110 << 2));
 #define CFG_SET_MAME_BL1_4K_BUTTON2(CONFIG) CONFIG[2 + 2] |= (0b010 << 2); CONFIG[2 + 2] &= ((0b010 << 2)| ~(0b101 << 2));
@@ -345,12 +345,12 @@ uint8_t config[CONFIG_BYTE_WIDTH + 2] = {CONFIG_EMPTY, CONFIG_EMPTY, CONFIG_EMPT
 #define CFG_SET_MAME_BL1_4K_BUTTON5(CONFIG) CONFIG[2 + 2] |= (0b101 << 2); CONFIG[2 + 2] &= ((0b101 << 2)| ~(0b010 << 2));
 #define CFG_SET_MAME_BL1_4K_BUTTON6(CONFIG) CONFIG[2 + 2] |= (0b110 << 2); CONFIG[2 + 2] &= ((0b110 << 2)| ~(0b001 << 2));
 #define CFG_SET_MAME_BL1_LP_NOTHING(CONFIG) CONFIG[2 + 2] &= ~(0b11 << 5); CONFIG[3 + 2] &= ~(0b1 << 0);
-#define CFG_SET_MAME_BL1_LP_BUTTON1(CONFIG) CONFIG[2 + 2] &= ~(0b11 << 5); CONFIG[3 + 2] |= (0b1 << 0);
-#define CFG_SET_MAME_BL1_LP_BUTTON2(CONFIG) CONFIG[2 + 2] |= (0b01 << 5); CONFIG[2 + 2] &= ((0b01 << 5)| ~(0b10 << 5)); CONFIG[3 + 2] &= ~(0b1 << 0);
-#define CFG_SET_MAME_BL1_LP_BUTTON3(CONFIG) CONFIG[2 + 2] |= (0b01 << 5); CONFIG[2 + 2] &= ((0b01 << 5)| ~(0b10 << 5)); CONFIG[3 + 2] |= (0b1 << 0);
-#define CFG_SET_MAME_BL1_LP_BUTTON4(CONFIG) CONFIG[2 + 2] |= (0b10 << 5); CONFIG[2 + 2] &= ((0b10 << 5)| ~(0b01 << 5)); CONFIG[3 + 2] &= ~(0b1 << 0);
-#define CFG_SET_MAME_BL1_LP_BUTTON5(CONFIG) CONFIG[2 + 2] |= (0b10 << 5); CONFIG[2 + 2] &= ((0b10 << 5)| ~(0b01 << 5)); CONFIG[3 + 2] |= (0b1 << 0);
-#define CFG_SET_MAME_BL1_LP_BUTTON6(CONFIG) CONFIG[2 + 2] |= (0b11 << 5); CONFIG[3 + 2] &= ~(0b1 << 0);
+#define CFG_SET_MAME_BL1_LP_BUTTON1(CONFIG) CONFIG[2 + 2] |= (0b01 << 5); CONFIG[2 + 2] &= ((0b01 << 5)| ~(0b10 << 5)); CONFIG[3 + 2] &= ~(0b1 << 0);
+#define CFG_SET_MAME_BL1_LP_BUTTON2(CONFIG) CONFIG[2 + 2] |= (0b10 << 5); CONFIG[2 + 2] &= ((0b10 << 5)| ~(0b01 << 5)); CONFIG[3 + 2] &= ~(0b1 << 0);
+#define CFG_SET_MAME_BL1_LP_BUTTON3(CONFIG) CONFIG[2 + 2] |= (0b11 << 5); CONFIG[3 + 2] &= ~(0b1 << 0);
+#define CFG_SET_MAME_BL1_LP_BUTTON4(CONFIG) CONFIG[2 + 2] &= ~(0b11 << 5); CONFIG[3 + 2] |= (0b1 << 0);
+#define CFG_SET_MAME_BL1_LP_BUTTON5(CONFIG) CONFIG[2 + 2] |= (0b01 << 5); CONFIG[2 + 2] &= ((0b01 << 5)| ~(0b10 << 5)); CONFIG[3 + 2] |= (0b1 << 0);
+#define CFG_SET_MAME_BL1_LP_BUTTON6(CONFIG) CONFIG[2 + 2] |= (0b10 << 5); CONFIG[2 + 2] &= ((0b10 << 5)| ~(0b01 << 5)); CONFIG[3 + 2] |= (0b1 << 0);
 #define CFG_SET_MAME_BL1_MP_NOTHING(CONFIG) CONFIG[3 + 2] &= ~(0b111 << 1);
 #define CFG_SET_MAME_BL1_MP_BUTTON1(CONFIG) CONFIG[3 + 2] |= (0b001 << 1); CONFIG[3 + 2] &= ((0b001 << 1)| ~(0b110 << 1));
 #define CFG_SET_MAME_BL1_MP_BUTTON2(CONFIG) CONFIG[3 + 2] |= (0b010 << 1); CONFIG[3 + 2] &= ((0b010 << 1)| ~(0b101 << 1));
@@ -380,12 +380,12 @@ uint8_t config[CONFIG_BYTE_WIDTH + 2] = {CONFIG_EMPTY, CONFIG_EMPTY, CONFIG_EMPT
 #define CFG_SET_MAME_BL2_LK_BUTTON5(CONFIG) CONFIG[4 + 2] |= (0b101 << 3); CONFIG[4 + 2] &= ((0b101 << 3)| ~(0b010 << 3));
 #define CFG_SET_MAME_BL2_LK_BUTTON6(CONFIG) CONFIG[4 + 2] |= (0b110 << 3); CONFIG[4 + 2] &= ((0b110 << 3)| ~(0b001 << 3));
 #define CFG_SET_MAME_BL2_MK_NOTHING(CONFIG) CONFIG[4 + 2] &= ~(0b1 << 6); CONFIG[5 + 2] &= ~(0b11 << 0);
-#define CFG_SET_MAME_BL2_MK_BUTTON1(CONFIG) CONFIG[4 + 2] &= ~(0b1 << 6); CONFIG[5 + 2] |= (0b01 << 0); CONFIG[5 + 2] &= ((0b01 << 0)| ~(0b10 << 0));
-#define CFG_SET_MAME_BL2_MK_BUTTON2(CONFIG) CONFIG[4 + 2] &= ~(0b1 << 6); CONFIG[5 + 2] |= (0b10 << 0); CONFIG[5 + 2] &= ((0b10 << 0)| ~(0b01 << 0));
-#define CFG_SET_MAME_BL2_MK_BUTTON3(CONFIG) CONFIG[4 + 2] &= ~(0b1 << 6); CONFIG[5 + 2] |= (0b11 << 0);
-#define CFG_SET_MAME_BL2_MK_BUTTON4(CONFIG) CONFIG[4 + 2] |= (0b1 << 6); CONFIG[5 + 2] &= ~(0b11 << 0);
-#define CFG_SET_MAME_BL2_MK_BUTTON5(CONFIG) CONFIG[4 + 2] |= (0b1 << 6); CONFIG[5 + 2] |= (0b01 << 0); CONFIG[5 + 2] &= ((0b01 << 0)| ~(0b10 << 0));
-#define CFG_SET_MAME_BL2_MK_BUTTON6(CONFIG) CONFIG[4 + 2] |= (0b1 << 6); CONFIG[5 + 2] |= (0b10 << 0); CONFIG[5 + 2] &= ((0b10 << 0)| ~(0b01 << 0));
+#define CFG_SET_MAME_BL2_MK_BUTTON1(CONFIG) CONFIG[4 + 2] |= (0b1 << 6); CONFIG[5 + 2] &= ~(0b11 << 0);
+#define CFG_SET_MAME_BL2_MK_BUTTON2(CONFIG) CONFIG[4 + 2] &= ~(0b1 << 6); CONFIG[5 + 2] |= (0b01 << 0); CONFIG[5 + 2] &= ((0b01 << 0)| ~(0b10 << 0));
+#define CFG_SET_MAME_BL2_MK_BUTTON3(CONFIG) CONFIG[4 + 2] |= (0b1 << 6); CONFIG[5 + 2] |= (0b01 << 0); CONFIG[5 + 2] &= ((0b01 << 0)| ~(0b10 << 0));
+#define CFG_SET_MAME_BL2_MK_BUTTON4(CONFIG) CONFIG[4 + 2] &= ~(0b1 << 6); CONFIG[5 + 2] |= (0b10 << 0); CONFIG[5 + 2] &= ((0b10 << 0)| ~(0b01 << 0));
+#define CFG_SET_MAME_BL2_MK_BUTTON5(CONFIG) CONFIG[4 + 2] |= (0b1 << 6); CONFIG[5 + 2] |= (0b10 << 0); CONFIG[5 + 2] &= ((0b10 << 0)| ~(0b01 << 0));
+#define CFG_SET_MAME_BL2_MK_BUTTON6(CONFIG) CONFIG[4 + 2] &= ~(0b1 << 6); CONFIG[5 + 2] |= (0b11 << 0);
 #define CFG_SET_MAME_BL2_HK_NOTHING(CONFIG) CONFIG[5 + 2] &= ~(0b111 << 2);
 #define CFG_SET_MAME_BL2_HK_BUTTON1(CONFIG) CONFIG[5 + 2] |= (0b001 << 2); CONFIG[5 + 2] &= ((0b001 << 2)| ~(0b110 << 2));
 #define CFG_SET_MAME_BL2_HK_BUTTON2(CONFIG) CONFIG[5 + 2] |= (0b010 << 2); CONFIG[5 + 2] &= ((0b010 << 2)| ~(0b101 << 2));
@@ -394,12 +394,12 @@ uint8_t config[CONFIG_BYTE_WIDTH + 2] = {CONFIG_EMPTY, CONFIG_EMPTY, CONFIG_EMPT
 #define CFG_SET_MAME_BL2_HK_BUTTON5(CONFIG) CONFIG[5 + 2] |= (0b101 << 2); CONFIG[5 + 2] &= ((0b101 << 2)| ~(0b010 << 2));
 #define CFG_SET_MAME_BL2_HK_BUTTON6(CONFIG) CONFIG[5 + 2] |= (0b110 << 2); CONFIG[5 + 2] &= ((0b110 << 2)| ~(0b001 << 2));
 #define CFG_SET_MAME_BL2_4K_NOTHING(CONFIG) CONFIG[5 + 2] &= ~(0b11 << 5); CONFIG[6 + 2] &= ~(0b1 << 0);
-#define CFG_SET_MAME_BL2_4K_BUTTON1(CONFIG) CONFIG[5 + 2] &= ~(0b11 << 5); CONFIG[6 + 2] |= (0b1 << 0);
-#define CFG_SET_MAME_BL2_4K_BUTTON2(CONFIG) CONFIG[5 + 2] |= (0b01 << 5); CONFIG[5 + 2] &= ((0b01 << 5)| ~(0b10 << 5)); CONFIG[6 + 2] &= ~(0b1 << 0);
-#define CFG_SET_MAME_BL2_4K_BUTTON3(CONFIG) CONFIG[5 + 2] |= (0b01 << 5); CONFIG[5 + 2] &= ((0b01 << 5)| ~(0b10 << 5)); CONFIG[6 + 2] |= (0b1 << 0);
-#define CFG_SET_MAME_BL2_4K_BUTTON4(CONFIG) CONFIG[5 + 2] |= (0b10 << 5); CONFIG[5 + 2] &= ((0b10 << 5)| ~(0b01 << 5)); CONFIG[6 + 2] &= ~(0b1 << 0);
-#define CFG_SET_MAME_BL2_4K_BUTTON5(CONFIG) CONFIG[5 + 2] |= (0b10 << 5); CONFIG[5 + 2] &= ((0b10 << 5)| ~(0b01 << 5)); CONFIG[6 + 2] |= (0b1 << 0);
-#define CFG_SET_MAME_BL2_4K_BUTTON6(CONFIG) CONFIG[5 + 2] |= (0b11 << 5); CONFIG[6 + 2] &= ~(0b1 << 0);
+#define CFG_SET_MAME_BL2_4K_BUTTON1(CONFIG) CONFIG[5 + 2] |= (0b01 << 5); CONFIG[5 + 2] &= ((0b01 << 5)| ~(0b10 << 5)); CONFIG[6 + 2] &= ~(0b1 << 0);
+#define CFG_SET_MAME_BL2_4K_BUTTON2(CONFIG) CONFIG[5 + 2] |= (0b10 << 5); CONFIG[5 + 2] &= ((0b10 << 5)| ~(0b01 << 5)); CONFIG[6 + 2] &= ~(0b1 << 0);
+#define CFG_SET_MAME_BL2_4K_BUTTON3(CONFIG) CONFIG[5 + 2] |= (0b11 << 5); CONFIG[6 + 2] &= ~(0b1 << 0);
+#define CFG_SET_MAME_BL2_4K_BUTTON4(CONFIG) CONFIG[5 + 2] &= ~(0b11 << 5); CONFIG[6 + 2] |= (0b1 << 0);
+#define CFG_SET_MAME_BL2_4K_BUTTON5(CONFIG) CONFIG[5 + 2] |= (0b01 << 5); CONFIG[5 + 2] &= ((0b01 << 5)| ~(0b10 << 5)); CONFIG[6 + 2] |= (0b1 << 0);
+#define CFG_SET_MAME_BL2_4K_BUTTON6(CONFIG) CONFIG[5 + 2] |= (0b10 << 5); CONFIG[5 + 2] &= ((0b10 << 5)| ~(0b01 << 5)); CONFIG[6 + 2] |= (0b1 << 0);
 #define CFG_SET_MAME_BL2_LP_NOTHING(CONFIG) CONFIG[6 + 2] &= ~(0b111 << 1);
 #define CFG_SET_MAME_BL2_LP_BUTTON1(CONFIG) CONFIG[6 + 2] |= (0b001 << 1); CONFIG[6 + 2] &= ((0b001 << 1)| ~(0b110 << 1));
 #define CFG_SET_MAME_BL2_LP_BUTTON2(CONFIG) CONFIG[6 + 2] |= (0b010 << 1); CONFIG[6 + 2] &= ((0b010 << 1)| ~(0b101 << 1));
@@ -429,12 +429,12 @@ uint8_t config[CONFIG_BYTE_WIDTH + 2] = {CONFIG_EMPTY, CONFIG_EMPTY, CONFIG_EMPT
 #define CFG_SET_MAME_BL2_4P_BUTTON5(CONFIG) CONFIG[7 + 2] |= (0b101 << 3); CONFIG[7 + 2] &= ((0b101 << 3)| ~(0b010 << 3));
 #define CFG_SET_MAME_BL2_4P_BUTTON6(CONFIG) CONFIG[7 + 2] |= (0b110 << 3); CONFIG[7 + 2] &= ((0b110 << 3)| ~(0b001 << 3));
 #define CFG_SET_MAME_BL3_LK_NOTHING(CONFIG) CONFIG[7 + 2] &= ~(0b1 << 6); CONFIG[8 + 2] &= ~(0b11 << 0);
-#define CFG_SET_MAME_BL3_LK_BUTTON1(CONFIG) CONFIG[7 + 2] &= ~(0b1 << 6); CONFIG[8 + 2] |= (0b01 << 0); CONFIG[8 + 2] &= ((0b01 << 0)| ~(0b10 << 0));
-#define CFG_SET_MAME_BL3_LK_BUTTON2(CONFIG) CONFIG[7 + 2] &= ~(0b1 << 6); CONFIG[8 + 2] |= (0b10 << 0); CONFIG[8 + 2] &= ((0b10 << 0)| ~(0b01 << 0));
-#define CFG_SET_MAME_BL3_LK_BUTTON3(CONFIG) CONFIG[7 + 2] &= ~(0b1 << 6); CONFIG[8 + 2] |= (0b11 << 0);
-#define CFG_SET_MAME_BL3_LK_BUTTON4(CONFIG) CONFIG[7 + 2] |= (0b1 << 6); CONFIG[8 + 2] &= ~(0b11 << 0);
-#define CFG_SET_MAME_BL3_LK_BUTTON5(CONFIG) CONFIG[7 + 2] |= (0b1 << 6); CONFIG[8 + 2] |= (0b01 << 0); CONFIG[8 + 2] &= ((0b01 << 0)| ~(0b10 << 0));
-#define CFG_SET_MAME_BL3_LK_BUTTON6(CONFIG) CONFIG[7 + 2] |= (0b1 << 6); CONFIG[8 + 2] |= (0b10 << 0); CONFIG[8 + 2] &= ((0b10 << 0)| ~(0b01 << 0));
+#define CFG_SET_MAME_BL3_LK_BUTTON1(CONFIG) CONFIG[7 + 2] |= (0b1 << 6); CONFIG[8 + 2] &= ~(0b11 << 0);
+#define CFG_SET_MAME_BL3_LK_BUTTON2(CONFIG) CONFIG[7 + 2] &= ~(0b1 << 6); CONFIG[8 + 2] |= (0b01 << 0); CONFIG[8 + 2] &= ((0b01 << 0)| ~(0b10 << 0));
+#define CFG_SET_MAME_BL3_LK_BUTTON3(CONFIG) CONFIG[7 + 2] |= (0b1 << 6); CONFIG[8 + 2] |= (0b01 << 0); CONFIG[8 + 2] &= ((0b01 << 0)| ~(0b10 << 0));
+#define CFG_SET_MAME_BL3_LK_BUTTON4(CONFIG) CONFIG[7 + 2] &= ~(0b1 << 6); CONFIG[8 + 2] |= (0b10 << 0); CONFIG[8 + 2] &= ((0b10 << 0)| ~(0b01 << 0));
+#define CFG_SET_MAME_BL3_LK_BUTTON5(CONFIG) CONFIG[7 + 2] |= (0b1 << 6); CONFIG[8 + 2] |= (0b10 << 0); CONFIG[8 + 2] &= ((0b10 << 0)| ~(0b01 << 0));
+#define CFG_SET_MAME_BL3_LK_BUTTON6(CONFIG) CONFIG[7 + 2] &= ~(0b1 << 6); CONFIG[8 + 2] |= (0b11 << 0);
 #define CFG_SET_MAME_BL3_MK_NOTHING(CONFIG) CONFIG[8 + 2] &= ~(0b111 << 2);
 #define CFG_SET_MAME_BL3_MK_BUTTON1(CONFIG) CONFIG[8 + 2] |= (0b001 << 2); CONFIG[8 + 2] &= ((0b001 << 2)| ~(0b110 << 2));
 #define CFG_SET_MAME_BL3_MK_BUTTON2(CONFIG) CONFIG[8 + 2] |= (0b010 << 2); CONFIG[8 + 2] &= ((0b010 << 2)| ~(0b101 << 2));
@@ -443,12 +443,12 @@ uint8_t config[CONFIG_BYTE_WIDTH + 2] = {CONFIG_EMPTY, CONFIG_EMPTY, CONFIG_EMPT
 #define CFG_SET_MAME_BL3_MK_BUTTON5(CONFIG) CONFIG[8 + 2] |= (0b101 << 2); CONFIG[8 + 2] &= ((0b101 << 2)| ~(0b010 << 2));
 #define CFG_SET_MAME_BL3_MK_BUTTON6(CONFIG) CONFIG[8 + 2] |= (0b110 << 2); CONFIG[8 + 2] &= ((0b110 << 2)| ~(0b001 << 2));
 #define CFG_SET_MAME_BL3_HK_NOTHING(CONFIG) CONFIG[8 + 2] &= ~(0b11 << 5); CONFIG[9 + 2] &= ~(0b1 << 0);
-#define CFG_SET_MAME_BL3_HK_BUTTON1(CONFIG) CONFIG[8 + 2] &= ~(0b11 << 5); CONFIG[9 + 2] |= (0b1 << 0);
-#define CFG_SET_MAME_BL3_HK_BUTTON2(CONFIG) CONFIG[8 + 2] |= (0b01 << 5); CONFIG[8 + 2] &= ((0b01 << 5)| ~(0b10 << 5)); CONFIG[9 + 2] &= ~(0b1 << 0);
-#define CFG_SET_MAME_BL3_HK_BUTTON3(CONFIG) CONFIG[8 + 2] |= (0b01 << 5); CONFIG[8 + 2] &= ((0b01 << 5)| ~(0b10 << 5)); CONFIG[9 + 2] |= (0b1 << 0);
-#define CFG_SET_MAME_BL3_HK_BUTTON4(CONFIG) CONFIG[8 + 2] |= (0b10 << 5); CONFIG[8 + 2] &= ((0b10 << 5)| ~(0b01 << 5)); CONFIG[9 + 2] &= ~(0b1 << 0);
-#define CFG_SET_MAME_BL3_HK_BUTTON5(CONFIG) CONFIG[8 + 2] |= (0b10 << 5); CONFIG[8 + 2] &= ((0b10 << 5)| ~(0b01 << 5)); CONFIG[9 + 2] |= (0b1 << 0);
-#define CFG_SET_MAME_BL3_HK_BUTTON6(CONFIG) CONFIG[8 + 2] |= (0b11 << 5); CONFIG[9 + 2] &= ~(0b1 << 0);
+#define CFG_SET_MAME_BL3_HK_BUTTON1(CONFIG) CONFIG[8 + 2] |= (0b01 << 5); CONFIG[8 + 2] &= ((0b01 << 5)| ~(0b10 << 5)); CONFIG[9 + 2] &= ~(0b1 << 0);
+#define CFG_SET_MAME_BL3_HK_BUTTON2(CONFIG) CONFIG[8 + 2] |= (0b10 << 5); CONFIG[8 + 2] &= ((0b10 << 5)| ~(0b01 << 5)); CONFIG[9 + 2] &= ~(0b1 << 0);
+#define CFG_SET_MAME_BL3_HK_BUTTON3(CONFIG) CONFIG[8 + 2] |= (0b11 << 5); CONFIG[9 + 2] &= ~(0b1 << 0);
+#define CFG_SET_MAME_BL3_HK_BUTTON4(CONFIG) CONFIG[8 + 2] &= ~(0b11 << 5); CONFIG[9 + 2] |= (0b1 << 0);
+#define CFG_SET_MAME_BL3_HK_BUTTON5(CONFIG) CONFIG[8 + 2] |= (0b01 << 5); CONFIG[8 + 2] &= ((0b01 << 5)| ~(0b10 << 5)); CONFIG[9 + 2] |= (0b1 << 0);
+#define CFG_SET_MAME_BL3_HK_BUTTON6(CONFIG) CONFIG[8 + 2] |= (0b10 << 5); CONFIG[8 + 2] &= ((0b10 << 5)| ~(0b01 << 5)); CONFIG[9 + 2] |= (0b1 << 0);
 #define CFG_SET_MAME_BL3_4K_NOTHING(CONFIG) CONFIG[9 + 2] &= ~(0b111 << 1);
 #define CFG_SET_MAME_BL3_4K_BUTTON1(CONFIG) CONFIG[9 + 2] |= (0b001 << 1); CONFIG[9 + 2] &= ((0b001 << 1)| ~(0b110 << 1));
 #define CFG_SET_MAME_BL3_4K_BUTTON2(CONFIG) CONFIG[9 + 2] |= (0b010 << 1); CONFIG[9 + 2] &= ((0b010 << 1)| ~(0b101 << 1));
@@ -478,12 +478,12 @@ uint8_t config[CONFIG_BYTE_WIDTH + 2] = {CONFIG_EMPTY, CONFIG_EMPTY, CONFIG_EMPT
 #define CFG_SET_MAME_BL3_HP_BUTTON5(CONFIG) CONFIG[10 + 2] |= (0b101 << 3); CONFIG[10 + 2] &= ((0b101 << 3)| ~(0b010 << 3));
 #define CFG_SET_MAME_BL3_HP_BUTTON6(CONFIG) CONFIG[10 + 2] |= (0b110 << 3); CONFIG[10 + 2] &= ((0b110 << 3)| ~(0b001 << 3));
 #define CFG_SET_MAME_BL3_4P_NOTHING(CONFIG) CONFIG[10 + 2] &= ~(0b1 << 6); CONFIG[11 + 2] &= ~(0b11 << 0);
-#define CFG_SET_MAME_BL3_4P_BUTTON1(CONFIG) CONFIG[10 + 2] &= ~(0b1 << 6); CONFIG[11 + 2] |= (0b01 << 0); CONFIG[11 + 2] &= ((0b01 << 0)| ~(0b10 << 0));
-#define CFG_SET_MAME_BL3_4P_BUTTON2(CONFIG) CONFIG[10 + 2] &= ~(0b1 << 6); CONFIG[11 + 2] |= (0b10 << 0); CONFIG[11 + 2] &= ((0b10 << 0)| ~(0b01 << 0));
-#define CFG_SET_MAME_BL3_4P_BUTTON3(CONFIG) CONFIG[10 + 2] &= ~(0b1 << 6); CONFIG[11 + 2] |= (0b11 << 0);
-#define CFG_SET_MAME_BL3_4P_BUTTON4(CONFIG) CONFIG[10 + 2] |= (0b1 << 6); CONFIG[11 + 2] &= ~(0b11 << 0);
-#define CFG_SET_MAME_BL3_4P_BUTTON5(CONFIG) CONFIG[10 + 2] |= (0b1 << 6); CONFIG[11 + 2] |= (0b01 << 0); CONFIG[11 + 2] &= ((0b01 << 0)| ~(0b10 << 0));
-#define CFG_SET_MAME_BL3_4P_BUTTON6(CONFIG) CONFIG[10 + 2] |= (0b1 << 6); CONFIG[11 + 2] |= (0b10 << 0); CONFIG[11 + 2] &= ((0b10 << 0)| ~(0b01 << 0));
+#define CFG_SET_MAME_BL3_4P_BUTTON1(CONFIG) CONFIG[10 + 2] |= (0b1 << 6); CONFIG[11 + 2] &= ~(0b11 << 0);
+#define CFG_SET_MAME_BL3_4P_BUTTON2(CONFIG) CONFIG[10 + 2] &= ~(0b1 << 6); CONFIG[11 + 2] |= (0b01 << 0); CONFIG[11 + 2] &= ((0b01 << 0)| ~(0b10 << 0));
+#define CFG_SET_MAME_BL3_4P_BUTTON3(CONFIG) CONFIG[10 + 2] |= (0b1 << 6); CONFIG[11 + 2] |= (0b01 << 0); CONFIG[11 + 2] &= ((0b01 << 0)| ~(0b10 << 0));
+#define CFG_SET_MAME_BL3_4P_BUTTON4(CONFIG) CONFIG[10 + 2] &= ~(0b1 << 6); CONFIG[11 + 2] |= (0b10 << 0); CONFIG[11 + 2] &= ((0b10 << 0)| ~(0b01 << 0));
+#define CFG_SET_MAME_BL3_4P_BUTTON5(CONFIG) CONFIG[10 + 2] |= (0b1 << 6); CONFIG[11 + 2] |= (0b10 << 0); CONFIG[11 + 2] &= ((0b10 << 0)| ~(0b01 << 0));
+#define CFG_SET_MAME_BL3_4P_BUTTON6(CONFIG) CONFIG[10 + 2] &= ~(0b1 << 6); CONFIG[11 + 2] |= (0b11 << 0);
 #define CFG_SET_MAME_BL4_LK_NOTHING(CONFIG) CONFIG[11 + 2] &= ~(0b111 << 2);
 #define CFG_SET_MAME_BL4_LK_BUTTON1(CONFIG) CONFIG[11 + 2] |= (0b001 << 2); CONFIG[11 + 2] &= ((0b001 << 2)| ~(0b110 << 2));
 #define CFG_SET_MAME_BL4_LK_BUTTON2(CONFIG) CONFIG[11 + 2] |= (0b010 << 2); CONFIG[11 + 2] &= ((0b010 << 2)| ~(0b101 << 2));
@@ -492,12 +492,12 @@ uint8_t config[CONFIG_BYTE_WIDTH + 2] = {CONFIG_EMPTY, CONFIG_EMPTY, CONFIG_EMPT
 #define CFG_SET_MAME_BL4_LK_BUTTON5(CONFIG) CONFIG[11 + 2] |= (0b101 << 2); CONFIG[11 + 2] &= ((0b101 << 2)| ~(0b010 << 2));
 #define CFG_SET_MAME_BL4_LK_BUTTON6(CONFIG) CONFIG[11 + 2] |= (0b110 << 2); CONFIG[11 + 2] &= ((0b110 << 2)| ~(0b001 << 2));
 #define CFG_SET_MAME_BL4_MK_NOTHING(CONFIG) CONFIG[11 + 2] &= ~(0b11 << 5); CONFIG[12 + 2] &= ~(0b1 << 0);
-#define CFG_SET_MAME_BL4_MK_BUTTON1(CONFIG) CONFIG[11 + 2] &= ~(0b11 << 5); CONFIG[12 + 2] |= (0b1 << 0);
-#define CFG_SET_MAME_BL4_MK_BUTTON2(CONFIG) CONFIG[11 + 2] |= (0b01 << 5); CONFIG[11 + 2] &= ((0b01 << 5)| ~(0b10 << 5)); CONFIG[12 + 2] &= ~(0b1 << 0);
-#define CFG_SET_MAME_BL4_MK_BUTTON3(CONFIG) CONFIG[11 + 2] |= (0b01 << 5); CONFIG[11 + 2] &= ((0b01 << 5)| ~(0b10 << 5)); CONFIG[12 + 2] |= (0b1 << 0);
-#define CFG_SET_MAME_BL4_MK_BUTTON4(CONFIG) CONFIG[11 + 2] |= (0b10 << 5); CONFIG[11 + 2] &= ((0b10 << 5)| ~(0b01 << 5)); CONFIG[12 + 2] &= ~(0b1 << 0);
-#define CFG_SET_MAME_BL4_MK_BUTTON5(CONFIG) CONFIG[11 + 2] |= (0b10 << 5); CONFIG[11 + 2] &= ((0b10 << 5)| ~(0b01 << 5)); CONFIG[12 + 2] |= (0b1 << 0);
-#define CFG_SET_MAME_BL4_MK_BUTTON6(CONFIG) CONFIG[11 + 2] |= (0b11 << 5); CONFIG[12 + 2] &= ~(0b1 << 0);
+#define CFG_SET_MAME_BL4_MK_BUTTON1(CONFIG) CONFIG[11 + 2] |= (0b01 << 5); CONFIG[11 + 2] &= ((0b01 << 5)| ~(0b10 << 5)); CONFIG[12 + 2] &= ~(0b1 << 0);
+#define CFG_SET_MAME_BL4_MK_BUTTON2(CONFIG) CONFIG[11 + 2] |= (0b10 << 5); CONFIG[11 + 2] &= ((0b10 << 5)| ~(0b01 << 5)); CONFIG[12 + 2] &= ~(0b1 << 0);
+#define CFG_SET_MAME_BL4_MK_BUTTON3(CONFIG) CONFIG[11 + 2] |= (0b11 << 5); CONFIG[12 + 2] &= ~(0b1 << 0);
+#define CFG_SET_MAME_BL4_MK_BUTTON4(CONFIG) CONFIG[11 + 2] &= ~(0b11 << 5); CONFIG[12 + 2] |= (0b1 << 0);
+#define CFG_SET_MAME_BL4_MK_BUTTON5(CONFIG) CONFIG[11 + 2] |= (0b01 << 5); CONFIG[11 + 2] &= ((0b01 << 5)| ~(0b10 << 5)); CONFIG[12 + 2] |= (0b1 << 0);
+#define CFG_SET_MAME_BL4_MK_BUTTON6(CONFIG) CONFIG[11 + 2] |= (0b10 << 5); CONFIG[11 + 2] &= ((0b10 << 5)| ~(0b01 << 5)); CONFIG[12 + 2] |= (0b1 << 0);
 #define CFG_SET_MAME_BL4_HK_NOTHING(CONFIG) CONFIG[12 + 2] &= ~(0b111 << 1);
 #define CFG_SET_MAME_BL4_HK_BUTTON1(CONFIG) CONFIG[12 + 2] |= (0b001 << 1); CONFIG[12 + 2] &= ((0b001 << 1)| ~(0b110 << 1));
 #define CFG_SET_MAME_BL4_HK_BUTTON2(CONFIG) CONFIG[12 + 2] |= (0b010 << 1); CONFIG[12 + 2] &= ((0b010 << 1)| ~(0b101 << 1));
@@ -527,12 +527,12 @@ uint8_t config[CONFIG_BYTE_WIDTH + 2] = {CONFIG_EMPTY, CONFIG_EMPTY, CONFIG_EMPT
 #define CFG_SET_MAME_BL4_MP_BUTTON5(CONFIG) CONFIG[13 + 2] |= (0b101 << 3); CONFIG[13 + 2] &= ((0b101 << 3)| ~(0b010 << 3));
 #define CFG_SET_MAME_BL4_MP_BUTTON6(CONFIG) CONFIG[13 + 2] |= (0b110 << 3); CONFIG[13 + 2] &= ((0b110 << 3)| ~(0b001 << 3));
 #define CFG_SET_MAME_BL4_HP_NOTHING(CONFIG) CONFIG[13 + 2] &= ~(0b1 << 6); CONFIG[14 + 2] &= ~(0b11 << 0);
-#define CFG_SET_MAME_BL4_HP_BUTTON1(CONFIG) CONFIG[13 + 2] &= ~(0b1 << 6); CONFIG[14 + 2] |= (0b01 << 0); CONFIG[14 + 2] &= ((0b01 << 0)| ~(0b10 << 0));
-#define CFG_SET_MAME_BL4_HP_BUTTON2(CONFIG) CONFIG[13 + 2] &= ~(0b1 << 6); CONFIG[14 + 2] |= (0b10 << 0); CONFIG[14 + 2] &= ((0b10 << 0)| ~(0b01 << 0));
-#define CFG_SET_MAME_BL4_HP_BUTTON3(CONFIG) CONFIG[13 + 2] &= ~(0b1 << 6); CONFIG[14 + 2] |= (0b11 << 0);
-#define CFG_SET_MAME_BL4_HP_BUTTON4(CONFIG) CONFIG[13 + 2] |= (0b1 << 6); CONFIG[14 + 2] &= ~(0b11 << 0);
-#define CFG_SET_MAME_BL4_HP_BUTTON5(CONFIG) CONFIG[13 + 2] |= (0b1 << 6); CONFIG[14 + 2] |= (0b01 << 0); CONFIG[14 + 2] &= ((0b01 << 0)| ~(0b10 << 0));
-#define CFG_SET_MAME_BL4_HP_BUTTON6(CONFIG) CONFIG[13 + 2] |= (0b1 << 6); CONFIG[14 + 2] |= (0b10 << 0); CONFIG[14 + 2] &= ((0b10 << 0)| ~(0b01 << 0));
+#define CFG_SET_MAME_BL4_HP_BUTTON1(CONFIG) CONFIG[13 + 2] |= (0b1 << 6); CONFIG[14 + 2] &= ~(0b11 << 0);
+#define CFG_SET_MAME_BL4_HP_BUTTON2(CONFIG) CONFIG[13 + 2] &= ~(0b1 << 6); CONFIG[14 + 2] |= (0b01 << 0); CONFIG[14 + 2] &= ((0b01 << 0)| ~(0b10 << 0));
+#define CFG_SET_MAME_BL4_HP_BUTTON3(CONFIG) CONFIG[13 + 2] |= (0b1 << 6); CONFIG[14 + 2] |= (0b01 << 0); CONFIG[14 + 2] &= ((0b01 << 0)| ~(0b10 << 0));
+#define CFG_SET_MAME_BL4_HP_BUTTON4(CONFIG) CONFIG[13 + 2] &= ~(0b1 << 6); CONFIG[14 + 2] |= (0b10 << 0); CONFIG[14 + 2] &= ((0b10 << 0)| ~(0b01 << 0));
+#define CFG_SET_MAME_BL4_HP_BUTTON5(CONFIG) CONFIG[13 + 2] |= (0b1 << 6); CONFIG[14 + 2] |= (0b10 << 0); CONFIG[14 + 2] &= ((0b10 << 0)| ~(0b01 << 0));
+#define CFG_SET_MAME_BL4_HP_BUTTON6(CONFIG) CONFIG[13 + 2] &= ~(0b1 << 6); CONFIG[14 + 2] |= (0b11 << 0);
 #define CFG_SET_MAME_BL4_4P_NOTHING(CONFIG) CONFIG[14 + 2] &= ~(0b111 << 2);
 #define CFG_SET_MAME_BL4_4P_BUTTON1(CONFIG) CONFIG[14 + 2] |= (0b001 << 2); CONFIG[14 + 2] &= ((0b001 << 2)| ~(0b110 << 2));
 #define CFG_SET_MAME_BL4_4P_BUTTON2(CONFIG) CONFIG[14 + 2] |= (0b010 << 2); CONFIG[14 + 2] &= ((0b010 << 2)| ~(0b101 << 2));

@@ -95,6 +95,57 @@ void resetMAMEReport4() {
 
 
 #define MAME_SET_REPORT_BIT_FUNCTION(functionName, reportNo, array, bit) void functionName() { data.mame_reports.report##reportNo.reportData[array] |= (1<<bit); }
+// meaning: LK, MK, HK, 4K, LP, MP, HP, 4P
+int buttonMapping1[8] = {4, 5, 6, -1, 1, 2, 3, 4};
+int buttonMapping2[8] = {-1, -1, -1, -1, -1, -1, -1, -1};
+int buttonMapping3[8] = {-1, -1, -1, -1, -1, -1, -1, -1};
+int buttonMapping4[8] = {-1, -1, -1, -1, -1, -1, -1, -1};
+
+int* buttonMapping = buttonMapping1;
+
+#define MAME_LK 0
+#define MAME_MK 1
+#define MAME_HK 2
+#define MAME_4K 3
+#define MAME_LP 4
+#define MAME_MP 5
+#define MAME_HP 6
+#define MAME_4P 7
+
+#define MAME_BUTTON_CFG(buttonLayout, stickButton, mameButton) CFG_MAME_BL##buttonLayout##_##stickButton##_##mameButton
+
+#define MAME_LOAD_BUTTON_MAPPING(buttonLayout, stickButton) \
+	if(CFG_MAME_BL##buttonLayout##_##stickButton##_NOTHING)\
+		buttonMapping##buttonLayout[MAME_##stickButton] = -1;\
+	else if(MAME_BUTTON_CFG(buttonLayout, stickButton, BUTTON1))\
+		buttonMapping##buttonLayout[MAME_##stickButton] = 0;\
+	else if(MAME_BUTTON_CFG(buttonLayout, stickButton, BUTTON2))\
+		buttonMapping##buttonLayout[MAME_##stickButton] = 1;\
+	else if(MAME_BUTTON_CFG(buttonLayout, stickButton, BUTTON3))\
+		buttonMapping##buttonLayout[MAME_##stickButton] = 2;\
+	else if(MAME_BUTTON_CFG(buttonLayout, stickButton, BUTTON4))\
+		buttonMapping##buttonLayout[MAME_##stickButton] = 3;\
+	else if(MAME_BUTTON_CFG(buttonLayout, stickButton, BUTTON5))\
+		buttonMapping##buttonLayout[MAME_##stickButton] = 4;\
+	else if(MAME_BUTTON_CFG(buttonLayout, stickButton, BUTTON6))\
+		buttonMapping##buttonLayout[MAME_##stickButton] = 5;\
+
+#define MAME_LOAD_BUTTON_MAPPINGS(buttonLayout)\
+	MAME_LOAD_BUTTON_MAPPING(buttonLayout, LK)\
+	MAME_LOAD_BUTTON_MAPPING(buttonLayout, MK)\
+	MAME_LOAD_BUTTON_MAPPING(buttonLayout, HK)\
+	MAME_LOAD_BUTTON_MAPPING(buttonLayout, 4K)\
+	MAME_LOAD_BUTTON_MAPPING(buttonLayout, LP)\
+	MAME_LOAD_BUTTON_MAPPING(buttonLayout, MP)\
+	MAME_LOAD_BUTTON_MAPPING(buttonLayout, HP)\
+	MAME_LOAD_BUTTON_MAPPING(buttonLayout, 4P)\
+
+void initMAMEButtonMappings() {
+	MAME_LOAD_BUTTON_MAPPINGS(1)
+	MAME_LOAD_BUTTON_MAPPINGS(2)
+	MAME_LOAD_BUTTON_MAPPINGS(3)
+	MAME_LOAD_BUTTON_MAPPINGS(4)
+}
 
 MAME_SET_REPORT_BIT_FUNCTION(mamePlayer1Button1, 1, MAME_R1_LCTRL_ARRAY, MAME_R1_LCTRL_BIT)
 MAME_SET_REPORT_BIT_FUNCTION(mamePlayer1Button2, 1, MAME_R1_LALT_ARRAY, MAME_R1_LALT_BIT)
@@ -114,19 +165,8 @@ MAME_SET_REPORT_BIT_FUNCTION(mamePlayer2Button6, 2, MAME_R2_I_ARRAY, MAME_R2_I_B
 
 void (*player2Buttons[6])() = {mamePlayer2Button1, mamePlayer2Button2, mamePlayer2Button3, mamePlayer2Button4, mamePlayer2Button5, mamePlayer2Button6 };
 
-// meaning: LK, MK, HK, 4K, LP, MP, HP, 4P
-int buttonMapping[8] = {3, 4, 5, -1, 0, 1, 2, 3};
+#define MAME_SET_BUTTON(playerNo, buttonID) { if(buttonMapping[buttonID] >= 0) (*player##playerNo##Buttons[buttonMapping[buttonID]])(); }
 
-#define MAME_LK 0
-#define MAME_MK 1
-#define MAME_HK 2
-#define MAME_4K 3
-#define MAME_LP 4
-#define MAME_MP 5
-#define MAME_HP 6
-#define MAME_4P 7
-
-#define MAME_SET_BUTTON(playerNo, buttonID) { if(buttonID >= 0) (*player##playerNo##Buttons[buttonMapping[buttonID]])(); }
 
 uchar selectPressed;
 uchar selectWasPressed = 0;
@@ -317,7 +357,25 @@ void sendMAMEReports() {
 	if(selectPressed) {
 		selectWasPressed = 1;
 
-		if(!Stick_Up) {
+		if(!Stick_LP) {
+			if(!Stick_Up) {
+				buttonMapping = buttonMapping1;
+				selectWasUsed = 1;
+			}
+			else if(!Stick_Right) {
+				buttonMapping = buttonMapping2;
+				selectWasUsed = 1;
+			}
+			else if(!Stick_Down) {
+				buttonMapping = buttonMapping3;
+				selectWasUsed = 1;
+			}
+			else if(!Stick_Left) {
+				buttonMapping = buttonMapping4;
+				selectWasUsed = 1;
+			}
+		}
+		else if(!Stick_Up) {
 			mameControl = 0;
 			selectWasUsed = 1;
 		}
@@ -370,6 +428,7 @@ void mame_controller() {
 	setupUSB();
 	usbPoll();
 	initMAMEReports();
+	initMAMEButtonMappings();
 
     while(1) { /* main event loop */
 		// could be used for mode switching: readJoystickSwitch();
