@@ -22,20 +22,20 @@ typedef struct {
 } ps3report_t;
 
 typedef struct {
-	uchar	reportID;
-	uchar	reportData[2];
-} mame_report_size2_t;
+	uchar reportID;
+	uchar data[4];
+	uchar previousData[4];
+} mame_keyboard_report_t;
+
 
 typedef struct {
-	uchar	reportID;
-	uchar	reportData;
-} mame_report_size1_t;
+	uchar reportID;
+	uchar data;
+} mame_consumer_report_t;
 
 typedef struct {
-	mame_report_size2_t report1;
-	mame_report_size2_t report2;
-	mame_report_size2_t report3;
-	mame_report_size1_t report4;
+	mame_keyboard_report_t keyboard;
+	mame_consumer_report_t consumer;
 } mame_reports_t;
 
 typedef union {
@@ -76,9 +76,11 @@ typedef union {
     uchar   c[sizeof(e2addr_t)];
 } e2address_t;
 
-static e2addr_t eepromOffset = -1;
-static uchar writeReportID = 0;
-static e2addr_t currentEEPROMAddress;
+e2addr_t eepromOffset = -1;
+uchar writeReportID = 0;
+e2addr_t currentEEPROMAddress;
+
+uchar mameIdleRate = 125; // 500ms
 
 usbMsgLen_t usbFunctionSetup(uchar receivedData[8]) {
 	usbRequest_t    *rq = (void *)receivedData;
@@ -153,6 +155,17 @@ usbMsgLen_t usbFunctionSetup(uchar receivedData[8]) {
 
 		            return 132;
 				}
+		    }
+		}
+	}
+	else if(usbMode == USB_MODE_MAME) {
+		if ((rq-> bmRequestType & USBRQ_TYPE_MASK) == USBRQ_TYPE_CLASS) {
+			if (rq->bRequest == USBRQ_HID_GET_IDLE) {		
+		    	usbMsgPtr = &mameIdleRate;
+		    	return 1;
+		    }
+			else if(rq->bRequest == USBRQ_HID_SET_IDLE) {
+				mameIdleRate = reportType;
 		    }
 		}
 	}
