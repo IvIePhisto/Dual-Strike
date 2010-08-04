@@ -168,30 +168,30 @@ void (*player2Buttons[6])() = {mamePlayer2Button1, mamePlayer2Button2, mamePlaye
 #define MAME_SET_BUTTON(playerNo, buttonID) { if(buttonMapping[buttonID] >= 0) (*player##playerNo##Buttons[buttonMapping[buttonID]])(); }
 
 
-uchar selectPressed;
-uchar selectWasPressed = 0;
-uchar selectWasUsed = 0;
-uchar selectReleased = 0;
+uchar metaPressed;
+uchar metaWasPressed = 0;
+uchar metaWasUsed = 0;
+uchar metaReleased = 0;
 uchar mameControl = 0;
 uchar mamePlayer = 1;
 
 void sendMAMEReportPlayer1() {
 	resetMAMEReport1();
 
-	if(selectPressed) {
+	if(metaPressed) {
 		if(!Stick_LK) {
 			MAME_R1_ENTER
-			selectWasUsed = 1;
+			metaWasUsed = 1;
 		}
 
 		if(!Stick_MK) {
 			MAME_R1_ESCAPE	
-			selectWasUsed = 1;
+			metaWasUsed = 1;
 		}
 
-		if(CFG_HOME_EMU && !Stick_Start) {
+		if(CFG_HOME_EMU && !Stick_Select) {
 			MAME_R1_P
-			selectWasUsed = 1;
+			metaWasUsed = 1;
 		}
 	}
 	else {
@@ -231,13 +231,13 @@ void sendMAMEReportPlayer1() {
 			MAME_SET_BUTTON(1, MAME_4P)
 	#endif
 
-		if(!Stick_Start)
+		if(metaReleased) {
 			MAME_R1_1
-
-		if(selectReleased) {
-			MAME_R1_5
-			selectReleased = 0;
+			metaReleased = 0;
 		}
+
+		if(!Stick_Select)
+			MAME_R1_5
 
 		if(!Stick_Home)
 			MAME_R1_P
@@ -285,20 +285,20 @@ void sendMAMEReportPlayer2() {
 		MAME_SET_BUTTON(2, MAME_4P)
 #endif
 
-	if(!Stick_Start)
+	if(metaReleased) {
 		MAME_R2_2
-
-	if(selectReleased) {
-		MAME_R2_6
-		selectReleased = 0;
+		metaReleased = 0;
 	}
+
+	if(!Stick_Select)
+		MAME_R2_6
 
 	if(!Stick_Home)
 		MAME_R2_P
 
-	if(CFG_HOME_EMU && selectPressed && !Stick_Start) {
+	if(CFG_HOME_EMU && metaPressed && !Stick_Select) {
 		MAME_R2_P
-		selectWasUsed = 1;
+		metaWasUsed = 1;
 	}
 
 	sendDataUSB((void*)&data.mame_reports.report2, 3);
@@ -330,13 +330,14 @@ void sendMAMEReportsControl() {
 	if(!Stick_MK)
 		MAME_R3_F3
 
-	if(!Stick_Start)
+	if(metaReleased) {
 		MAME_R3_TAB
-
-	if(selectReleased) {
-		MAME_R3_9
-		selectReleased = 0;
+		metaReleased = 0;
 	}
+
+	if(!Stick_Select)
+		MAME_R3_9
+
 
 #ifdef EXTRA_BUTTONS		
 	if(!Stick_4P)
@@ -351,72 +352,72 @@ void sendMAMEReportsControl() {
 }
 
 void sendMAMEReports() {	
-	selectReleased = 0;
-	selectPressed = !Stick_Select;
+	metaReleased = 0;
+	metaPressed = !Stick_Start;
 
-	if(selectPressed) {
-		selectWasPressed = 1;
+	if(metaPressed) {
+		metaWasPressed = 1;
 
 		if(!Stick_LP) {
 			if(!Stick_Up) {
 				buttonMapping = buttonMapping1;
-				selectWasUsed = 1;
+				metaWasUsed = 1;
 			}
 			else if(!Stick_Right) {
 				buttonMapping = buttonMapping2;
-				selectWasUsed = 1;
+				metaWasUsed = 1;
 			}
 			else if(!Stick_Down) {
 				buttonMapping = buttonMapping3;
-				selectWasUsed = 1;
+				metaWasUsed = 1;
 			}
 			else if(!Stick_Left) {
 				buttonMapping = buttonMapping4;
-				selectWasUsed = 1;
+				metaWasUsed = 1;
 			}
 		}
 		else if(!Stick_Up) {
 			mameControl = 0;
-			selectWasUsed = 1;
+			metaWasUsed = 1;
 		}
 		else if(!Stick_Down) {
 			mameControl = 1;
-			selectWasUsed = 1;
+			metaWasUsed = 1;
 		}
 	
 		if(!mameControl) {
 			if(!Stick_Left) {
 				mamePlayer = 1;
-				selectWasUsed = 1;
+				metaWasUsed = 1;
 			}
 			else if(!Stick_Right) {
 				mamePlayer = 2;
-				selectWasUsed = 1;
+				metaWasUsed = 1;
 			}
 		}
 	}
 
-	if(selectWasUsed) {
-		if(!selectPressed) {
-			selectWasUsed = 0;
-			selectWasPressed = 0;
+	if(metaWasUsed) {
+		if(!metaPressed) {
+			metaWasUsed = 0;
+			metaWasPressed = 0;
 		}
 	}
 	else {
-		if(!selectPressed && selectWasPressed) {
-			selectWasPressed = 0;
-			selectReleased = 1;
+		if(!metaPressed && metaWasPressed) {
+			metaWasPressed = 0;
+			metaReleased = 1;
 		}
 	}
 
 	if(mameControl) {
-		if(!selectPressed)
+		if(!metaPressed)
 			sendMAMEReportsControl();
 	}
 	else {
 		if(mamePlayer == 1)
 			sendMAMEReportPlayer1();
-		else if(!selectPressed)
+		else if(!metaPressed)
 			sendMAMEReportPlayer2();
 	}
 }
