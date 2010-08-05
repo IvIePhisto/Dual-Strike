@@ -33,8 +33,9 @@ the directory this file resides in.
 
 Version History
 ~~~~~~~~~~~~~~~
-1.0.2 - fixed default setter bug
+1.1.0 - added defaults loading for current tab
       - appeareance changes
+      - fixed default setter bug
       - fixed choice byte splitting bugs
       
 1.0.1 - fixed choice bits reading bug

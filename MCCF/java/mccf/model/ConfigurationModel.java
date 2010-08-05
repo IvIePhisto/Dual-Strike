@@ -4,12 +4,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Vector;
 
-import javax.swing.ButtonGroup;
-import javax.swing.JComboBox;
-import javax.swing.JRadioButton;
-
-import mccf.definition.BooleanSetting;
-import mccf.definition.ChoiceSetting;
 import mccf.definition.Configuration;
 import mccf.file.FileHandler;
 
@@ -17,7 +11,7 @@ import mccf.file.FileHandler;
 public class ConfigurationModel {
 	private final FileHandler fileHandler;
 	private final int byteWidth;
-	private final List<SettingModel> settings = new Vector<SettingModel>();
+	private final List<PageModel> pages = new Vector<PageModel>();
 	private final byte device;
 	private final byte version;
 	
@@ -32,30 +26,18 @@ public class ConfigurationModel {
 		return byteWidth;
 	}
 	
-	public synchronized void addChoice(final ChoiceSetting choiceSetting, final JComboBox comboBox) {
-		ComboBoxChoiceModel choiceModel;
+	public synchronized PageModel addPage() {
+		PageModel pageModel;
 		
-		choiceModel = new ComboBoxChoiceModel(fileHandler, choiceSetting, comboBox);
-		settings.add(choiceModel);
-	}
-	
-	public synchronized void addChoice(final ChoiceSetting choiceSetting, final ButtonGroup buttons) {
-		RadioButtonsChoiceModel choiceModel;
+		pageModel = new PageModel(fileHandler);
+		pages.add(pageModel);
 		
-		choiceModel = new RadioButtonsChoiceModel(fileHandler, choiceSetting, buttons);
-		settings.add(choiceModel);
-	}
-
-	public synchronized void addBoolean(final BooleanSetting booleanSetting, final JRadioButton enableButton, final JRadioButton disableButton) {
-		BooleanModel booleanModel;
-		
-		booleanModel = new BooleanModel(fileHandler, booleanSetting, enableButton, disableButton);
-		settings.add(booleanModel);
+		return pageModel;
 	}
 	
 	public synchronized void loadDefaults() {
-		for(SettingModel setting: settings)
-			setting.loadDefaults();
+		for(PageModel page: pages)
+			page.loadDefaults();
 	}
 	
 	public synchronized void loadBytes(byte[] bytes) throws ByteLoadingException {
@@ -74,8 +56,8 @@ public class ConfigurationModel {
 		
 		bytes = Arrays.copyOfRange(bytes, 2, bytes.length);
 
-		for(SettingModel setting: settings)
-			setting.loadBytes(bytes);
+		for(PageModel page: pages)
+			page.loadBytes(bytes);
 	}
 	
 	public synchronized byte[] saveBytes() {
@@ -83,8 +65,8 @@ public class ConfigurationModel {
 		
 		bytes = new byte[byteWidth + 2];
 		
-		for(SettingModel setting: settings)
-			setting.saveBytes(bytes);
+		for(PageModel page: pages)
+			page.saveBytes(bytes);
 		
 		for(int i = 0; i < byteWidth; i++)
 			bytes[bytes.length - i - 1] = bytes[bytes.length - i - 3];

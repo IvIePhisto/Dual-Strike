@@ -8,11 +8,12 @@ import javax.swing.AbstractButton;
 
 public class ActionListenerHandler {
 	private final Map<String, ActionListener> actionListeners = new HashMap<String, ActionListener>();	
+	
 	public synchronized void registerActionListener(final String name, final ActionListener actionListener) {
 		actionListeners.put(name, actionListener);
 	}
 	
-	private synchronized ActionListener getActionListener(final String actionListenerName) {
+	public synchronized ActionListener getActionListener(final String actionListenerName) {
 		ActionListener actionListener;
 		
 		actionListener = actionListeners.get(actionListenerName);

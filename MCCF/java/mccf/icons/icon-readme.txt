@@ -1,5 +1,8 @@
-The icons are taken from the KDE Nuvola <http://www.icon-king.com/projects/nuvola/> icon set.
-It is under the following licence:
+The icons are taken from the KDE Nuvola
+<http://www.icon-king.com/projects/nuvola/> icon set, except "reload_tab.png",
+"device_load.png" and "device_save.png", although they were created using
+icons from Nuvola.
+The Nuvola icon set is under the following licence:
 
 		  GNU LESSER GENERAL PUBLIC LICENSE
 		       Version 2.1, February 1999

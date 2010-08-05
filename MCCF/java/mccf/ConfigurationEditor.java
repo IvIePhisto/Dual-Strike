@@ -63,6 +63,7 @@ import mccf.action_listeners.ExitActionListener;
 import mccf.action_listeners.HelpActionListener;
 import mccf.action_listeners.LoadActionListener;
 import mccf.action_listeners.SaveActionListener;
+import mccf.action_listeners.TabDefaultsActionListener;
 import mccf.definition.BooleanSetting;
 import mccf.definition.ChoiceSetting;
 import mccf.definition.Configuration;
@@ -74,12 +75,13 @@ import mccf.definition.PathInfo;
 import mccf.file.FileHandler;
 import mccf.icons.IconHandler;
 import mccf.model.ConfigurationModel;
+import mccf.model.PageModel;
 
 
 public class ConfigurationEditor implements HyperlinkListener {
 	public static final int MAJOR_VERSION_NO = 1;
-	public static final int MINOR_VERSION_NO = 0;
-	public static final int BUGFIX_VERSION_NO = 2;
+	public static final int MINOR_VERSION_NO = 1;
+	public static final int BUGFIX_VERSION_NO = 0;
 
 	static final File DEFAULT_CONFIGURATION_DEFINITION_FILE = new File("configuration.xml");
 
@@ -218,6 +220,7 @@ public class ConfigurationEditor implements HyperlinkListener {
 		actionListenerHandler.registerActionListener("save", new SaveActionListener(this));
 		actionListenerHandler.registerActionListener("load", new LoadActionListener(this));
 		actionListenerHandler.registerActionListener("defaults", new DefaultsActionListener(this));
+		actionListenerHandler.registerActionListener("tabDefaults", new TabDefaultsActionListener(this));
 		actionListenerHandler.registerActionListener("help", new HelpActionListener(this, getLocalizedInfo(configuration.getHelp(), true)));
 		actionListenerHandler.registerActionListener("about", new AboutMessageActionListener(this));
 	}
@@ -321,6 +324,12 @@ public class ConfigurationEditor implements HyperlinkListener {
 		menu.add(menuItem);
 		actionListenerHandler.registerAction(menuItem, "defaults");
 
+		menuItem = new JMenuItem(MessageHelper.get(this, "tabDefaultsMenuItemName"));
+		menuItem.setToolTipText(MessageHelper.get(this, "tabDefaultsHelp"));
+		menuItem.setIcon(IconHandler.getIcon("tabDefaults", null, 16, null));
+		menu.add(menuItem);
+		actionListenerHandler.registerAction(menuItem, "tabDefaults");
+
 		menuBar.add(menu);
 		menu = new JMenu(MessageHelper.get(this, "helpMenuName"));
 		
@@ -368,7 +377,13 @@ public class ConfigurationEditor implements HyperlinkListener {
 		button.setIcon(IconHandler.getIcon("defaults", MessageHelper.get(this, "defaultsButtonTitle"), 22, null));
 		toolBar.add(button);
 		actionListenerHandler.registerAction(button, "defaults");
-		
+
+		button = new JButton();
+		button.setToolTipText(MessageHelper.get(this, "tabDefaultsHelp"));
+		button.setIcon(IconHandler.getIcon("tabDefaults", MessageHelper.get(this, "tabDefaultsButtonTitle"), 22, null));
+		toolBar.add(button);
+		actionListenerHandler.registerAction(button, "tabDefaults");
+
 		toolBar.addSeparator();
 		button = new JButton();
 		button.setToolTipText(MessageHelper.get(this, "helpHelp"));
@@ -428,20 +443,26 @@ public class ConfigurationEditor implements HyperlinkListener {
 	
 	private JComponent createTabs() {
 		JTabbedPane tabs;
+		TabDefaultsActionListener tabDefaults;
 		
 		tabs = new JTabbedPane(JTabbedPane.TOP, JTabbedPane.SCROLL_TAB_LAYOUT);
+		tabDefaults = (TabDefaultsActionListener)actionListenerHandler.getActionListener("tabDefaults");
+		tabDefaults.setTabs(tabs);
 		
 		for(Page page: configuration.getPage())
-			tabs.addTab(getLocalizedInfo(page.getTitle(), true), createTabContent(page));
+			tabs.addTab(getLocalizedInfo(page.getTitle(), true), createTabContent(page, tabDefaults));
 		
 		return tabs;
 	}
 	
-	private Component createTabContent(final Page page) {
+	private Component createTabContent(final Page page, final TabDefaultsActionListener tabDefaults) {
 		JLabel tabHelpLabel;
 		JScrollPane scrollPane;
 		JPanel panel;
-
+		PageModel pageModel;
+		
+		pageModel = model.addPage();
+		tabDefaults.addPageModel(pageModel);
 		panel = new ResizingJPanel();
 		panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
@@ -458,7 +479,7 @@ public class ConfigurationEditor implements HyperlinkListener {
 		for(Object setting: page.getChoiceOrBoolean()) {
 			JComponent settingComponent;
 			
-			settingComponent = createSettingComponent(setting);
+			settingComponent = createSettingComponent(setting, pageModel);
 			settingComponent.setAlignmentX(Component.LEFT_ALIGNMENT);
 			settingComponent.setAlignmentY(Component.TOP_ALIGNMENT);
 			panel.add(settingComponent);
@@ -469,7 +490,7 @@ public class ConfigurationEditor implements HyperlinkListener {
 		return scrollPane;
 	}
 
-	private JComponent createSettingComponent(final Object settingObject) {
+	private JComponent createSettingComponent(final Object settingObject, final PageModel pageModel) {
 		JPanel settingPanel;
 		JComponent selectorComponent;
 		JLabel title;
@@ -488,7 +509,7 @@ public class ConfigurationEditor implements HyperlinkListener {
 			setting = (BooleanSetting)settingObject;
 			title = createLabel(setting.getTitle(), TITLE_FONT);
 			helpString = getLocalizedInfo(setting.getHelp(), true);
-			selectorComponent = createSettingComponent(setting);
+			selectorComponent = createSettingComponent(setting, pageModel);
 			imageLabel = createImageLabel(setting.getImage());
 		}
 		else if(settingObject instanceof ChoiceSetting) {
@@ -497,7 +518,7 @@ public class ConfigurationEditor implements HyperlinkListener {
 			setting = (ChoiceSetting)settingObject;
 			title = createLabel(setting.getTitle(), TITLE_FONT);
 			helpString = getLocalizedInfo(setting.getHelp(), true);
-			selectorComponent = createSettingComponent(setting);
+			selectorComponent = createSettingComponent(setting, pageModel);
 			imageLabel = createImageLabel(setting.getImage());
 		}
 		else {
@@ -529,7 +550,7 @@ public class ConfigurationEditor implements HyperlinkListener {
 		return settingPanel;
 	}
 
-	private JComponent createSettingComponent(final BooleanSetting b) {
+	private JComponent createSettingComponent(final BooleanSetting b, final PageModel pageModel) {
 		JPanel selectorPanel;
 		ButtonGroup buttons;
 		JRadioButton enableButton;
@@ -543,13 +564,12 @@ public class ConfigurationEditor implements HyperlinkListener {
 		isEnabled = b.isDefault();
 		enableButton = addRadioButton(MessageHelper.get(this, "trueButtonText", language), null, buttons, selectorPanel, isEnabled);
 		disableButton = addRadioButton(MessageHelper.get(this, "falseButtonText", language), null, buttons, selectorPanel, !isEnabled);
-		
-		model.addBoolean(b, enableButton, disableButton);
+		pageModel.addBoolean(b, enableButton, disableButton);
 		
 		return selectorPanel;
 	}
 	
-	private JComponent createSettingComponent(final ChoiceSetting c) {
+	private JComponent createSettingComponent(final ChoiceSetting c, final PageModel pageModel) {
 		Option defaultOption;
 		List<Option> options;
 		final int listOptionCount;
@@ -559,12 +579,12 @@ public class ConfigurationEditor implements HyperlinkListener {
 		listOptionCount = 3;
 		
 		if(options.size() <= listOptionCount)
-			return createOptionRadioButtons(c, defaultOption.getId());
+			return createOptionRadioButtons(c, defaultOption.getId(), pageModel);
 		else
-			return createOptionComboBox(c, defaultOption.getId());
+			return createOptionComboBox(c, defaultOption.getId(), pageModel);
 	}
 	
-	private JComponent createOptionComboBox(final ChoiceSetting choiceSetting, String defaultOptionID) {
+	private JComponent createOptionComboBox(final ChoiceSetting choiceSetting, final String defaultOptionID, final PageModel pageModel) {
 		List<String> titles;
 		List<String> helps;
 		final String[] helpsArray;
@@ -608,14 +628,14 @@ public class ConfigurationEditor implements HyperlinkListener {
 		comboBox.setRenderer(listCellRenderer);
 		comboBox.setSelectedIndex(selectedIndex);
 		comboBox.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
-		model.addChoice(choiceSetting, comboBox);
+		pageModel.addChoice(choiceSetting, comboBox);
 		panel = new JPanel();
 		panel.add(comboBox);
 
 		return panel;
 	}
 
-	private JComponent createOptionRadioButtons(final ChoiceSetting choiceSetting, final String defaultOptionID) {
+	private JComponent createOptionRadioButtons(final ChoiceSetting choiceSetting, final String defaultOptionID, final PageModel pageModel) {
 		ButtonGroup buttons;
 		JPanel selectorPanel;
 	
@@ -635,7 +655,7 @@ public class ConfigurationEditor implements HyperlinkListener {
 			addRadioButton(title, help, buttons, selectorPanel, selected);
 		}
 		
-		model.addChoice(choiceSetting, buttons);
+		pageModel.addChoice(choiceSetting, buttons);
 		
 		return selectorPanel;
 	}
