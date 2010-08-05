@@ -378,51 +378,51 @@ void setMAMEReportsControl() {
 }
 
 /*
-#define MAME_SET_BUTTON_MAPPING(stickButton, mameButton)\
-	switch(configurationButtonMappingNo) {\
-	case 1:\
-		CFG_SET_MAME_BL1_##stickButton##_##mameButton(newConfig)\
-		break;\
-	case 2:\
-		CFG_SET_MAME_BL2_##stickButton##_##mameButton(newConfig)\
-		break;\
-	case 3:\
-		CFG_SET_MAME_BL3_##stickButton##_##mameButton(newConfig)\
-		break;\
-	case 4:\
-		CFG_SET_MAME_BL4_##stickButton##_##mameButton(newConfig)\
-		break;\
-	}\
-
-#define MAME_READ_BUTTON_MAPPING(stickButton)\
+#define MAME_SET_BUTTON_MAPPING(buttonLayout, stickButton)\
 	if(!Stick_Select) {\
-		MAME_SET_BUTTON_MAPPING(stickButton, NOTHING)\
+		CFG_SET_MAME_BL##buttonLayout##_##stickButton##_NOTHING(newConfig)\
 	}\
 	else if(!Stick_Up) {\
 		if(!Stick_Right) {\
-			MAME_SET_BUTTON_MAPPING(stickButton, BUTTON2)\
+			CFG_SET_MAME_BL##buttonLayout##_##stickButton##_BUTTON2(newConfig)\
 		}\
 		else if(!Stick_Left) {\
 		}\
 		else {\
-			MAME_SET_BUTTON_MAPPING(stickButton, BUTTON1)\
+			CFG_SET_MAME_BL##buttonLayout##_##stickButton##_BUTTON1(newConfig)\
 		}\
 	}\
 	else if(!Stick_Down) {\
 		if(!Stick_Right) {\
-			MAME_SET_BUTTON_MAPPING(stickButton, BUTTON4)\
+			CFG_SET_MAME_BL##buttonLayout##_##stickButton##_BUTTON4(newConfig)\
 		}\
 		else if(!Stick_Left) {\
-			MAME_SET_BUTTON_MAPPING(stickButton, BUTTON6)\
+			CFG_SET_MAME_BL##buttonLayout##_##stickButton##_BUTTON6(newConfig)\
 		}\
 		else {\
-			MAME_SET_BUTTON_MAPPING(stickButton, BUTTON5)\
+			CFG_SET_MAME_BL##buttonLayout##_##stickButton##_BUTTON5(newConfig)\
 		}\
 	}\
 	else if(!Stick_Right) {\
-		MAME_SET_BUTTON_MAPPING(stickButton, BUTTON3)\
+		CFG_SET_MAME_BL##buttonLayout##_##stickButton##_BUTTON3(newConfig)\
 	}\
 	else if(!Stick_Left) {\
+	}\
+
+#define MAME_READ_BUTTON_MAPPING(stickButton)\
+	switch(configurationButtonMappingNo) {\
+	case 1:\
+		MAME_SET_BUTTON_MAPPING(1, stickButton)\
+		break;\
+	case 2:\
+		MAME_SET_BUTTON_MAPPING(2, stickButton)\
+		break;\
+	case 3:\
+		MAME_SET_BUTTON_MAPPING(3, stickButton)\
+		break;\
+	case 4:\
+		MAME_SET_BUTTON_MAPPING(4, stickButton)\
+		break;\
 	}\
 
 void configureMAMEButtonMappings() {
