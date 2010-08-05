@@ -80,7 +80,7 @@ e2addr_t eepromOffset = -1;
 uchar writeReportID = 0;
 e2addr_t currentEEPROMAddress;
 
-uchar mameIdleRate = 1; // 4ms
+uchar mameIdleRate = 125; // 500ms
 
 usbMsgLen_t usbFunctionSetup(uchar receivedData[8]) {
 	usbRequest_t    *rq = (void *)receivedData;

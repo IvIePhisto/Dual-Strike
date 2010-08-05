@@ -76,12 +76,13 @@ void resetMAMEReports() {
 
 #define MAME_SET_REPORT_BIT_FUNCTION(functionName, array, bit) void functionName() { data.mame_reports.keyboard.data[array] |= (1<<bit); }
 // meaning: LK, MK, HK, 4K, LP, MP, HP, 4P
-int buttonMapping1[8] = {4, 5, 6, -1, 1, 2, 3, 4};
+int buttonMapping1[8] = {-1, -1, -1, -1, -1, -1, -1, -1};
 int buttonMapping2[8] = {-1, -1, -1, -1, -1, -1, -1, -1};
 int buttonMapping3[8] = {-1, -1, -1, -1, -1, -1, -1, -1};
 int buttonMapping4[8] = {-1, -1, -1, -1, -1, -1, -1, -1};
 
 int* buttonMapping = buttonMapping1;
+uchar currentButtonMappingNo = 1;
 
 #define MAME_LK 0
 #define MAME_MK 1
@@ -376,6 +377,113 @@ void setMAMEReportsControl() {
 #endif
 }
 
+/*
+#define MAME_SET_BUTTON_MAPPING(stickButton, mameButton)\
+	switch(configurationButtonMappingNo) {\
+	case 1:\
+		CFG_SET_MAME_BL1_##stickButton##_##mameButton(newConfig)\
+		break;\
+	case 2:\
+		CFG_SET_MAME_BL2_##stickButton##_##mameButton(newConfig)\
+		break;\
+	case 3:\
+		CFG_SET_MAME_BL3_##stickButton##_##mameButton(newConfig)\
+		break;\
+	case 4:\
+		CFG_SET_MAME_BL4_##stickButton##_##mameButton(newConfig)\
+		break;\
+	}\
+
+#define MAME_READ_BUTTON_MAPPING(stickButton)\
+	if(!Stick_Select) {\
+		MAME_SET_BUTTON_MAPPING(stickButton, NOTHING)\
+	}\
+	else if(!Stick_Up) {\
+		if(!Stick_Right) {\
+			MAME_SET_BUTTON_MAPPING(stickButton, BUTTON2)\
+		}\
+		else if(!Stick_Left) {\
+		}\
+		else {\
+			MAME_SET_BUTTON_MAPPING(stickButton, BUTTON1)\
+		}\
+	}\
+	else if(!Stick_Down) {\
+		if(!Stick_Right) {\
+			MAME_SET_BUTTON_MAPPING(stickButton, BUTTON4)\
+		}\
+		else if(!Stick_Left) {\
+			MAME_SET_BUTTON_MAPPING(stickButton, BUTTON6)\
+		}\
+		else {\
+			MAME_SET_BUTTON_MAPPING(stickButton, BUTTON5)\
+		}\
+	}\
+	else if(!Stick_Right) {\
+		MAME_SET_BUTTON_MAPPING(stickButton, BUTTON3)\
+	}\
+	else if(!Stick_Left) {\
+	}\
+
+void configureMAMEButtonMappings() {
+	uchar configurationButtonMappingNo;
+	uint8_t newConfig[CONFIG_BYTE_WIDTH + 2];
+
+	configurationButtonMappingNo = currentButtonMappingNo;
+	readConfig(newConfig);
+
+	while(!(!Stick_Start && !Stick_HP)) {
+		if(!Stick_Start && !Stick_Up) {
+			configurationButtonMappingNo = 1;
+		}
+		else if(!Stick_Start && !Stick_Right) {
+			configurationButtonMappingNo = 2;
+		}
+		else if(!Stick_Start && !Stick_Down) {
+			configurationButtonMappingNo = 3;
+		}
+		else if(!Stick_Start && !Stick_Left) {
+			configurationButtonMappingNo = 4;
+		}
+
+		if(!Stick_LK) {
+			MAME_READ_BUTTON_MAPPING(LK)
+		}
+
+		if(!Stick_MK) {
+			MAME_READ_BUTTON_MAPPING(MK)
+		}
+
+		if(!Stick_HK) {
+			MAME_READ_BUTTON_MAPPING(HK)
+		}
+
+		if(!Stick_4K) {
+			MAME_READ_BUTTON_MAPPING(4K)
+		}
+
+		if(!Stick_LP) {
+			MAME_READ_BUTTON_MAPPING(LP)
+		}
+
+		if(!Stick_MP) {
+			MAME_READ_BUTTON_MAPPING(MP)
+		}
+
+		if(!Stick_HP) {
+			MAME_READ_BUTTON_MAPPING(HP)
+		}
+
+		if(!Stick_4P) {
+			MAME_READ_BUTTON_MAPPING(4P)
+		}
+	}
+
+	writeConfig(newConfig);
+	initMAMEButtonMappings();
+}
+*/
+
 void sendMAMEReports() {	
 	resetMAMEReports();
 
@@ -385,21 +493,30 @@ void sendMAMEReports() {
 	if(metaPressed) {
 		metaWasPressed = 1;
 
-		if(!Stick_LP) {
+		/*if(!Stick_MP) {
+			configureMAMEButtonMappings();
+			metaWasUsed = 1;
+			return;
+		}
+		else */if(!Stick_LP) {
 			if(!Stick_Up) {
 				buttonMapping = buttonMapping1;
+				currentButtonMappingNo = 1;
 				metaWasUsed = 1;
 			}
 			else if(!Stick_Right) {
 				buttonMapping = buttonMapping2;
+				currentButtonMappingNo = 2;
 				metaWasUsed = 1;
 			}
 			else if(!Stick_Down) {
 				buttonMapping = buttonMapping3;
+				currentButtonMappingNo = 3;
 				metaWasUsed = 1;
 			}
 			else if(!Stick_Left) {
 				buttonMapping = buttonMapping4;
+				currentButtonMappingNo = 4;
 				metaWasUsed = 1;
 			}
 		}

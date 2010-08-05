@@ -25,7 +25,7 @@ ASMFLAGS += -x assembler-with-cpp -Wa,-gdwarf2
 
 ## Linker flags
 LDFLAGS = $(COMMON)
-LDFLAGS += 
+LDFLAGS += -Wl,-section-start=.bootloader=0x3800
 
 
 ## Intel Hex file production flags
@@ -77,6 +77,7 @@ $(TARGET): $(OBJECTS)
 size: ${TARGET}
 	@echo
 	@avr-size -C --mcu=${MCU} ${TARGET}
+	@echo "Only 14336 bytes (87.5%) are available on the device due to the bootloader!"
 
 ## Clean target
 .PHONY: clean

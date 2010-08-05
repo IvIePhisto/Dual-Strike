@@ -67,5 +67,7 @@
 #endif
 
 void readJoystickSwitch();
+void readConfig(uint8_t newConfig[CONFIG_BYTE_WIDTH + 2]);
+void writeConfig(uint8_t newConfig[CONFIG_BYTE_WIDTH + 2]);
 
 #endif
