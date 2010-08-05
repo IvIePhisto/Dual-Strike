@@ -87,7 +87,8 @@ usbMsgLen_t usbFunctionSetup(uchar receivedData[8]) {
 	uchar reportID = rq->wValue.bytes[0];
 	uchar reportType = rq->wValue.bytes[1];
 
-	if(usbMode == USB_MODE_PS3) {
+	switch(usbMode) {
+	case USB_MODE_PS3:
 	    if((rq->bmRequestType & USBRQ_TYPE_MASK) == USBRQ_TYPE_CLASS) {    // class request
 			// wValue: ReportType (highbyte), ReportID (lowbyte)
 	        if(rq->bRequest == USBRQ_HID_GET_REPORT) {
@@ -107,8 +108,9 @@ usbMsgLen_t usbFunctionSetup(uchar receivedData[8]) {
 				}
 	        }
 	    }
-	}
-	else if(usbMode == USB_MODE_PROGRAMMER) {
+		break;
+
+	case USB_MODE_PROGRAMMER:
 		if((rq->bmRequestType & USBRQ_TYPE_MASK) == USBRQ_TYPE_CLASS) {
 		    if(rq->bRequest == USBRQ_HID_SET_REPORT){
 		        if(reportID == EEPROM_PROGRAMMING_REPORT_ID) {
@@ -157,8 +159,9 @@ usbMsgLen_t usbFunctionSetup(uchar receivedData[8]) {
 				}
 		    }
 		}
-	}
-	else if(usbMode == USB_MODE_MAME) {
+		break;
+
+	case USB_MODE_MAME:
 		if ((rq-> bmRequestType & USBRQ_TYPE_MASK) == USBRQ_TYPE_CLASS) {
 			if (rq->bRequest == USBRQ_HID_GET_IDLE) {
 				if((reportID == 0) || (reportID == 1)) {
@@ -171,6 +174,28 @@ usbMsgLen_t usbFunctionSetup(uchar receivedData[8]) {
 					mameIdleRate = reportType;
 				}
 		    }
+		}
+		break;
+
+	case USB_MODE_XBOX:
+		if ((rq-> bmRequestType & USBRQ_TYPE_MASK) == USBRQ_TYPE_VENDOR) {
+			if(rq->bRequest == 0x06) {
+				data.array[0] = 16;
+				data.array[1] = 66;
+				data.array[2] = 0;
+				data.array[3] = 1;
+				data.array[4] = 1;
+				data.array[5] = 2;
+				data.array[6] = 20;
+				data.array[7] = 6;
+
+				for(int i = 8; i < 16; i++)
+					data.array[i] = 0xFF;
+
+				usbMsgPtr = data.array;
+
+				return 16;
+			}
 		}
 	}
 
