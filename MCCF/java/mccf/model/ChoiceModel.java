@@ -95,12 +95,27 @@ public abstract class ChoiceModel extends SettingModel {
 		this.defaultValue = defaultValue;
 	}
 
-	public synchronized void setCurrentOption(final int currentOption) throws IndexOutOfBoundsException {
+	synchronized void setCurrentOption(final int currentOption) throws IndexOutOfBoundsException {
 		if(currentOption < 0 || currentOption >= optionValues.length)
 			throw new IndexOutOfBoundsException();
 		
 		getConfiguration().setSettingValue(optionIDs[this.currentOption], false);
 		getConfiguration().setSettingValue(optionIDs[currentOption], true);
+		
+		for(String requirement: requirements[this.currentOption]) {
+			BooleanModel setting;
+
+			setting = (BooleanModel)getConfiguration().getSetting(requirement);
+			setting.requiringSettingIsInactive();
+		}
+		
+		for(String requirement: requirements[currentOption]) {
+			BooleanModel setting;
+
+			setting = (BooleanModel)getConfiguration().getSetting(requirement);
+			setting.requiringSettingIsActive();
+		}
+
 		this.currentOption = currentOption;
 	}
 
@@ -205,18 +220,21 @@ public abstract class ChoiceModel extends SettingModel {
 	}
 	
 	synchronized void initRequirements() {
-		for(int i = 0; i < requirements.length; i++) {
+		for(int option = 0; option < requirements.length; option++) {
 			String[] optionRequirements;
 			
-			optionRequirements = requirements[i];
+			optionRequirements = requirements[option];
 			
 			for(String requirement: optionRequirements) {
-				SettingModel setting;
 				String optionID;
+				BooleanModel setting;
 			
-				setting = getConfiguration().getSetting(requirement);
-				optionID = optionIDs[i];
+				setting = (BooleanModel)getConfiguration().getSetting(requirement);
+				optionID = optionIDs[option];
 				setting.addRequiredBy(optionID, requirement);
+				
+				if(option == currentOption)
+					setting.requiringSettingIsActive();
 			}
 		}
 	}

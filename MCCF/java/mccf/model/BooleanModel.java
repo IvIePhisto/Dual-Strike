@@ -17,6 +17,7 @@ public class BooleanModel extends SettingModel implements ActionListener {
 	private boolean value;
 	private final String id;
 	private final List<String> requiredBy = new Vector<String>();
+	private int activeRequiringSettings = 0;
 	
 	BooleanModel(final ConfigurationModel configuration, final BooleanSetting booleanSetting, final JRadioButton enableButton, final JRadioButton disableButton) {
 		super(configuration, (int)booleanSetting.getByteNo(), (int)booleanSetting.getBitNo());
@@ -79,5 +80,22 @@ public class BooleanModel extends SettingModel implements ActionListener {
 	}
 
 	synchronized void initConstraints() {
+	}
+	
+	synchronized void requiringSettingIsActive() {
+		if(activeRequiringSettings == 0) {
+			setValue(true);
+			disableButton.setEnabled(false);
+		}
+		
+		activeRequiringSettings++;
+	}
+
+	synchronized void requiringSettingIsInactive() {
+		activeRequiringSettings--;
+		
+		if(activeRequiringSettings == 0) {
+			disableButton.setEnabled(true);
+		}
 	}
 }
