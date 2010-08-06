@@ -246,7 +246,7 @@ static int  dumpEEPROMData(char *dataBuffer, int dataBufferSize) {
 	printf("Dumping EEPROM data...\n");
 
 	if(pageSize == 0 && deviceSize == 0)
-		if(readSizes(3, 0) != 0) {
+		if(readSizes(1, 0) != 0) {
 			if(dev != NULL)
 				usbCloseDevice(dev);
 
@@ -392,7 +392,7 @@ int main(int argc, char **argv) {
 		
 		returnValue = 1;
 		
-		if(readSizes(3, 0) == 0) {
+		if(readSizes(1, 0) == 0) {
 			returnValue = 0;
 			printf("EEPROM programming available.\n");
 		}
