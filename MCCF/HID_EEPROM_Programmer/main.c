@@ -132,6 +132,12 @@ int i;
 
 /* ------------------------------------------------------------------------- */
 
+typedef struct deviceInfo {
+    char    reportId;
+    char    pageSize[2];
+    char    memorySize[4];
+}deviceInfo_t;
+
 typedef struct {
     char    reportId;
     char    address[3];
@@ -155,6 +161,7 @@ usbDevice_t *dev = NULL;
 
 union {
     char            bytes[1];
+	deviceInfo_t    info;
 	e2Data_t		e2data;
 	setAddressData_t setAddress;
 	dumpData_t		dump;
