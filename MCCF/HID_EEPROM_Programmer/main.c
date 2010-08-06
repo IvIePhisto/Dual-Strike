@@ -9,8 +9,7 @@
  */
  
 /*
- * Addition by Michael Pohl for the Dual Strike by Jochen Zurborg:
- * EEPROM programming and dumping.
+ * Changes by Michael Pohl for the MCCF project.
  */
 
 #include <stdio.h>
@@ -19,21 +18,15 @@
 #include <errno.h>
 #include "usbcalls.h"
 
-#define IDENT_VENDOR_NUM_0        0x16c0
-#define IDENT_VENDOR_STRING_0     "obdev.at"
-#define IDENT_PRODUCT_NUM_0       1503
-#define IDENT_PRODUCT_STRING_0    "HIDBoot"
-
-#define IDENT_VENDOR_NUM_1        0x8282
-#define IDENT_VENDOR_STRING_1     "MoJo"
-#define IDENT_PRODUCT_NUM_1       0x2301
-#define IDENT_PRODUCT_STRING_1    "RA Update Mode"
+#define IDENT_VENDOR_NUM        0x16c0
+#define IDENT_VENDOR_STRING     "pohl-michael@gmx.biz"
+#define IDENT_PRODUCT_NUM       1503
+#define IDENT_PRODUCT_STRING    "HID EEPROM Programmer"
 
 /* ------------------------------------------------------------------------- */
 
 static char dataBuffer[65536 + 256];    /* buffer for file data */
 static int  startAddress, endAddress;
-static char leaveBootLoader = 0;
 
 /* ------------------------------------------------------------------------- */
 
@@ -139,18 +132,6 @@ int i;
 
 /* ------------------------------------------------------------------------- */
 
-typedef struct deviceInfo {
-    char    reportId;
-    char    pageSize[2];
-    char    memorySize[4];
-}deviceInfo_t;
-
-typedef struct {
-    char    reportId;
-    char    address[3];
-    char    data[128];
-}deviceData_t;
-
 typedef struct {
     char    reportId;
     char    address[3];
@@ -174,8 +155,6 @@ usbDevice_t *dev = NULL;
 
 union {
     char            bytes[1];
-    deviceInfo_t    info;
-    deviceData_t    data;
 	e2Data_t		e2data;
 	setAddressData_t setAddress;
 	dumpData_t		dump;
@@ -200,69 +179,11 @@ static int readSizes(int reportID, int deviceSizeCorrection) {
 	return 0;
 }
 
-static int uploadFlashData(char *dataBuffer, int startAddr, int endAddr) {
-	int mask;
-
-	printf("Uploading flash data...\n");
-    if(readSizes(1, -2048) != 0) {
-		if(dev != NULL)
-			usbCloseDevice(dev);
-
-		return 1;
-	}
-	
-    if(len < sizeof(buffer.info)){
-        fprintf(stderr, "Not enough bytes in device info report (%d instead of %d)\n", len, (int)sizeof(buffer.info));
-        err = -1;
-        goto errorOccurred;
-    }
-	
-    if(endAddr > deviceSize - 2048){
-        fprintf(stderr, "Data (%d bytes) exceeds remaining flash size!\n", endAddr);
-        err = -1;
-        goto errorOccurred;
-    }
-	
-    if(pageSize < 128)
-        mask = 127;
-	else
-        mask = pageSize - 1;
-		
-    startAddr &= ~mask;                  /* round down */
-    endAddr = (endAddr + mask) & ~mask;  /* round up */
-    printf("Uploading %d (0x%x) bytes starting at %d (0x%x)\n", endAddr - startAddr, endAddr - startAddr, startAddr, startAddr);
-	
-    while(startAddr < endAddr){
-        buffer.data.reportId = 2;
-        memcpy(buffer.data.data, dataBuffer + startAddr, 128);
-        setUsbInt(buffer.data.address, startAddr, 3);
-        printf("\r0x%05x ... 0x%05x", startAddr, startAddr + (int)sizeof(buffer.data.data));
-        fflush(stdout);
-		
-        if((err = usbSetReport(dev, USB_HID_REPORT_TYPE_FEATURE, buffer.bytes, sizeof(buffer.data))) != 0){
-            fprintf(stderr, "Error uploading data block: %s\n", usbErrorMessage(err));
-            goto errorOccurred;
-        }
-		
-        startAddr += sizeof(buffer.data.data);
-    }
-    printf("\n");
-	
-	pageSize = deviceSize = 0;
-	
-	return 0;
-
-errorOccurred:
-    if(dev != NULL)
-        usbCloseDevice(dev);
-    return err;
-}
-
 static int uploadEEPROMData(char *dataBuffer, int startAddr, int endAddr) {
 	err = 0;
 	printf("Dumping EEPROM data...\n");
 
-	if(readSizes(3, 0) != 0) {
+	if(readSizes(1, 0) != 0) {
 		if(dev != NULL)
 			usbCloseDevice(dev);
 
@@ -289,8 +210,7 @@ static int uploadEEPROMData(char *dataBuffer, int startAddr, int endAddr) {
 		if(endAddr - startAddr < 128)
 			length = endAddr - startAddr;
 			
-        buffer.e2data.reportId = 4;
-		// TODO
+        buffer.e2data.reportId = 2;
         memcpy(buffer.e2data.data, dataBuffer + startAddr, length);
         setUsbInt(buffer.e2data.address, startAddr, 3);
 		buffer.e2data.length = length;
@@ -337,7 +257,7 @@ static int  dumpEEPROMData(char *dataBuffer, int dataBufferSize) {
     while(address < deviceSize) {
 		unsigned int length;
 		
-		buffer.setAddress.reportId = 5;
+		buffer.setAddress.reportId = 3;
         setUsbInt(buffer.setAddress.address, address, 3);
 
         if((err = usbSetReport(dev, USB_HID_REPORT_TYPE_FEATURE, buffer.bytes, 4)) != 0){
@@ -345,7 +265,7 @@ static int  dumpEEPROMData(char *dataBuffer, int dataBufferSize) {
             goto errorOccurred;
         }
 
-		if((err = usbGetReport(dev, USB_HID_REPORT_TYPE_FEATURE, 6, buffer.bytes, &len)) != 0) {		
+		if((err = usbGetReport(dev, USB_HID_REPORT_TYPE_FEATURE, 4, buffer.bytes, &len)) != 0) {		
             fprintf(stderr, "\nError receiving dumped EEPROM data: %s\n", usbErrorMessage(err));
             goto errorOccurred;
 		}
@@ -396,10 +316,8 @@ int writePlainHEX(char* plainHexFile, char* dataBuffer, int endAddress) {
 
 static void printUsage(char *pname)
 {
-    fprintf(stderr,	"usage: %s ([-h|--help] | [-r] [<intel-hexfile>] [-e <intel-hexfile>] [-de <plain-hexfile>])\n", pname);
+    fprintf(stderr,	"usage: %s ([-h|--help] | [-e <intel-hexfile>] [-de <plain-hexfile>])\n", pname);
 	fprintf(stderr,	" \"-h\" or \"--help\" prints this message.\n");
-	fprintf(stderr,	" \"-r\" restarts the device in the end.\n");
-	fprintf(stderr,	" \"<intel-hexfile\" specifies a file to write into the flash.\n");
 	fprintf(stderr,	" \"-e <intel-hexfile>\" specifies a file to write to the EEPROM.\n");
 	fprintf(stderr,	" \"-de <plain-hexfile>\" specifies a file to dump the EEPROM to.\n");
 	fprintf(stderr,	"At least one of the arguments not including \"-r\" must be used.\nIf no argument is given device availability is tested.\n");
@@ -408,20 +326,13 @@ static void printUsage(char *pname)
 static int testArgs(int argc, char **argv) {
 	int currentIndex;
 	
-	if(argc > 7)
+	if(argc > 5)
 		return 1;
 		
 	if(argc == 1 || (argc == 2 && (strcmp(argv[1], "-h") == 0 || strcmp(argv[1], "--help") == 0)))
 		return 0;
 		
-	if(strcmp(argv[1], "-r") == 0)
-		currentIndex = 2;
-	else
-		currentIndex = 1;
-
-	if((argc == currentIndex + 1 && strcmp(argv[currentIndex], "-e") != 0) &&
-	   (argc == currentIndex + 1 && strcmp(argv[currentIndex], "-de") != 0))
-		return 0;
+	currentIndex = 1;		
 
 	if((argc == currentIndex + 2 && strcmp(argv[currentIndex], "-e") == 0) ||
 	   (argc == currentIndex + 2 && strcmp(argv[currentIndex], "-de") == 0) ||
@@ -436,7 +347,6 @@ static int testArgs(int argc, char **argv) {
 
 int main(int argc, char **argv) {
 	int currentIndex;
-	char *flashFile = NULL;
 	char *eepromFile = NULL;
 	char *eepromDumpFile = NULL;
 
@@ -450,17 +360,7 @@ int main(int argc, char **argv) {
         return 0;
     }
 
-	if(argc > 1 && (strcmp(argv[1], "-r") == 0)) {
-        leaveBootLoader = 1;
-		currentIndex = 2;
-	}
-	else
-		currentIndex = 1;
-	
-	if(currentIndex < argc && (strcmp(argv[currentIndex], "-e") != 0 && strcmp(argv[currentIndex], "-de") != 0)) {
-		flashFile = argv[currentIndex];
-		currentIndex++;
-	}
+	currentIndex = 1;		
 	
 	if(argc >= currentIndex + 2 && strcmp(argv[currentIndex], "-e") == 0) {
 		eepromFile = argv[currentIndex + 1];
@@ -469,12 +369,6 @@ int main(int argc, char **argv) {
 	
 	if(argc == currentIndex + 2 && strcmp(argv[currentIndex], "-de") == 0)
 		eepromDumpFile = argv[currentIndex + 1];
-			
-	if(leaveBootLoader)
-		printf("Leaving bootloader after finishing.\n");
-	
-	if(flashFile != NULL)
-		printf("Flash file: \"%s\"\n", flashFile);
 	
 	if(eepromFile != NULL)
 		printf("EEPROM file: \"%s\"\n", eepromFile);
@@ -482,24 +376,17 @@ int main(int argc, char **argv) {
 	if(eepromDumpFile != NULL)
 		printf("EEPROM dump file: \"%s\"\n", eepromDumpFile);
 		
-    if((err = usbOpenDevice(&dev, IDENT_VENDOR_NUM_0, IDENT_VENDOR_STRING_0, IDENT_PRODUCT_NUM_0, IDENT_PRODUCT_STRING_0, 1)) != 0){
-		if((err = usbOpenDevice(&dev, IDENT_VENDOR_NUM_1, IDENT_VENDOR_STRING_1, IDENT_PRODUCT_NUM_1, IDENT_PRODUCT_STRING_1, 1)) != 0){
-			fprintf(stderr, "Error opening HIDBoot device: %s\n", usbErrorMessage(err));
-			return 2;
-		}
+    if((err = usbOpenDevice(&dev, IDENT_VENDOR_NUM, IDENT_VENDOR_STRING, IDENT_PRODUCT_NUM, IDENT_PRODUCT_STRING, 1)) != 0){
+		fprintf(stderr, "Error opening HID EEPROM Programmer device: %s\n", usbErrorMessage(err));
+		return 2;
 	}
 	else if(argc == 1) {
 		int returnValue;
 		
-		returnValue = 0;
-		
-		if(readSizes(1, -2048) == 0) {
-			returnValue -= 1;
-			printf("Flash programming available.\n");
-		}
+		returnValue = 1;
 		
 		if(readSizes(3, 0) == 0) {
-			returnValue -= 2;
+			returnValue = 0;
 			printf("EEPROM programming available.\n");
 		}
 		
@@ -508,22 +395,6 @@ int main(int argc, char **argv) {
 
 		printf("Use argument \"-h\" or \"--help\" for usage information.\n");
 		return returnValue;
-	}
-
-	if(flashFile != NULL) {
-		startAddress = sizeof(dataBuffer);
-		endAddress = 0;
-		memset(dataBuffer, -1, sizeof(dataBuffer));
-
-		if(parseIntelHex(flashFile, dataBuffer, &startAddress, &endAddress))
-			return 3;
-		
-		if(startAddress >= endAddress) {
-			fprintf(stderr, "No data in flash input file.\n");
-			return 4;
-		}
-		else if(uploadFlashData(dataBuffer, startAddress, endAddress))
-			return 5;
 	}
 	
 	if(eepromFile != NULL) {
@@ -555,16 +426,7 @@ int main(int argc, char **argv) {
 			return 10;
 	}
 	
-	if(leaveBootLoader) {
-        // and now leave boot loader:
-		printf("Telling device to leave bootloader...\n");
-        buffer.info.reportId = 1;
-        usbSetReport(dev, USB_HID_REPORT_TYPE_FEATURE, buffer.bytes, sizeof(buffer.info));
-        // Ignore errors here. If the device reboots before we poll the response,
-        // this request fails.
-    }
-
-	 if(dev != NULL)
+	if(dev != NULL)
         usbCloseDevice(dev);
 
     return 0;

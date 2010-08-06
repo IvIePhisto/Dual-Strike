@@ -16,9 +16,10 @@ It is aimed at usage with AVR microcontrollers to read out, modify and update
 EEPROM configuration data. It makes heavy use of the XML technologies XML 
 Schema and XSL Transformations.
 
-The PC software part requires a Java 6 Runtime Environment. On all systems
-except Windows custom compilation of the "HID Programmer" is necessary. See
-"HID_Programmer/Readme.txt" for more information on custom compilation.
+The PC software part requires a Java 6 Runtime Environment. On all systems 
+except Windows custom compilation of the "HID EEPROM Programmer" is necessary. 
+See "HID_EEPROM_Programmer/Readme.txt" for more information on custom 
+compilation. 
 
 
 Usage for Projects

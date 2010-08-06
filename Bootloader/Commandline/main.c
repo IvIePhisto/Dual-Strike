@@ -301,15 +301,21 @@ int main(int argc, char **argv) {
 		}
 	}
 	else if(argc == 1) {
+		int returnValue;
+		
+		returnValue = 1;
+		
 		if(readSizes(1, -2048) == 0) {
 			printf("Flash programming available.\n");
+			returnValue = 0;
 		}
 		
 		if(dev != NULL)
 			usbCloseDevice(dev);
 
 		printf("Use argument \"-h\" or \"--help\" for usage information.\n");
-		return 0;
+		
+		return returnValue;
 	}
 
 	if(flashFile != NULL) {
