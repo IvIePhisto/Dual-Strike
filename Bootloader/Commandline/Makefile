@@ -30,7 +30,7 @@ ARCH_COMPILE=
 ARCH_LINK=		
 
 OBJ=		main.o usbcalls.o
-PROGRAM=	hid-programmer$(EXE_SUFFIX)
+PROGRAM=	bootloadHID$(EXE_SUFFIX)
 
 all: $(PROGRAM)
 
