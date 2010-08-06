@@ -1,4 +1,4 @@
-This is the README file for the bootloadHID bootloader.
+This is the README file for bootloadHID commandline tool.
 
 BootloadHID is a USB boot loader for AVR microcontrollers. It can be used on
 all AVRs with at least 2 kB of boot loader section, e.g. the popular ATMega8.
@@ -15,54 +15,42 @@ friendly on Windows, since no kernel level drivers need to be installed.
 
 FILES IN THE DISTRIBUTION
 =========================
-Readme.txt ........ The file you are currently reading.
-firmware .......... Source code of the controller firmware.
-firmware/usbdrv ... USB driver -- See Readme.txt in that directory for info
-License.txt ....... Public license (GPL2) for all contents of this project.
-Changelog.txt ..... Logfile documenting changes in soft-, firm- and hardware.
+This directory contains the source code of the host software (firmware updater).
 
 
 BUILDING AND INSTALLING
 =======================
 This project can be built on Unix (Linux, FreeBSD or Mac OS X) or Windows.
 
-For all platforms, you must first describe your hardware in the file
-"firmware/bootloaderconfig.h". See the documentation in the example provided
-with this distribution for details. Then edit "firmware/Makefile" to reflect
-the target device, the device's boot loader address and fuse bit values. Our
-examples are for an ATMega8.
-
 Building on Windows:
-You need WinAVR for the firmware and MinGW and MSYS for the host software.
+You need MinGW and MSYS or Cygwin for the host software.
 Visual C++ instead of MinGW might work as well, but we prefer free development
 environments. The packages can be downloaded from:
-    WinAVR: http://winavr.sourceforge.net/
     MinGW and MSYS: http://www.mingw.org/
 Install the packages in any order and follow the installation instructions
 of the respective package. Hint: Use the big ready-made archives for MinGW
 and MSYS, not the individual packages. You can identify these by their file
 size.
 
-To build the firmware with WinAVR, change into the "firmware" directory,
-check whether you need to edit the "Makefile" (e.g. change the ISP upload
-tool) and type "make" to compile the source code. Before you upload the code
-to the device with "make flash", you should set the fuses with "make fuse".
-To protect the boot loader from overwriting itself, set the lock bits with
-"make lock" after uploading the firmware.
+In order to build the command line tool, change to the "commandline" directory
+and edit the "Makefile". Comment out the definitions which are for Unix only
+and uncomment those for Windows. Then type "make" to build "bootloadHID.exe".
+Alternatively, if everything is installed in the default locations, you
+can type "make -f Makefile.windows".
 
 Building on Unix (Linux, FreeBSD and Mac):
-You need the GNU toolchain and avr-libc for the firmware. The packages can be
-downloaded from:
+You need the GNU toolchain and libusb for the command line tool. The packages
+can be downloaded from:
     GNU toolchain and avr-libc: See
         http://www.nongnu.org/avr-libc/user-manual/install_tools.html
+    libusb: http://libusb.sourceforge.net/
 Install the packages in any order and follow the instructions for the
 respective package.
 
-To build the firmware, change to the "firmware" directory, edit "Makefile"
-to use the programmer of your choice and type "make" to compile the source
-code. Before you upload the code to the device with "make flash", you
-should set the fuses with "make fuse". Then protect the boot loader firmware
-with "make lock".
+In order to build the application, make sure that the command 'libusb-config'
+is in your search path. Then change directory to "commandline", check whether
+you need to edit "Makefile" (should not be necessary on Unix) and type "make"
+to build the "bootloadHID" tool.
 
 
 WORKING WITH THE BOOT LOADER
@@ -71,18 +59,8 @@ The boot loader is quite easy to use. Set the jumper (or whatever condition
 you have configured) for boot loading on the target hardware, connect it to
 the host computer and (if not bus powered) issue a Reset on the AVR.
 
-The firmware can now be flashed with the "bootloadHID" tool.
-
-
-USING THE USB DRIVER FOR YOUR OWN PROJECTS
-==========================================
-This project is not intended as a reference implementation. If you want to
-use AVR-USB in your own projects, please see
-   * PowerSwitch for the most basic example,
-   * Automator for an HID example or
-   * AVR-Doper for a very complex example on how to simulate a serial
-     interface (virtual COM port).
-All these projects can be downloaded from http://www.obdev.at/avrusb/
+The firmware can now be flashed with the "bootloadHID" tool. It accepts only
+one parameter: an Intel-Hex file containing the code to be loaded.
 
 
 ABOUT THE LICENSE

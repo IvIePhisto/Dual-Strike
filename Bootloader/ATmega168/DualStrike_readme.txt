@@ -1,21 +1,28 @@
-Bootloader V1.5
+This is the Dual Strike's version of Objective Development's BootloadHID 
+bootloader adapted to ATmega168 MCUs. See "Readme.txt" for more details.
 
-This bootloader is for ATMEGA168 MCU.
+Last modification:
+06.08.2010
 
-01.07.2010
-
-Update of DUal Strike Firmware
+Update of Dual Strike Firmware
 ==============================
 
-1. While plugging on Dual Strike PCB hold Start.
+1. While plugging in Dual Strike PCB hold Start.
 
 Expected result : Device is recognized as bootload HID.
 
 2. You can release Start.
 
-3. Double Click on update.bat
+3. Start firmware update.
 
 Expected result : Information about updating firmware appears.
 
 4. If the "-r" argument is used for firmware, the Dual Strike will be recognized.
-   Otherwise press Home or Start+Select to leave the bootloader.
+   Otherwise press Home to leave the bootloader.
+   
+Changes to BootloadHID Bootloader
+=================================
+-adapted to Dual Strike PCB
+-splitted bootloader condition to conditions for entering and leaving
+-adapted to ATmega168
+-removed commandline tool

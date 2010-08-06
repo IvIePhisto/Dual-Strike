@@ -1,4 +1,4 @@
-This is the README file for bootloadHID.
+This is the README file for bootloadHID bootloader.
 
 BootloadHID is a USB boot loader for AVR microcontrollers. It can be used on
 all AVRs with at least 2 kB of boot loader section, e.g. the popular ATMega8.
@@ -18,7 +18,6 @@ FILES IN THE DISTRIBUTION
 Readme.txt ........ The file you are currently reading.
 firmware .......... Source code of the controller firmware.
 firmware/usbdrv ... USB driver -- See Readme.txt in that directory for info
-commandline ....... Source code of the host software (downloader).
 License.txt ....... Public license (GPL2) for all contents of this project.
 Changelog.txt ..... Logfile documenting changes in soft-, firm- and hardware.
 
@@ -51,18 +50,11 @@ to the device with "make flash", you should set the fuses with "make fuse".
 To protect the boot loader from overwriting itself, set the lock bits with
 "make lock" after uploading the firmware.
 
-In order to build the command line tool, change to the "commandline" directory
-and edit the "Makefile". Comment out the definitions which are for Unix only
-and uncomment those for Windows. Then type "make" to build "bootloadHID.exe".
-Alternatively, if everything is installed in the default locations, you
-can type "make -f Makefile.windows".
-
 Building on Unix (Linux, FreeBSD and Mac):
-You need the GNU toolchain and avr-libc for the firmware and libusb for the
-command line tool. The packages can be downloaded from:
+You need the GNU toolchain and avr-libc for the firmware. The packages can be
+downloaded from:
     GNU toolchain and avr-libc: See
         http://www.nongnu.org/avr-libc/user-manual/install_tools.html
-    libusb: http://libusb.sourceforge.net/
 Install the packages in any order and follow the instructions for the
 respective package.
 
@@ -72,11 +64,6 @@ code. Before you upload the code to the device with "make flash", you
 should set the fuses with "make fuse". Then protect the boot loader firmware
 with "make lock".
 
-In order to build the application, make sure that the command 'libusb-config'
-is in your search path. Then change directory to "commandline", check whether
-you need to edit "Makefile" (should not be necessary on Unix) and type "make"
-to build the "bootloadHID" tool.
-
 
 WORKING WITH THE BOOT LOADER
 ============================
@@ -84,8 +71,7 @@ The boot loader is quite easy to use. Set the jumper (or whatever condition
 you have configured) for boot loading on the target hardware, connect it to
 the host computer and (if not bus powered) issue a Reset on the AVR.
 
-The firmware can now be flashed with the "bootloadHID" tool. It accepts only
-one parameter: an Intel-Hex file containing the code to be loaded.
+The firmware can now be flashed with the "bootloadHID" tool.
 
 
 USING THE USB DRIVER FOR YOUR OWN PROJECTS
