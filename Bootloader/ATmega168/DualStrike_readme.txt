@@ -1,6 +1,8 @@
 This is the Dual Strike's version of Objective Development's BootloadHID 
 bootloader adapted to ATmega168 MCUs. See "Readme.txt" for more details.
 
+"DualStrike_Bootloader_ATmega168.hex" is a firmware image of the bootloader.
+
 Last modification:
 06.08.2010
 
