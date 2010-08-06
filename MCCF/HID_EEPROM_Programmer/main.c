@@ -21,7 +21,7 @@
 #define IDENT_VENDOR_NUM        0x16c0
 #define IDENT_VENDOR_STRING     "pohl-michael@gmx.biz"
 #define IDENT_PRODUCT_NUM       1503
-#define IDENT_PRODUCT_STRING    "HID EEPROM Programmer"
+#define IDENT_PRODUCT_STRING    "HID EP"
 
 /* ------------------------------------------------------------------------- */
 
