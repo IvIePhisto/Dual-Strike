@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.IOException;
 
 public class DeviceHelper {
-	private static final File executableFile = new File("hid-programmer" + (System.getProperty("os.name").contains("Windows")?".exe":""));
+	private static final File executableFile = new File("eepromProgrammerHID" + (System.getProperty("os.name").contains("Windows")?".exe":""));
 		
 	private static ExecutionResult execute(boolean reset, String option, File targetFile) {
 		try {
@@ -64,8 +64,7 @@ public class DeviceHelper {
 	
 	public static boolean isConnected() {
 		switch(execute(false, null, null).getReturnCode()) {
-		case EEPROM_PROGRAMMING_AVAILABLE:
-		case FLASH_AND_EEPROM_PROGRAMMING_AVAILABLE:
+		case COMPLETED_SUCCESSFULLY:
 			return true;
 		default:
 			return false;

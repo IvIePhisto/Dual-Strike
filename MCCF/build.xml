@@ -102,24 +102,12 @@
         <include name="dualstrike.png"/>
         <include name="Readme.txt"/>
         <include name="mcc_Readme.txt"/>
-        <include name="hid-programmer.exe"/>
+        <include name="eepromProgrammerHID.exe"/>
         <include name="HID_Programmer/**/*"/>
   		</fileset>
 	  	<fileset dir="${pack.dir}">
 	  	  <filename name="${project.name.short}-${project.version}.jar"/>
 	  	</fileset>
-	  	<!--
-	    <fileset dir=".">
-        <include name="arcadestick.jpg"/>
-        <include name="configuration-*.html"/>
-        <include name="configuration.*"/>
-        <include name="dualstrike.png"/>
-        <include name="*.txt"/>
-        <include name="hid-programmer.exe"/>
-        <include name="${pack.dir}/${project.name.short}-${project.version}.jar"/>
-        <exclude name="build/**/*"/>
-    	</fileset>
-    	-->
 	  </zip>
 	</target>
 </project>

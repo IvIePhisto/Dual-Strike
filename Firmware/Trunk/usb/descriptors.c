@@ -322,9 +322,9 @@ PROGMEM const unsigned char usbDescriptorConfigurationXBox[] = {
 	*/
 };
 
-// PROGRAMMER
+// EEPROM PROGRAMMER
 
-PROGMEM char usbDescriptorDeviceHIDBoot[] = {    /* USB device descriptor */
+PROGMEM char usbDescriptorDeviceEP[] = {    /* USB device descriptor */
     18,         /* sizeof(usbDescriptorDevice): length of descriptor in bytes */
     USBDESCR_DEVICE,        /* descriptor type */
     0x10, 0x01,             /* USB version supported */
@@ -341,23 +341,22 @@ PROGMEM char usbDescriptorDeviceHIDBoot[] = {    /* USB device descriptor */
     1,          			/* number of configurations */
 };
 
-
-PROGMEM int  usbDescriptorStringVendorHIDBoot[] = {
-    USB_STRING_DESCRIPTOR_HEADER(8),
-    'o', 'b', 'd', 'e', 'v', '.', 'a', 't'
+PROGMEM int  usbDescriptorStringVendorEP[] = {
+    USB_STRING_DESCRIPTOR_HEADER(20),
+    'p', 'o', 'h', 'l', '-', 'm', 'i', 'c', 'h', 'a', 'e', 'l', '@', 'g', 'm', 'x', '.', 'b', 'i', 'z'
 };
 
-PROGMEM int  usbDescriptorStringDeviceHIDBoot[] = {
-    USB_STRING_DESCRIPTOR_HEADER(7),
-    'H', 'I', 'D', 'B', 'o', 'o', 't'
+PROGMEM int  usbDescriptorStringDeviceEP[] = {
+    USB_STRING_DESCRIPTOR_HEADER(6),
+    'H', 'I', 'D', ' ', 'E', 'P', 
 };
 
-#define EEPROM_SIZE_QUERY_REPORT_ID 3
-#define EEPROM_PROGRAMMING_REPORT_ID 4
-#define EEPROM_SET_ADDRESS_REPORT_ID 5
-#define EEPROM_READING_REPORT_ID 6
+#define EEPROM_SIZE_QUERY_REPORT_ID 1
+#define EEPROM_PROGRAMMING_REPORT_ID 2
+#define EEPROM_SET_ADDRESS_REPORT_ID 3
+#define EEPROM_READING_REPORT_ID 4
 
-PROGMEM char usbHidReportDescriptorProgrammer[51] = {
+PROGMEM char usbHidReportDescriptorEP[51] = {
     0x06, 0x00, 0xff,              		// USAGE_PAGE (Generic Desktop)
     0x09, 0x01,                    		// USAGE (Vendor Usage 1)
     0xa1, 0x01,                    		// COLLECTION (Application)
@@ -388,7 +387,7 @@ PROGMEM char usbHidReportDescriptorProgrammer[51] = {
     0xc0                           		// END_COLLECTION
 };
 
-PROGMEM char usbDescriptorConfigurationProgrammer[] = {
+PROGMEM char usbDescriptorConfigurationEP[] = {
     /* HID USB configuration descriptor */
     9,          				/* sizeof(usbDescriptorConfiguration): length of descriptor in bytes */
     USBDESCR_CONFIG,   	 		/* descriptor type */
@@ -414,7 +413,7 @@ PROGMEM char usbDescriptorConfigurationProgrammer[] = {
     0x00,       				/* target country code */
     0x01,       				/* number of HID Report (or other HID class) Descriptor infos to follow */
     0x22,       				/* descriptor type: report */
-    sizeof(usbHidReportDescriptorProgrammer), 0, /* total length of report descriptor */
+    sizeof(usbHidReportDescriptorEP), 0, /* total length of report descriptor */
     7,          				/* sizeof(usbDescrEndpoint) */
     USBDESCR_ENDPOINT,			/* descriptor type = endpoint */
     0x81,						/* IN endpoint number 1 */
@@ -531,37 +530,37 @@ usbMsgLen_t usbFunctionDescriptor(struct usbRequest *rq) {
 	case USB_MODE_PROGRAMMER:
 	    switch(rq->wValue.bytes[1]) {
 	    case USBDESCR_DEVICE:
-	        usbMsgPtr = (uchar *)(usbDescriptorDeviceHIDBoot);
-	        len = sizeof(usbDescriptorDeviceHIDBoot);
+	        usbMsgPtr = (uchar *)(usbDescriptorDeviceEP);
+	        len = sizeof(usbDescriptorDeviceEP);
 			break;
 
 	    case USBDESCR_STRING:
 	        switch(rq->wValue.bytes[0]) {
 	        case 1: // Vendor
-		        usbMsgPtr = (uchar *)(usbDescriptorStringVendorHIDBoot);
-				len = sizeof(usbDescriptorStringVendorHIDBoot);
+		        usbMsgPtr = (uchar *)(usbDescriptorStringVendorEP);
+				len = sizeof(usbDescriptorStringVendorEP);
 				break;
 	        case 2: // Device
-		        usbMsgPtr = (uchar *)(usbDescriptorStringDeviceHIDBoot);
-				len = sizeof(usbDescriptorStringDeviceHIDBoot);
+		        usbMsgPtr = (uchar *)(usbDescriptorStringDeviceEP);
+				len = sizeof(usbDescriptorStringDeviceEP);
 				break;
 			}
 
 			break;
 
 	    case USBDESCR_CONFIG:
-			usbMsgPtr = (uchar*)usbDescriptorConfigurationProgrammer;
-			len = sizeof(usbDescriptorConfigurationProgrammer);
+			usbMsgPtr = (uchar*)usbDescriptorConfigurationEP;
+			len = sizeof(usbDescriptorConfigurationEP);
 			break;
 
 	    case USBDESCR_HID:
-        	usbMsgPtr = (uchar *)(usbDescriptorConfigurationProgrammer + 18);
-			len = usbDescriptorConfigurationProgrammer[18];
+        	usbMsgPtr = (uchar *)(usbDescriptorConfigurationEP + 18);
+			len = usbDescriptorConfigurationEP[18];
 			break;
 
 	    case USBDESCR_HID_REPORT:
-			usbMsgPtr = (uchar*)usbHidReportDescriptorProgrammer;
-			len = sizeof(usbHidReportDescriptorProgrammer);
+			usbMsgPtr = (uchar*)usbHidReportDescriptorEP;
+			len = sizeof(usbHidReportDescriptorEP);
 			break;
 	    }
 		break;

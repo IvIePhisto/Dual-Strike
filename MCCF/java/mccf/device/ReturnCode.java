@@ -20,12 +20,6 @@ public enum ReturnCode {
 	
 	static ReturnCode newInstance(final int returnCode) throws RuntimeException {
 		switch(returnCode) {
-		case -3:
-			return FLASH_AND_EEPROM_PROGRAMMING_AVAILABLE;
-		case -2:
-			return EEPROM_PROGRAMMING_AVAILABLE;
-		case -1:
-			return FLASH_PROGRAMMING_AVAILABLE;
 		case 0:
 			return COMPLETED_SUCCESSFULLY;
 		case 1:
@@ -33,20 +27,14 @@ public enum ReturnCode {
 		case 2:
 			return OPEN_DEVICE_ERROR;
 		case 3:
-			return OPEN_FLASH_FILE_ERROR;
-		case 4:
-			return EMPTY_FLASH_FILE;
-		case 5:
-			return FLASH_PROGRAMMING_ERROR;
-		case 6:
 			return OPEN_EEPROM_FILE_ERROR;
-		case 7:
+		case 4:
 			return EMPTY_EEPROM_FILE;
-		case 8:
+		case 5:
 			return EEPROM_PROGRAMMING_ERROR;
-		case 9:
+		case 6:
 			return EEPROM_DUMPING_ERROR;
-		case 10:
+		case 7:
 			return WRITING_EEPROM_DUMP_FILE_ERROR;
 		default:
 			throw new RuntimeException("Unsuspected return code");
