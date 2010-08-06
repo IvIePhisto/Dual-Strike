@@ -2,8 +2,11 @@ package mccf.model;
 
 import java.util.List;
 
+import javax.xml.bind.JAXBElement;
+
 import mccf.definition.ChoiceSetting;
 import mccf.definition.Option;
+import mccf.definition.Setting;
 
 
 public abstract class ChoiceModel extends SettingModel {
@@ -11,6 +14,7 @@ public abstract class ChoiceModel extends SettingModel {
 	private final int bitWidth;
 	private final boolean[][] optionValues;
 	private final String[] optionIDs;
+	private final String[][] requirements;
 	private final int defaultValue;
 	private int currentOption;
 	
@@ -33,6 +37,7 @@ public abstract class ChoiceModel extends SettingModel {
 		optionCount = options.size();
 		optionValues = new boolean[optionCount][bitWidth];
 		optionIDs = new String[optionCount];
+		requirements = new String[optionCount][];
 		defaultValue = 0;
 		defaultID = ((Option)choiceSetting.getDefault()).getId();
 		
@@ -40,6 +45,8 @@ public abstract class ChoiceModel extends SettingModel {
 			String bitPattern;
 			Option option;
 			String id;
+			List<JAXBElement<Object>> requirementsList;
+			int j;
 			
 			option = options.get(i);
 			bitPattern = option.getBitPattern();
@@ -54,7 +61,18 @@ public abstract class ChoiceModel extends SettingModel {
 				configuration.setSetting(id, false);
 			}
 			
-			for(int j = 0; j < bitWidth; j++) {
+			requirementsList = option.getRequires();
+			requirements[i] = new String[requirementsList.size()];
+			j = 0;
+			
+			for(JAXBElement<Object> requirement: requirementsList) {
+				Setting setting;
+				
+				setting = (Setting)requirement.getValue();
+				requirements[i][j++] = setting.getId();
+			}
+			
+			for(j = 0; j < bitWidth; j++) {
 				if(bitPattern.charAt(j) == '1')
 					optionValues[i][j] = true;
 				else
@@ -62,7 +80,6 @@ public abstract class ChoiceModel extends SettingModel {
 			}
 		}
 
-		
 		currentOption = defaultValue;			
 		this.defaultValue = defaultValue;
 	}
