@@ -24,3 +24,4 @@ Expected result : Information about updating firmware appears.
 Changes to BootloadHID
 ======================
 -added test mode (no arguments), more verbose output
+-added compatibility with the RetroAdapter Bootloader

@@ -1,3 +1,5 @@
+# Modifications by Michael Pohl (2010)
+
 # Name: Makefile
 # Project: Automator
 # Author: Christian Starkjohann
@@ -28,7 +30,7 @@ ARCH_COMPILE=
 ARCH_LINK=		
 
 OBJ=		main.o usbcalls.o
-PROGRAM=	bootloadHID$(EXE_SUFFIX)
+PROGRAM=	hid-programmer$(EXE_SUFFIX)
 
 all: $(PROGRAM)
 
