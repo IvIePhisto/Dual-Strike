@@ -2,8 +2,10 @@ package mccf.model;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Vector;
 
 import mccf.definition.Configuration;
@@ -16,8 +18,9 @@ public class ConfigurationModel {
 	private final List<PageModel> pages = new Vector<PageModel>();
 	private final byte device;
 	private final byte version;
-	private final Map<String, Boolean> settings = new HashMap<String, Boolean>();
-	private final Map<String, String> requirements = new HashMap<String, String>();
+	private final Map<String, Boolean> settingValues = new HashMap<String, Boolean>();
+	private final Map<String, SettingModel> settingsByID = new HashMap<String, SettingModel>();
+	private final Set<SettingModel> settingsSet = new HashSet<SettingModel>();
 	
 	public ConfigurationModel(final FileHandler fileHandler, final Configuration configuration) {
 		this.fileHandler = fileHandler;
@@ -81,8 +84,22 @@ public class ConfigurationModel {
 		return bytes;
 	}
 	
-	synchronized void setSetting(final String key, final boolean value) {
-		settings.put(key, value);
+	synchronized void setSettingValue(final String id, final boolean value) {
+		settingValues.put(id, value);
+	}
+
+	synchronized void registerSetting(final String id, final SettingModel setting) {
+		settingsByID.put(id, setting);
+		settingsSet.add(setting);
+	}
+
+	synchronized SettingModel getSetting(final String id) {
+		return settingsByID.get(id);
+	}
+	
+	public synchronized void initConstraints() {
+		for(SettingModel setting: settingsSet)
+			setting.initConstraints();
 	}
 
 	static boolean getBit(final byte[] bytes, final int byteNo, final int bitNo) {

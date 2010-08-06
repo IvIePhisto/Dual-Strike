@@ -1,6 +1,9 @@
 package mccf.model;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Vector;
 
 import javax.xml.bind.JAXBElement;
 
@@ -14,10 +17,13 @@ public abstract class ChoiceModel extends SettingModel {
 	private final int bitWidth;
 	private final boolean[][] optionValues;
 	private final String[] optionIDs;
+	private final Map<String, Integer> idOptions;
 	private final String[][] requirements;
+	private final List<String>[] requiredBy;
 	private final int defaultValue;
 	private int currentOption;
 	
+	@SuppressWarnings("unchecked")
 	ChoiceModel(final ConfigurationModel configuration, final ChoiceSetting choiceSetting) {
 		super(configuration, (int)choiceSetting.getByteNo(), (int)choiceSetting.getBitNo());
 		List<Option> options;
@@ -38,6 +44,8 @@ public abstract class ChoiceModel extends SettingModel {
 		optionValues = new boolean[optionCount][bitWidth];
 		optionIDs = new String[optionCount];
 		requirements = new String[optionCount][];
+		requiredBy = new List[optionCount];
+		idOptions = new HashMap<String, Integer>(optionCount, 1);
 		defaultValue = 0;
 		defaultID = ((Option)choiceSetting.getDefault()).getId();
 		
@@ -52,17 +60,20 @@ public abstract class ChoiceModel extends SettingModel {
 			bitPattern = option.getBitPattern();
 			id = option.getId();
 			optionIDs[i] = id;
+			idOptions.put(id, i);
+			configuration.registerSetting(id, this);
 			
 			if(option.getId().equals(defaultID)) {
 				defaultValue = i;
-				configuration.setSetting(id, true);
+				configuration.setSettingValue(id, true);
 			}
 			else {
-				configuration.setSetting(id, false);
+				configuration.setSettingValue(id, false);
 			}
 			
 			requirementsList = option.getRequires();
 			requirements[i] = new String[requirementsList.size()];
+			requiredBy[i] = new Vector<String>();
 			j = 0;
 			
 			for(JAXBElement<Object> requirement: requirementsList) {
@@ -88,15 +99,14 @@ public abstract class ChoiceModel extends SettingModel {
 		if(currentOption < 0 || currentOption >= optionValues.length)
 			throw new IndexOutOfBoundsException();
 		
-		getConfiguration().setSetting(optionIDs[this.currentOption], false);
-		getConfiguration().setSetting(optionIDs[currentOption], true);
+		getConfiguration().setSettingValue(optionIDs[this.currentOption], false);
+		getConfiguration().setSettingValue(optionIDs[currentOption], true);
 		this.currentOption = currentOption;
 	}
 
 	public synchronized final int getCurrentOption() {
 		return currentOption;
 	}
-
 
 	public int getDefaultValue() {
 		return defaultValue;
@@ -147,7 +157,6 @@ public abstract class ChoiceModel extends SettingModel {
 		setCurrentOption(option);
 	}
 
-
 	@Override
 	synchronized void saveBytes(byte[] bytes) {
 		int currentByteDivider;
@@ -184,6 +193,31 @@ public abstract class ChoiceModel extends SettingModel {
 			if(option[optionIndex])
 				bytes[currentByte] |= 1 << currentBitInByte;
 
+		}
+	}
+	
+	synchronized void addRequiredBy(final String source, final String target) {
+		requiredBy[idOptions.get(target)].add(source);
+	}
+	
+	synchronized void initConstraints() {
+		initRequirements();
+	}
+	
+	synchronized void initRequirements() {
+		for(int i = 0; i < requirements.length; i++) {
+			String[] optionRequirements;
+			
+			optionRequirements = requirements[i];
+			
+			for(String requirement: optionRequirements) {
+				SettingModel setting;
+				String optionID;
+			
+				setting = getConfiguration().getSetting(requirement);
+				optionID = optionIDs[i];
+				setting.addRequiredBy(optionID, requirement);
+			}
 		}
 	}
 }

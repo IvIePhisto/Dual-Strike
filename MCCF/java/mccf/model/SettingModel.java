@@ -23,7 +23,9 @@ public abstract class SettingModel {
 	abstract void loadDefaults();
 	abstract void loadBytes(byte[] bytes);
 	abstract void saveBytes(byte[] bytes);
-
+	abstract void addRequiredBy(final String source, final String target);
+	abstract void initConstraints();
+	
 	ConfigurationModel getConfiguration() {
 		return configuration;
 	}

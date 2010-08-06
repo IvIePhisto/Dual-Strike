@@ -208,6 +208,7 @@ public class ConfigurationEditor implements HyperlinkListener {
 		createGlassPanel();
 		registerActionHandlers();
 		populateWindow();
+		model.initConstraints();
 		statusClearer = new StatusClearer(this);
 	}
 	
