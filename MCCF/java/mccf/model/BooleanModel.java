@@ -6,7 +6,6 @@ import java.awt.event.ActionListener;
 import javax.swing.JRadioButton;
 
 import mccf.definition.BooleanSetting;
-import mccf.file.FileHandler;
 
 
 public class BooleanModel extends SettingModel implements ActionListener {
@@ -14,13 +13,16 @@ public class BooleanModel extends SettingModel implements ActionListener {
 	private final JRadioButton enableButton;
 	private final JRadioButton disableButton;
 	private boolean value;
+	private final String id;
 	
-	BooleanModel(final FileHandler fileHandler, final BooleanSetting booleanSetting, final JRadioButton enableButton, final JRadioButton disableButton) {
-		super(fileHandler, (int)booleanSetting.getByteNo(), (int)booleanSetting.getBitNo());
+	BooleanModel(final ConfigurationModel configuration, final BooleanSetting booleanSetting, final JRadioButton enableButton, final JRadioButton disableButton) {
+		super(configuration, (int)booleanSetting.getByteNo(), (int)booleanSetting.getBitNo());
 		defaultValue = booleanSetting.isDefault();
 		value = defaultValue;
 		this.enableButton = enableButton;
 		this.disableButton = disableButton;
+		this.id = booleanSetting.getId();
+		configuration.setSetting(id, value);
 		enableButton.addActionListener(this);
 		disableButton.addActionListener(this);
 	}
@@ -29,7 +31,8 @@ public class BooleanModel extends SettingModel implements ActionListener {
 	public synchronized void actionPerformed(final ActionEvent event) {
 		if(enableButton.isSelected() != value) {
 			value = enableButton.isSelected();
-			getFileHandler().setModelChanged();
+			getConfiguration().setSetting(id, value);
+			getConfiguration().getFileHandler().setModelChanged();
 		}
 	}
 
@@ -42,7 +45,8 @@ public class BooleanModel extends SettingModel implements ActionListener {
 			this.value = value;
 			enableButton.setSelected(value);
 			disableButton.setSelected(!value);
-			getFileHandler().setModelChanged();
+			getConfiguration().setSetting(id, value);
+			getConfiguration().getFileHandler().setModelChanged();
 		}
 	}
 

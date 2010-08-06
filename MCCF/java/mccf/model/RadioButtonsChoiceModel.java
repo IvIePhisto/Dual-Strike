@@ -11,7 +11,6 @@ import javax.swing.ButtonGroup;
 import javax.swing.ButtonModel;
 
 import mccf.definition.ChoiceSetting;
-import mccf.file.FileHandler;
 
 
 public class RadioButtonsChoiceModel extends ChoiceModel  implements ActionListener {
@@ -20,8 +19,8 @@ public class RadioButtonsChoiceModel extends ChoiceModel  implements ActionListe
 	private final Map<ButtonModel, Integer> buttonModel2Index;
 	private ButtonModel currentButtonModel;
 	
-	RadioButtonsChoiceModel(final FileHandler fileHandler, final ChoiceSetting choiceSetting, final ButtonGroup buttons) {
-		super(fileHandler, choiceSetting);
+	RadioButtonsChoiceModel(final ConfigurationModel configuration, final ChoiceSetting choiceSetting, final ButtonGroup buttons) {
+		super(configuration, choiceSetting);
 		
 		int buttonCount;
 		Enumeration<AbstractButton> buttonEnumeration;
@@ -53,7 +52,7 @@ public class RadioButtonsChoiceModel extends ChoiceModel  implements ActionListe
 		if(selection != currentButtonModel) {
 			super.setCurrentOption(buttonModel2Index.get(selection));
 			currentButtonModel = selection;
-			getFileHandler().setModelChanged();
+			getConfiguration().getFileHandler().setModelChanged();
 		}
 	}
 
@@ -63,7 +62,7 @@ public class RadioButtonsChoiceModel extends ChoiceModel  implements ActionListe
 			super.setCurrentOption(currentOption);
 			currentButtonModel = buttonModels[currentOption];
 			buttons.setSelected(buttonModels[currentOption], true);
-			getFileHandler().setModelChanged();
+			getConfiguration().getFileHandler().setModelChanged();
 		}
 	}
 }

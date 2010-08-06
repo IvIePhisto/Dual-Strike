@@ -1,7 +1,9 @@
 package mccf.model;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 import mccf.definition.Configuration;
@@ -14,6 +16,8 @@ public class ConfigurationModel {
 	private final List<PageModel> pages = new Vector<PageModel>();
 	private final byte device;
 	private final byte version;
+	private final Map<String, Boolean> settings = new HashMap<String, Boolean>();
+	private final Map<String, String> requirements = new HashMap<String, String>();
 	
 	public ConfigurationModel(final FileHandler fileHandler, final Configuration configuration) {
 		this.fileHandler = fileHandler;
@@ -29,7 +33,7 @@ public class ConfigurationModel {
 	public synchronized PageModel addPage() {
 		PageModel pageModel;
 		
-		pageModel = new PageModel(fileHandler);
+		pageModel = new PageModel(this);
 		pages.add(pageModel);
 		
 		return pageModel;
@@ -77,6 +81,10 @@ public class ConfigurationModel {
 		return bytes;
 	}
 	
+	synchronized void setSetting(final String key, final boolean value) {
+		settings.put(key, value);
+	}
+
 	static boolean getBit(final byte[] bytes, final int byteNo, final int bitNo) {
 		byte value;
 		boolean bit;
@@ -86,5 +94,9 @@ public class ConfigurationModel {
 		bit = value == 1;
 		
 		return bit;
+	}
+
+	FileHandler getFileHandler() {
+		return fileHandler;
 	}
 }

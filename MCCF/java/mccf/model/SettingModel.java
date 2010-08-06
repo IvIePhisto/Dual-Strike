@@ -1,14 +1,13 @@
 package mccf.model;
 
-import mccf.file.FileHandler;
 
 public abstract class SettingModel {
 	private final int byteNo;
 	private final int bitNo;
-	private final FileHandler fileHandler;
+	private final ConfigurationModel configuration;
 
-	protected SettingModel(final FileHandler fileHandler, final int byteNo, final int bitNo) {
-		this.fileHandler = fileHandler;
+	protected SettingModel(final ConfigurationModel configuration, final int byteNo, final int bitNo) {
+		this.configuration = configuration;
 		this.byteNo = byteNo;
 		this.bitNo = bitNo;
 	}
@@ -25,7 +24,7 @@ public abstract class SettingModel {
 	abstract void loadBytes(byte[] bytes);
 	abstract void saveBytes(byte[] bytes);
 
-	FileHandler getFileHandler() {
-		return fileHandler;
+	ConfigurationModel getConfiguration() {
+		return configuration;
 	}
 }

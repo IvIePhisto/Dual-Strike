@@ -4,18 +4,18 @@ import java.util.List;
 
 import mccf.definition.ChoiceSetting;
 import mccf.definition.Option;
-import mccf.file.FileHandler;
 
 
 public abstract class ChoiceModel extends SettingModel {
 	private final int[] byteDividers;
 	private final int bitWidth;
 	private final boolean[][] optionValues;
+	private final String[] optionIDs;
 	private final int defaultValue;
 	private int currentOption;
 	
-	ChoiceModel(final FileHandler fileHandler, final ChoiceSetting choiceSetting) {
-		super(fileHandler, (int)choiceSetting.getByteNo(), (int)choiceSetting.getBitNo());
+	ChoiceModel(final ConfigurationModel configuration, final ChoiceSetting choiceSetting) {
+		super(configuration, (int)choiceSetting.getByteNo(), (int)choiceSetting.getBitNo());
 		List<Option> options;
 		int optionCount;
 		int defaultValue;
@@ -32,18 +32,27 @@ public abstract class ChoiceModel extends SettingModel {
 		options = choiceSetting.getOption();
 		optionCount = options.size();
 		optionValues = new boolean[optionCount][bitWidth];
+		optionIDs = new String[optionCount];
 		defaultValue = 0;
 		defaultID = ((Option)choiceSetting.getDefault()).getId();
 		
 		for(int i = 0; i < optionCount; i++) {
 			String bitPattern;
 			Option option;
+			String id;
 			
 			option = options.get(i);
 			bitPattern = option.getBitPattern();
+			id = option.getId();
+			optionIDs[i] = id;
 			
-			if(option.getId().equals(defaultID))
-					defaultValue = i;
+			if(option.getId().equals(defaultID)) {
+				defaultValue = i;
+				configuration.setSetting(id, true);
+			}
+			else {
+				configuration.setSetting(id, false);
+			}
 			
 			for(int j = 0; j < bitWidth; j++) {
 				if(bitPattern.charAt(j) == '1')
@@ -58,11 +67,12 @@ public abstract class ChoiceModel extends SettingModel {
 		this.defaultValue = defaultValue;
 	}
 
-
 	public synchronized void setCurrentOption(final int currentOption) throws IndexOutOfBoundsException {
 		if(currentOption < 0 || currentOption >= optionValues.length)
 			throw new IndexOutOfBoundsException();
 		
+		getConfiguration().setSetting(optionIDs[this.currentOption], false);
+		getConfiguration().setSetting(optionIDs[currentOption], true);
 		this.currentOption = currentOption;
 	}
 

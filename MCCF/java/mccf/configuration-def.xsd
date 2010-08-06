@@ -9,6 +9,7 @@
         <xs:element name="device" type="c:Field"/>
         <xs:element name="version" type="c:Field"/>
         <xs:element name="page" type="c:Page" maxOccurs="unbounded"/>
+        <xs:element name="group" type="c:Group" minOccurs="0" maxOccurs="unbounded"/>
       </xs:sequence>      
     </xs:sequence>
     <xs:attribute name="def-lang-version" fixed="1" use="required" type="xs:int"/>
@@ -79,7 +80,11 @@
 
   <xs:complexType name="Option">
     <xs:complexContent>
-      <xs:extension base="c:Setting"/>
+      <xs:extension base="c:Setting">
+        <xs:sequence>
+          <xs:element name="requires" type="xs:IDREF" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>      
+      </xs:extension>
     </xs:complexContent>
   </xs:complexType>
 
@@ -87,7 +92,7 @@
     <xs:group ref="c:Infos"/>
     <xs:attribute name="id" type="c:SettingID"/>
   </xs:complexType>
-  
+    
   <xs:simpleType name="SettingID">
     <xs:restriction base="xs:ID">
       <xs:pattern value="(\p{Lu}|_|\d)+"/>
@@ -97,6 +102,14 @@
   <xs:complexType name="DescriptionImage">
     <xs:group ref="c:Infos"/>
     <xs:attribute name="path" type="c:RelativePath"/>
+  </xs:complexType>
+  
+  <xs:complexType name="Group">
+    <xs:sequence>
+      <xs:element name="setting" type="xs:IDREF" minOccurs="1" maxOccurs="unbounded"/>
+    </xs:sequence>
+    <xs:attribute name="minimum" type="xs:int"/>
+    <xs:attribute name="maximum" type="xs:int"/>
   </xs:complexType>
 
   <xs:simpleType name="RelativePath">

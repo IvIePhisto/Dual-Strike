@@ -3,7 +3,7 @@
 <configuration
   xmlns="urn:strike-devices:configuration"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="urn:strike-devices:configuration java/dualstrike/configuration/configuration-def.xsd"
+  xsi:schemaLocation="urn:strike-devices:configuration java/mccf/configuration-def.xsd"
   def-lang-version="1"
   lang="en"
   prefix="CFG_"
@@ -21,7 +21,7 @@
   <page>
     <title>Defaults</title>
     <title lang="de">Standards</title>
-    <help>Config the default settings of the Dual Strike.</help>
+    <help>Configure the default settings of the Dual Strike.</help>
     <help lang="de">Konfiguration der Dual Strike Standardeinstellungen.</help>
     
     <choice prefix="DEF_WORK_MODE_" default="PS3">
@@ -32,9 +32,9 @@
       
       <option id="PS3">
         <title>PS3/PC Controller</title>
-        <title lang="de">PS3/PC Controller</title>
         <help>The Dual Strike works as a PS3 and PC controller.</help>
         <help lang="de">Das Dual Strike arbeitet als PS3 und PC Controller.</help>
+        <requires>PS3_ENABLED</requires>
       </option>
 
       <option id="MAME">
@@ -42,12 +42,14 @@
         <title lang="de">MAME Tastatur</title>
         <help>The Dual Strike works as a MAME compatible keyboard.</help>
         <help lang="de">Das Dual Strike arbeitet als eine MAME kompatible Tastatur.</help>
+        <requires>MAME_ENABLED</requires>
       </option>
 
       <option id="XBOX">
         <title>XBox Controller</title>
         <help>The Dual Strike works as a XBox1 controller.</help>
         <help lang="de">Das Dual Strike arbeitet als eine XBox1 Controller.</help>
+        <requires>XBOX_ENABLED</requires>
       </option>
       
       <option id="PT">
@@ -55,8 +57,35 @@
         <title lang="de">Durchschleifen (XBox360 oder andere)</title>
         <help>The pass-through data connections are routed to the USB data connections on the Dual Strike PCB.</help>
         <help lang="de">Die Durschleif-Datenanschlüsse werden auf die USB Datenanschlüsse des Dual Strike PCB geleitet.</help>
+        <requires>PT_ENABLED</requires>
       </option>
     </choice>
+    
+    <boolean id="PS3_ENABLED" default="true">
+        <title>PS3/PC Controller</title>
+        <help>The Dual Strike works as a PS3 and PC controller.</help>
+        <help lang="de">Das Dual Strike arbeitet als PS3 und PC Controller.</help>
+    </boolean>
+
+    <boolean id="MAME_ENABLED" default="true">
+        <title>XBox Controller</title>
+        <help>The Dual Strike works as a XBox1 controller.</help>
+        <help lang="de">Das Dual Strike arbeitet als eine XBox1 Controller.</help>
+    </boolean>
+    
+    <boolean id="XBOX_ENABLED" default="true">
+        <title>MAME Keyboard</title>
+        <title lang="de">MAME Tastatur</title>
+        <help>The Dual Strike works as a MAME compatible keyboard.</help>
+        <help lang="de">Das Dual Strike arbeitet als eine MAME kompatible Tastatur.</help>
+    </boolean>
+    
+    <boolean id="PT_ENABLED" default="true">
+        <title>Pass-Through (XBox360 or other)</title>
+        <title lang="de">Durchschleifen (XBox360 oder andere)</title>
+        <help>The pass-through data connections are routed to the USB data connections on the Dual Strike PCB.</help>
+        <help lang="de">Die Durschleif-Datenanschlüsse werden auf die USB Datenanschlüsse des Dual Strike PCB geleitet.</help>
+    </boolean>
     
     <choice default="DIGITAL_PAD">
       <title>Default Joystick Mode</title>
@@ -1240,4 +1269,11 @@ Damit funkionieren die entsprechenden Buttons mit Active-High Trigger PCBs.</hel
       </option>
     </choice>
   </page>
+  
+  <group minimum="1">
+    <setting>PS3_ENABLED</setting>
+    <setting>MAME_ENABLED</setting>
+    <setting>XBOX_ENABLED</setting>
+    <setting>PT_ENABLED</setting>
+  </group>
 </configuration>

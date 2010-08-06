@@ -6,14 +6,13 @@ import java.awt.event.ActionListener;
 import javax.swing.JComboBox;
 
 import mccf.definition.ChoiceSetting;
-import mccf.file.FileHandler;
 
 
 public class ComboBoxChoiceModel extends ChoiceModel implements ActionListener {
 	private final JComboBox comboBox;
 	
-	ComboBoxChoiceModel(final FileHandler fileHandler, final ChoiceSetting choiceSetting, final JComboBox comboBox) {
-		super(fileHandler, choiceSetting);
+	ComboBoxChoiceModel(final ConfigurationModel configuration, final ChoiceSetting choiceSetting, final JComboBox comboBox) {
+		super(configuration, choiceSetting);
 		
 		this.comboBox = comboBox;
 		comboBox.addActionListener(this);
@@ -27,7 +26,7 @@ public class ComboBoxChoiceModel extends ChoiceModel implements ActionListener {
 		
 		if(selectedIndex != getCurrentOption()) {
 			super.setCurrentOption(selectedIndex);
-			getFileHandler().setModelChanged();
+			getConfiguration().getFileHandler().setModelChanged();
 		}
 	}
 
@@ -36,7 +35,7 @@ public class ComboBoxChoiceModel extends ChoiceModel implements ActionListener {
 		if(super.getCurrentOption() != currentOption) {
 			super.setCurrentOption(currentOption);
 			comboBox.setSelectedIndex(currentOption);
-			getFileHandler().setModelChanged();
+			getConfiguration().getFileHandler().setModelChanged();
 		}
 	}
 }
