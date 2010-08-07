@@ -2,9 +2,25 @@
 	http://euc.jp/periphs/xbox-controller.ja.html
 */
 
-void resetDataXBox() {
+void initDataXBox() {
 	data.array[1] = 20; // size of report
 
+	// Vendor Request data
+	data.array[20] = 16;
+	data.array[21] = 66;
+	data.array[22] = 0;
+	data.array[23] = 1;
+	data.array[24] = 1;
+	data.array[25] = 2;
+	data.array[26] = 20;
+	data.array[27] = 6;
+	for(int i = 8; i < 16; i++)
+		data.array[20 + i] = 0xFF;
+
+}
+
+void resetDataXBox() {
+	// buttons
 	data.array[0] =
 	data.array[2] =
 	data.array[3] =
@@ -133,8 +149,8 @@ void readInputXBox() {
 void xbox_controller() {
 	usbMode = USB_MODE_XBOX;
 	setupUSB();
+	initDataXBox();
 	resetDataXBox();
-	sendDataUSBInterrupt3(data.array, 20);
 
     while(1) { /* main event loop */
 		usbPoll();

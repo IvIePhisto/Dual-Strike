@@ -315,13 +315,13 @@ PROGMEM const unsigned char usbDescriptorConfigurationXBox[] = {
     USBDESCR_ENDPOINT,			// descriptor type = endpoint 
     0x82,						// IN endpoint number 2
     0x03,						// attrib: Interrupt endpoint 
-    8, 0,						// maximum packet size 
+    8, 0,					// maximum packet size
     4, 							// interrupt poll interval in ms 
     7,          				// sizeof(usbDescrEndpoint): length of descriptor in bytes 
     USBDESCR_ENDPOINT,			// descriptor type = endpoint 
     0x02,						// OUT endpoint number 2 
     0x03,						// attrib: Interrupt endpoint 
-    8, 0,						// maximum packet size 
+    8, 0,					// maximum packet size
     4, 							// interrupt poll interval in ms
 };
 

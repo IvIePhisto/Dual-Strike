@@ -178,32 +178,28 @@ usbMsgLen_t usbFunctionSetup(uchar receivedData[8]) {
 		break;
 
 	case USB_MODE_XBOX:
+		/*
 	    if((rq->bmRequestType & USBRQ_TYPE_MASK) == USBRQ_TYPE_CLASS) {    // class request
-			// wValue: ReportType (highbyte), ReportID (lowbyte)
-	        if(rq->bRequest == USBRQ_HID_GET_REPORT) {
-				usbMsgPtr = data.array;
+			if(rq->bRequest == USBRQ_HID_GET_REPORT) {
+		        if(reportID == EEPROM_SIZE_QUERY_REPORT_ID) {
+					usbMsgPtr = data.array;
 
-				return 20;
+					return 20;
+				}
 			}
 		}
-		else if ((rq-> bmRequestType & USBRQ_TYPE_MASK) == USBRQ_TYPE_VENDOR) {
+		else */if ((rq-> bmRequestType & USBRQ_TYPE_MASK) == USBRQ_TYPE_VENDOR) {
 			if(rq->bRequest == 0x06) {
-				data.array[20] = 16;
-				data.array[21] = 66;
-				data.array[22] = 0;
-				data.array[23] = 1;
-				data.array[24] = 1;
-				data.array[25] = 2;
-				data.array[26] = 20;
-				data.array[27] = 6;
-
-				for(int i = 8; i < 16; i++)
-					data.array[20 + i] = 0xFF;
 
 				usbMsgPtr = &data.array[20];
 
 				return 16;
 			}
+		}
+		else {
+			usbMsgPtr = data.array;
+
+			return 20;
 		}
 	}
 
