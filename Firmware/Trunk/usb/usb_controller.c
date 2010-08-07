@@ -284,6 +284,26 @@ void sendDataUSB(uchar* data, unsigned int byteCount) {
 	}
 }
 
+void sendDataUSBInterrupt3(uchar* data, unsigned int byteCount) {
+	int currentByte;
+	int currentCount;
+
+	currentByte = 0;
+
+	while(currentByte < byteCount) {
+		currentCount = byteCount - currentByte;
+
+		if(currentCount > 8)
+			currentCount = 8;
+
+		usbSetInterrupt3(data + currentByte, currentCount*sizeof(uchar));
+		currentByte += currentCount;
+
+		while(!usbInterruptIsReady3())
+			usbPoll();
+	}
+}
+
 void setupUSB() {
     usbDeviceDisconnect(); /* enforce re-enumeration, do this while interrupts are disabled! */
     _delay_ms(300UL);/* fake USB disconnect for > 250 ms */

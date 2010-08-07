@@ -290,7 +290,7 @@ PROGMEM int  usbDescriptorStringDeviceXBox[] = {
 PROGMEM const unsigned char usbDescriptorConfigurationXBox[] = {
     9,          				// sizeof(usbDescriptorConfiguration): length of descriptor in bytes 
     USBDESCR_CONFIG,   	 		// descriptor type 
-    32-7, 0,      				// total length of data returned (including inlined descriptors) 
+    32, 0,      				// total length of data returned (including inlined descriptors) 
     1,          				// number of interfaces in this configuration 
     1,          				// index of this configuration 
     0,          				// configuration name string index 
@@ -308,18 +308,16 @@ PROGMEM const unsigned char usbDescriptorConfigurationXBox[] = {
     0,          				// string index for interface 
     7,          				// sizeof(usbDescrEndpoint): length of descriptor in bytes 
     USBDESCR_ENDPOINT,			// descriptor type = endpoint 
-    0x81,						// IN endpoint number 1 | ORIGINALLY: 0x82
+    0x82,						// IN endpoint number 2
     0x03,						// attrib: Interrupt endpoint 
     8, 0,						// maximum packet size 
-    4/*, 							// interrupt poll interval in ms 
-	
+    4, 							// interrupt poll interval in ms 
     7,          				// sizeof(usbDescrEndpoint): length of descriptor in bytes 
     USBDESCR_ENDPOINT,			// descriptor type = endpoint 
     0x02,						// OUT endpoint number 2 
     0x03,						// attrib: Interrupt endpoint 
     8, 0,						// maximum packet size 
-    4, 							// interrupt poll interval in ms 
-	*/
+    4, 							// interrupt poll interval in ms
 };
 
 // EEPROM PROGRAMMER

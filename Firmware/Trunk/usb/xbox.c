@@ -134,15 +134,12 @@ void xbox_controller() {
 	usbMode = USB_MODE_XBOX;
 	setupUSB();
 	resetDataXBox();
-	sendDataUSB(data.array, 20);
+	sendDataUSBInterrupt3(data.array, 20);
 
     while(1) { /* main event loop */
 		usbPoll();
-
-        if(usbInterruptIsReady()) {
-			readJoystickSwitch();
-            readInputXBox();
-			sendDataUSB(data.array, 20);
-        }
+		readJoystickSwitch();
+        readInputXBox();
+		sendDataUSBInterrupt3(data.array, 20);
     }
 }
