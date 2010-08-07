@@ -58,6 +58,7 @@
         <help>The pass-through data connections are routed to the USB data connections on the Dual Strike PCB.</help>
         <help lang="de">Die Durschleif-Datenanschlüsse werden auf die USB Datenanschlüsse des Dual Strike PCB geleitet.</help>
         <requires>PT_ENABLED</requires>
+        <requires>FOO</requires>
       </option>
     </choice>
     
@@ -68,16 +69,16 @@
     </boolean>
 
     <boolean id="MAME_ENABLED" default="true">
-        <title>XBox Controller</title>
-        <help>The Dual Strike works as a XBox1 controller.</help>
-        <help lang="de">Das Dual Strike arbeitet als eine XBox1 Controller.</help>
-    </boolean>
-    
-    <boolean id="XBOX_ENABLED" default="true">
         <title>MAME Keyboard</title>
         <title lang="de">MAME Tastatur</title>
         <help>The Dual Strike works as a MAME compatible keyboard.</help>
         <help lang="de">Das Dual Strike arbeitet als eine MAME kompatible Tastatur.</help>
+    </boolean>
+    
+    <boolean id="XBOX_ENABLED" default="true">
+        <title>XBox Controller</title>
+        <help>The Dual Strike works as a XBox1 controller.</help>
+        <help lang="de">Das Dual Strike arbeitet als eine XBox1 Controller.</help>
     </boolean>
     
     <boolean id="PT_ENABLED" default="true">
@@ -112,6 +113,19 @@
         <title lang="de">Rechter Analoger Stick</title>
         <help>The joystick works as a right analogue joystick.</help>
         <help lang="de">Der Joystick arbeitet als ein rechter analoger Stick.</help>
+        <requires>BAR</requires>
+      </option>
+    </choice>
+
+    <choice default="FOO">
+      <title>Blubb</title>
+      
+      <option id="FOO">
+        <title>Foo</title>
+      </option>
+      
+      <option id="BAR">
+        <title>Bar</title>
       </option>
     </choice>
   </page>
@@ -1269,11 +1283,4 @@ Damit funkionieren die entsprechenden Buttons mit Active-High Trigger PCBs.</hel
       </option>
     </choice>
   </page>
-  
-  <group minimum="1">
-    <setting>PS3_ENABLED</setting>
-    <setting>MAME_ENABLED</setting>
-    <setting>XBOX_ENABLED</setting>
-    <setting>PT_ENABLED</setting>
-  </group>
 </configuration>

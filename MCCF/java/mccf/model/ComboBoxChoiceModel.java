@@ -5,16 +5,19 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JComboBox;
 
+import mccf.ChoiceListCellRenderer;
 import mccf.definition.ChoiceSetting;
 
 
 public class ComboBoxChoiceModel extends ChoiceModel implements ActionListener {
 	private final JComboBox comboBox;
+	private final ChoiceListCellRenderer listCellRenderer;
 	
-	ComboBoxChoiceModel(final ConfigurationModel configuration, final ChoiceSetting choiceSetting, final JComboBox comboBox) {
+	ComboBoxChoiceModel(final ConfigurationModel configuration, final ChoiceSetting choiceSetting, final JComboBox comboBox, final ChoiceListCellRenderer listCellRenderer) {
 		super(configuration, choiceSetting);
 		
 		this.comboBox = comboBox;
+		this.listCellRenderer = listCellRenderer;
 		comboBox.addActionListener(this);
 	}
 	
@@ -23,10 +26,15 @@ public class ComboBoxChoiceModel extends ChoiceModel implements ActionListener {
 		int selectedIndex;
 		
 		selectedIndex = comboBox.getSelectedIndex();
-		
-		if(selectedIndex != getCurrentOption()) {
-			super.setCurrentOption(selectedIndex);
-			getConfiguration().getFileHandler().setModelChanged();
+
+		if(listCellRenderer.getItemDisabled(selectedIndex)) {
+			comboBox.setSelectedIndex(getCurrentOption());
+		}
+		else {
+			if(selectedIndex != getCurrentOption()) {
+				super.setCurrentOption(selectedIndex);
+				getConfiguration().getFileHandler().setModelChanged();
+			}
 		}
 	}
 
@@ -37,5 +45,15 @@ public class ComboBoxChoiceModel extends ChoiceModel implements ActionListener {
 			comboBox.setSelectedIndex(currentOption);
 			getConfiguration().getFileHandler().setModelChanged();
 		}
+	}
+
+	@Override
+	synchronized void setEnabled(final int option) {
+		listCellRenderer.setItemDisabled(option, false);
+	}
+
+	@Override
+	synchronized void setDisabled(final int option) {
+		listCellRenderer.setItemDisabled(option, true);
 	}
 }

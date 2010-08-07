@@ -17,11 +17,14 @@ public abstract class ChoiceModel extends SettingModel {
 	private final int bitWidth;
 	private final boolean[][] optionValues;
 	private final String[] optionIDs;
-	private final Map<String, Integer> idOptions;
 	private final String[][] requirements;
 	private final List<String>[] requiredBy;
+	private final int[] activeRequiringSettings;
+	private final int[] enabledRequiredSettings;
 	private final int defaultValue;
 	private int currentOption;
+
+	protected final Map<String, Integer> idOptions;
 	
 	@SuppressWarnings("unchecked")
 	ChoiceModel(final ConfigurationModel configuration, final ChoiceSetting choiceSetting) {
@@ -46,6 +49,8 @@ public abstract class ChoiceModel extends SettingModel {
 		requirements = new String[optionCount][];
 		requiredBy = new List[optionCount];
 		idOptions = new HashMap<String, Integer>(optionCount, 1);
+		activeRequiringSettings = new int[optionCount];
+		enabledRequiredSettings = new int[optionCount];
 		defaultValue = 0;
 		defaultID = ((Option)choiceSetting.getDefault()).getId();
 		
@@ -65,10 +70,6 @@ public abstract class ChoiceModel extends SettingModel {
 			
 			if(option.getId().equals(defaultID)) {
 				defaultValue = i;
-				configuration.setSettingValue(id, true);
-			}
-			else {
-				configuration.setSettingValue(id, false);
 			}
 			
 			requirementsList = option.getRequires();
@@ -99,21 +100,18 @@ public abstract class ChoiceModel extends SettingModel {
 		if(currentOption < 0 || currentOption >= optionValues.length)
 			throw new IndexOutOfBoundsException();
 		
-		getConfiguration().setSettingValue(optionIDs[this.currentOption], false);
-		getConfiguration().setSettingValue(optionIDs[currentOption], true);
-		
 		for(String requirement: requirements[this.currentOption]) {
-			BooleanModel setting;
+			SettingModel setting;
 
-			setting = (BooleanModel)getConfiguration().getSetting(requirement);
-			setting.requiringSettingIsInactive();
+			setting = getConfiguration().getSetting(requirement);
+			setting.requiringSettingIsInactive(requirement);
 		}
 		
 		for(String requirement: requirements[currentOption]) {
-			BooleanModel setting;
+			SettingModel setting;
 
-			setting = (BooleanModel)getConfiguration().getSetting(requirement);
-			setting.requiringSettingIsActive();
+			setting = getConfiguration().getSetting(requirement);
+			setting.requiringSettingIsActive(requirement);
 		}
 
 		this.currentOption = currentOption;
@@ -211,10 +209,12 @@ public abstract class ChoiceModel extends SettingModel {
 		}
 	}
 	
+	@Override
 	synchronized void addRequiredBy(final String source, final String target) {
 		requiredBy[idOptions.get(target)].add(source);
 	}
 	
+	@Override
 	synchronized void initConstraints() {
 		initRequirements();
 	}
@@ -227,15 +227,95 @@ public abstract class ChoiceModel extends SettingModel {
 			
 			for(String requirement: optionRequirements) {
 				String optionID;
-				BooleanModel setting;
+				SettingModel setting;
 			
-				setting = (BooleanModel)getConfiguration().getSetting(requirement);
+				setting = getConfiguration().getSetting(requirement);
 				optionID = optionIDs[option];
 				setting.addRequiredBy(optionID, requirement);
 				
 				if(option == currentOption)
-					setting.requiringSettingIsActive();
+					setting.requiringSettingIsActive(requirement);
+				else
+					setting.requiringSettingIsInactive(requirement);
 			}
 		}
+	}
+	
+	synchronized boolean checkNoOtherRequiringOptions(final String optionID) {
+		int option;
+		
+		option = idOptions.get(optionID);
+		
+		for(int i = 0; i < optionIDs.length; i++)
+			if(i != option)
+				if(activeRequiringSettings[i] > 0)
+					return false;
+		
+		return true;
+	}
+	
+	@Override
+	synchronized void requiringSettingIsActive(final String requirement) {
+		int requiredOption;
+		
+		requiredOption = idOptions.get(requirement);
+		
+		if(activeRequiringSettings[requiredOption] == 0) {
+			for(int i = 0; i < optionIDs.length; i++)
+				if(i != requiredOption)
+					setDisabled(i);
+		}
+
+		activeRequiringSettings[requiredOption] = activeRequiringSettings[requiredOption] + 1;
+	}
+
+	@Override
+	synchronized void requiringSettingIsInactive(final String requirement) {
+		int requiredOption;
+		
+		requiredOption = idOptions.get(requirement);
+		
+		if(activeRequiringSettings[requiredOption] > 0) {
+			activeRequiringSettings[requiredOption] = activeRequiringSettings[requiredOption] -1;
+			
+			if(activeRequiringSettings[requiredOption] == 0)
+				for(int i = 0; i < optionIDs.length; i++)
+					if(i != requiredOption)
+						if(enabledRequiredSettings[requiredOption] > 1)
+							setEnabled(i);
+		}
+	}
+	
+	synchronized void requiredSettingIsEnabled(final String requirement) {
+		int requiredOption;
+		
+		requiredOption = idOptions.get(requirement);
+		enabledRequiredSettings[requiredOption] = enabledRequiredSettings[requiredOption] + 1;
+
+		if(enabledRequiredSettings[requiredOption] > 1)
+			setEnabled(requiredOption);
+	}
+	
+	synchronized boolean requiredSettingIsDisabled(final String requirement) {
+		int requiredOption;
+		
+		requiredOption = idOptions.get(requirement);
+		enabledRequiredSettings[requiredOption] = enabledRequiredSettings[requiredOption] - 1;
+
+		if(enabledRequiredSettings[requiredOption] == 0) {
+			if(activeRequiringSettings[requiredOption] > 0)
+				return false;
+			
+			setDisabled(requiredOption);
+		}
+		
+		return true;
+	}
+	
+	abstract void setEnabled(int option);
+	abstract void setDisabled(int option);
+	
+	int getOptionCount() {
+		return optionIDs.length;
 	}
 }

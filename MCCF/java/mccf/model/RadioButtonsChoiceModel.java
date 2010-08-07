@@ -65,4 +65,14 @@ public class RadioButtonsChoiceModel extends ChoiceModel  implements ActionListe
 			getConfiguration().getFileHandler().setModelChanged();
 		}
 	}
+	
+	@Override
+	synchronized void setEnabled(final int option) {
+		buttonModels[option].setEnabled(true);
+	}
+
+	@Override
+	synchronized void setDisabled(final int option) {
+		buttonModels[option].setEnabled(false);
+	}
 }

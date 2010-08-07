@@ -9,7 +9,6 @@
         <xs:element name="device" type="c:Field"/>
         <xs:element name="version" type="c:Field"/>
         <xs:element name="page" type="c:Page" maxOccurs="unbounded"/>
-        <xs:element name="group" type="c:Group" minOccurs="0" maxOccurs="unbounded"/>
       </xs:sequence>      
     </xs:sequence>
     <xs:attribute name="def-lang-version" fixed="1" use="required" type="xs:int"/>
@@ -82,7 +81,29 @@
     <xs:complexContent>
       <xs:extension base="c:Setting">
         <xs:sequence>
-          <xs:element name="requires" type="xs:IDREF" minOccurs="0" maxOccurs="unbounded"/>
+          <xs:element name="requires" type="xs:IDREF" minOccurs="0" maxOccurs="unbounded">
+            <xs:annotation><xs:documentation>
+              An element of this kind imposes two constraints on the configuration:
+                -The containing option can only be activated if the referred
+                 setting is set, i.e. in case of a boolean it is enabled and
+                 in case of an option it is the current selection of its
+                 containing choice.
+                -If the containing option is the current selection of its
+                 containing choice, the referred setting is set fix, i.e.
+                 in case of a boolean it is not disengageable and in case of an
+                 option the other options of its containing choice are not
+                 selectable.
+                 
+              To prevent cascading changes and clashing requirements, the
+              following cases must not occur (which the application has to check):
+                -A choice A contains an option which is being required by a
+                 choice B (A may be equal to B) and an option of A requires a
+                 setting.
+                -In one choice for a pair of options A and B, A is required
+                 by a choice C, B is required by a choice D and C and D are
+                 different choices.
+            </xs:documentation></xs:annotation>
+          </xs:element>
         </xs:sequence>      
       </xs:extension>
     </xs:complexContent>
@@ -102,14 +123,6 @@
   <xs:complexType name="DescriptionImage">
     <xs:group ref="c:Infos"/>
     <xs:attribute name="path" type="c:RelativePath"/>
-  </xs:complexType>
-  
-  <xs:complexType name="Group">
-    <xs:sequence>
-      <xs:element name="setting" type="xs:IDREF" minOccurs="1" maxOccurs="unbounded"/>
-    </xs:sequence>
-    <xs:attribute name="minimum" type="xs:int"/>
-    <xs:attribute name="maximum" type="xs:int"/>
   </xs:complexType>
 
   <xs:simpleType name="RelativePath">

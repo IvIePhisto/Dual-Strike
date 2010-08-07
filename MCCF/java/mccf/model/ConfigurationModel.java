@@ -18,7 +18,6 @@ public class ConfigurationModel {
 	private final List<PageModel> pages = new Vector<PageModel>();
 	private final byte device;
 	private final byte version;
-	private final Map<String, Boolean> settingValues = new HashMap<String, Boolean>();
 	private final Map<String, SettingModel> settingsByID = new HashMap<String, SettingModel>();
 	private final Set<SettingModel> settingsSet = new HashSet<SettingModel>();
 	
@@ -82,10 +81,6 @@ public class ConfigurationModel {
 		bytes[1] = version;
 		
 		return bytes;
-	}
-	
-	synchronized void setSettingValue(final String id, final boolean value) {
-		settingValues.put(id, value);
 	}
 
 	synchronized void registerSetting(final String id, final SettingModel setting) {

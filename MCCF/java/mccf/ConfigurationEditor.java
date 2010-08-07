@@ -33,7 +33,6 @@ import java.util.regex.Pattern;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
-import javax.swing.DefaultListCellRenderer;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -591,7 +590,7 @@ public class ConfigurationEditor implements HyperlinkListener {
 		final String[] helpsArray;
 		JComboBox comboBox;
 		int selectedIndex;
-		DefaultListCellRenderer listCellRenderer;
+		ChoiceListCellRenderer listCellRenderer;
 		JPanel panel;
 		
 		titles = new LinkedList<String>();
@@ -624,12 +623,12 @@ public class ConfigurationEditor implements HyperlinkListener {
 		}
 		
 		helpsArray = helps.toArray(new String[]{});
-		listCellRenderer = new TooltipListCellRenderer(helpsArray);
+		listCellRenderer = new ChoiceListCellRenderer(helpsArray);
 		comboBox = new JComboBox(titles.toArray());
 		comboBox.setRenderer(listCellRenderer);
 		comboBox.setSelectedIndex(selectedIndex);
 		comboBox.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
-		pageModel.addChoice(choiceSetting, comboBox);
+		pageModel.addChoice(choiceSetting, comboBox, listCellRenderer);
 		panel = new JPanel();
 		panel.add(comboBox);
 

@@ -16,7 +16,7 @@ public class BooleanModel extends SettingModel implements ActionListener {
 	private final JRadioButton disableButton;
 	private boolean value;
 	private final String id;
-	private final List<String> requiredBy = new Vector<String>();
+	private final List<String> requiredBySettings = new Vector<String>();
 	private int activeRequiringSettings = 0;
 	
 	BooleanModel(final ConfigurationModel configuration, final BooleanSetting booleanSetting, final JRadioButton enableButton, final JRadioButton disableButton) {
@@ -27,7 +27,6 @@ public class BooleanModel extends SettingModel implements ActionListener {
 		this.disableButton = disableButton;
 		this.id = booleanSetting.getId();
 		configuration.registerSetting(id, this);
-		configuration.setSettingValue(id, value);
 		enableButton.addActionListener(this);
 		disableButton.addActionListener(this);
 	}
@@ -36,7 +35,7 @@ public class BooleanModel extends SettingModel implements ActionListener {
 	public synchronized void actionPerformed(final ActionEvent event) {
 		if(enableButton.isSelected() != value) {
 			value = enableButton.isSelected();
-			getConfiguration().setSettingValue(id, value);
+			notifyRequiringSettings();
 			getConfiguration().getFileHandler().setModelChanged();
 		}
 	}
@@ -50,7 +49,7 @@ public class BooleanModel extends SettingModel implements ActionListener {
 			this.value = value;
 			enableButton.setSelected(value);
 			disableButton.setSelected(!value);
-			getConfiguration().setSettingValue(id, value);
+			notifyRequiringSettings();
 			getConfiguration().getFileHandler().setModelChanged();
 		}
 	}
@@ -75,14 +74,21 @@ public class BooleanModel extends SettingModel implements ActionListener {
 			bytes[getByteNo()] |= (1 << getBitNo());
 	}
 
+	@Override
 	synchronized void addRequiredBy(final String source, final String target) {
-		requiredBy.add(source);
+		requiredBySettings.add(source);
 	}
 
-	synchronized void initConstraints() {
+	@Override
+	void initConstraints() {
 	}
 	
-	synchronized void requiringSettingIsActive() {
+	boolean checkNoOtherRequiringOptions(final String optionID) {
+		return true;
+	}
+	
+	@Override
+	synchronized void requiringSettingIsActive(final String requirement) {
 		if(activeRequiringSettings == 0) {
 			setValue(true);
 			disableButton.setEnabled(false);
@@ -91,11 +97,33 @@ public class BooleanModel extends SettingModel implements ActionListener {
 		activeRequiringSettings++;
 	}
 
-	synchronized void requiringSettingIsInactive() {
-		activeRequiringSettings--;
-		
-		if(activeRequiringSettings == 0) {
-			disableButton.setEnabled(true);
+	@Override
+	synchronized void requiringSettingIsInactive(final String requirement) {
+		if(activeRequiringSettings > 0) {
+			activeRequiringSettings--;
+			
+			if(activeRequiringSettings == 0) {
+				disableButton.setEnabled(true);
+			}
+		}
+	}
+
+	synchronized void requiringSettings() {
+		for(String requiredBySettingID: requiredBySettings) {
+			checkNoOtherRequiringOptions(requiredBySettingID);
+		}
+	}
+	
+	synchronized void notifyRequiringSettings() {
+		for(String requiredBySettingID: requiredBySettings) {
+			ChoiceModel requiredBySetting;
+			
+			requiredBySetting = (ChoiceModel)getConfiguration().getSetting(requiredBySettingID);
+			
+			if(value)
+				requiredBySetting.requiredSettingIsEnabled(requiredBySettingID);
+			else
+				requiredBySetting.requiredSettingIsDisabled(requiredBySettingID);
 		}
 	}
 }

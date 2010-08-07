@@ -61,6 +61,43 @@
   </xsl:template>
 
   <xsl:template match="c:choice">
+    <xsl:variable name="currentChoiceID" select="generate-id(current())"/>
+
+    <xsl:for-each select="c:option">
+      <xsl:variable name="firstID" select="current()/@id"/>
+      <xsl:variable name="firstIsRequiring" select="count(current()/c:requires) > 0"/>  
+          
+      <xsl:for-each select="/c:configuration/c:page/c:choice[c:option/c:requires[string() = $firstID]]">
+        <xsl:variable name="firstChoiceID" select="generate-id(current())"/>
+        <xsl:message>1:<xsl:value-of select="$firstID"/></xsl:message>
+        <xsl:message> c1:<xsl:value-of select="$firstChoiceID"/></xsl:message>
+    
+        <xsl:if test="$firstIsRequiring">
+          <xsl:message terminate="yes">
+            <xsl:text>The choice A contains the option with ID "</xsl:text>
+            <xsl:value-of select="$firstID"/>
+            <xsl:text>" which is being required by the option with ID "</xsl:text>
+            <xsl:value-of select="c:option/c:requires[string() = $firstID][1]"/>
+            <xsl:text>"of another choice B, but an option of A requires a setting.</xsl:text>
+          </xsl:message>
+        </xsl:if>
+
+        <xsl:for-each select="/c:configuration/c:page/c:choice[generate-id() = $currentChoiceID]/c:option">
+          <xsl:variable name="secondID" select="current()/@id"/>
+          
+          <xsl:for-each select="/c:configuration/c:page/c:choice[generate-id() != $firstChoiceID][c:option/c:requires[string() = $secondID]]">
+              <xsl:message terminate="yes">
+                <xsl:text>In one choice A the option with ID "</xsl:text>
+                <xsl:value-of select="$firstID"/>
+                <xsl:text>" is required by another choice B and the option in A with ID "</xsl:text>
+                <xsl:value-of select="$secondID"/>
+                <xsl:text>" is required by a third choice C.</xsl:text>
+              </xsl:message>
+          </xsl:for-each>
+        </xsl:for-each>
+      </xsl:for-each>
+    </xsl:for-each>
+    
     <xsl:copy>
       <xsl:variable name="bit-width">
         <xsl:call-template name="calculate-bit-width">
@@ -133,6 +170,7 @@
           <xsl:with-param name="value" select="count(c:option) - 1"/>
         </xsl:call-template>
     </xsl:variable>
+    
     <xsl:choose>
       <xsl:when test="preceding::c:*[local-name() = 'choice' or local-name() = 'boolean'][1]">
         <xsl:variable name="rest-sum">
@@ -219,7 +257,7 @@
       <xsl:apply-templates select="node()"/>
     </xsl:copy>
   </xsl:template>
-  
+
   <xsl:template match="
     c:configuration/@byte-width |
     c:choice/@bit-width |
