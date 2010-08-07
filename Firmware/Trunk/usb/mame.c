@@ -76,13 +76,13 @@ void resetMAMEReports() {
 
 #define MAME_SET_REPORT_BIT_FUNCTION(functionName, array, bit) void functionName() { data.mame_reports.keyboard.data[array] |= (1<<bit); }
 // meaning: LK, MK, HK, 4K, LP, MP, HP, 4P
-int buttonMapping1[8] = {-1, -1, -1, -1, -1, -1, -1, -1};
-int buttonMapping2[8] = {-1, -1, -1, -1, -1, -1, -1, -1};
-int buttonMapping3[8] = {-1, -1, -1, -1, -1, -1, -1, -1};
-int buttonMapping4[8] = {-1, -1, -1, -1, -1, -1, -1, -1};
+static int buttonMapping1[8] = {-1, -1, -1, -1, -1, -1, -1, -1};
+static int buttonMapping2[8] = {-1, -1, -1, -1, -1, -1, -1, -1};
+static int buttonMapping3[8] = {-1, -1, -1, -1, -1, -1, -1, -1};
+static int buttonMapping4[8] = {-1, -1, -1, -1, -1, -1, -1, -1};
 
-int* buttonMapping = buttonMapping1;
-uchar currentButtonMappingNo = 1;
+static int* buttonMapping = buttonMapping1;
+static uchar currentButtonMappingNo = 1;
 
 #define MAME_LK 0
 #define MAME_MK 1
@@ -149,20 +149,20 @@ void (*player2Buttons[6])() = {mamePlayer2Button1, mamePlayer2Button2, mamePlaye
 #define MAME_SET_BUTTON(playerNo, buttonID) { if(buttonMapping[buttonID] >= 0) (*player##playerNo##Buttons[buttonMapping[buttonID]])(); }
 
 
-uchar metaPressed;
-uchar metaWasPressed = 0;
-uchar metaWasUsed = 0;
-uchar metaReleased = 0;
+static uchar metaPressed;
+static uchar metaWasPressed = 0;
+static uchar metaWasUsed = 0;
+static uchar metaReleased = 0;
 
-uchar mameControl = 0;
-uchar mamePlayer = 1;
+static uchar mameControl = 0;
+static uchar mamePlayer = 1;
 
 // one HID idle rate unit is 4ms, 
 #define IDLE_RATE_UNIT_COUNT_CYCLES ((uchar)(F_CPU / 250 / 1024))
 #define IDLE_RATE_OVERLOW_COUNT		(255 / IDLE_RATE_UNIT_COUNT_CYCLES)
 #define IDLE_RATE_OVERLOW_CYCLES	(255 % IDLE_RATE_UNIT_COUNT_CYCLES)
 
-uchar idleRateCount = 0;
+static uchar idleRateCount = 0;
 
 #include <avr/io.h>
 #include <avr/interrupt.h>

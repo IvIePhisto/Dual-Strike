@@ -50,7 +50,7 @@ extern usb_data_t data;
 #define HID_REPORT_TYPE_OUTPUT 2
 #define HID_REPORT_TYPE_FEATURE 3
 
-uchar usbMode = -1;
+static uchar usbMode = -1;
 
 #define USB_MODE_PROGRAMMER 0
 #define USB_MODE_PS3 1
@@ -76,11 +76,11 @@ typedef union {
     uchar   c[sizeof(e2addr_t)];
 } e2address_t;
 
-e2addr_t eepromOffset = -1;
-uchar writeReportID = 0;
-e2addr_t currentEEPROMAddress;
+static e2addr_t eepromOffset = -1;
+static uchar writeReportID = 0;
+static e2addr_t currentEEPROMAddress;
 
-uchar mameIdleRate = 125; // 500ms
+static uchar mameIdleRate = 125; // 500ms
 
 usbMsgLen_t usbFunctionSetup(uchar receivedData[8]) {
 	usbRequest_t    *rq = (void *)receivedData;
@@ -178,21 +178,29 @@ usbMsgLen_t usbFunctionSetup(uchar receivedData[8]) {
 		break;
 
 	case USB_MODE_XBOX:
-		if ((rq-> bmRequestType & USBRQ_TYPE_MASK) == USBRQ_TYPE_VENDOR) {
+	    if((rq->bmRequestType & USBRQ_TYPE_MASK) == USBRQ_TYPE_CLASS) {    // class request
+			// wValue: ReportType (highbyte), ReportID (lowbyte)
+	        if(rq->bRequest == USBRQ_HID_GET_REPORT) {
+				usbMsgPtr = data.array;
+
+				return 20;
+			}
+		}
+		else if ((rq-> bmRequestType & USBRQ_TYPE_MASK) == USBRQ_TYPE_VENDOR) {
 			if(rq->bRequest == 0x06) {
-				data.array[0] = 16;
-				data.array[1] = 66;
-				data.array[2] = 0;
-				data.array[3] = 1;
-				data.array[4] = 1;
-				data.array[5] = 2;
-				data.array[6] = 20;
-				data.array[7] = 6;
+				data.array[20] = 16;
+				data.array[21] = 66;
+				data.array[22] = 0;
+				data.array[23] = 1;
+				data.array[24] = 1;
+				data.array[25] = 2;
+				data.array[26] = 20;
+				data.array[27] = 6;
 
 				for(int i = 8; i < 16; i++)
-					data.array[i] = 0xFF;
+					data.array[20 + i] = 0xFF;
 
-				usbMsgPtr = data.array;
+				usbMsgPtr = &data.array[20];
 
 				return 16;
 			}
