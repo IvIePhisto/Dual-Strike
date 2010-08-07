@@ -293,15 +293,20 @@ PROGMEM const unsigned char usbDescriptorConfigurationXBox[] = {
     32, 0,      				// total length of data returned (including inlined descriptors) 
     1,          				// number of interfaces in this configuration 
     1,          				// index of this configuration 
-    0,          				// configuration name string index 
+    0,          				// configuration name string index
+
+	0x80, 						//attributes:Default
+	0x32,						//power consumption * 2mA
+	/*
     (char)USBATTR_BUSPOWER, 	// attributes 
     USB_CFG_MAX_BUS_POWER/2,	// max USB current in 2mA units 
+	*/
 // interface descriptor follows inline: 
     9,   			 	    	// sizeof(usbDescrInterface): length of descriptor in bytes 
     USBDESCR_INTERFACE,			// descriptor type 
     0,          				// index of this interface 
     0,							// alternate setting for this interface 
-    1, 							// endpoints excl 0: number of endpoint descriptors to follow  | ORIGINALLY: 2
+    2, 							// endpoints excl 0: number of endpoint descriptors to follow  | ORIGINALLY: 2
     0x58,						// USB interface class: Unknown 
     0x42,						// USB interface subclass 
     0,							// USB interface protocol 
