@@ -62,7 +62,11 @@
       <xs:element name="image" type="c:DescriptionImage" minOccurs="0"/>
       <xs:element name="option" type="c:Option" maxOccurs="unbounded"/>
     </xs:sequence>
-    <xs:attribute name="default" type="xs:IDREF"/>
+    <xs:attribute name="default" type="xs:IDREF" use="required">
+      <xs:annotation><xs:documentation>
+        This attribute has to refer to a option of the containing choice.
+      </xs:documentation></xs:annotation>
+    </xs:attribute>
     <xs:attribute name="prefix" type="c:SettingID"/>
   </xs:complexType>
 
@@ -111,7 +115,7 @@
 
   <xs:complexType name="Setting" >
     <xs:group ref="c:Infos"/>
-    <xs:attribute name="id" type="c:SettingID"/>
+    <xs:attribute name="id" type="c:SettingID" use="required"/>
   </xs:complexType>
     
   <xs:simpleType name="SettingID">

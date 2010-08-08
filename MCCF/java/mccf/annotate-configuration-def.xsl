@@ -69,8 +69,6 @@
           
       <xsl:for-each select="/c:configuration/c:page/c:choice[c:option/c:requires[string() = $firstID]]">
         <xsl:variable name="firstChoiceID" select="generate-id(current())"/>
-        <xsl:message>1:<xsl:value-of select="$firstID"/></xsl:message>
-        <xsl:message> c1:<xsl:value-of select="$firstChoiceID"/></xsl:message>
     
         <xsl:if test="$firstIsRequiring">
           <xsl:message terminate="yes">
