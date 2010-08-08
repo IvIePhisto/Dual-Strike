@@ -253,10 +253,14 @@ If the Select button is pressed, then configuration mode is entered (see below).
 
 If the Start button is pressed, then firmware update mode is entered (see below).
 
-If the button A/Cross is pressed, then the PS3 mode is activated.
-If the button B/Circle is pressed, then the MAME mode is activated.
-If the button X/Square is pressed, then the XBox1 mode is activated.
-If the button Y/Triangle is pressed, then the pass-through mode is activated.
+If only one working mode is enabled, then this is activated.
+If two working modes are enabled and one of the buttons LK, MK, LP, MP, HP and 4P is
+pressed, then the non-default mode is activated.
+If more than two working modes are enabled,:
+-the button LK is pressed and the PS3 mode is enabled, then the PS3 mode is activated.
+-the button MK is pressed and the MAME mode is enabled, then the MAME mode is activated.
+-the button LP is pressed and the XBox mode is enabled, then the XBox mode is activated.
+-the button MP is pressed and the pass-through mode is enabled, then the pass-through mode is activated.
 Otherwise the default working mode is activated.
 
 If the joystick is moved to the up direction, the joystick is acting as a digital pad
