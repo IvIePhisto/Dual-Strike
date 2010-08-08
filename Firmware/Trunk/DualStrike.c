@@ -150,16 +150,16 @@ void configInit() {
 			}
 
 			if(!Stick_LK) {
-				if(!Stick_Left) {
+				if(CFG_WORK_MODE_PS3_ENABLED && !Stick_Left) {
 					CFG_SET_DEF_WORK_MODE_PS3(newConfig)
 				}
-				else if(!Stick_Up) {
+				else if(CFG_WORK_MODE_MAME_ENABLED && !Stick_Up) {
 					CFG_SET_DEF_WORK_MODE_MAME(newConfig)
 				}
-				else if(!Stick_Right) {
+				else if(CFG_WORK_MODE_XBOX_ENABLED && !Stick_Right) {
 					CFG_SET_DEF_WORK_MODE_XBOX(newConfig)
 				}
-				else if(!Stick_Down) {
+				else if(CFG_WORK_MODE_PT_ENABLED && !Stick_Down) {
 					CFG_SET_DEF_WORK_MODE_PT(newConfig)
 				}
 			}
@@ -229,6 +229,16 @@ int setModePT() {
 	return WORKING_MODE_PT;
 }
 
+int setModeDefault() {
+	if(CFG_DEF_WORK_MODE_PS3)
+		return setModePS3();
+	else if(CFG_DEF_WORK_MODE_MAME)
+		return setModeMAME();
+	else if(CFG_DEF_WORK_MODE_XBOX)
+		return setModeXBox();
+	else
+		return setModePT();
+}
 
 
 // README
@@ -285,24 +295,56 @@ int hardwareInit() {
 		PORTC |= (1<<6); // pin S4 is high
 	}
 
-	if(!Stick_LK)
-		return setModePS3();
-	else if(!Stick_MK)
-		return setModeMAME();
-	else if(!Stick_LP)
-		return setModeXBox();
-	else if(!Stick_MP)
-		return setModePT();
-	else {
-		if(CFG_DEF_WORK_MODE_PS3)
-			return setModePS3();
-		else if(CFG_DEF_WORK_MODE_MAME)
-			return setModeMAME();
-		else if(CFG_DEF_WORK_MODE_XBOX)
-			return setModeXBox();
-		else
-			return setModePT();
+	int enabledWorkingModes = 0;
+	
+	if(CFG_WORK_MODE_PS3_ENABLED)
+		enabledWorkingModes++;
+
+	if(CFG_WORK_MODE_MAME_ENABLED)
+		enabledWorkingModes++;
+	
+	if(CFG_WORK_MODE_XBOX_ENABLED)
+		enabledWorkingModes++;
+	
+	if(CFG_WORK_MODE_PT_ENABLED)
+		enabledWorkingModes++;
+
+	if(enabledWorkingModes == 2) {
+		if(!Stick_LK
+		|| !Stick_MK
+		|| !Stick_LP
+		|| !Stick_MP
+		|| !Stick_HP
+		|| !Stick_4P) {
+			if(!CFG_DEF_WORK_MODE_PS3 && CFG_WORK_MODE_PS3_ENABLED)
+				return setModePS3();
+
+			if(!CFG_DEF_WORK_MODE_MAME && CFG_WORK_MODE_MAME_ENABLED)
+				return setModeMAME();
+	
+			if(!CFG_DEF_WORK_MODE_XBOX && CFG_WORK_MODE_XBOX_ENABLED)
+				return setModeXBox();
+	
+			if(!CFG_DEF_WORK_MODE_PT && CFG_WORK_MODE_PT_ENABLED)
+				return setModePT();
+		}
 	}
+	else if(enabledWorkingModes > 2) {
+		if(!Stick_LK && CFG_WORK_MODE_PS3_ENABLED)
+			return setModePS3();
+
+		if(!Stick_MK && CFG_WORK_MODE_MAME_ENABLED)
+			return setModeMAME();
+
+		if(!Stick_LP && CFG_WORK_MODE_XBOX_ENABLED)
+			return setModeXBox();
+
+		if(!Stick_MP && CFG_WORK_MODE_PT_ENABLED)
+			return setModePT();
+		
+	}
+
+	return setModeDefault();
 }
 
 /* ------------------------------------------------------------------------- */
