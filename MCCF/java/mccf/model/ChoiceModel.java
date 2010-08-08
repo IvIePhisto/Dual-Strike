@@ -16,21 +16,25 @@ public abstract class ChoiceModel extends SettingModel {
 	private final int[] byteDividers;
 	private final int bitWidth;
 	private final boolean[][] optionValues;
-	private final String[] optionIDs;
-	private final String[][] requirements;
-	private final List<String>[] requiredBy;
-	private final int[] activeRequiringSettings;
-	private final int[] enabledRequiredSettings;
 	private final int defaultValue;
 	private int currentOption;
-
-	protected final Map<String, Integer> idOptions;
+	private int optionCount;
+	
+	private final String[] option2ID;
+	private final Map<String, Integer> id2Option;
+	private final String[][] requirements;
+	
+	private final List<ChoiceModel>[] requiringChoices;
+	private final List<Integer>[] requiringOptions;
+	private final int[] activeRequiringSettings;
+	private final List<SettingModel>[] requiredSettingsByOption;
+	private final List<Integer>[] requiredOptionsByOption;
+	private final int[] enabledRequiredSettings;
 	
 	@SuppressWarnings("unchecked")
 	ChoiceModel(final ConfigurationModel configuration, final ChoiceSetting choiceSetting) {
 		super(configuration, (int)choiceSetting.getByteNo(), (int)choiceSetting.getBitNo());
 		List<Option> options;
-		int optionCount;
 		int defaultValue;
 		String defaultID;
 		List<Long> rawByteDividers;
@@ -45,12 +49,15 @@ public abstract class ChoiceModel extends SettingModel {
 		options = choiceSetting.getOption();
 		optionCount = options.size();
 		optionValues = new boolean[optionCount][bitWidth];
-		optionIDs = new String[optionCount];
+		option2ID = new String[optionCount];
 		requirements = new String[optionCount][];
-		requiredBy = new List[optionCount];
-		idOptions = new HashMap<String, Integer>(optionCount, 1);
+		requiredSettingsByOption = new List[optionCount];
+		requiredOptionsByOption = new List[optionCount];
+		requiringChoices = new List[optionCount];
+		requiringOptions = new List[optionCount];
 		activeRequiringSettings = new int[optionCount];
 		enabledRequiredSettings = new int[optionCount];
+		id2Option = new HashMap<String, Integer>(optionCount, 1);
 		defaultValue = 0;
 		defaultID = ((Option)choiceSetting.getDefault()).getId();
 		
@@ -64,8 +71,8 @@ public abstract class ChoiceModel extends SettingModel {
 			option = options.get(i);
 			bitPattern = option.getBitPattern();
 			id = option.getId();
-			optionIDs[i] = id;
-			idOptions.put(id, i);
+			option2ID[i] = id;
+			id2Option.put(id, i);
 			configuration.registerSetting(id, this);
 			
 			if(option.getId().equals(defaultID)) {
@@ -74,7 +81,10 @@ public abstract class ChoiceModel extends SettingModel {
 			
 			requirementsList = option.getRequires();
 			requirements[i] = new String[requirementsList.size()];
-			requiredBy[i] = new Vector<String>();
+			requiredSettingsByOption[i] = new Vector<SettingModel>();
+			requiredOptionsByOption[i] = new Vector<Integer>();
+			requiringChoices[i] = new Vector<ChoiceModel>();
+			requiringOptions[i] = new Vector<Integer>();
 			j = 0;
 			
 			for(JAXBElement<Object> requirement: requirementsList) {
@@ -100,20 +110,10 @@ public abstract class ChoiceModel extends SettingModel {
 		if(currentOption < 0 || currentOption >= optionValues.length)
 			throw new IndexOutOfBoundsException();
 		
-		for(String requirement: requirements[this.currentOption]) {
-			SettingModel setting;
-
-			setting = getConfiguration().getSetting(requirement);
-			setting.requiringSettingIsInactive(requirement);
-		}
-		
-		for(String requirement: requirements[currentOption]) {
-			SettingModel setting;
-
-			setting = getConfiguration().getSetting(requirement);
-			setting.requiringSettingIsActive(requirement);
-		}
-
+		notifyRequiringSettings(this.currentOption, false);
+		notifyRequiredSettings(this.currentOption, false);
+		notifyRequiringSettings(currentOption, true);
+		notifyRequiredSettings(currentOption, true);
 		this.currentOption = currentOption;
 	}
 
@@ -211,7 +211,13 @@ public abstract class ChoiceModel extends SettingModel {
 	
 	@Override
 	synchronized void addRequiredBy(final String source, final String target) {
-		requiredBy[idOptions.get(target)].add(source);
+		ChoiceModel requiringChoice;
+		int requiredOption;
+		
+		requiredOption = id2Option.get(target);
+		requiringChoice = (ChoiceModel)getConfiguration().getSetting(source);
+		requiringChoices[requiredOption].add(requiringChoice);
+		requiringOptions[requiredOption].add(requiringChoice.getOption(source));
 	}
 	
 	@Override
@@ -220,48 +226,42 @@ public abstract class ChoiceModel extends SettingModel {
 	}
 	
 	synchronized void initRequirements() {
-		for(int option = 0; option < requirements.length; option++) {
-			String[] optionRequirements;
+		for(int requiringOption = 0; requiringOption < requirements.length; requiringOption++) {
+			String[] requiredSettingIDs;
+			String requiringOptionID;
 			
-			optionRequirements = requirements[option];
+			requiredSettingIDs = requirements[requiringOption];
+			requiringOptionID = option2ID[requiringOption];
 			
-			for(String requirement: optionRequirements) {
-				String optionID;
-				SettingModel setting;
+			for(String requiredSettingID: requiredSettingIDs) {
+				SettingModel requiredSetting;
 			
-				setting = getConfiguration().getSetting(requirement);
-				optionID = optionIDs[option];
-				setting.addRequiredBy(optionID, requirement);
+				requiredSetting = getConfiguration().getSetting(requiredSettingID);
+				requiredSetting.addRequiredBy(requiringOptionID, requiredSettingID);
+				requiredSettingsByOption[requiringOption].add(requiredSetting);
 				
-				if(option == currentOption)
-					setting.requiringSettingIsActive(requirement);
-				else
-					setting.requiringSettingIsInactive(requirement);
+				if(requiredSetting instanceof ChoiceModel) {
+					ChoiceModel requiredChoice;
+					int requiredOption;
+					
+					requiredChoice = (ChoiceModel)requiredSetting;
+					requiredOption = requiredChoice.getOption(requiredSettingID);
+					requiredOptionsByOption[requiringOption].add(requiredOption);
+				}
+				else {
+					requiredOptionsByOption[requiringOption].add(-1);
+				}
 			}
+			
+			notifyRequiredSettings(requiringOption, currentOption == requiringOption);
 		}
 	}
 	
-	synchronized boolean checkNoOtherRequiringOptions(final String optionID) {
-		int option;
-		
-		option = idOptions.get(optionID);
-		
-		for(int i = 0; i < optionIDs.length; i++)
-			if(i != option)
-				if(activeRequiringSettings[i] > 0)
-					return false;
-		
-		return true;
-	}
-	
-	@Override
-	synchronized void requiringSettingIsActive(final String requirement) {
-		int requiredOption;
-		
-		requiredOption = idOptions.get(requirement);
-		
+	synchronized void requiringSettingIsActive(final int requiredOption) {
 		if(activeRequiringSettings[requiredOption] == 0) {
-			for(int i = 0; i < optionIDs.length; i++)
+			setCurrentOption(requiredOption);
+			
+			for(int i = 0; i < optionCount; i++)
 				if(i != requiredOption)
 					setDisabled(i);
 		}
@@ -269,53 +269,95 @@ public abstract class ChoiceModel extends SettingModel {
 		activeRequiringSettings[requiredOption] = activeRequiringSettings[requiredOption] + 1;
 	}
 
-	@Override
-	synchronized void requiringSettingIsInactive(final String requirement) {
-		int requiredOption;
+	synchronized void requiringSettingIsInactive(final int requiredOption) {
+		activeRequiringSettings[requiredOption] = activeRequiringSettings[requiredOption] -1;
 		
-		requiredOption = idOptions.get(requirement);
+		if(activeRequiringSettings[requiredOption] == 0)
+			for(int i = 0; i < option2ID.length; i++)
+				if(i != requiredOption)
+					setEnabled(i);
+	}
+	
+	synchronized void notifyRequiringSettings(final int requiredOption, final boolean active) {
+		List<ChoiceModel> currentRequiringChoices;
+		List<Integer> currentRequiringOptions;
 		
-		if(activeRequiringSettings[requiredOption] > 0) {
-			activeRequiringSettings[requiredOption] = activeRequiringSettings[requiredOption] -1;
+		currentRequiringChoices = requiringChoices[requiredOption];
+		currentRequiringOptions = requiringOptions[requiredOption];
+		
+		for(int i = 0; i < currentRequiringChoices.size(); i++) {
+			ChoiceModel requiringChoice;
+			int requiringOption;
 			
-			if(activeRequiringSettings[requiredOption] == 0)
-				for(int i = 0; i < optionIDs.length; i++)
-					if(i != requiredOption)
-						if(enabledRequiredSettings[requiredOption] > 1)
-							setEnabled(i);
+			requiringChoice = currentRequiringChoices.get(i);
+			requiringOption = currentRequiringOptions.get(i);
+			
+			if(active)
+				requiringChoice.requiredSettingIsActive(requiringOption);
+			else
+				requiringChoice.requiredSettingIsInactive(requiringOption);
 		}
 	}
 	
-	synchronized void requiredSettingIsEnabled(final String requirement) {
-		int requiredOption;
-		
-		requiredOption = idOptions.get(requirement);
-		enabledRequiredSettings[requiredOption] = enabledRequiredSettings[requiredOption] + 1;
-
-		if(enabledRequiredSettings[requiredOption] > 1)
+	synchronized void requiredSettingIsActive(final int requiredOption) {
+		if(enabledRequiredSettings[requiredOption] == 0)
 			setEnabled(requiredOption);
+
+		enabledRequiredSettings[requiredOption] = enabledRequiredSettings[requiredOption] + 1;
 	}
 	
-	synchronized boolean requiredSettingIsDisabled(final String requirement) {
-		int requiredOption;
-		
-		requiredOption = idOptions.get(requirement);
+	synchronized void requiredSettingIsInactive(final int requiredOption) {
 		enabledRequiredSettings[requiredOption] = enabledRequiredSettings[requiredOption] - 1;
 
-		if(enabledRequiredSettings[requiredOption] == 0) {
-			if(activeRequiringSettings[requiredOption] > 0)
-				return false;
-			
+		if(enabledRequiredSettings[requiredOption] == 0)
 			setDisabled(requiredOption);
-		}
+	}
+	
+	synchronized void notifyRequiredSettings(final int requiringOption, final boolean active) {
+		List<SettingModel> requiredSettings;
+		List<Integer> requiredOptions;
 		
-		return true;
+		requiredSettings = requiredSettingsByOption[requiringOption];
+		requiredOptions = requiredOptionsByOption[requiringOption];
+		
+		for(int i = 0; i < requiredSettings.size(); i++) {
+			SettingModel setting;
+			
+			setting = requiredSettings.get(i);
+			
+			if(setting instanceof BooleanModel) {
+				BooleanModel booleanModel;
+				
+				booleanModel = (BooleanModel)setting;
+
+				if(active)
+					booleanModel.requiringSettingIsActive();
+				else
+					booleanModel.requiringSettingIsInactive();
+			}
+			else if(setting instanceof ChoiceModel) {
+				ChoiceModel choiceModel;
+				int option;
+				
+				choiceModel = (ChoiceModel)setting;
+				option = requiredOptions.get(i);
+				
+				if(active)
+					choiceModel.requiringSettingIsActive(option);
+				else
+					choiceModel.requiringSettingIsInactive(option);
+			}
+			else {
+				throw new Error("Unsupported SettingModel type.");
+			}
+		}
 	}
 	
 	abstract void setEnabled(int option);
 	abstract void setDisabled(int option);
+	abstract boolean isDisabled(int option);
 	
-	int getOptionCount() {
-		return optionIDs.length;
+	Integer getOption(final String id) {
+		return id2Option.get(id);
 	}
 }

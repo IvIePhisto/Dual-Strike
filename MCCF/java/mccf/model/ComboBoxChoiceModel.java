@@ -27,7 +27,7 @@ public class ComboBoxChoiceModel extends ChoiceModel implements ActionListener {
 		
 		selectedIndex = comboBox.getSelectedIndex();
 
-		if(listCellRenderer.getItemDisabled(selectedIndex)) {
+		if(listCellRenderer.isItemDisabled(selectedIndex)) {
 			comboBox.setSelectedIndex(getCurrentOption());
 		}
 		else {
@@ -49,11 +49,16 @@ public class ComboBoxChoiceModel extends ChoiceModel implements ActionListener {
 
 	@Override
 	synchronized void setEnabled(final int option) {
-		listCellRenderer.setItemDisabled(option, false);
+		listCellRenderer.setItemEnabled(option);
 	}
 
 	@Override
 	synchronized void setDisabled(final int option) {
-		listCellRenderer.setItemDisabled(option, true);
+		listCellRenderer.setItemDisabled(option);
+	}
+
+	@Override
+	synchronized boolean isDisabled(final int option) {
+		return listCellRenderer.isItemDisabled(option);
 	}
 }

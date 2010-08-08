@@ -75,4 +75,9 @@ public class RadioButtonsChoiceModel extends ChoiceModel  implements ActionListe
 	synchronized void setDisabled(final int option) {
 		buttonModels[option].setEnabled(false);
 	}
+
+	@Override
+	synchronized boolean isDisabled(final int option) {
+		return !buttonModels[option].isEnabled();
+	}
 }

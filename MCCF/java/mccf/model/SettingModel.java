@@ -25,8 +25,6 @@ public abstract class SettingModel {
 	abstract void saveBytes(byte[] bytes);
 	abstract void initConstraints();
 	abstract void addRequiredBy(String source, String requirement);
-	abstract void requiringSettingIsInactive(String requirement);
-	abstract void requiringSettingIsActive(String requirement);
 	
 	ConfigurationModel getConfiguration() {
 		return configuration;

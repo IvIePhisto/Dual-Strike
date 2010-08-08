@@ -16,7 +16,8 @@ public class BooleanModel extends SettingModel implements ActionListener {
 	private final JRadioButton disableButton;
 	private boolean value;
 	private final String id;
-	private final List<String> requiredBySettings = new Vector<String>();
+	private final List<ChoiceModel> requiringChoices = new Vector<ChoiceModel>();
+	private final List<Integer> requiringOptions = new Vector<Integer>();
 	private int activeRequiringSettings = 0;
 	
 	BooleanModel(final ConfigurationModel configuration, final BooleanSetting booleanSetting, final JRadioButton enableButton, final JRadioButton disableButton) {
@@ -76,19 +77,24 @@ public class BooleanModel extends SettingModel implements ActionListener {
 
 	@Override
 	synchronized void addRequiredBy(final String source, final String target) {
-		requiredBySettings.add(source);
-	}
+		ChoiceModel requiringChoice;
+		int requiringOption;
+		
+		requiringChoice = (ChoiceModel)getConfiguration().getSetting(source);
+		requiringOption = requiringChoice.getOption(source);
+		requiringChoices.add(requiringChoice);
+		requiringOptions.add(requiringOption);
+
+		if(value)
+			requiringChoice.requiredSettingIsActive(requiringOption);
+		else
+			requiringChoice.requiredSettingIsInactive(requiringOption);	}
 
 	@Override
 	void initConstraints() {
 	}
 	
-	boolean checkNoOtherRequiringOptions(final String optionID) {
-		return true;
-	}
-	
-	@Override
-	synchronized void requiringSettingIsActive(final String requirement) {
+	synchronized void requiringSettingIsActive() {
 		if(activeRequiringSettings == 0) {
 			setValue(true);
 			disableButton.setEnabled(false);
@@ -97,33 +103,27 @@ public class BooleanModel extends SettingModel implements ActionListener {
 		activeRequiringSettings++;
 	}
 
-	@Override
-	synchronized void requiringSettingIsInactive(final String requirement) {
-		if(activeRequiringSettings > 0) {
+	synchronized void requiringSettingIsInactive() {
+		if(activeRequiringSettings != 0) {
 			activeRequiringSettings--;
 			
-			if(activeRequiringSettings == 0) {
+			if(activeRequiringSettings == 0)
 				disableButton.setEnabled(true);
-			}
 		}
 	}
 
-	synchronized void requiringSettings() {
-		for(String requiredBySettingID: requiredBySettings) {
-			checkNoOtherRequiringOptions(requiredBySettingID);
-		}
-	}
-	
 	synchronized void notifyRequiringSettings() {
-		for(String requiredBySettingID: requiredBySettings) {
-			ChoiceModel requiredBySetting;
+		for(int i = 0; i < requiringChoices.size(); i++) {
+			ChoiceModel requiringChoice;
+			int requiringOption;
 			
-			requiredBySetting = (ChoiceModel)getConfiguration().getSetting(requiredBySettingID);
+			requiringChoice = requiringChoices.get(i);
+			requiringOption = requiringOptions.get(i);
 			
 			if(value)
-				requiredBySetting.requiredSettingIsEnabled(requiredBySettingID);
+				requiringChoice.requiredSettingIsActive(requiringOption);
 			else
-				requiredBySetting.requiredSettingIsDisabled(requiredBySettingID);
+				requiringChoice.requiredSettingIsInactive(requiringOption);
 		}
 	}
 }
