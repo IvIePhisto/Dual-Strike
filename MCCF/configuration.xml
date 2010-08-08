@@ -58,7 +58,6 @@
         <help>The pass-through data connections are routed to the USB data connections on the Dual Strike PCB.</help>
         <help lang="de">Die Durschleif-Datenanschlüsse werden auf die USB Datenanschlüsse des Dual Strike PCB geleitet.</help>
         <requires>PT_ENABLED</requires>
-        <requires>FOO</requires>
       </option>
     </choice>
     
@@ -113,19 +112,6 @@
         <title lang="de">Rechter Analoger Stick</title>
         <help>The joystick works as a right analogue joystick.</help>
         <help lang="de">Der Joystick arbeitet als ein rechter analoger Stick.</help>
-        <requires>BAR</requires>
-      </option>
-    </choice>
-
-    <choice default="FOO">
-      <title>Blubb</title>
-      
-      <option id="FOO">
-        <title>Foo</title>
-      </option>
-      
-      <option id="BAR">
-        <title>Bar</title>
       </option>
     </choice>
   </page>
