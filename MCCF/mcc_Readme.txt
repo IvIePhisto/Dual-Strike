@@ -34,12 +34,13 @@ the directory this file resides in.
 
 Version History
 ~~~~~~~~~~~~~~~
-1.1.0 - added defaults loading for current tab
+1.1.0 - added disabling of load/save controls if no connection to device
       - added "requires" constraint
+      - added defaults loading for current tab
       - appeareance changes
       - fixed default setter bug
       - fixed choice byte splitting bugs
-	    - changed "HID Programmer" to "HID EEPROM Programmer" removing flash
-	      writing support
+      - changed "HID Programmer" to "HID EEPROM Programmer" removing flash
+        writing support
       
 1.0.1 - fixed choice bits reading bug

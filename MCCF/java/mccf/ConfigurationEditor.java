@@ -182,6 +182,7 @@ public class ConfigurationEditor implements HyperlinkListener {
 	private final FileHandler fileHandler;
 	private final JFrame window;
 	private final StatusClearer statusClearer;
+	private final List<JComponent> connectionDependingComponents = new LinkedList<JComponent>();
 
 	private JPanel glassPanel;
 	private JLabel statusLabel;
@@ -310,12 +311,14 @@ public class ConfigurationEditor implements HyperlinkListener {
 		menuItem.setIcon(IconHandler.getIcon("load", null, 16, null));
 		menu.add(menuItem);
 		actionListenerHandler.registerAction(menuItem, "load");
+		connectionDependingComponents.add(menuItem);
 
 		menuItem = new JMenuItem(MessageHelper.get(this, "saveMenuItemName"));
 		menuItem.setToolTipText(MessageHelper.get(this, "saveHelp"));
 		menuItem.setIcon(IconHandler.getIcon("save", null, 16, null));
 		menu.add(menuItem);
 		actionListenerHandler.registerAction(menuItem, "save");
+		connectionDependingComponents.add(menuItem);
 
 		menu.addSeparator();
 		menuItem = new JMenuItem(MessageHelper.get(this, "defaultsMenuItemName"));
@@ -364,12 +367,14 @@ public class ConfigurationEditor implements HyperlinkListener {
 		button.setIcon(IconHandler.getIcon("load", MessageHelper.get(this, "loadButtonTitle"), 22, null));
 		toolBar.add(button);
 		actionListenerHandler.registerAction(button, "load");
+		connectionDependingComponents.add(button);
 		
 		button = new JButton();
 		button.setToolTipText(MessageHelper.get(this, "saveHelp"));
 		button.setIcon(IconHandler.getIcon("save", MessageHelper.get(this, "saveButtonTitle"), 22, null));
 		toolBar.add(button);
 		actionListenerHandler.registerAction(button, "save");
+		connectionDependingComponents.add(button);
 		
 		toolBar.addSeparator();
 		button = new JButton();
@@ -431,7 +436,7 @@ public class ConfigurationEditor implements HyperlinkListener {
 		connectionStatusPanel = new JPanel();
 		connectionStatusPanel.add(connectedLabel);
 		connectionStatusPanel.add(disconnectedLabel);
-		connectionChecker = new ConnectionChecker(connectedLabel, disconnectedLabel);
+		connectionChecker = new ConnectionChecker(connectedLabel, disconnectedLabel, connectionDependingComponents);
 		statusLabel = new JLabel(" ", JLabel.LEFT);
 		statusLabel.setBorder(BorderFactory.createEmptyBorder(1, 4, 1, 4));
 		statusLabel.setFont(DESCRIPTION_FONT);
