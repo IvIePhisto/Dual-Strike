@@ -153,6 +153,7 @@ static uchar metaPressed;
 static uchar metaWasPressed = 0;
 static uchar metaWasUsed = 0;
 static uchar metaReleased = 0;
+static uint startCount = 0;
 
 static uchar mameControl = 0;
 static uchar mamePlayer = 1;
@@ -269,9 +270,9 @@ void setMAMEReportPlayer1() {
 			MAME_SET_BUTTON(1, MAME_4P)
 	#endif
 
-		if(metaReleased) {
+		if(startCount > 0) {
+			startCount--;
 			MAME_REPORT_1
-			metaReleased = 0;
 		}
 
 		if(!Stick_Select)
@@ -319,9 +320,9 @@ void setMAMEReportPlayer2() {
 		MAME_SET_BUTTON(2, MAME_4P)
 #endif
 
-	if(metaReleased) {
+	if(startCount > 0) {
+		startCount--;
 		MAME_REPORT_2
-		metaReleased = 0;
 	}
 
 	if(!Stick_Select)
@@ -359,9 +360,9 @@ void setMAMEReportsControl() {
 	if(!Stick_MK)
 		MAME_REPORT_F3
 
-	if(metaReleased) {
+	if(startCount > 0) {
+		startCount--;
 		MAME_REPORT_TAB
-		metaReleased = 0;
 	}
 
 	if(!Stick_Select)
@@ -487,70 +488,81 @@ void configureMAMEButtonMappings() {
 void sendMAMEReports() {	
 	resetMAMEReports();
 
-	metaReleased = 0;
-	metaPressed = !Stick_Start;
+	if(startCount == 0) {
+		metaReleased = 0;
+		metaPressed = !Stick_Start;
 
-	if(metaPressed) {
-		metaWasPressed = 1;
+		if(metaPressed) {
+			metaWasPressed = 1;
 
-		/*if(!Stick_MP) {
-			configureMAMEButtonMappings();
-			metaWasUsed = 1;
-			return;
-		}
-		else */if(!Stick_LP) {
-			if(!Stick_Up) {
-				buttonMapping = buttonMapping1;
-				currentButtonMappingNo = 1;
+			/*if(!Stick_MP) {
+				configureMAMEButtonMappings();
 				metaWasUsed = 1;
+				return;
 			}
-			else if(!Stick_Right) {
-				buttonMapping = buttonMapping2;
-				currentButtonMappingNo = 2;
+			else */if(!Stick_LP) {
+				if(!Stick_Up) {
+					buttonMapping = buttonMapping1;
+					currentButtonMappingNo = 1;
+					metaWasUsed = 1;
+				}
+				else if(!Stick_Right) {
+					buttonMapping = buttonMapping2;
+					currentButtonMappingNo = 2;
+					metaWasUsed = 1;
+				}
+				else if(!Stick_Down) {
+					buttonMapping = buttonMapping3;
+					currentButtonMappingNo = 3;
+					metaWasUsed = 1;
+				}
+				else if(!Stick_Left) {
+					buttonMapping = buttonMapping4;
+					currentButtonMappingNo = 4;
+					metaWasUsed = 1;
+				}
+			}
+			else if(!Stick_Up) {
+				mameControl = 0;
 				metaWasUsed = 1;
+				startCount = 0;
 			}
 			else if(!Stick_Down) {
-				buttonMapping = buttonMapping3;
-				currentButtonMappingNo = 3;
+				mameControl = 1;
 				metaWasUsed = 1;
+				startCount = 0;
 			}
-			else if(!Stick_Left) {
-				buttonMapping = buttonMapping4;
-				currentButtonMappingNo = 4;
-				metaWasUsed = 1;
-			}
-		}
-		else if(!Stick_Up) {
-			mameControl = 0;
-			metaWasUsed = 1;
-		}
-		else if(!Stick_Down) {
-			mameControl = 1;
-			metaWasUsed = 1;
-		}
 	
-		if(!mameControl) {
-			if(!Stick_Left) {
-				mamePlayer = 1;
-				metaWasUsed = 1;
-			}
-			else if(!Stick_Right) {
-				mamePlayer = 2;
-				metaWasUsed = 1;
+			if(!mameControl) {
+				if(!Stick_Left) {
+					mamePlayer = 1;
+					metaWasUsed = 1;
+					startCount = 0;
+				}
+				else if(!Stick_Right) {
+					mamePlayer = 2;
+					metaWasUsed = 1;
+					startCount = 0;
+				}
 			}
 		}
-	}
 
-	if(metaWasUsed) {
-		if(!metaPressed) {
-			metaWasUsed = 0;
-			metaWasPressed = 0;
+		if(metaWasUsed) {
+			if(!metaPressed) {
+				metaWasUsed = 0;
+				metaWasPressed = 0;
+			}
 		}
-	}
-	else {
-		if(!metaPressed && metaWasPressed) {
-			metaWasPressed = 0;
-			metaReleased = 1;
+		else {
+			if(!metaPressed && metaWasPressed) {
+				metaWasPressed = 0;
+				metaReleased = 1;
+			}
+		}
+
+		if(metaReleased) {
+			startCount = 1000;
+			metaReleased = 0;
 		}
 	}
 
