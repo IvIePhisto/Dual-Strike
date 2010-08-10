@@ -189,7 +189,7 @@ Damit funkionieren die entsprechenden Buttons mit Active-High Trigger PCBs.</hel
   <page>
     <title>MAME Button Layout 1</title>
     <title lang="de">MAME Button Anordnung 1</title>
-    <help>The MAME button layout number 1. It is selected in MAME mode by pressing Select, LP and joystick up.</help>
+    <help>The MAME button layout number 1. It is selected in MAME mode by pressing Select, LK and joystick up.</help>
     <help lang="de">Die MAME Button Anordnung Nummer 1. Sie wird im MAME Modus durch drücken von Select, LK und Joystick hoch aktiviert.</help>
 
     <choice default="MAME_BL1_LK_BUTTON3">
@@ -460,7 +460,7 @@ Damit funkionieren die entsprechenden Buttons mit Active-High Trigger PCBs.</hel
   <page>
     <title>MAME Button Layout 2</title>
     <title lang="de">MAME Button Anordnung 2</title>
-    <help>The MAME button layout number 2. It is selected in MAME mode by pressing Select, LP and joystick right.</help>
+    <help>The MAME button layout number 2. It is selected in MAME mode by pressing Select, LK and joystick right.</help>
     <help lang="de">Die MAME Button Anordnung Nummer 2. Sie wird im MAME Modus durch drücken von Select, LK und Joystick rechts aktiviert.</help>
 
     <choice default="MAME_BL2_LK_BUTTON4">
@@ -731,7 +731,7 @@ Damit funkionieren die entsprechenden Buttons mit Active-High Trigger PCBs.</hel
   <page>
     <title>MAME Button Layout 3</title>
     <title lang="de">MAME Button Anordnung 3</title>
-    <help>The MAME button layout number 3. It is selected in MAME mode by pressing Select, LP and joystick down.</help>
+    <help>The MAME button layout number 3. It is selected in MAME mode by pressing Select, LK and joystick down.</help>
     <help lang="de">Die MAME Button Anordnung Nummer 3. Sie wird im MAME Modus durch drücken von Select, LK und Joystick runter aktiviert.</help>
 
     <choice default="MAME_BL3_LK_BUTTON5">
@@ -1002,7 +1002,7 @@ Damit funkionieren die entsprechenden Buttons mit Active-High Trigger PCBs.</hel
   <page>
     <title>MAME Button Layout 4</title>
     <title lang="de">MAME Button Anordnung 4</title>
-    <help>The MAME button layout number 4. It is selected in MAME mode by pressing Select, LP and joystick left.</help>
+    <help>The MAME button layout number 4. It is selected in MAME mode by pressing Select, LK and joystick left.</help>
     <help lang="de">Die MAME Button Anordnung Nummer 4. Sie wird im MAME Modus durch drücken von Select, LK und Joystick links aktiviert.</help>
 
     <choice default="MAME_BL4_LK_BUTTON4">
