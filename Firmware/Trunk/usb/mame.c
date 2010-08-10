@@ -590,6 +590,12 @@ void sendMAMEReports() {
 
 void mame_controller() {
 	usbMode = USB_MODE_MAME;
+
+	if(CFG_MAME_DEFAULT_PLAYER_1)
+		mamePlayer = 1;
+	else
+		mamePlayer = 2;
+	
 	setupUSB();
 	usbPoll();
 	initMAMEReports();

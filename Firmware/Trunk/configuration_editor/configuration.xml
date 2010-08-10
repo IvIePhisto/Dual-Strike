@@ -114,6 +114,21 @@
         <help lang="de">Der Joystick arbeitet als ein rechter analoger Stick.</help>
       </option>
     </choice>
+	
+	<choice default="MAME_DEFAULT_PLAYER_1">
+		<title>MAME Default Player</title>
+		<title lang="de">MAME Standard Spieler</title>
+		<help>The player which is selected in MAME mode after turning on/plugging in the Dual Strike.</help>
+		<help lang="de">Der Spieler welcher im MAME Modus ausgewählt ist, nachdem das Dual Strike angeschaltet/eingesteckt wurde.</help>
+		<option id="MAME_DEFAULT_PLAYER_1">
+			<title>Player 1</title>
+			<title lang="de">Spieler 1</title>
+		</option>
+		<option id="MAME_DEFAULT_PLAYER_2">
+			<title>Player 2</title>
+			<title lang="de">Spieler 2</title>
+		</option>
+	</choice>
   </page>
   
   <page>
