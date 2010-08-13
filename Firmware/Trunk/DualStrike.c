@@ -218,8 +218,8 @@ int setModePT() {
 		SET_HOME_OUTPUT
 
 	if(CFG_JOYSTICK_SWITCH_EMU || CFG_INVERTED_TRIGGERS) {
-		DDRD |= (1<<4); // pin S3 is output
-		DDRC |= (1<<6); // pin S4 is output
+        PORTD &= ~(1<<4); // pin S3 is low	
+        PORTC &= ~(1<<6); // pin S4 is low
 	}
 
 	disconnectUSB();

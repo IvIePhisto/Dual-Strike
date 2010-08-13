@@ -8,16 +8,22 @@ extern uint8_t config[2];
 void pass_through() {
     if(CFG_JOYSTICK_SWITCH_EMU) {	
         if(CFG_LEFT_STICK) {
+            PORTC |= (1<<6);  // pin S4 is high
             PORTD &= ~(1<<4); // pin S3 is low	
-            PORTC |= (1<<6); // pin S4 is high
+			DDRD |= (1<<4);   // pin S3 is output
+			DDRC |= (1<<6);   // pin S4 is output
         }
         else if(CFG_RIGHT_STICK) {
-            PORTD |= (1<<4); // pin S3 is high	
+            PORTD |= (1<<4);  // pin S3 is high	
             PORTC &= ~(1<<6); // pin S4 is low
+			DDRD |= (1<<4);   // pin S3 is output
+			DDRC |= (1<<6);   // pin S4 is output
         }
         else if(CFG_DIGITAL_PAD) {
-            PORTD |= (1<<4); // pin S3 is high	
-            PORTC |= (1<<6); // pin S4 is high
+			DDRD &= ~(1<<4);  // pin S3 is input
+			DDRC &= ~(1<<6);  // pin S4 is input
+            PORTD &= ~(1<<4); // pin S3 is low	
+            PORTC &= ~(1<<6); // pin S4 is low
         }
     }
 
