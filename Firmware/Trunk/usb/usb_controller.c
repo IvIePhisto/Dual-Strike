@@ -181,19 +181,17 @@ usbMsgLen_t usbFunctionSetup(uchar receivedData[8]) {
 		/*
 	    if((rq->bmRequestType & USBRQ_TYPE_MASK) == USBRQ_TYPE_CLASS) {    // class request
 			if(rq->bRequest == USBRQ_HID_GET_REPORT) {
-		        if(reportID == EEPROM_SIZE_QUERY_REPORT_ID) {
-					usbMsgPtr = data.array;
+				usbMsgPtr = data.array;
 
-					return 20;
-				}
+				return 20;
 			}
 		}
-		else*/ if ((rq-> bmRequestType & USBRQ_TYPE_MASK) == USBRQ_TYPE_VENDOR) {
+		else*/
+		if ((rq-> bmRequestType & USBRQ_TYPE_MASK) == USBRQ_TYPE_VENDOR) {
 			if(rq->bRequest == 0x06) {
-
 				usbMsgPtr = &data.array[20];
 
-				return 16;
+				return 16; // originally 16
 			}
 		}
 	}

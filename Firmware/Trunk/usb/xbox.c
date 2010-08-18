@@ -3,25 +3,25 @@
 */
 
 void initDataXBox() {
+	data.array[0] = 0;
 	data.array[1] = 20; // size of report
 
 	// Vendor Request data
-	data.array[20] = 16;
-	data.array[21] = 66;
-	data.array[22] = 0;
-	data.array[23] = 1;
-	data.array[24] = 1;
-	data.array[25] = 2;
-	data.array[26] = 20;
-	data.array[27] = 6;
+	data.array[20] = 16; //  16 - length of this report?
+	data.array[21] = 66; //  66 - USB interface subclass?
+	data.array[22] = 0;  //  0
+	data.array[23] = 1;  //  1 - needs to be greater than 1
+	data.array[24] = 1;  //  1 - needed exactly
+	data.array[25] = 0;  //  2 - no known effect
+	data.array[26] = 8;  // 20 - must be less or equal than max packet size for report endpoint
+	data.array[27] = 0;  //  6 - no known effect
+
 	for(int i = 8; i < 16; i++)
 		data.array[20 + i] = 0xFF;
 
 }
 
 void resetDataXBox() {
-	// buttons
-	data.array[0] =
 	data.array[2] =
 	data.array[3] =
 	data.array[4] =
@@ -151,12 +151,12 @@ void xbox_controller() {
 	setupUSB();
 	initDataXBox();
 	resetDataXBox();
-	sendDataUSB3(data.array, 20);
+	//sendDataUSB3(data.array, 20);
 
     while(1) { /* main event loop */
 		usbPoll();
 		readJoystickSwitch();
         readInputXBox();
-		sendDataUSB3(data.array, 20);
+		sendDataUSB(data.array, 20);
     }
 }
