@@ -151,7 +151,6 @@ void readInputPS3() {
 void ps3_controller() {
 	usbMode = USB_MODE_PS3;
 	setupUSB();
-	usbPoll();
 	resetPS3ReportBuffer();
 	sendDataUSB(data.array, 16);
 

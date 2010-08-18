@@ -178,6 +178,7 @@ usbMsgLen_t usbFunctionSetup(uchar receivedData[8]) {
 		break;
 
 	case USB_MODE_XBOX:
+		/*
 	    if((rq->bmRequestType & USBRQ_TYPE_MASK) == USBRQ_TYPE_CLASS) {    // class request
 			if(rq->bRequest == USBRQ_HID_GET_REPORT) {
 		        if(reportID == EEPROM_SIZE_QUERY_REPORT_ID) {
@@ -187,7 +188,7 @@ usbMsgLen_t usbFunctionSetup(uchar receivedData[8]) {
 				}
 			}
 		}
-		else if ((rq-> bmRequestType & USBRQ_TYPE_MASK) == USBRQ_TYPE_VENDOR) {
+		else*/ if ((rq-> bmRequestType & USBRQ_TYPE_MASK) == USBRQ_TYPE_VENDOR) {
 			if(rq->bRequest == 0x06) {
 
 				usbMsgPtr = &data.array[20];
@@ -274,15 +275,15 @@ void sendDataUSB(uchar* data, unsigned int byteCount) {
 		if(currentCount > 8)
 			currentCount = 8;
 
-		usbSetInterrupt(data + currentByte, currentCount*sizeof(uchar));
-		currentByte += currentCount;
-		
 		while(!usbInterruptIsReady())
 			usbPoll();
+
+		usbSetInterrupt(data + currentByte, currentCount*sizeof(uchar));
+		currentByte += currentCount;		
 	}
 }
 
-void sendDataUSBInterrupt3(uchar* data, unsigned int byteCount) {
+void sendDataUSB3(uchar* data, unsigned int byteCount) {
 	int currentByte;
 	int currentCount;
 
@@ -294,11 +295,11 @@ void sendDataUSBInterrupt3(uchar* data, unsigned int byteCount) {
 		if(currentCount > 8)
 			currentCount = 8;
 
-		usbSetInterrupt3(data + currentByte, currentCount*sizeof(uchar));
-		currentByte += currentCount;
-
 		while(!usbInterruptIsReady3())
 			usbPoll();
+
+		usbSetInterrupt3(data + currentByte, currentCount*sizeof(uchar));
+		currentByte += currentCount;
 	}
 }
 

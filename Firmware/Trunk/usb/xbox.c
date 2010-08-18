@@ -151,11 +151,12 @@ void xbox_controller() {
 	setupUSB();
 	initDataXBox();
 	resetDataXBox();
+	sendDataUSB3(data.array, 20);
 
     while(1) { /* main event loop */
 		usbPoll();
 		readJoystickSwitch();
         readInputXBox();
-		sendDataUSBInterrupt3(data.array, 20);
+		sendDataUSB3(data.array, 20);
     }
 }
