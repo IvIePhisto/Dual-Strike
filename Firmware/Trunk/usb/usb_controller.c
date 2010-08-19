@@ -189,6 +189,18 @@ usbMsgLen_t usbFunctionSetup(uchar receivedData[8]) {
 		else*/
 		if ((rq-> bmRequestType & USBRQ_TYPE_MASK) == USBRQ_TYPE_VENDOR) {
 			if(rq->bRequest == 0x06) {
+				/*
+				receivedData == { 0xc1, 0x06, 0x00, 0x42, 0x00, 0x00, 0x10, 0x00 }
+				means:
+				-bmRequestType:
+				 +direction: device to host
+				 +type:      vendor
+				 +recipient: interface
+				-request: 0x06
+				-wValue:  0, 0x42
+				-wIndex:  0, 0
+				-wLength: 16
+				*/
 				usbMsgPtr = &data.array[20];
 
 				return 16; // originally 16

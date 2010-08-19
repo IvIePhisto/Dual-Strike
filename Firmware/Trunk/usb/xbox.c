@@ -4,17 +4,17 @@
 
 void initDataXBox() {
 	data.array[0] = 0;
-	data.array[1] = 20; // size of report
+	data.array[1] = 20; // size of report?
 
 	// Vendor Request data
-	data.array[20] = 16; //  16 - length of this report?
-	data.array[21] = 66; //  66 - USB interface subclass?
-	data.array[22] = 0;  //  0
-	data.array[23] = 1;  //  1 - needs to be greater than 1
-	data.array[24] = 1;  //  1 - needed exactly
-	data.array[25] = 0;  //  2 - no known effect
-	data.array[26] = 8;  // 20 - must be less or equal than max packet size for report endpoint
-	data.array[27] = 0;  //  6 - no known effect
+	data.array[20] = 16; // 16 - must be greater than 7, length of this report?
+	data.array[21] = 66; // 66 - needed, USB interface subclass?
+	data.array[22] = 0;  //  0 - needed, USB interface protocol?
+	data.array[23] = 1;  //  1 - must be greater than 0, number of interfaces?
+	data.array[24] = 1;  //  1 - needed, configuration index?
+	data.array[25] = 2;  //  2 - must be greater than 0, number of endpoints?
+	data.array[26] = 8;  // 20 - must be less or equal than max packet size for in endpoint, in report size?
+	data.array[27] = 6;  //  6 - must be less or equal than max packet size for out endpoint, out report size?
 
 	for(int i = 8; i < 16; i++)
 		data.array[20 + i] = 0xFF;
@@ -146,13 +146,14 @@ void readInputXBox() {
 		XBOX_BACK
 }
 
+#define nop()  __asm__ __volatile__("nop")
+
 void xbox_controller() {
 	usbMode = USB_MODE_XBOX;
 	setupUSB();
 	initDataXBox();
 	resetDataXBox();
-	//sendDataUSB3(data.array, 20);
-
+	
     while(1) { /* main event loop */
 		usbPoll();
 		readJoystickSwitch();
