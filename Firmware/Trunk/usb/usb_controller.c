@@ -203,7 +203,7 @@ usbMsgLen_t usbFunctionSetup(uchar receivedData[8]) {
 				*/
 				usbMsgPtr = &data.array[20];
 
-				return 16; // originally 16
+				return 16;
 			}
 		}
 	}

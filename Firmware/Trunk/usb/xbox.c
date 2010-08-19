@@ -3,8 +3,9 @@
 */
 
 void initDataXBox() {
-	data.array[0] = 0;
-	data.array[1] = 20; // size of report?
+	data.array[0] =  0;  //  0 - no effect, report ID?
+	data.array[1] = 20;  // 20 - no effect, size of report?
+	data.array[3] =  0;  //  0 - no effect
 
 	// Vendor Request data
 	data.array[20] = 16; // 16 - must be greater than 7, length of this report?
@@ -23,7 +24,6 @@ void initDataXBox() {
 
 void resetDataXBox() {
 	data.array[2] =
-	data.array[3] =
 	data.array[4] =
 	data.array[5] =
 	data.array[6] =
@@ -146,8 +146,6 @@ void readInputXBox() {
 		XBOX_BACK
 }
 
-#define nop()  __asm__ __volatile__("nop")
-
 void xbox_controller() {
 	usbMode = USB_MODE_XBOX;
 	setupUSB();
@@ -158,6 +156,12 @@ void xbox_controller() {
 		usbPoll();
 		readJoystickSwitch();
         readInputXBox();
-		sendDataUSB(data.array, 20);
+		while(!usbInterruptIsReady()) usbPoll();
+		usbSetInterrupt(data.array + 0, 8);
+		while(!usbInterruptIsReady()) usbPoll();
+		usbSetInterrupt(data.array + 8, 8);
+		while(!usbInterruptIsReady()) usbPoll();
+		usbSetInterrupt(data.array + 16, 4);
+		//sendDataUSB(data.array, 20);
     }
 }
