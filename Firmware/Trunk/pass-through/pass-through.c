@@ -22,17 +22,21 @@ void pass_through() {
         else if(CFG_DIGITAL_PAD) {
 			DDRD &= ~(1<<4);  // pin S3 is input
 			DDRC &= ~(1<<6);  // pin S4 is input
-            PORTD &= ~(1<<4); // pin S3 is low	
-            PORTC &= ~(1<<6); // pin S4 is low
+            PORTD |= (1<<4);  // pin S3 is high	
+            PORTC |= (1<<6);  // pin S4 is high
         }
     }
 
     while(1) {
         if(CFG_HOME_EMU) {
-            if((!Stick_Start) &&  (!Stick_Select))
-                SWITCH_HOME_LOW
-            else
-                SWITCH_HOME_HIGH
+            if((!Stick_Start) &&  (!Stick_Select)) {
+                HOME_PORT	&=  ~(1<<HOME_PIN); // make Home low
+				HOME_DDR	|=  (1<<HOME_PIN); // make Home output
+			}
+            else {
+				HOME_DDR	&=  ~(1<<HOME_PIN); // make Home input
+                HOME_PORT	|=  (1<<HOME_PIN); // make Home high
+			}
         }
 
         if(CFG_INVERTED_TRIGGERS) {

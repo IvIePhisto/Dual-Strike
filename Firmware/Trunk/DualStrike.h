@@ -33,14 +33,9 @@
 #define EXTRA_BUTTONS 1
 #endif
 
-#define Stick_Select		(PINC & (1<<1))
-#define Stick_Start			(PINC & (1<<0))
 
 #if DUAL_STRIKE_SMD
-	#define SET_HOME_OUTPUT DDRB	|=  (1<<5);
-	#define SWITCH_HOME_LOW PORTB	&= ~(1<<5);
-	#define SWITCH_HOME_HIGH PORTB	|=  (1<<5);
-	#define Stick_Home	(PINB & (1<<5))
+	#define HOME_PORT_NAME 	B
 
 	#define Stick_Up	(PINC & (1<<4))
 	#define Stick_Down	(PINC & (1<<5))
@@ -59,10 +54,7 @@
 		#define Stick_4K	(PINB & (1<<3))
 	#endif
 #else
-	#define SET_HOME_OUTPUT DDRC	|=  (1<<5);
-	#define SWITCH_HOME_LOW PORTC	&= ~(1<<5);
-	#define SWITCH_HOME_HIGH PORTC	|=  (1<<5);
-	#define Stick_Home	(PINC & (1<<5))
+	#define HOME_PORT_NAME 	C
 
 	#define Stick_Up	(PIND & (1<<6))
 	#define Stick_Down	(PIND & (1<<7))
@@ -81,6 +73,16 @@
 		#define Stick_4K	(PINC & (1<<4))
 	#endif
 #endif
+
+#define CONCAT_EVAL(start, end) start##end
+#define CONCAT(start, end) CONCAT_EVAL(start, end)
+
+#define HOME_PIN		5
+#define HOME_PORT		CONCAT(PORT, HOME_PORT_NAME)
+#define HOME_DDR		CONCAT(DDR, HOME_PORT_NAME)
+#define Stick_Home		(CONCAT(PIN, HOME_PORT_NAME) & (1<<HOME_PIN))
+#define Stick_Select	(PINC & (1<<1))
+#define Stick_Start		(PINC & (1<<0))
 
 void readJoystickSwitch();
 void readConfig(uint8_t newConfig[CONFIG_BYTE_WIDTH + 2]);

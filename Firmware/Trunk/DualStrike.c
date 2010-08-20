@@ -220,10 +220,7 @@ int setModeXBox() {
 }
 #endif
 
-int setModePT() {	
-	if(CFG_HOME_EMU)
-		SET_HOME_OUTPUT
-
+int setModePT() {
 	if(CFG_JOYSTICK_SWITCH_EMU || CFG_INVERTED_TRIGGERS) {
         PORTD &= ~(1<<4); // pin S3 is low	
         PORTC &= ~(1<<6); // pin S4 is low
