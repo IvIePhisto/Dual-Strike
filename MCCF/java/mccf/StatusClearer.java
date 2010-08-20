@@ -31,6 +31,8 @@ class StatusClearer {
 			}
 		};
 		
+		cleareanceThread.setDaemon(true);
+		
 		cleareanceThread.start();
 	}
 }

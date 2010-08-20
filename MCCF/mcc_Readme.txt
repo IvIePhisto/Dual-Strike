@@ -37,6 +37,7 @@ Version History
 1.1.0 - added disabling of load/save controls if no connection to device
       - added "requires" constraint
       - added defaults loading for current tab
+      - added support for application icon in different sizes
       - appeareance changes
       - fixed default setter bug
       - fixed choice byte splitting bugs
@@ -44,3 +45,5 @@ Version History
         writing support
       
 1.0.1 - fixed choice bits reading bug
+
+1.0.0 - initial release

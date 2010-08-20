@@ -134,16 +134,45 @@ public class ConfigurationEditor implements HyperlinkListener {
 		}
 	}
 
-	private static Image createApplicationImage(final String path) {
-		Image image;
+	private static List<Image> createApplicationImages(final String path) {
+		List<Image> images;
+		Image currentImage;
 		
-		if(path == null || path.equals(""))
-			image = IconHandler.getIcon("application", null, 64, null).getImage();
+		images = new LinkedList<Image>();
+		
+		if(path == null || path.equals("")) {
+			currentImage = IconHandler.getIcon("application", null, 64, null).getImage();
+			images.add(currentImage);
+			currentImage = IconHandler.getIcon("application", null, 22, null).getImage();
+			images.add(currentImage);
+			currentImage = IconHandler.getIcon("application", null, 16, null).getImage();
+			images.add(currentImage);
+		}
 		else {
-			image = createFileImageIcon(path).getImage();
+			int mainImageFileLastDot;
+			int nextImageNumber;
+			File currentImageFile;
+			File imageFilesDir;
+			String mainImageFileName;
+			String imageFilesPrefix;
+			String imageFilesPostfix;
+			
+			currentImageFile = new File(path);
+			imageFilesDir = currentImageFile.getParentFile();
+			mainImageFileName = currentImageFile.getName();
+			mainImageFileLastDot = mainImageFileName.lastIndexOf('.');
+			imageFilesPrefix = mainImageFileName.substring(0, mainImageFileLastDot);
+			imageFilesPostfix = mainImageFileName.substring(mainImageFileLastDot);
+			nextImageNumber = 1;
+			
+			do {
+				currentImage = createFileImageIcon(currentImageFile.getAbsolutePath()).getImage();
+				images.add(currentImage);
+				currentImageFile = new File(imageFilesDir, imageFilesPrefix + "_" + nextImageNumber++ + imageFilesPostfix);
+			} while(currentImageFile.exists());
 		}
 		
-		return image;
+		return images;
 	}
 
 	private static void makeDefault(final JComponent defaultSetting) {
@@ -203,7 +232,7 @@ public class ConfigurationEditor implements HyperlinkListener {
 		model = new ConfigurationModel(fileHandler, configuration);
 		mainTitle = getLocalizedInfo(configuration.getTitle(), false);
 		window = new JFrame(mainTitle);
-		window.setIconImage(createApplicationImage(configuration.getIconPath()));
+		window.setIconImages(createApplicationImages(configuration.getIconPath()));
 		actionListenerHandler = new ActionListenerHandler();
 		createGlassPanel();
 		registerActionHandlers();
@@ -832,16 +861,14 @@ public class ConfigurationEditor implements HyperlinkListener {
 	}
 
 	public void makeWindowInactive() {
-		window.setEnabled(false);
-		window.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 		window.getGlassPane().setVisible(true);
+		window.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 	}
 
 	public void makeWindowActive() {
-		window.getGlassPane().setVisible(false);
-		window.setCursor(null);
-		window.setEnabled(true);
 		window.requestFocus();
+		window.setCursor(null);
+		window.getGlassPane().setVisible(false);
 	}
 
 	public ConnectionChecker getConnectionChecker() {

@@ -19,7 +19,9 @@ public class ChoiceListCellRenderer extends DefaultListCellRenderer {
 		itemDisabledStatus = new boolean[helps.length];
 	}
 
-	public synchronized Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+	
+	
+	public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
 		JComponent component;
 		
 		component = (JComponent) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
@@ -40,15 +42,15 @@ public class ChoiceListCellRenderer extends DefaultListCellRenderer {
 		return component;
 	}
 	
-	public synchronized void setItemDisabled(final int index) {
+	public void setItemDisabled(final int index) {
 		itemDisabledStatus[index] = true;
 	}
 
-	public synchronized void setItemEnabled(final int index) {
+	public void setItemEnabled(final int index) {
 		itemDisabledStatus[index] = false;
 	}
 
-	public synchronized boolean isItemDisabled(final int index) {
+	public boolean isItemDisabled(final int index) {
 		return itemDisabledStatus[index];
 	}
 }

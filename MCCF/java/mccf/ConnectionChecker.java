@@ -31,7 +31,6 @@ public class ConnectionChecker {
 	
 	public synchronized void enable() {
 		enabled = true;
-		scheduleCheck();
 	}
 		
 	private synchronized void check() {
@@ -54,21 +53,26 @@ public class ConnectionChecker {
 						dependingComponent.setEnabled(false);
 				}
 			}
-			
-			scheduleCheck();
-		}		
+		}
 	}
 	
 	private void scheduleCheck() {
-		new Thread() {
+		Thread checkingThread;
+		
+		checkingThread = new Thread() {
 			@Override
 			public void run() {
 				try {
-					Thread.sleep(CHECKING_INTERVAL);
-					check();
+					while(true) {
+						Thread.sleep(CHECKING_INTERVAL);
+						check();	
+					}
 				}
 				catch(InterruptedException e) {}
 			}
-		}.start();
+		};
+		
+		checkingThread.setDaemon(true);
+		checkingThread.start();
 	}
 }
