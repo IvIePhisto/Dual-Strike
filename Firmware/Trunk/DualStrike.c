@@ -61,8 +61,11 @@ Down  = inverted triggers for pass-through
 
 #define WORKING_MODE_PT		0
 #define WORKING_MODE_PS3	1
+
+#if ATMEGA_NO == 168
 #define WORKING_MODE_MAME	2
 #define WORKING_MODE_XBOX	3
+#endif
 
 // declares config and config_EEPROM
 CFG_DECLARATION
@@ -153,12 +156,14 @@ void configInit() {
 				if(CFG_WORK_MODE_PS3_ENABLED && !Stick_Left) {
 					CFG_SET_DEF_WORK_MODE_PS3(newConfig)
 				}
+#if ATMEGA_NO == 168
 				else if(CFG_WORK_MODE_MAME_ENABLED && !Stick_Up) {
 					CFG_SET_DEF_WORK_MODE_MAME(newConfig)
 				}
 				else if(CFG_WORK_MODE_XBOX_ENABLED && !Stick_Right) {
 					CFG_SET_DEF_WORK_MODE_XBOX(newConfig)
 				}
+#endif
 				else if(CFG_WORK_MODE_PT_ENABLED && !Stick_Down) {
 					CFG_SET_DEF_WORK_MODE_PT(newConfig)
 				}
@@ -201,6 +206,7 @@ int setModePS3() {
 	return WORKING_MODE_PS3;
 }
 
+#if ATMEGA_NO == 168
 int setModeMAME() {	
 	enableUsbLines();
 
@@ -212,6 +218,7 @@ int setModeXBox() {
 
 	return WORKING_MODE_XBOX;
 }
+#endif
 
 int setModePT() {	
 	if(CFG_HOME_EMU)
@@ -232,10 +239,12 @@ int setModePT() {
 int setModeDefault() {
 	if(CFG_DEF_WORK_MODE_PS3)
 		return setModePS3();
+#if ATMEGA_NO == 168
 	else if(CFG_DEF_WORK_MODE_MAME)
 		return setModeMAME();
 	else if(CFG_DEF_WORK_MODE_XBOX)
 		return setModeXBox();
+#endif
 	else
 		return setModePT();
 }
@@ -304,12 +313,14 @@ int hardwareInit() {
 	if(CFG_WORK_MODE_PS3_ENABLED)
 		enabledWorkingModes++;
 
+#if ATMEGA_NO == 168
 	if(CFG_WORK_MODE_MAME_ENABLED)
 		enabledWorkingModes++;
 	
 	if(CFG_WORK_MODE_XBOX_ENABLED)
 		enabledWorkingModes++;
-	
+#endif
+
 	if(CFG_WORK_MODE_PT_ENABLED)
 		enabledWorkingModes++;
 
@@ -323,12 +334,14 @@ int hardwareInit() {
 			if(!CFG_DEF_WORK_MODE_PS3 && CFG_WORK_MODE_PS3_ENABLED)
 				return setModePS3();
 
+#if ATMEGA_NO == 168
 			if(!CFG_DEF_WORK_MODE_MAME && CFG_WORK_MODE_MAME_ENABLED)
 				return setModeMAME();
 	
 			if(!CFG_DEF_WORK_MODE_XBOX && CFG_WORK_MODE_XBOX_ENABLED)
 				return setModeXBox();
-	
+#endif	
+
 			if(!CFG_DEF_WORK_MODE_PT && CFG_WORK_MODE_PT_ENABLED)
 				return setModePT();
 		}
@@ -337,11 +350,13 @@ int hardwareInit() {
 		if(!Stick_LK && CFG_WORK_MODE_PS3_ENABLED)
 			return setModePS3();
 
+#if ATMEGA_NO == 168
 		if(!Stick_MK && CFG_WORK_MODE_MAME_ENABLED)
 			return setModeMAME();
 
 		if(!Stick_LP && CFG_WORK_MODE_XBOX_ENABLED)
 			return setModeXBox();
+#endif
 
 		if(!Stick_MP && CFG_WORK_MODE_PT_ENABLED)
 			return setModePT();
@@ -395,6 +410,7 @@ int main(void)
 	  ps3_controller();
 	  break;
 
+#if ATMEGA_NO == 168
 	case WORKING_MODE_MAME:
 	  mame_controller();
 	  break;
@@ -402,6 +418,7 @@ int main(void)
 	case WORKING_MODE_XBOX:
 	  xbox_controller();
 	  break;
+#endif
 	}
 
     return 0;

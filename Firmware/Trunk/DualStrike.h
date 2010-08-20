@@ -3,9 +3,25 @@
 
 #include "usb/usb_controller.h"
 #include "pass-through/pass-through.h"
-#include "configuration.h"
+
 
 // BUTTON DEFINITIONS
+
+#ifndef ATMEGA_NO
+#error ATmega number has to be defined.
+#endif
+
+#if ((ATMEGA_NO != 8) && (ATMEGA_NO != 168))
+#error ATmega with unsupported number used.
+#endif
+
+#if (ATMEGA_NO == 8)
+#include "configuration_atmega8.h"
+#endif
+
+#if (ATMEGA_NO == 168)
+#include "configuration_atmega168.h"
+#endif
 
 // set to 1 for SMD version of the Dual Strike
 #ifndef DUAL_STRIKE_SMD

@@ -10,13 +10,13 @@
   icon-path="configuration.png"
   xmlns:xi="http://www.w3.org/2001/XInclude">
   
-  <title>Dual Strike Configuration</title>
-  <title lang="de">Dual Strike Konfiguration</title>
+  <title>Dual Strike Configuration (ATmega168)</title>
+  <title lang="de">Dual Strike Konfiguration (ATmega168)</title>
   <help path="configuration-help.html"/>
   <help lang="de" path="configuration-help_de.html"/>
   
   <device>2</device>
-  <version>1</version>
+  <version>2</version>
   
   <page>
     <title>Defaults</title>

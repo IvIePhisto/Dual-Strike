@@ -21,6 +21,7 @@ typedef struct {
 	uchar	analogue_buttons[12];
 } ps3report_t;
 
+#if ATMEGA_NO == 168
 typedef struct {
 	uchar reportID;
 	uchar data[4];
@@ -38,10 +39,15 @@ typedef struct {
 	mame_consumer_report_t consumer;
 } mame_reports_t;
 
+static uchar mameIdleRate = 125; // 500ms
+#endif
+
 typedef union {
 	uchar array[132];
 	ps3report_t ps3report;
+#if ATMEGA_NO == 168
 	mame_reports_t mame_reports;
+#endif
 } usb_data_t;
 
 extern usb_data_t data;
@@ -54,8 +60,11 @@ static uchar usbMode = -1;
 
 #define USB_MODE_PROGRAMMER 0
 #define USB_MODE_PS3 1
+
+#if ATMEGA_NO == 168
 #define USB_MODE_MAME 2
 #define USB_MODE_XBOX 3
+#endif
 
 #include "descriptors.c"
 
@@ -79,8 +88,6 @@ typedef union {
 static e2addr_t eepromOffset = -1;
 static uchar writeReportID = 0;
 static e2addr_t currentEEPROMAddress;
-
-static uchar mameIdleRate = 125; // 500ms
 
 usbMsgLen_t usbFunctionSetup(uchar receivedData[8]) {
 	usbRequest_t    *rq = (void *)receivedData;
@@ -159,6 +166,7 @@ usbMsgLen_t usbFunctionSetup(uchar receivedData[8]) {
 				}
 		    }
 		}
+#if ATMEGA_NO == 168
 		break;
 
 	case USB_MODE_MAME:
@@ -206,6 +214,7 @@ usbMsgLen_t usbFunctionSetup(uchar receivedData[8]) {
 				return 16;
 			}
 		}
+#endif
 	}
 
     return 0;   /* default for not implemented requests: return no data back to host */
@@ -329,5 +338,8 @@ void disconnectUSB() {
 
 #include "programmer.c"
 #include "ps3.c"
+
+#if ATMEGA_NO == 168
 #include "mame.c"
 #include "xbox.c"
+#endif

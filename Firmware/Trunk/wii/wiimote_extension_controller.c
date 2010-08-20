@@ -85,6 +85,7 @@ PROGMEM const uchar classicControllerDeviceID[6] = {0x00, 0x00, 0xA4, 0x20, 0x01
 
 // calibration data starting at address 0xA40020
 PROGMEM const uchar classicControllerCalibrationData[16] = {
+	/*
 	// left stick X
 	0b00000000, // -min
 	0b00100000, // -mid
@@ -112,11 +113,12 @@ PROGMEM const uchar classicControllerCalibrationData[16] = {
 	// right trigger
 	0b00000000, // -min
 	0b00001111, // -max
-	/*	
+	*/
+
+	/* Source: http://code.google.com/p/dolphin-emu/source/browse/trunk/Source/Plugins/Plugin_Wiimote/Src/EmuDefinitions.h */
     0xff, 0x00, 0x80, 0xff, 0x00, 0x80,
     0xff, 0x00, 0x80, 0xff, 0x00, 0x80,
     0x00, 0x00, 0x51, 0xa6
-	*/
 };
 
 typedef struct {

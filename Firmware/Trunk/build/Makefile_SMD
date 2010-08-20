@@ -1,10 +1,11 @@
 ###############################################################################
-# Makefile for Dual Strike PS3 and Pass-Through Firmware
+# Makefile for Dual Strike Firmware (SMD)
 ###############################################################################
 
 ## General Flags
 PROJECT = DualStrike
-MCU = atmega168
+ATMEGA_NO = 8
+MCU = atmega$(ATMEGA_NO)
 TARGET = DualStrike.elf
 CC = avr-gcc
 
@@ -15,7 +16,7 @@ COMMON = -mmcu=$(MCU)
 
 ## Compile options common for all C compilation units.
 CFLAGS = $(COMMON)
-CFLAGS += -Wall -std=c99 -DF_CPU=12000000UL -Os -fsigned-char
+CFLAGS += -Wall -std=c99 -DATMEGA_NO=$(ATMEGA_NO) -DF_CPU=12000000UL -DSMD=1 -Os -fsigned-char
 CFLAGS += -MD -MP -MT $(*F).o -MF dep/$(@F).d 
 
 ## Assembly specific flags
@@ -43,7 +44,7 @@ OBJECTS = DualStrike.o pass-through.o usb_controller.o usbdrv.o usbdrvasm.o
 LINKONLYOBJECTS = 
 
 ## Build
-all: $(TARGET) dual_strike_168_firmware.hex dual_strike_168_firmware.eep size
+all: $(TARGET) dual_strike_firmware_smd.hex dual_strike_firmware_smd.eep size
 
 ## Compile
 DualStrike.o: ../DualStrike.c
@@ -77,7 +78,7 @@ $(TARGET): $(OBJECTS)
 size: ${TARGET}
 	@echo
 	@avr-size -C --mcu=${MCU} ${TARGET}
-	@echo "Only 14336 bytes (87.5%) are available on the device due to the bootloader!"
+	@echo "Only 6144 bytes (75%) are available on the device due to the bootloader!"
 
 ## Clean target
 .PHONY: clean
