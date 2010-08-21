@@ -28,6 +28,8 @@ void resetPS3ReportBuffer() {
 
 #define PS3_SELECT		{ data.ps3report.buttons[1] |= (1<<0); }
 #define PS3_START		{ data.ps3report.buttons[1] |= (1<<1); }
+#define PS3_L3			{ data.ps3report.buttons[1] |= (1<<2); }
+#define PS3_R3			{ data.ps3report.buttons[1] |= (1<<3); }
 #define PS3_PS			{ data.ps3report.buttons[1] |= (1<<4); }
 
 #define PS3_DPAD_UP			{ data.ps3report.hatswitch = 0; data.ps3report.analogue_buttons[2] = 0xFF; }
@@ -51,8 +53,11 @@ void resetPS3ReportBuffer() {
 #define PS3_RS_UP		{ data.ps3report.joystick_axes &= 0b00111111; }
 #define PS3_RS_DOWN		{ data.ps3report.joystick_axes |= 0b10000000; data.ps3report.joystick_axes &= 0b10111111; }
 
+START_STATE_VARIABLES
+
 void readInputPS3() {
 	resetPS3ReportBuffer();
+	updateStartState();
 
 	// Left Joystick Directions
 	if(CFG_LEFT_STICK) {
@@ -129,16 +134,51 @@ void readInputPS3() {
 
 	if(!Stick_4K)
 		PS3_L2
+
+	if(CFG_EMU_4X && startPressed && !Stick_HP) {
+		PS3_R1
+		startWasUsed = 1;
+	}
+
+	if(CFG_EMU_4X && startPressed && !Stick_HK) {
+		PS3_R2
+		startWasUsed = 1;
+	}
 #endif
 
-	if(CFG_HOME_EMU && !Stick_Start && !Stick_Select)
+	if(CFG_HOME_EMU && startPressed && !Stick_Select) {
 		PS3_PS
+		startWasUsed = 1;
+	}
 	else {
-		if(!Stick_Start)
+		if(
+		/*
+		(startPressed &&
+		!(CFG_JOYSTICK_SWITCH_READ_ACTIVE_LOW || CFG_JOYSTICK_SWITCH_READ_ACTIVE_HIGH) && !CFG_EMU_4X && !CFG_HOME_EMU && CFG_X3_READ) // no meta-functionality for Start
+		||*/ startSendCount)
 			PS3_START
 
 		if(!Stick_Select)
 			PS3_SELECT
+	}
+
+	if(CFG_X3_READ) {
+		if(!Stick_S3)
+			PS3_L3
+
+		if(!Stick_S4)
+			PS3_R3
+	}
+	else {
+		if(startPressed && !Stick_LK) {
+			PS3_L3
+			startWasUsed = 1;
+		}
+
+		if(startPressed && !Stick_MK) {
+			PS3_R3
+			startWasUsed = 1;
+		}
 	}
 
 	if(!Stick_Home)

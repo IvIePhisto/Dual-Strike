@@ -8,50 +8,67 @@ extern uint8_t config[2];
 void pass_through() {
     if(CFG_JOYSTICK_SWITCH_EMU) {	
         if(CFG_LEFT_STICK) {
-            PORTC |= (1<<6);  // pin S4 is high
-            PORTD &= ~(1<<4); // pin S3 is low	
-			DDRD |= (1<<4);   // pin S3 is output
-			DDRC |= (1<<6);   // pin S4 is output
+            S4_PORT |=  (1<<S4_PIN);
+            S3_PORT &= ~(1<<S3_PIN);
+			S3_DDR	|=  (1<<S3_PIN);
+			S4_DDR 	|=  (1<<S4_PIN);
         }
         else if(CFG_RIGHT_STICK) {
-            PORTD |= (1<<4);  // pin S3 is high	
-            PORTC &= ~(1<<6); // pin S4 is low
-			DDRD |= (1<<4);   // pin S3 is output
-			DDRC |= (1<<6);   // pin S4 is output
+            S3_PORT |=  (1<<S3_PIN);
+            S4_PORT &= ~(1<<S4_PIN);
+			S3_DDR  |=  (1<<S3_PIN);
+			S4_DDR  |=  (1<<S4_PIN);
         }
         else if(CFG_DIGITAL_PAD) {
-			DDRD &= ~(1<<4);  // pin S3 is input
-			DDRC &= ~(1<<6);  // pin S4 is input
-            PORTD |= (1<<4);  // pin S3 is high	
-            PORTC |= (1<<6);  // pin S4 is high
+			S3_DDR  &= ~(1<<S3_PIN);
+			S4_DDR  &= ~(1<<S4_PIN);
+            S3_PORT |=  (1<<S3_PIN);
+            S4_PORT |=  (1<<S4_PIN);
         }
     }
 
     while(1) {
         if(CFG_HOME_EMU) {
             if((!Stick_Start) &&  (!Stick_Select)) {
-                HOME_PORT	&=  ~(1<<HOME_PIN); // make Home low
-				HOME_DDR	|=  (1<<HOME_PIN); // make Home output
+                HOME_PORT	&=  ~(1<<HOME_PIN);
+				HOME_DDR	|=   (1<<HOME_PIN);
 			}
             else {
-				HOME_DDR	&=  ~(1<<HOME_PIN); // make Home input
-                HOME_PORT	|=  (1<<HOME_PIN); // make Home high
+				HOME_DDR	&=  ~(1<<HOME_PIN);
+                HOME_PORT	|=   (1<<HOME_PIN);
 			}
         }
 
+		if(CFG_EMU_4X) {
+			if(!Stick_Start && !Stick_4K) {
+				EXTRA_4K_PORT &= ~(1<<EXTRA_4K_PIN);
+				EXTRA_4K_DDR  |=  (1<<EXTRA_4K_PIN);
+			}
+			else {
+				EXTRA_4K_DDR  &= ~(1<<EXTRA_4K_PIN);
+				EXTRA_4K_PORT |=  (1<<EXTRA_4K_PIN);
+			}
+
+			if(!Stick_Start && !Stick_4P) {
+				EXTRA_4P_PORT &= ~(1<<EXTRA_4P_PIN);
+				EXTRA_4P_DDR  |=  (1<<EXTRA_4P_PIN);
+			}
+			else {
+				EXTRA_4P_DDR  &= ~(1<<EXTRA_4P_PIN);
+				EXTRA_4P_PORT |=  (1<<EXTRA_4P_PIN);
+			}
+		}
+
         if(CFG_INVERTED_TRIGGERS) {
-            // if LT is pressed then invert trigger and make it high (pressed)
             if(!Stick_4K)
-                PORTD |= (1<<4);
+                S3_PORT |=  (1<<S3_PIN);
             else
-                PORTD &= ~(1<<4);
+                S3_PORT &= ~(1<<S3_PIN);
     
-            // if RT is pressed then invert trigger and make it high (pressed)
             if(!Stick_HK)
-                PORTC |= (1<<6);
-            // else keep trigger low
+                S4_PORT |=  (1<<S4_PIN);
             else
-                PORTC &= ~(1<<6);
+                S4_PORT &= ~(1<<S4_PIN);
         }
     }
 }

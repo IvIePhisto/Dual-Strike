@@ -40,19 +40,7 @@ Start+Select=Home:
 Button: LP
 Left  = disabled [default]
 Right = enabled
-
-Extra Pins Mode
----------------
-Button: MP
-Up    = deactivated (precedence over Left and Right) [default]
-Left  = read joystick mode switch (precedence over Down)
-		S3 and S4 have to be connected to a triple switch
-Right = emulate joystick mode switch for pass-through (precedence over Down)
-        S3 and S4 have to be connected to joystick mode pins on the 
-		pass-through PCB
-Down  = inverted triggers for pass-through
-        S3 and S4 have to be connected to trigger pins with active high on the
-		pass-through PCB		
+		
 */
 
 #define WORKING_MODE_PT		0
@@ -63,11 +51,12 @@ Down  = inverted triggers for pass-through
 #define WORKING_MODE_XBOX	3
 #endif
 
+#define enableUsbLines()	S1_PORT |=  (1<<S1_PIN);
+#define disableUsbLines()	S1_PORT &= ~(1<<S1_PIN);
+
+
 // declares config and config_EEPROM
 CFG_DECLARATION
-
-#define enableUsbLines()	PORTD |= (1<<0)
-#define disableUsbLines()	PORTD &= ~(1<<0);
 
 void readConfig(uint8_t newConfig[CONFIG_BYTE_WIDTH + 2]) {
 	 // read config from EEPROM
@@ -173,22 +162,7 @@ void configInit() {
 				if(!Stick_Right) {
 					CFG_ENABLE_HOME_EMU(newConfig)
 				}
-			}
-
-			if(!Stick_MP) {
-				if(!Stick_Up) {
-					CFG_SET_NO_EXTRA_PINS(newConfig)
-				}
-				else if(!Stick_Left) {
-					CFG_SET_JOYSTICK_SWITCH_READ(newConfig)
-				}
-				else if(!Stick_Right) {
-					CFG_SET_JOYSTICK_SWITCH_EMU(newConfig)
-				}
-				else if(!Stick_Down) {
-					CFG_SET_INVERTED_TRIGGERS(newConfig)
-				}
-			}			
+			}	
 		}
 
 	}
@@ -218,13 +192,14 @@ int setModeXBox() {
 
 int setModePT() {
 	if(CFG_JOYSTICK_SWITCH_EMU || CFG_INVERTED_TRIGGERS) {
-        PORTD &= ~(1<<4); // pin S3 is low	
-        PORTC &= ~(1<<6); // pin S4 is low
+        S3_PORT &= ~(1<<S3_PIN); // pin S3 is low	
+        S4_PORT &= ~(1<<S4_PIN); // pin S4 is low
 	}
 
 	disconnectUSB();
 	disableUsbLines();
-	PORTD |= (1<<3); // enable pass-through usb lines
+
+	S2_PORT |= (1<<S2_PIN); // enable pass-through usb lines
 
 	return WORKING_MODE_PT;
 }
@@ -296,9 +271,13 @@ int hardwareInit() {
 		CFG_SET_RIGHT_STICK(config)
 	}
 
-	if(CFG_JOYSTICK_SWITCH_READ) {	
-		PORTD |= (1<<4); // pin S3 is high
-		PORTC |= (1<<6); // pin S4 is high
+	if(CFG_JOYSTICK_SWITCH_READ_ACTIVE_LOW) {	
+		S3_PORT |= (1<<S3_PIN); // pin S3 is high
+		S4_PORT |= (1<<S4_PIN); // pin S4 is high
+	}
+	else if(CFG_JOYSTICK_SWITCH_READ_ACTIVE_HIGH) {	
+		S3_PORT &= ~(1<<S3_PORT); // pin S3 is low
+		S4_PORT &= ~(1<<S4_PIN); // pin S4 is low
 	}
 
 	int enabledWorkingModes = 0;
@@ -360,23 +339,6 @@ int hardwareInit() {
 }
 
 /* ------------------------------------------------------------------------- */
-
-void readJoystickSwitch() {
-    if(CFG_JOYSTICK_SWITCH_READ) {
-        if(!(PIND & (1<<4)) && (PINC & (1<<6))) { // S3 low and S4 high
-			CFG_SET_LEFT_STICK(config)
-        }
-        else if((PIND & (1<<4)) && !(PINC & (1<<6))) { // S3 high and S4 low
-			CFG_SET_RIGHT_STICK(config)
-        }
-        else if((PIND & (1<<4)) && (PINC & (1<<6))) { // S3 high and S4 high
-			CFG_SET_DIGITAL_PAD(config)
-        }
-    }
-}
-
-/* ------------------------------------------------------------------------- */
-
 /* Here the meta-button functionality for Start is defined. */
 
 uchar startPressed = 0;
@@ -402,6 +364,49 @@ void updateStartState() {
 
 	if(startReleased)
 		startWasUsed = 0;
+}
+
+/* ------------------------------------------------------------------------- */
+
+void readJoystickSwitch() {
+    if(CFG_JOYSTICK_SWITCH_READ_ACTIVE_LOW) {
+        if(!Stick_S3 && Stick_S4) { 	 // S3 low and S4 high
+			CFG_SET_LEFT_STICK(config)
+        }
+        else if(Stick_S3 && !Stick_S4) { // S3 high and S4 low
+			CFG_SET_RIGHT_STICK(config)
+        }
+        else if(Stick_S3 && Stick_S4) {  // S3 high and S4 high
+			CFG_SET_DIGITAL_PAD(config)
+        }
+    }
+	else if(CFG_JOYSTICK_SWITCH_READ_ACTIVE_HIGH) {
+        if(!Stick_S3 && Stick_S4) { 	 // S3 low and S4 high
+			CFG_SET_RIGHT_STICK(config)
+        }
+        else if(Stick_S3 && !Stick_S4) { // S3 high and S4 low
+			CFG_SET_LEFT_STICK(config)
+        }
+        else if(!Stick_S3 && !Stick_S4) { // S3 low and S4 low
+			CFG_SET_DIGITAL_PAD(config)
+        }
+    }
+	else {
+		if(startPressed) {
+			if(!Stick_Up) {
+				CFG_SET_DIGITAL_PAD(config)
+				startWasUsed = 1;
+			}
+			else if(!Stick_Left) {
+				CFG_SET_LEFT_STICK(config)
+				startWasUsed = 1;
+			}
+			else if(!Stick_Right) {
+				CFG_SET_RIGHT_STICK(config)
+				startWasUsed = 1;
+			}
+		}
+	}
 }
 
 /* ------------------------------------------------------------------------- */

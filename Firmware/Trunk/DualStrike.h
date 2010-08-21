@@ -59,8 +59,10 @@
 	#define Stick_HK	(PINB & (1<<4))
 
 	#ifdef EXTRA_BUTTONS
-		#define Stick_4P	(PINB & (1<<1))
-		#define Stick_4K	(PINB & (1<<3))
+		#define 4P_PIN			1
+		#define 4P_PORT_NAME 	B
+		#define 4K_PIN			3
+		#define 4K_PORT_NAME 	B
 	#endif
 #else
 	#define HOME_PORT_NAME 	C
@@ -78,20 +80,50 @@
 	#define Stick_HK	(PINC & (1<<2))
 
 	#if EXTRA_BUTTONS
-		#define Stick_4P	(PINC & (1<<3))
-		#define Stick_4K	(PINC & (1<<4))
+		#define EXTRA_4P_PIN			3
+		#define EXTRA_4P_PORT_NAME 	C
+		#define EXTRA_4K_PIN			4
+		#define EXTRA_4K_PORT_NAME 	C
 	#endif
 #endif
 
 #define CONCAT_EVAL(start, end) start##end
 #define CONCAT(start, end) CONCAT_EVAL(start, end)
 
+#if EXTRA_BUTTONS
+	#define EXTRA_4P_PORT	CONCAT(PORT, EXTRA_4P_PORT_NAME)
+	#define EXTRA_4P_DDR	CONCAT(DDR, EXTRA_4P_PORT_NAME)
+	#define Stick_4P		(CONCAT(PIN, EXTRA_4P_PORT_NAME) & (1<<EXTRA_4P_PIN))
+
+	#define EXTRA_4K_PORT	CONCAT(PORT, EXTRA_4K_PORT_NAME)
+	#define EXTRA_4K_DDR	CONCAT(DDR, EXTRA_4K_PORT_NAME)
+	#define Stick_4K		(CONCAT(PIN, EXTRA_4K_PORT_NAME) & (1<<EXTRA_4K_PIN))
+#endif
+
 #define HOME_PIN		5
 #define HOME_PORT		CONCAT(PORT, HOME_PORT_NAME)
 #define HOME_DDR		CONCAT(DDR, HOME_PORT_NAME)
 #define Stick_Home		(CONCAT(PIN, HOME_PORT_NAME) & (1<<HOME_PIN))
+
 #define Stick_Select	(PINC & (1<<1))
 #define Stick_Start		(PINC & (1<<0))
+
+
+#define S1_PORT	PORTD
+#define S1_PIN	0
+
+#define S2_PORT	PORTD
+#define S2_PIN	3
+
+#define S3_PIN			4
+#define S3_PORT			PORTD
+#define S3_DDR			DDRD
+#define Stick_S3		(PIND & (1<<4))
+
+#define S4_PIN			6
+#define S4_PORT			PORTC
+#define S4_DDR			DDRC
+#define Stick_S4		(PINC & (1<<6))
 
 #define START_STATE_VARIABLES \
 extern uchar startPressed;\
