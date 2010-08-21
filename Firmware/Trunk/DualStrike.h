@@ -128,9 +128,10 @@
 #define START_STATE_VARIABLES \
 extern uchar startPressed;\
 extern uchar startWasUsed;\
-extern uint startSendCount;
+extern uint startSendCount;\
+extern uint startSendRepeats;\
 
-void readJoystickSwitch();
+void updateJoystickMode();
 void updateStartState();
 void readConfig(uint8_t newConfig[CONFIG_BYTE_WIDTH + 2]);
 void writeConfig(uint8_t newConfig[CONFIG_BYTE_WIDTH + 2]);

@@ -51,6 +51,7 @@ typedef union {
 } usb_data_t;
 
 extern usb_data_t data;
+START_STATE_VARIABLES
 
 #define HID_REPORT_TYPE_INPUT 1
 #define HID_REPORT_TYPE_OUTPUT 2

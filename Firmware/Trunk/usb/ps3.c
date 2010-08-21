@@ -53,60 +53,60 @@ void resetPS3ReportBuffer() {
 #define PS3_RS_UP		{ data.ps3report.joystick_axes &= 0b00111111; }
 #define PS3_RS_DOWN		{ data.ps3report.joystick_axes |= 0b10000000; data.ps3report.joystick_axes &= 0b10111111; }
 
-START_STATE_VARIABLES
-
 void readInputPS3() {
 	resetPS3ReportBuffer();
 	updateStartState();
 
-	// Left Joystick Directions
-	if(CFG_LEFT_STICK) {
-		if (!Stick_Up)
-			PS3_LS_UP
-		else if (!Stick_Down)
-			PS3_LS_DOWN
+	if(CFG_JOYSTICK_SWITCH_READ_ACTIVE_LOW || CFG_JOYSTICK_SWITCH_READ_ACTIVE_HIGH || !startPressed) {
+		// Left Joystick Directions
+		if(CFG_LEFT_STICK) {
+			if (!Stick_Up)
+				PS3_LS_UP
+			else if (!Stick_Down)
+				PS3_LS_DOWN
 
-		if (!Stick_Left)
-			PS3_LS_LEFT
-		else if (!Stick_Right)
-			PS3_LS_RIGHT
-	}
+			if (!Stick_Left)
+				PS3_LS_LEFT
+			else if (!Stick_Right)
+				PS3_LS_RIGHT
+		}
 
-	// Right Joystick Directions
-	if(CFG_RIGHT_STICK) {
-		if (!Stick_Up)
-			PS3_RS_UP
-		else if (!Stick_Down)
-			PS3_RS_DOWN
+		// Right Joystick Directions
+		if(CFG_RIGHT_STICK) {
+			if (!Stick_Up)
+				PS3_RS_UP
+			else if (!Stick_Down)
+				PS3_RS_DOWN
 		
-		if (!Stick_Left)
-			PS3_RS_LEFT
-		else if (!Stick_Right)
-			PS3_RS_RIGHT
-	}
+			if (!Stick_Left)
+				PS3_RS_LEFT
+			else if (!Stick_Right)
+				PS3_RS_RIGHT
+		}
 
-	// Digital Pad Directions
-	if(CFG_DIGITAL_PAD) {
-		if (!Stick_Up) {
-			if (!Stick_Left)
-				PS3_DPAD_UP_LEFT
+		// Digital Pad Directions
+		if(CFG_DIGITAL_PAD) {
+			if (!Stick_Up) {
+				if (!Stick_Left)
+					PS3_DPAD_UP_LEFT
+				else if (!Stick_Right)
+					PS3_DPAD_UP_RIGHT
+				else
+					PS3_DPAD_UP
+			}
+			else if (!Stick_Down) {
+				if (!Stick_Left)
+					PS3_DPAD_DOWN_LEFT
+				else if (!Stick_Right)
+					PS3_DPAD_DOWN_RIGHT
+				else
+					PS3_DPAD_DOWN
+			}
+			else if (!Stick_Left)
+				PS3_DPAD_LEFT
 			else if (!Stick_Right)
-				PS3_DPAD_UP_RIGHT
-			else
-				PS3_DPAD_UP
+				PS3_DPAD_RIGHT
 		}
-		else if (!Stick_Down) {
-			if (!Stick_Left)
-				PS3_DPAD_DOWN_LEFT
-			else if (!Stick_Right)
-				PS3_DPAD_DOWN_RIGHT
-			else
-				PS3_DPAD_DOWN
-		}
-		else if (!Stick_Left)
-			PS3_DPAD_LEFT
-		else if (!Stick_Right)
-			PS3_DPAD_RIGHT
 	}
 
 	// Buttons
@@ -116,17 +116,41 @@ void readInputPS3() {
 	if(!Stick_MP)
 		PS3_TRIANGLE
 
-	if(!Stick_HP)
-		PS3_R1
+	if(!Stick_HP) {
+		if(CFG_EMU_4X && startPressed) {
+			PS3_L1
+			startWasUsed = 1;
+		}
+		else
+			PS3_R1
+	}
 
-	if(!Stick_LK)
-		PS3_CROSS
+	if(!Stick_LK) {
+		if(!CFG_X3_READ && startPressed) {
+			PS3_L3
+			startWasUsed = 1;
+		}
+		else
+			PS3_CROSS
+	}
 
-	if(!Stick_MK)
-		PS3_CIRCLE
+	if(!Stick_MK) {
+		if(!CFG_X3_READ && startPressed) {
+			PS3_R3
+			startWasUsed = 1;
+		}
+		else
+			PS3_CIRCLE
+	}
 
-	if(!Stick_HK)
-		PS3_R2
+	if(!Stick_HK) {
+		if(CFG_EMU_4X && startPressed) {
+			PS3_L2
+			startWasUsed = 1;
+		}
+		else
+			PS3_R2
+	}
 
 #ifdef EXTRA_BUTTONS					
 	if(!Stick_4P)
@@ -134,16 +158,6 @@ void readInputPS3() {
 
 	if(!Stick_4K)
 		PS3_L2
-
-	if(CFG_EMU_4X && startPressed && !Stick_HP) {
-		PS3_R1
-		startWasUsed = 1;
-	}
-
-	if(CFG_EMU_4X && startPressed && !Stick_HK) {
-		PS3_R2
-		startWasUsed = 1;
-	}
 #endif
 
 	if(CFG_HOME_EMU && startPressed && !Stick_Select) {
@@ -151,11 +165,7 @@ void readInputPS3() {
 		startWasUsed = 1;
 	}
 	else {
-		if(
-		/*
-		(startPressed &&
-		!(CFG_JOYSTICK_SWITCH_READ_ACTIVE_LOW || CFG_JOYSTICK_SWITCH_READ_ACTIVE_HIGH) && !CFG_EMU_4X && !CFG_HOME_EMU && CFG_X3_READ) // no meta-functionality for Start
-		||*/ startSendCount)
+		if(startSendCount > 0)
 			PS3_START
 
 		if(!Stick_Select)
@@ -168,17 +178,6 @@ void readInputPS3() {
 
 		if(!Stick_S4)
 			PS3_R3
-	}
-	else {
-		if(startPressed && !Stick_LK) {
-			PS3_L3
-			startWasUsed = 1;
-		}
-
-		if(startPressed && !Stick_MK) {
-			PS3_R3
-			startWasUsed = 1;
-		}
 	}
 
 	if(!Stick_Home)
@@ -193,10 +192,11 @@ void ps3_controller() {
 	setupUSB();
 	resetPS3ReportBuffer();
 	sendDataUSB(data.array, 16);
+	startSendRepeats = 10;
 
     while(1) { /* main event loop */
 		usbPoll();
-		readJoystickSwitch();
+		updateJoystickMode();
         readInputPS3();
 		sendDataUSB(data.array, 16);
     }

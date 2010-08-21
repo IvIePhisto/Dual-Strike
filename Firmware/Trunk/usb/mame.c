@@ -157,7 +157,6 @@ static uchar mamePlayer = 1;
 #define IDLE_RATE_OVERLOW_CYCLES	(255 % IDLE_RATE_UNIT_COUNT_CYCLES)
 
 static uchar idleRateCount = 0;
-START_STATE_VARIABLES
 
 #include <avr/io.h>
 #include <avr/interrupt.h>
@@ -264,7 +263,7 @@ void setMAMEReportPlayer1() {
 			MAME_SET_BUTTON(1, MAME_4P)
 #endif
 
-		if(startSendCount) 
+		if(startSendCount > 0) 
 			MAME_REPORT_1
 
 		if(!Stick_Select)
@@ -319,7 +318,7 @@ void setMAMEReportPlayer2() {
 			MAME_SET_BUTTON(2, MAME_4P)
 #endif
 
-		if(startSendCount)
+		if(startSendCount > 0)
 			MAME_REPORT_2
 
 		if(!Stick_Select)
@@ -353,7 +352,7 @@ void setMAMEReportsControl() {
 	if(!Stick_MK)
 		MAME_REPORT_F3
 
-	if(startSendCount)
+	if(startSendCount > 0)
 		MAME_REPORT_TAB
 
 	if(!Stick_Select)
@@ -566,9 +565,9 @@ void mame_controller() {
 	initMAMEReports();
 	initMAMEButtonMappings();
 	initIdleTimer();
+	startSendRepeats = 5000;
 
     while(1) { /* main event loop */
-		// could be used for mode switching: readJoystickSwitch();
         sendMAMEReports();
     }
 }

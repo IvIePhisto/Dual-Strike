@@ -6,28 +6,32 @@
 extern uint8_t config[2];
 
 void pass_through() {
-    if(CFG_JOYSTICK_SWITCH_EMU) {	
-        if(CFG_LEFT_STICK) {
-            S4_PORT |=  (1<<S4_PIN);
-            S3_PORT &= ~(1<<S3_PIN);
-			S3_DDR	|=  (1<<S3_PIN);
-			S4_DDR 	|=  (1<<S4_PIN);
-        }
-        else if(CFG_RIGHT_STICK) {
-            S3_PORT |=  (1<<S3_PIN);
-            S4_PORT &= ~(1<<S4_PIN);
-			S3_DDR  |=  (1<<S3_PIN);
-			S4_DDR  |=  (1<<S4_PIN);
-        }
-        else if(CFG_DIGITAL_PAD) {
-			S3_DDR  &= ~(1<<S3_PIN);
-			S4_DDR  &= ~(1<<S4_PIN);
-            S3_PORT |=  (1<<S3_PIN);
-            S4_PORT |=  (1<<S4_PIN);
-        }
-    }
 
     while(1) {
+	    if(CFG_JOYSTICK_SWITCH_EMU) {
+			updateStartState();
+			updateJoystickMode();
+
+	        if(CFG_LEFT_STICK) {
+	            S4_PORT |=  (1<<S4_PIN);
+	            S3_PORT &= ~(1<<S3_PIN);
+				S3_DDR	|=  (1<<S3_PIN);
+				S4_DDR 	|=  (1<<S4_PIN);
+	        }
+	        else if(CFG_RIGHT_STICK) {
+	            S3_PORT |=  (1<<S3_PIN);
+	            S4_PORT &= ~(1<<S4_PIN);
+				S3_DDR  |=  (1<<S3_PIN);
+				S4_DDR  |=  (1<<S4_PIN);
+	        }
+	        else if(CFG_DIGITAL_PAD) {
+				S3_DDR  &= ~(1<<S3_PIN);
+				S4_DDR  &= ~(1<<S4_PIN);
+	            S3_PORT |=  (1<<S3_PIN);
+	            S4_PORT |=  (1<<S4_PIN);
+	        }
+	    }
+
         if(CFG_HOME_EMU) {
             if((!Stick_Start) &&  (!Stick_Select)) {
                 HOME_PORT	&=  ~(1<<HOME_PIN);

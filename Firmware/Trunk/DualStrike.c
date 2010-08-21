@@ -271,12 +271,12 @@ int hardwareInit() {
 		CFG_SET_RIGHT_STICK(config)
 	}
 
-	if(CFG_JOYSTICK_SWITCH_READ_ACTIVE_LOW) {	
+	if(CFG_JOYSTICK_SWITCH_READ_ACTIVE_LOW || CFG_X3_READ) {	
 		S3_PORT |= (1<<S3_PIN); // pin S3 is high
 		S4_PORT |= (1<<S4_PIN); // pin S4 is high
 	}
 	else if(CFG_JOYSTICK_SWITCH_READ_ACTIVE_HIGH) {	
-		S3_PORT &= ~(1<<S3_PORT); // pin S3 is low
+		S3_PORT &= ~(1<<S3_PIN); // pin S3 is low
 		S4_PORT &= ~(1<<S4_PIN); // pin S4 is low
 	}
 
@@ -344,6 +344,7 @@ int hardwareInit() {
 uchar startPressed = 0;
 uchar startWasUsed = 0;
 uint startSendCount = 0;
+uint startSendRepeats = 0;
 
 void updateStartState() {
 	uchar lastStartPressed = startPressed;
@@ -352,23 +353,19 @@ void updateStartState() {
 
 	if(startWasUsed) {
 		startSendCount = 0;
-	}
-	else {
-		if(startReleased) {
-			startSendCount = 5000;
-		}
-		else if(startSendCount) {
-			startSendCount--;
-		}
-	}
 
-	if(startReleased)
-		startWasUsed = 0;
+		if(startReleased)
+			startWasUsed = 0;
+	}
+	else if(startReleased)
+		startSendCount = startSendRepeats;
+    else if(startSendCount > 0)
+		 startSendCount--;
 }
 
 /* ------------------------------------------------------------------------- */
 
-void readJoystickSwitch() {
+void updateJoystickMode() {
     if(CFG_JOYSTICK_SWITCH_READ_ACTIVE_LOW) {
         if(!Stick_S3 && Stick_S4) { 	 // S3 low and S4 high
 			CFG_SET_LEFT_STICK(config)

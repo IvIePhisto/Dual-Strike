@@ -154,7 +154,7 @@ void xbox_controller() {
 	
     while(1) { /* main event loop */
 		usbPoll();
-		readJoystickSwitch();
+		updateJoystickMode();
         readInputXBox();
 		/*
 		while(!usbInterruptIsReady()) usbPoll();
