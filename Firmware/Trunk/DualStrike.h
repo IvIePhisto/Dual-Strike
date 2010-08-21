@@ -4,6 +4,15 @@
 #include "usb/usb_controller.h"
 #include "pass-through/pass-through.h"
 
+#ifndef ulong
+#   define ulong    unsigned long
+#endif
+#ifndef uint
+#   define uint     unsigned int
+#endif
+#ifndef uchar
+#define uchar   unsigned char
+#endif
 
 // BUTTON DEFINITIONS
 
@@ -84,7 +93,13 @@
 #define Stick_Select	(PINC & (1<<1))
 #define Stick_Start		(PINC & (1<<0))
 
+#define START_STATE_VARIABLES \
+extern uchar startPressed;\
+extern uchar startWasUsed;\
+extern uint startSendCount;
+
 void readJoystickSwitch();
+void updateStartState();
 void readConfig(uint8_t newConfig[CONFIG_BYTE_WIDTH + 2]);
 void writeConfig(uint8_t newConfig[CONFIG_BYTE_WIDTH + 2]);
 

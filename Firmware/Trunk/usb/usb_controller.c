@@ -68,12 +68,6 @@ static uchar usbMode = -1;
 
 #include "descriptors.c"
 
-#ifndef ulong
-#   define ulong    unsigned long
-#endif
-#ifndef uint
-#   define uint     unsigned int
-#endif
 #if (E2END) > 0xffff /* we need long addressing */
 #   define e2addr_t           ulong
 #else

@@ -3,10 +3,6 @@
 #include <avr/eeprom.h> /* EEPROM functions */
 #include <avr/pgmspace.h>   /* required by usbdrv.h */
 
-#ifndef uchar
-#define uchar   unsigned char
-#endif
-
 // README
 /* 
 Configuration Mode
@@ -377,6 +373,35 @@ void readJoystickSwitch() {
 			CFG_SET_DIGITAL_PAD(config)
         }
     }
+}
+
+/* ------------------------------------------------------------------------- */
+
+/* Here the meta-button functionality for Start is defined. */
+
+uchar startPressed = 0;
+uchar startWasUsed = 0;
+uint startSendCount = 0;
+
+void updateStartState() {
+	uchar lastStartPressed = startPressed;
+	startPressed = !Stick_Start;
+	uchar startReleased = lastStartPressed && !startPressed;
+
+	if(startWasUsed) {
+		startSendCount = 0;
+	}
+	else {
+		if(startReleased) {
+			startSendCount = 5000;
+		}
+		else if(startSendCount) {
+			startSendCount--;
+		}
+	}
+
+	if(startReleased)
+		startWasUsed = 0;
 }
 
 /* ------------------------------------------------------------------------- */

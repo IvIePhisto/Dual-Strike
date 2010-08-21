@@ -1,8 +1,8 @@
 /*
  * GENERATED CONFIGURATION HEADER FILE
- * Title:   Dual Strike Configuration
+ * Title:   Dual Strike Configuration (ATmega168)
  * Device:  2
- * Version: 1
+ * Version: 2
  */
  
 #ifndef __configuration_h_included__
@@ -12,7 +12,7 @@
 #include <stdint.h> /* C99 typedefs */ 
 
 #define CONFIG_DEVICE (uint8_t)2
-#define CONFIG_VERSION (uint8_t)1
+#define CONFIG_VERSION (uint8_t)2
 #define CONFIG_BYTE_WIDTH 16
 #define CONFIG_EMPTY 0xFF
 #define CONFIG_DEF_1 0b0111100

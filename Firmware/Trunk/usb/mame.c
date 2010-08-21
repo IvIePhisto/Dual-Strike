@@ -148,13 +148,6 @@ void (*player2Buttons[6])() = {mamePlayer2Button1, mamePlayer2Button2, mamePlaye
 
 #define MAME_SET_BUTTON(playerNo, buttonID) { if(buttonMapping[buttonID] >= 0) (*player##playerNo##Buttons[buttonMapping[buttonID]])(); }
 
-
-static uchar metaPressed;
-static uchar metaWasPressed = 0;
-static uchar metaWasUsed = 0;
-static uchar metaReleased = 0;
-static uint startCount = 0;
-
 static uchar mameControl = 0;
 static uchar mamePlayer = 1;
 
@@ -164,6 +157,7 @@ static uchar mamePlayer = 1;
 #define IDLE_RATE_OVERLOW_CYCLES	(255 % IDLE_RATE_UNIT_COUNT_CYCLES)
 
 static uchar idleRateCount = 0;
+START_STATE_VARIABLES
 
 #include <avr/io.h>
 #include <avr/interrupt.h>
@@ -217,20 +211,20 @@ uchar hasIdlePeriodPassed() {
 }
 
 void setMAMEReportPlayer1() {
-	if(metaPressed) {
+	if(startPressed) {
 		if(!Stick_LK) {
 			MAME_REPORT_ENTER
-			metaWasUsed = 1;
+			startWasUsed = 1;
 		}
 
 		if(!Stick_MK) {
 			MAME_REPORT_ESCAPE	
-			metaWasUsed = 1;
+			startWasUsed = 1;
 		}
 
 		if(CFG_HOME_EMU && !Stick_Select) {
 			MAME_REPORT_P
-			metaWasUsed = 1;
+			startWasUsed = 1;
 		}
 	}
 	else {
@@ -262,18 +256,16 @@ void setMAMEReportPlayer1() {
 		if(!Stick_HP)
 			MAME_SET_BUTTON(1, MAME_HP)
 
-	#ifdef EXTRA_BUTTONS
+#ifdef EXTRA_BUTTONS
 		if(!Stick_4K)
 			MAME_SET_BUTTON(1, MAME_4K)
 
 		if(!Stick_4P)
 			MAME_SET_BUTTON(1, MAME_4P)
-	#endif
+#endif
 
-		if(startCount > 0) {
-			startCount--;
+		if(startSendCount) 
 			MAME_REPORT_1
-		}
 
 		if(!Stick_Select)
 			MAME_REPORT_5
@@ -284,56 +276,57 @@ void setMAMEReportPlayer1() {
 }
 
 void setMAMEReportPlayer2() {
-	if (!Stick_Up)
-		MAME_REPORT_R
-	else if (!Stick_Down)
-		MAME_REPORT_F
+	if(startPressed) {
+		if(CFG_HOME_EMU && !Stick_Select) {
+			MAME_REPORT_P
+			startWasUsed = 1;
+		}
+	}
+	else {
+		if (!Stick_Up)
+			MAME_REPORT_R
+		else if (!Stick_Down)
+			MAME_REPORT_F
 
-	if (!Stick_Left)
-		MAME_REPORT_D
-	else if (!Stick_Right)
-		MAME_REPORT_G
+		if (!Stick_Left)
+			MAME_REPORT_D
+		else if (!Stick_Right)
+			MAME_REPORT_G
 
-	if(!Stick_LK)
-		MAME_SET_BUTTON(2, MAME_LK)
+		if(!Stick_LK)
+			MAME_SET_BUTTON(2, MAME_LK)
 
-	if(!Stick_MK)
-		MAME_SET_BUTTON(2, MAME_MK)
+		if(!Stick_MK)
+			MAME_SET_BUTTON(2, MAME_MK)
 
-	if(!Stick_HK)
-		MAME_SET_BUTTON(2, MAME_HK)
+		if(!Stick_HK)
+			MAME_SET_BUTTON(2, MAME_HK)
 
-	if(!Stick_LP)
-		MAME_SET_BUTTON(2, MAME_LP)
+		if(!Stick_LP)
+			MAME_SET_BUTTON(2, MAME_LP)
 
-	if(!Stick_MP)
-		MAME_SET_BUTTON(2, MAME_MP)
+		if(!Stick_MP)
+			MAME_SET_BUTTON(2, MAME_MP)
 
-	if(!Stick_HP)
-		MAME_SET_BUTTON(2, MAME_HP)
+		if(!Stick_HP)
+			MAME_SET_BUTTON(2, MAME_HP)
 
 #ifdef EXTRA_BUTTONS
-	if(!Stick_4K)
-		MAME_SET_BUTTON(2, MAME_4K)
+		if(!Stick_4K)
+			MAME_SET_BUTTON(2, MAME_4K)
 
-	if(!Stick_4P)
-		MAME_SET_BUTTON(2, MAME_4P)
+		if(!Stick_4P)
+			MAME_SET_BUTTON(2, MAME_4P)
 #endif
 
-	if(startCount > 0) {
-		startCount--;
-		MAME_REPORT_2
-	}
+		if(startSendCount)
+			MAME_REPORT_2
 
-	if(!Stick_Select)
-		MAME_REPORT_6
+		if(!Stick_Select)
+			MAME_REPORT_6
 
-	if(!Stick_Home)
-		MAME_REPORT_P
-
-	if(CFG_HOME_EMU && metaPressed && !Stick_Select) {
-		MAME_REPORT_P
-		metaWasUsed = 1;
+		if(!Stick_Home)
+			MAME_REPORT_P
 	}
 }
 
@@ -360,10 +353,8 @@ void setMAMEReportsControl() {
 	if(!Stick_MK)
 		MAME_REPORT_F3
 
-	if(startCount > 0) {
-		startCount--;
+	if(startSendCount)
 		MAME_REPORT_TAB
-	}
 
 	if(!Stick_Select)
 		MAME_REPORT_9
@@ -487,93 +478,67 @@ void configureMAMEButtonMappings() {
 
 void sendMAMEReports() {	
 	resetMAMEReports();
+	updateStartState();
 
-	if(startCount == 0) {
-		metaReleased = 0;
-		metaPressed = !Stick_Start;
-
-		if(metaPressed) {
-			metaWasPressed = 1;
-
-			/*if(!Stick_MP) {
-				configureMAMEButtonMappings();
-				metaWasUsed = 1;
-				return;
+	if(startPressed) {
+		/*if(!Stick_MP) {
+			configureMAMEButtonMappings();
+			startWasUsed = 1;
+			return;
+		}
+		else */
+		if(!Stick_LP) {
+			if(!Stick_Up) {
+				buttonMapping = buttonMapping1;
+				currentButtonMappingNo = 1;
+				startWasUsed = 1;
 			}
-			else */if(!Stick_LP) {
-				if(!Stick_Up) {
-					buttonMapping = buttonMapping1;
-					currentButtonMappingNo = 1;
-					metaWasUsed = 1;
-				}
-				else if(!Stick_Right) {
-					buttonMapping = buttonMapping2;
-					currentButtonMappingNo = 2;
-					metaWasUsed = 1;
-				}
-				else if(!Stick_Down) {
-					buttonMapping = buttonMapping3;
-					currentButtonMappingNo = 3;
-					metaWasUsed = 1;
-				}
-				else if(!Stick_Left) {
-					buttonMapping = buttonMapping4;
-					currentButtonMappingNo = 4;
-					metaWasUsed = 1;
-				}
-			}
-			else if(!Stick_Up) {
-				mameControl = 0;
-				metaWasUsed = 1;
-				startCount = 0;
+			else if(!Stick_Right) {
+				buttonMapping = buttonMapping2;
+				currentButtonMappingNo = 2;
+				startWasUsed = 1;
 			}
 			else if(!Stick_Down) {
-				mameControl = 1;
-				metaWasUsed = 1;
-				startCount = 0;
+				buttonMapping = buttonMapping3;
+				currentButtonMappingNo = 3;
+				startWasUsed = 1;
 			}
-	
-			if(!mameControl) {
-				if(!Stick_Left) {
-					mamePlayer = 1;
-					metaWasUsed = 1;
-					startCount = 0;
-				}
-				else if(!Stick_Right) {
-					mamePlayer = 2;
-					metaWasUsed = 1;
-					startCount = 0;
-				}
+			else if(!Stick_Left) {
+				buttonMapping = buttonMapping4;
+				currentButtonMappingNo = 4;
+				startWasUsed = 1;
 			}
+		}
+		
+		if(!Stick_Up) {
+			mameControl = 0;
+			startWasUsed = 1;
+		}
+		else if(!Stick_Down) {
+			mameControl = 1;
+			startWasUsed = 1;
 		}
 
-		if(metaWasUsed) {
-			if(!metaPressed) {
-				metaWasUsed = 0;
-				metaWasPressed = 0;
+		if(!mameControl) {
+			if(!Stick_Left) {
+				mamePlayer = 1;
+				startWasUsed = 1;
 			}
-		}
-		else {
-			if(!metaPressed && metaWasPressed) {
-				metaWasPressed = 0;
-				metaReleased = 1;
+			else if(!Stick_Right) {
+				mamePlayer = 2;
+				startWasUsed = 1;
 			}
-		}
-
-		if(metaReleased) {
-			startCount = 1000;
-			metaReleased = 0;
 		}
 	}
 
 	if(mameControl) {
-		if(!metaPressed)
+		if(!startPressed)
 			setMAMEReportsControl();
 	}
 	else {
 		if(mamePlayer == 1)
 			setMAMEReportPlayer1();
-		else if(!metaPressed)
+		else
 			setMAMEReportPlayer2();
 	}
 
