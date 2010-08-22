@@ -55,7 +55,6 @@ void resetPS3ReportBuffer() {
 
 void readInputPS3() {
 	resetPS3ReportBuffer();
-	updateStartState();
 
 	if(CFG_JOYSTICK_SWITCH_READ_ACTIVE_LOW || CFG_JOYSTICK_SWITCH_READ_ACTIVE_HIGH || !startPressed) {
 		// Left Joystick Directions
@@ -196,6 +195,7 @@ void ps3_controller() {
 
     while(1) { /* main event loop */
 		usbPoll();
+		updateStartState();
 		updateJoystickMode();
         readInputPS3();
 		sendDataUSB(data.array, 16);

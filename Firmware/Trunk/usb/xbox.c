@@ -141,7 +141,7 @@ void readInputXBox() {
 		XBOX_RT
 #endif
 
-	if(!Stick_Start)
+	if(startSendCount)
 		XBOX_START
 
 	if(!Stick_Select)
@@ -152,7 +152,8 @@ void xbox_controller() {
 	usbMode = USB_MODE_XBOX;
 	setupUSB();
 	initDataXBox();
-	
+	startSendRepeats = 10;
+
     while(1) { /* main event loop */
 		usbPoll();
 		updateStartState();
