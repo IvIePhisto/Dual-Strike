@@ -14,7 +14,7 @@ void initDataXBox() {
 	data.array[23] = 1;  //  1 - must be greater than 0, number of interfaces?
 	data.array[24] = 1;  //  1 - needed, configuration index?
 	data.array[25] = 2;  //  2 - must be greater than 0, number of endpoints?
-	data.array[26] = 8;  // 20 - must be less or equal than max packet size for in endpoint, in report size?
+	data.array[26] = 20;  // 20 - must be less or equal than max packet size for in endpoint, in report size?
 	data.array[27] = 6;  //  6 - must be less or equal than max packet size for out endpoint, out report size?
 
 	for(int i = 8; i < 16; i++)
@@ -71,45 +71,47 @@ void resetDataXBox() {
 void readInputXBox() {
 	resetDataXBox();
 
-	// Left Joystick Directions
-	if(CFG_LEFT_STICK) {
-		if (!Stick_Up)
-			XBOX_LS_UP
-		else if (!Stick_Down)
-			XBOX_LS_DOWN
+	if(CFG_JOYSTICK_SWITCH_READ_ACTIVE_LOW || CFG_JOYSTICK_SWITCH_READ_ACTIVE_HIGH || !startPressed) {
+		// Left Joystick Directions
+		if(CFG_LEFT_STICK) {
+			if (!Stick_Up)
+				XBOX_LS_UP
+			else if (!Stick_Down)
+				XBOX_LS_DOWN
 
-		if (!Stick_Left)
-			XBOX_LS_LEFT
-		else if (!Stick_Right)
-			XBOX_LS_RIGHT
-	}
-
-	// Right Joystick Directions
-	if(CFG_RIGHT_STICK) {
-		if (!Stick_Up)
-			XBOX_RS_UP
-		else if (!Stick_Down)
-			XBOX_RS_DOWN
-		
-		if (!Stick_Left)
-			XBOX_RS_LEFT
-		else if (!Stick_Right)
-			XBOX_RS_RIGHT
-	}
-
-	// Digital Pad Directions
-	if(CFG_DIGITAL_PAD) {
-		if (!Stick_Up) {
-			XBOX_DPAD_UP
+			if (!Stick_Left)
+				XBOX_LS_LEFT
+			else if (!Stick_Right)
+				XBOX_LS_RIGHT
 		}
-		else if (!Stick_Down) {
-			XBOX_DPAD_DOWN
-		}
+
+		// Right Joystick Directions
+		if(CFG_RIGHT_STICK) {
+			if (!Stick_Up)
+				XBOX_RS_UP
+			else if (!Stick_Down)
+				XBOX_RS_DOWN
 		
-		if (!Stick_Left)
-			XBOX_DPAD_LEFT
-		else if (!Stick_Right)
-			XBOX_DPAD_RIGHT
+			if (!Stick_Left)
+				XBOX_RS_LEFT
+			else if (!Stick_Right)
+				XBOX_RS_RIGHT
+		}
+
+		// Digital Pad Directions
+		if(CFG_DIGITAL_PAD) {
+			if (!Stick_Up) {
+				XBOX_DPAD_UP
+			}
+			else if (!Stick_Down) {
+				XBOX_DPAD_DOWN
+			}
+		
+			if (!Stick_Left)
+				XBOX_DPAD_LEFT
+			else if (!Stick_Right)
+				XBOX_DPAD_RIGHT
+		}
 	}
 
 	// Buttons
@@ -150,20 +152,21 @@ void xbox_controller() {
 	usbMode = USB_MODE_XBOX;
 	setupUSB();
 	initDataXBox();
-	resetDataXBox();
 	
     while(1) { /* main event loop */
 		usbPoll();
+		updateStartState();
 		updateJoystickMode();
         readInputXBox();
 		/*
-		while(!usbInterruptIsReady()) usbPoll();
-		usbSetInterrupt(data.array + 0, 8);
-		while(!usbInterruptIsReady()) usbPoll();
-		usbSetInterrupt(data.array + 8, 8);
-		while(!usbInterruptIsReady()) usbPoll();
-		usbSetInterrupt(data.array + 16, 4);
+		while(!usbInterruptIsReady3()) usbPoll();
+		usbSetInterrupt3(data.array + 0, 8);
+		while(!usbInterruptIsReady3()) usbPoll();
+		usbSetInterrupt3(data.array + 8, 8);
+		while(!usbInterruptIsReady3()) usbPoll();
+		usbSetInterrupt3(data.array + 16, 4);
 		*/
+		
 		sendDataUSB3(data.array, 20);
     }
 }
