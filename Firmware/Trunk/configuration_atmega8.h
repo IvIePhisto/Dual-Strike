@@ -49,11 +49,10 @@ uint8_t config[CONFIG_BYTE_WIDTH + 2] = {CONFIG_EMPTY, CONFIG_EMPTY, CONFIG_EMPT
 #define CFG_HOME_EMU (config[0 + 2] & (1<<5))
 #define CFG_EMU_4X (config[0 + 2] & (1<<6))
 #define CFG_NO_EXTRA_PINS (((config[1 + 2] >> 0) & 0b00000111)  == 0b000)
-#define CFG_JOYSTICK_SWITCH_READ_ACTIVE_LOW (((config[1 + 2] >> 0) & 0b00000111)  == 0b001)
-#define CFG_JOYSTICK_SWITCH_READ_ACTIVE_HIGH (((config[1 + 2] >> 0) & 0b00000111)  == 0b010)
-#define CFG_JOYSTICK_SWITCH_EMU (((config[1 + 2] >> 0) & 0b00000111)  == 0b011)
-#define CFG_INVERTED_TRIGGERS (((config[1 + 2] >> 0) & 0b00000111)  == 0b100)
-#define CFG_X3_READ (((config[1 + 2] >> 0) & 0b00000111)  == 0b101)
+#define CFG_JOYSTICK_SWITCH_READ (((config[1 + 2] >> 0) & 0b00000111)  == 0b001)
+#define CFG_JOYSTICK_SWITCH_EMU (((config[1 + 2] >> 0) & 0b00000111)  == 0b010)
+#define CFG_INVERTED_TRIGGERS (((config[1 + 2] >> 0) & 0b00000111)  == 0b011)
+#define CFG_X3_READ (((config[1 + 2] >> 0) & 0b00000111)  == 0b100)
 
 /* CONFIG SETTERS: */
 #define CFG_SET_DEF_WORK_MODE_PS3(CONFIG) CONFIG[0 + 2] &= ~(0b1 << 0);
@@ -70,10 +69,9 @@ uint8_t config[CONFIG_BYTE_WIDTH + 2] = {CONFIG_EMPTY, CONFIG_EMPTY, CONFIG_EMPT
 #define CFG_ENABLE_EMU_4X(CONFIG) CONFIG[0 + 2] |= (1<<6);
 #define CFG_DISABLE_EMU_4X(CONFIG) CONFIG[0 + 2] &= ~(1<<6);
 #define CFG_SET_NO_EXTRA_PINS(CONFIG) CONFIG[1 + 2] &= ~(0b111 << 0);
-#define CFG_SET_JOYSTICK_SWITCH_READ_ACTIVE_LOW(CONFIG) CONFIG[1 + 2] |= (0b001 << 0); CONFIG[1 + 2] &= ((0b001 << 0)| ~(0b110 << 0));
-#define CFG_SET_JOYSTICK_SWITCH_READ_ACTIVE_HIGH(CONFIG) CONFIG[1 + 2] |= (0b010 << 0); CONFIG[1 + 2] &= ((0b010 << 0)| ~(0b101 << 0));
-#define CFG_SET_JOYSTICK_SWITCH_EMU(CONFIG) CONFIG[1 + 2] |= (0b011 << 0); CONFIG[1 + 2] &= ((0b011 << 0)| ~(0b100 << 0));
-#define CFG_SET_INVERTED_TRIGGERS(CONFIG) CONFIG[1 + 2] |= (0b100 << 0); CONFIG[1 + 2] &= ((0b100 << 0)| ~(0b011 << 0));
-#define CFG_SET_X3_READ(CONFIG) CONFIG[1 + 2] |= (0b101 << 0); CONFIG[1 + 2] &= ((0b101 << 0)| ~(0b010 << 0));
+#define CFG_SET_JOYSTICK_SWITCH_READ(CONFIG) CONFIG[1 + 2] |= (0b001 << 0); CONFIG[1 + 2] &= ((0b001 << 0)| ~(0b110 << 0));
+#define CFG_SET_JOYSTICK_SWITCH_EMU(CONFIG) CONFIG[1 + 2] |= (0b010 << 0); CONFIG[1 + 2] &= ((0b010 << 0)| ~(0b101 << 0));
+#define CFG_SET_INVERTED_TRIGGERS(CONFIG) CONFIG[1 + 2] |= (0b011 << 0); CONFIG[1 + 2] &= ((0b011 << 0)| ~(0b100 << 0));
+#define CFG_SET_X3_READ(CONFIG) CONFIG[1 + 2] |= (0b100 << 0); CONFIG[1 + 2] &= ((0b100 << 0)| ~(0b011 << 0));
 
 #endif

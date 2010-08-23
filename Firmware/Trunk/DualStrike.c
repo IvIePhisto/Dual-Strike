@@ -271,13 +271,9 @@ int hardwareInit() {
 		CFG_SET_RIGHT_STICK(config)
 	}
 
-	if(CFG_JOYSTICK_SWITCH_READ_ACTIVE_LOW || CFG_X3_READ) {	
+	if(CFG_JOYSTICK_SWITCH_READ || CFG_X3_READ) {	
 		S3_PORT |= (1<<S3_PIN); // pin S3 is high
 		S4_PORT |= (1<<S4_PIN); // pin S4 is high
-	}
-	else if(CFG_JOYSTICK_SWITCH_READ_ACTIVE_HIGH) {	
-		S3_PORT &= ~(1<<S3_PIN); // pin S3 is low
-		S4_PORT &= ~(1<<S4_PIN); // pin S4 is low
 	}
 
 	int enabledWorkingModes = 0;
@@ -366,7 +362,7 @@ void updateStartState() {
 /* ------------------------------------------------------------------------- */
 
 void updateJoystickMode() {
-    if(CFG_JOYSTICK_SWITCH_READ_ACTIVE_LOW) {
+    if(CFG_JOYSTICK_SWITCH_READ) {
         if(!Stick_S3 && Stick_S4) { 	 // S3 low and S4 high
 			CFG_SET_LEFT_STICK(config)
         }
@@ -374,17 +370,6 @@ void updateJoystickMode() {
 			CFG_SET_RIGHT_STICK(config)
         }
         else if(Stick_S3 && Stick_S4) {  // S3 high and S4 high
-			CFG_SET_DIGITAL_PAD(config)
-        }
-    }
-	else if(CFG_JOYSTICK_SWITCH_READ_ACTIVE_HIGH) {
-        if(!Stick_S3 && Stick_S4) { 	 // S3 low and S4 high
-			CFG_SET_RIGHT_STICK(config)
-        }
-        else if(Stick_S3 && !Stick_S4) { // S3 high and S4 low
-			CFG_SET_LEFT_STICK(config)
-        }
-        else if(!Stick_S3 && !Stick_S4) { // S3 low and S4 low
 			CFG_SET_DIGITAL_PAD(config)
         }
     }

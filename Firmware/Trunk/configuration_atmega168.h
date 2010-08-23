@@ -83,11 +83,10 @@ uint8_t config[CONFIG_BYTE_WIDTH + 2] = {CONFIG_EMPTY, CONFIG_EMPTY, CONFIG_EMPT
 #define CFG_HOME_EMU (config[1 + 2] & (1<<2))
 #define CFG_EMU_4X (config[1 + 2] & (1<<3))
 #define CFG_NO_EXTRA_PINS (((config[1 + 2] >> 4) & 0b00000111)  == 0b000)
-#define CFG_JOYSTICK_SWITCH_READ_ACTIVE_LOW (((config[1 + 2] >> 4) & 0b00000111)  == 0b001)
-#define CFG_JOYSTICK_SWITCH_READ_ACTIVE_HIGH (((config[1 + 2] >> 4) & 0b00000111)  == 0b010)
-#define CFG_JOYSTICK_SWITCH_EMU (((config[1 + 2] >> 4) & 0b00000111)  == 0b011)
-#define CFG_INVERTED_TRIGGERS (((config[1 + 2] >> 4) & 0b00000111)  == 0b100)
-#define CFG_X3_READ (((config[1 + 2] >> 4) & 0b00000111)  == 0b101)
+#define CFG_JOYSTICK_SWITCH_READ (((config[1 + 2] >> 4) & 0b00000111)  == 0b001)
+#define CFG_JOYSTICK_SWITCH_EMU (((config[1 + 2] >> 4) & 0b00000111)  == 0b010)
+#define CFG_INVERTED_TRIGGERS (((config[1 + 2] >> 4) & 0b00000111)  == 0b011)
+#define CFG_X3_READ (((config[1 + 2] >> 4) & 0b00000111)  == 0b100)
 #define CFG_MAME_BL1_LK_NOTHING (((config[2 + 2] >> 0) & 0b00000111)  == 0b000)
 #define CFG_MAME_BL1_LK_BUTTON1 (((config[2 + 2] >> 0) & 0b00000111)  == 0b001)
 #define CFG_MAME_BL1_LK_BUTTON2 (((config[2 + 2] >> 0) & 0b00000111)  == 0b010)
@@ -336,11 +335,10 @@ uint8_t config[CONFIG_BYTE_WIDTH + 2] = {CONFIG_EMPTY, CONFIG_EMPTY, CONFIG_EMPT
 #define CFG_ENABLE_EMU_4X(CONFIG) CONFIG[1 + 2] |= (1<<3);
 #define CFG_DISABLE_EMU_4X(CONFIG) CONFIG[1 + 2] &= ~(1<<3);
 #define CFG_SET_NO_EXTRA_PINS(CONFIG) CONFIG[1 + 2] &= ~(0b111 << 4);
-#define CFG_SET_JOYSTICK_SWITCH_READ_ACTIVE_LOW(CONFIG) CONFIG[1 + 2] |= (0b001 << 4); CONFIG[1 + 2] &= ((0b001 << 4)| ~(0b110 << 4));
-#define CFG_SET_JOYSTICK_SWITCH_READ_ACTIVE_HIGH(CONFIG) CONFIG[1 + 2] |= (0b010 << 4); CONFIG[1 + 2] &= ((0b010 << 4)| ~(0b101 << 4));
-#define CFG_SET_JOYSTICK_SWITCH_EMU(CONFIG) CONFIG[1 + 2] |= (0b011 << 4); CONFIG[1 + 2] &= ((0b011 << 4)| ~(0b100 << 4));
-#define CFG_SET_INVERTED_TRIGGERS(CONFIG) CONFIG[1 + 2] |= (0b100 << 4); CONFIG[1 + 2] &= ((0b100 << 4)| ~(0b011 << 4));
-#define CFG_SET_X3_READ(CONFIG) CONFIG[1 + 2] |= (0b101 << 4); CONFIG[1 + 2] &= ((0b101 << 4)| ~(0b010 << 4));
+#define CFG_SET_JOYSTICK_SWITCH_READ(CONFIG) CONFIG[1 + 2] |= (0b001 << 4); CONFIG[1 + 2] &= ((0b001 << 4)| ~(0b110 << 4));
+#define CFG_SET_JOYSTICK_SWITCH_EMU(CONFIG) CONFIG[1 + 2] |= (0b010 << 4); CONFIG[1 + 2] &= ((0b010 << 4)| ~(0b101 << 4));
+#define CFG_SET_INVERTED_TRIGGERS(CONFIG) CONFIG[1 + 2] |= (0b011 << 4); CONFIG[1 + 2] &= ((0b011 << 4)| ~(0b100 << 4));
+#define CFG_SET_X3_READ(CONFIG) CONFIG[1 + 2] |= (0b100 << 4); CONFIG[1 + 2] &= ((0b100 << 4)| ~(0b011 << 4));
 #define CFG_SET_MAME_BL1_LK_NOTHING(CONFIG) CONFIG[2 + 2] &= ~(0b111 << 0);
 #define CFG_SET_MAME_BL1_LK_BUTTON1(CONFIG) CONFIG[2 + 2] |= (0b001 << 0); CONFIG[2 + 2] &= ((0b001 << 0)| ~(0b110 << 0));
 #define CFG_SET_MAME_BL1_LK_BUTTON2(CONFIG) CONFIG[2 + 2] |= (0b010 << 0); CONFIG[2 + 2] &= ((0b010 << 0)| ~(0b101 << 0));

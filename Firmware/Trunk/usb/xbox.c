@@ -71,7 +71,7 @@ void resetDataXBox() {
 void readInputXBox() {
 	resetDataXBox();
 
-	if(CFG_JOYSTICK_SWITCH_READ_ACTIVE_LOW || CFG_JOYSTICK_SWITCH_READ_ACTIVE_HIGH || !startPressed) {
+	if(CFG_JOYSTICK_SWITCH_READ || !startPressed) {
 		// Left Joystick Directions
 		if(CFG_LEFT_STICK) {
 			if (!Stick_Up)

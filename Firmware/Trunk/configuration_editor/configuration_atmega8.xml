@@ -118,31 +118,16 @@
         <help lang="de">S3 und S4 werden nicht verwendet.</help>
       </option>
       
-      <option id="JOYSTICK_SWITCH_READ_ACTIVE_LOW">
+      <option id="JOYSTICK_SWITCH_READ">
         <title>Active Low Joystick Switch Reading</title>
         <title lang="de">Active-Low Joystick-Schalter Auslesen</title>
         <help>S3 and S4 should be connected to a SPCO switch as well as ground to the center position pin.&lt;br/>
-This applies to the PS3/PC working mode.&lt;br/>
+This applies to the PS3/PC and XBox working modes.&lt;br/>
 If the switch is in the center position the digital pad will be activated. In the&lt;br/>
 left position the left analogue stick will be activated. In the other position&lt;br/>
 the right analogue stick will be activated.</help>
         <help lang="de">S3 und S4 sollten mit einem SPCO Schalter verbunden sein&lt;br/>
-genauso wie Ground zum Anschluß der mittleren Position. Dies gilt für den PS3/PC Arbeitsmodus.&lt;br/>
-Ist der Schalter in der mittleren Position wird das digitale Pad aktiviert. In der linken Position&lt;br/>
-wird der linke analoge Stick aktiviert. In der rechten Position wird der rechte&lt;br/>
-analoge Stick aktiviert.</help>
-      </option>
-
-      <option id="JOYSTICK_SWITCH_READ_ACTIVE_HIGH">
-        <title>Active High Joystick Switch Reading</title>
-        <title lang="de">Active High Joystick-Schalter Auslesen</title>
-        <help>S3 and S4 should be connected to a SPCO switch as well as VCC to the center position pin, additionally pull low resistors have to be connected to S3/S4 (this might already be the case if connected to another PCB).&lt;br/>
-This applies to the PS3/PC working mode.&lt;br/>
-If the switch is in the center position the digital pad will be activated. In the&lt;br/>
-left position the left analogue stick will be activated. In the other position&lt;br/>
-the right analogue stick will be activated.</help>
-        <help lang="de">S3 und S4 sollten mit einem SPCO Schalter verbunden sein genauso wie VCC zum Anschluß der mittleren Position, zusätzlich müssen Pull Low Widerstände mit S3/S4 verbunden sein (dies kann schon der Fall sein, wenn sie mit einem anderen PCB verbunden sind).&lt;br/>
-Dies gilt für den PS3/PC Arbeitsmodus.&lt;br/>
+genauso wie Ground zum Anschluß der mittleren Position. Dies gilt für die PS3/PC und XBox Arbeitsmodi.&lt;br/>
 Ist der Schalter in der mittleren Position wird das digitale Pad aktiviert. In der linken Position&lt;br/>
 wird der linke analoge Stick aktiviert. In der rechten Position wird der rechte&lt;br/>
 analoge Stick aktiviert.</help>
