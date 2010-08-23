@@ -14,8 +14,8 @@ void initDataXBox() {
 	data.array[23] = 1;  //  1 - must be greater than 0, number of interfaces?
 	data.array[24] = 1;  //  1 - needed, configuration index?
 	data.array[25] = 2;  //  2 - must be greater than 0, number of endpoints?
-	data.array[26] = 20;  // 20 - must be less or equal than max packet size for in endpoint, in report size?
-	data.array[27] = 6;  //  6 - must be less or equal than max packet size for out endpoint, out report size?
+	data.array[26] = 8;  // 20 - must be less or equal than max packet size for in endpoint, in max packet size?
+	data.array[27] = 6;  //  6 - must be less or equal than max packet size for out endpoint, out max packet size?
 
 	for(int i = 8; i < 16; i++)
 		data.array[20 + i] = 0xFF;
@@ -152,22 +152,15 @@ void xbox_controller() {
 	usbMode = USB_MODE_XBOX;
 	setupUSB();
 	initDataXBox();
-	startSendRepeats = 10;
+	startSendRepeats = 20;
+	//eeprom_write_word((void*)E2END-1, 0); // DEBUG
 
     while(1) { /* main event loop */
 		usbPoll();
 		updateStartState();
 		updateJoystickMode();
         readInputXBox();
-		/*
-		while(!usbInterruptIsReady3()) usbPoll();
-		usbSetInterrupt3(data.array + 0, 8);
-		while(!usbInterruptIsReady3()) usbPoll();
-		usbSetInterrupt3(data.array + 8, 8);
-		while(!usbInterruptIsReady3()) usbPoll();
-		usbSetInterrupt3(data.array + 16, 4);
-		*/
-		
-		sendDataUSB3(data.array, 20);
+		sendDataUSB3(data.array, 20); // each packet is interpreted by XBox as whole report, works on Windows when max packet size is 8
+		//usbSetInterrupt3(data.array, 8);
     }
 }

@@ -83,6 +83,7 @@ typedef union {
 static e2addr_t eepromOffset = -1;
 static uchar writeReportID = 0;
 static e2addr_t currentEEPROMAddress;
+//static uint debugCount = 0; //DEBUG
 
 usbMsgLen_t usbFunctionSetup(uchar receivedData[8]) {
 	usbRequest_t    *rq = (void *)receivedData;
@@ -181,15 +182,17 @@ usbMsgLen_t usbFunctionSetup(uchar receivedData[8]) {
 		break;
 
 	case USB_MODE_XBOX:
-		/*
 	    if((rq->bmRequestType & USBRQ_TYPE_MASK) == USBRQ_TYPE_CLASS) {    // class request
 			if(rq->bRequest == USBRQ_HID_GET_REPORT) {
+				// is called only once in my setup
+
 				usbMsgPtr = data.array;
+				//eeprom_write_word((void*)E2END-1, ++debugCount); // DEBUG
 
 				return 20;
 			}
 		}
-		else*/
+		else
 		if ((rq-> bmRequestType & USBRQ_TYPE_MASK) == USBRQ_TYPE_VENDOR) {
 			if(rq->bRequest == 0x06) {
 				/*
