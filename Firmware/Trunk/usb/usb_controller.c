@@ -178,11 +178,23 @@ usbMsgLen_t usbFunctionSetup(uchar receivedData[8]) {
 					mameIdleRate = reportType;
 				}
 		    }
+			else if(rq->bRequest == USBRQ_HID_GET_REPORT) {
+				if(reportID == 1) {
+					usbMsgPtr = (void*)&data.mame_reports.keyboard;
+
+					return 5;
+				}
+				else if(reportID == 2) {
+					usbMsgPtr = (void*)&data.mame_reports.consumer;
+
+					return 2;
+				}
+			}
 		}
 		break;
 
 	case USB_MODE_XBOX:
-	    if((rq->bmRequestType & USBRQ_TYPE_MASK) == USBRQ_TYPE_CLASS) {    // class request
+	    if((rq->bmRequestType & USBRQ_TYPE_MASK) == USBRQ_TYPE_CLASS) {
 			if(rq->bRequest == USBRQ_HID_GET_REPORT) {
 				// is called only once in my setup
 
@@ -197,7 +209,7 @@ usbMsgLen_t usbFunctionSetup(uchar receivedData[8]) {
 			if(rq->bRequest == 0x06) {
 				/*
 				receivedData == { 0xc1, 0x06, 0x00, 0x42, 0x00, 0x00, 0x10, 0x00 }
-				means:
+				probably means:
 				-bmRequestType:
 				 +direction: device to host
 				 +type:      vendor
