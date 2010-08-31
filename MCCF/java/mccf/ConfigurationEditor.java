@@ -9,8 +9,10 @@ import java.awt.Dimension;
 import java.awt.Event;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.Insets;
+import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -231,6 +233,7 @@ public class ConfigurationEditor implements HyperlinkListener {
 		fileHandler = new FileHandler(this);
 		model = new ConfigurationModel(fileHandler, configuration);
 		mainTitle = getLocalizedInfo(configuration.getTitle(), false);
+		JFrame.setDefaultLookAndFeelDecorated(true);
 		window = new JFrame(mainTitle);
 		window.setIconImages(createApplicationImages(configuration.getIconPath()));
 		actionListenerHandler = new ActionListenerHandler();
@@ -256,9 +259,28 @@ public class ConfigurationEditor implements HyperlinkListener {
 	}
 
 	private void populateWindow() {
+		GraphicsEnvironment graphicsEnvironment;
+		Rectangle maximumWindowBounds;
+		int maximumWidth;
+		int maximumHeight;
+		Dimension windowSize;
+		
 		createMenuBar();
 		createContentPane();
+		graphicsEnvironment = GraphicsEnvironment.getLocalGraphicsEnvironment();
+		maximumWindowBounds = graphicsEnvironment.getMaximumWindowBounds();
+		maximumWidth = maximumWindowBounds.width;
+		maximumHeight = maximumWindowBounds.height;
 		window.pack();
+		windowSize = window.getSize();
+		
+		if(windowSize.width > maximumWidth)
+			windowSize.width = maximumWidth;
+
+		if(windowSize.height > maximumHeight)
+			windowSize.height = maximumHeight;
+		
+		window.setSize(windowSize);
 		window.setLocationRelativeTo(null);
 		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		window.setVisible(true);
