@@ -169,7 +169,7 @@ handleIn1:                      ;[38]
 #if USB_CFG_HAVE_INTRIN_ENDPOINT && USB_CFG_HAVE_INTRIN_ENDPOINT3
 handleIn3:
     lds     cnt, usbTxLen3      ;[41]
-    sbrc    cnt, 4              ;[43]
+    sbrc    cnt, 6              ;[43] originally: 4, just using another bit
     rjmp    sendCntAndReti      ;[44] 49 + 16 = 65 until SOP
     sts     usbTxLen3, x1       ;[45] x1 == USBPID_NAK from above
     ldi     YL, lo8(usbTxBuf3)  ;[47]

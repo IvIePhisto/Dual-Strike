@@ -214,6 +214,9 @@ USB_PUBLIC usbMsgLen_t usbFunctionDescriptor(struct usbRequest *rq);
  * usbFunctionSetup() above, but it is called only to request USB descriptor
  * data. See the documentation of usbFunctionSetup() above for more info.
  */
+#define USB_READY_BIT		4
+#define USB_READY_MASK	(1<<USB_READY_BIT)
+
 #if USB_CFG_HAVE_INTRIN_ENDPOINT
 USB_PUBLIC void usbSetInterrupt(uchar *data, uchar len);
 /* This function sets the message which will be sent during the next interrupt
@@ -222,15 +225,15 @@ USB_PUBLIC void usbSetInterrupt(uchar *data, uchar len);
  * interrupt status to the host.
  * If you need to transfer more bytes, use a control read after the interrupt.
  */
-#define usbInterruptIsReady()   (usbTxLen1 & 0x10)
+#define usbInterruptIsReady()   (usbTxLen1 & USB_READY_MASK)
 /* This macro indicates whether the last interrupt message has already been
  * sent. If you set a new interrupt message before the old was sent, the
  * message already buffered will be lost.
  */
 #if USB_CFG_HAVE_INTRIN_ENDPOINT3
 USB_PUBLIC void usbSetInterrupt3(uchar *data, uchar len);
-#define usbInterruptIsReady3()   (usbTxLen3 & 0x10)
-/* Same as above for endpoint 3 */
+#define usbInterruptIsReady3()   (usbTxLen3 & (1<<6))
+/* Same as above for endpoint 3, but using another bit, has to be alligned with assembler code in asmcommon.inc */
 #endif
 #endif /* USB_CFG_HAVE_INTRIN_ENDPOINT */
 #if USB_CFG_HID_REPORT_DESCRIPTOR_LENGTH    /* simplified interface for backward compatibility */
@@ -546,7 +549,8 @@ int usbDescriptorStringSerialNumber[];
 #define USB_CFG_EP3_NUMBER  3
 #endif
 
-#define USB_BUFSIZE     11  /* PID, 8 bytes data, 2 bytes CRC */
+#define USB_MAX_PACKET_SIZE	8 /* maximum packet size for interrupt in */
+#define USB_BUFSIZE     	(3+USB_MAX_PACKET_SIZE)  /* PID, data, 2 bytes CRC */
 
 /* ----- Try to find registers and bits responsible for ext interrupt 0 ----- */
 
@@ -604,16 +608,21 @@ at90s1200, attiny11, attiny12, attiny15, attiny28: these have no RAM
 /* ----------------- USB Specification Constants and Types ----------------- */
 /* ------------------------------------------------------------------------- */
 
-/* USB Token values */
-#define USBPID_SETUP    0x2d
-#define USBPID_OUT      0xe1
-#define USBPID_IN       0x69
-#define USBPID_DATA0    0xc3
-#define USBPID_DATA1    0x4b
+/* USB PID definitions, low byte is the PID value, the high byte the logical inverse. */
 
-#define USBPID_ACK      0xd2
-#define USBPID_NAK      0x5a
-#define USBPID_STALL    0x1e
+/* Token PIDs */
+#define USBPID_OUT      0xe1 // PID: 0b0001
+#define USBPID_IN       0x69 // PID: 0b1001
+#define USBPID_SETUP    0x2d // PID: 0b1101
+
+/* Data PIDs */
+#define USBPID_DATA0    0xc3 // PID: 0b0011
+#define USBPID_DATA1    0x4b // PID: 0b1011
+
+/* Handshake PIDs */
+#define USBPID_ACK      0xd2 // PID: 0b0010
+#define USBPID_NAK      0x5a // PID: 0b1010
+#define USBPID_STALL    0x1e // PID: 0b1110
 
 #ifndef USB_INITIAL_DATATOKEN
 #define USB_INITIAL_DATATOKEN   USBPID_DATA1
@@ -622,10 +631,15 @@ at90s1200, attiny11, attiny12, attiny15, attiny28: these have no RAM
 #ifndef __ASSEMBLER__
 typedef struct usbTxStatus{
     volatile uchar   len;
-    uchar   buffer[USB_BUFSIZE];
+    uchar   buffer[USB_BUFSIZE + 23]; // added 23 to allow up to 31 bytes to transfer
 }usbTxStatus_t;
 
 extern usbTxStatus_t   usbTxStatus1, usbTxStatus3;
+
+/*
+	usbTxLen? bits:
+	[USB_READY_BIT]: transfer finished
+*/
 #define usbTxLen1   usbTxStatus1.len
 #define usbTxBuf1   usbTxStatus1.buffer
 #define usbTxLen3   usbTxStatus3.len

@@ -25,7 +25,7 @@ documentation of the entire driver.
 /* ------------------------------------------------------------------------- */
 
 /* raw USB registers / interface to assembler code: */
-uchar usbRxBuf[2*USB_BUFSIZE];  /* raw RX buffer: PID, 8 bytes data, 2 bytes CRC */
+uchar usbRxBuf[2*USB_BUFSIZE];  /* raw RX buffer: PID, data, 2 bytes CRC */
 uchar       usbInputBufOffset;  /* offset in usbRxBuf used for low level receiving */
 uchar       usbDeviceAddr;      /* assigned during enumeration, defaults to 0 */
 uchar       usbNewDeviceAddr;   /* device ID which should be set after status phase */
@@ -236,9 +236,11 @@ char    i;
     if(usbTxLen1 == USBPID_STALL)
         return;
 #endif
-    if(txStatus->len & 0x10){   /* packet buffer was empty */
+	// ready bit is set to 1:
+    if(txStatus->len & USB_READY_MASK){   /* packet buffer was empty */
         txStatus->buffer[0] ^= USBPID_DATA0 ^ USBPID_DATA1; /* toggle token */
     }else{
+		// sets ready bit to 1:
         txStatus->len = USBPID_NAK; /* avoid sending outdated (overwritten) interrupt data */
     }
     p = txStatus->buffer + 1;
@@ -369,7 +371,8 @@ uchar       flags = USB_FLG_MSGPTR_IS_ROM;
  */
 static inline usbMsgLen_t usbDriverSetup(usbRequest_t *rq)
 {
-uchar   len  = 0, *dataPtr = usbTxBuf + 9;  /* there are 2 bytes free space at the end of the buffer */
+uchar   len  = 0;
+uchar *dataPtr = usbTxBuf + 9;  /* there are 2 bytes free space at the end of the buffer */
 uchar   value = rq->wValue.bytes[0];
 #if USB_CFG_IMPLEMENT_HALT
 uchar   index = rq->wIndex.bytes[0];
@@ -587,7 +590,7 @@ uchar   i;
         usbRxLen = 0;       /* mark rx buffer as available */
 #endif
     }
-    if(usbTxLen & 0x10){    /* transmit system idle */
+    if(usbTxLen & USB_READY_MASK){    /* transmit system idle */
         if(usbMsgLen != USB_NO_MSG){    /* transmit data pending? */
             usbBuildTxBlock();
         }

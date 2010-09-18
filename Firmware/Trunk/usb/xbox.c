@@ -10,12 +10,12 @@ void initDataXBox() {
 	// Vendor Request data
 	data.array[20] = 16; // 16 - must be greater than 7, length of this report?
 	data.array[21] = 66; // 66 - needed, USB interface subclass?
-	data.array[22] = 0;  //  0 - needed, USB interface protocol?
-	data.array[23] = 1;  //  1 - must be greater than 0, number of interfaces?
-	data.array[24] = 1;  //  1 - needed, configuration index?
-	data.array[25] = 2;  //  2 - must be greater than 0, number of endpoints?
-	data.array[26] = 8;  // 20 - must be less or equal than max packet size for in endpoint, in max packet size?
-	data.array[27] = 6;  //  6 - must be less or equal than max packet size for out endpoint, out max packet size?
+	data.array[22] =  0; //  0 - needed, USB interface protocol?
+	data.array[23] =  1; //  1 - must be greater than 0, number of interfaces?
+	data.array[24] =  1; //  1 - needed, configuration index?
+	data.array[25] =  2; //  2 - must be greater than 0, number of endpoints?
+	data.array[26] = 20; // 20 - must be less or equal than max packet size for in endpoint, in max packet size?
+	data.array[27] =  6; //  6 - must be less or equal than max packet size for out endpoint, out max packet size?
 
 	for(int i = 8; i < 16; i++)
 		data.array[20 + i] = 0xFF;
@@ -23,23 +23,25 @@ void initDataXBox() {
 }
 
 void resetDataXBox() {
-	data.array[2] =
-	data.array[4] =
-	data.array[5] =
-	data.array[6] =
-	data.array[7] =
-	data.array[8] =
-	data.array[9] =
-	data.array[10] =
-	data.array[11] =
-	data.array[12] =
-	data.array[13] =
-	data.array[14] =
-	data.array[15] =
-	data.array[16] =
-	data.array[17] =
-	data.array[18] =
-	data.array[19] = 0;
+	data.array[2] =		// DPAD
+	data.array[4] =		// A
+	data.array[5] =		// B
+	data.array[6] =		// X
+	data.array[7] =		// Y
+	data.array[8] =		// black
+	data.array[9] =		// white
+	data.array[10] =	// LT
+	data.array[11] =	// RT
+	data.array[12] =	// left analogue x high byte
+	data.array[13] =	// left analogue x low byte
+	data.array[14] =	// left analogue y high byte
+	data.array[15] =	// left analogue y low byte
+	data.array[16] =	// right analogue x high byte
+	data.array[17] =	// right analogue x low byte
+	data.array[18] =	// right analogue y high byte
+	data.array[19] = 0;	// right analogue y low byte
+	
+	// analogue axes are north/east positive
 }
 
 #define XBOX_DPAD_UP	{ data.array[2] |= (1<<0); }
@@ -51,22 +53,22 @@ void resetDataXBox() {
 #define XBOX_L_STICK	{ data.array[2] |= (1<<6); }
 #define XBOX_R_STICK	{ data.array[2] |= (1<<7); }
 
-#define XBOX_A			{ data.array[4] |= 0xFF; }
-#define XBOX_B			{ data.array[5] |= 0xFF; }
-#define XBOX_X			{ data.array[6] |= 0xFF; }
-#define XBOX_Y			{ data.array[7] |= 0xFF; }
-#define XBOX_BLACK		{ data.array[8] |= 0xFF; }
-#define XBOX_WHITE		{ data.array[9] |= 0xFF; }
-#define XBOX_LT			{ data.array[10] |= 0xFF; }
-#define XBOX_RT			{ data.array[11] |= 0xFF; }
-#define XBOX_LS_RIGHT	{ data.array[12] |= 0xFF; data.array[13] |= 0b01111111; }
-#define XBOX_LS_LEFT	{ data.array[13] |= 0b10000000; }
-#define XBOX_LS_UP		{ data.array[14] |= 0xFF; data.array[15] |= 0b01111111; }
-#define XBOX_LS_DOWN	{ data.array[15] |= 0b10000000; }
-#define XBOX_RS_RIGHT	{ data.array[16] |= 0xFF; data.array[17] |= 0b01111111; }
-#define XBOX_RS_LEFT	{ data.array[17] |= 0b10000000; }
-#define XBOX_RS_UP		{ data.array[18] |= 0xFF; data.array[19] |= 0b01111111; }
-#define XBOX_RS_DOWN	{ data.array[19] |= 0b10000000; }
+#define XBOX_A			{  data.array[4] = 0xFF; }
+#define XBOX_B			{  data.array[5] = 0xFF; }
+#define XBOX_X			{  data.array[6] = 0xFF; }
+#define XBOX_Y			{  data.array[7] = 0xFF; }
+#define XBOX_BLACK		{  data.array[8] = 0xFF; }
+#define XBOX_WHITE		{  data.array[9] = 0xFF; }
+#define XBOX_LT			{ data.array[10] = 0xFF; }
+#define XBOX_RT			{ data.array[11] = 0xFF; }
+#define XBOX_LS_RIGHT	{ data.array[12] = 0xFF; data.array[13] = 0b01111111; }
+#define XBOX_LS_LEFT	{ data.array[13] = 0b10000000; }
+#define XBOX_LS_UP		{ data.array[14] = 0xFF; data.array[15] = 0b01111111; }
+#define XBOX_LS_DOWN	{ data.array[15] = 0b10000000; }
+#define XBOX_RS_RIGHT	{ data.array[16] = 0xFF; data.array[17] = 0b01111111; }
+#define XBOX_RS_LEFT	{ data.array[17] = 0b10000000; }
+#define XBOX_RS_UP		{ data.array[18] = 0xFF; data.array[19] = 0b01111111; }
+#define XBOX_RS_DOWN	{ data.array[19] = 0b10000000; }
 
 void readInputXBox() {
 	resetDataXBox();
@@ -160,7 +162,11 @@ void xbox_controller() {
 		updateStartState();
 		updateJoystickMode();
         readInputXBox();
-		sendDataUSB3(data.array, 20); // each packet is interpreted by XBox as whole report, works on Windows when max packet size is 8
-		//usbSetInterrupt3(data.array, 8);
+		//sendDataUSB3(data.array, 20); // each packet is interpreted by XBox as whole report, works on Windows when max packet size is 8
+
+		while(!usbInterruptIsReady3())
+			usbPoll();
+
+		usbSetInterrupt3(data.array, 20); // usbTxStatus.buffer has to be bigger than normal; 15 bytes should be transferable, 8 bytes is normal, 11 works
     }
 }
