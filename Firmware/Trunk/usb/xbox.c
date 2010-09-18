@@ -167,6 +167,6 @@ void xbox_controller() {
 		while(!usbInterruptIsReady3())
 			usbPoll();
 
-		usbSetInterrupt3(data.array, 20); // usbTxStatus.buffer has to be bigger than normal; 15 bytes should be transferable, 8 bytes is normal, 11 works
+		usbSetInterrupt3(data.array, 20); // V-USB is patched to have up to 27 bytes transferred, 20 working for XBox
     }
 }

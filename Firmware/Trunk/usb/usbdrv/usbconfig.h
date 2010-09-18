@@ -77,6 +77,8 @@ section at the end of this file).
  * configured below) and a catch-all default interrupt-in endpoint as above.
  * You must also define USB_CFG_HAVE_INTRIN_ENDPOINT to 1 for this feature.
  */
+// interrupt in endpoint 3 handling patched to allow for up to 27 bytes to be
+// transferred (working with 20 for XBox1)
 #define USB_CFG_EP3_NUMBER              2
 /* If the so-called endpoint 3 is used, it can now be configured to any other
  * endpoint number (except 0) with this macro. Default if undefined is 3.
