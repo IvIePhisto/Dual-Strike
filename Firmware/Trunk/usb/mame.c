@@ -148,9 +148,6 @@ void (*player2Buttons[6])() = {mamePlayer2Button1, mamePlayer2Button2, mamePlaye
 
 #define MAME_SET_BUTTON(playerNo, buttonID) { if(buttonMapping[buttonID] >= 0) (*player##playerNo##Buttons[buttonMapping[buttonID]])(); }
 
-static uchar mameControl = 0;
-static uchar mamePlayer = 1;
-
 // one HID idle rate unit is 4ms, 
 #define IDLE_RATE_UNIT_COUNT_CYCLES ((uchar)(F_CPU / 250 / 1024))
 #define IDLE_RATE_OVERLOW_COUNT		(255 / IDLE_RATE_UNIT_COUNT_CYCLES)
@@ -478,6 +475,14 @@ void configureMAMEButtonMappings() {
 void sendMAMEReports() {	
 	resetMAMEReports();
 	updateStartState();
+	/*
+	joystick mode setting corresponds to the MAME mode, either set by
+	SPDT switch or on the fly switching:
+		-left analogue switch: player 1
+		-digital pad: control mode
+		-right analogue switch: player 2
+	*/
+	updateJoystickMode();
 
 	if(startPressed) {
 		/*if(!Stick_MP) {
@@ -508,36 +513,16 @@ void sendMAMEReports() {
 				startWasUsed = 1;
 			}
 		}
-		
-		if(!Stick_Up) {
-			mameControl = 0;
-			startWasUsed = 1;
-		}
-		else if(!Stick_Down) {
-			mameControl = 1;
-			startWasUsed = 1;
-		}
-
-		if(!mameControl) {
-			if(!Stick_Left) {
-				mamePlayer = 1;
-				startWasUsed = 1;
-			}
-			else if(!Stick_Right) {
-				mamePlayer = 2;
-				startWasUsed = 1;
-			}
-		}
 	}
 
-	if(mameControl) {
+	if(CFG_DIGITAL_PAD) {
 		if(!startPressed)
 			setMAMEReportsControl();
 	}
 	else {
-		if(mamePlayer == 1)
+		if(CFG_LEFT_STICK)
 			setMAMEReportPlayer1();
-		else
+		else if(CFG_RIGHT_STICK)
 			setMAMEReportPlayer2();
 	}
 
@@ -555,10 +540,12 @@ void sendMAMEReports() {
 void mame_controller() {
 	usbMode = USB_MODE_MAME;
 
-	if(CFG_MAME_DEFAULT_PLAYER_1)
-		mamePlayer = 1;
-	else
-		mamePlayer = 2;
+	if(CFG_MAME_DEFAULT_PLAYER_1) {
+		CFG_SET_LEFT_STICK(config);
+	}
+	else {
+		CFG_SET_RIGHT_STICK(config);
+	}
 	
 	setupUSB();
 	usbPoll();
@@ -566,6 +553,7 @@ void mame_controller() {
 	initMAMEButtonMappings();
 	initIdleTimer();
 	startSendRepeats = 5000;
+	CFG_SET_LEFT_STICK(config);
 
     while(1) { /* main event loop */
         sendMAMEReports();

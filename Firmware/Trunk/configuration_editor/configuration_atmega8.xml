@@ -136,11 +136,11 @@ analoge Stick aktiviert.</help>
       <option id="JOYSTICK_SWITCH_EMU">
         <title>Joystick Switch Emulation</title>
         <title lang="de">Joystick-Schalter Emulation</title>
-        <help>S3 and S4 should be connected to the pins for a active-high SPCO 
+        <help>S3 and S4 should be connected to the pins for a active-low SPCO 
 switch of the pass-through PCB. This applies to the pass-through working mode.&lt;br/>
 The joystick setting of the Dual Strike will set the pass-through PCB's switch -&lt;br/>
 either by default setting or by activating an appropiate joystick direction while plugging in.</help>
-        <help lang="de">S3 und S4 sollten mit den Anschlüssen für einen Active-High&lt;br/>
+        <help lang="de">S3 und S4 sollten mit den Anschlüssen für einen Active-Low&lt;br/>
 SPCO Schalter des durgeschliffenen PCBs verbunden sein.&lt;br/>
 Dies gilt für den Durschleif-Arbeitsmodus.&lt;br/>
 Die Joystick-Einstellung des Dual Strike wird den Schalter des durgeschliffenen&lt;br/> 
@@ -151,11 +151,11 @@ entsprechenden Joystick-Richtung beim Einstecken.</help>
       <option id="INVERTED_TRIGGERS">
         <title>Inverted Triggers</title>
         <title lang="de">Invertierte Trigger</title>
-<help>S3 and S4 should be connected to the pins of active-low trigger buttons of&lt;br/>
+<help>S3 and S4 should be connected to the pins of active-high trigger buttons of&lt;br/>
 the pass-through PCB while these are not connected to the MK and 4K buttons.&lt;br/>
 This applies to the pass-through working mode.&lt;br/>
 This will make the appropiate buttons work with active-high trigger PCBs.</help>
-<help lang="de">S3 und S4 sollten mit den Anschlüssen für Active-Low Trigger des&lt;br/>
+<help lang="de">S3 und S4 sollten mit den Anschlüssen für Active-High Trigger des&lt;br/>
 durgeschliffenen PCBs verbunden werden, solange diese nicht mit den MK und 4K&lt;br/>
 Buttons verbunden sind.&lt;br/>
 Dies gilt für den Durschleif-Arbeitsmodus.&lt;br/>
