@@ -59,10 +59,10 @@
 	#define Stick_HK	(PINB & (1<<4))
 
 	#ifdef EXTRA_BUTTONS
-		#define 4P_PIN			1
-		#define 4P_PORT_NAME 	B
-		#define 4K_PIN			3
-		#define 4K_PORT_NAME 	B
+		#define EXTRA_4P_PIN			1
+		#define EXTRA_4P_PORT_NAME 	B
+		#define EXTRA_4K_PIN			3
+		#define EXTRA_4K_PORT_NAME 	B
 	#endif
 #else
 	#define HOME_PORT_NAME 	C
