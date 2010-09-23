@@ -37,7 +37,7 @@ PROGMEM int  usbDescriptorStringDevicePS3[] = {
     USB_CFG_DEVICE_NAME, ' ', '(', 'P', 'S', '3', ')'
 };
 
-PROGMEM char usbHidReportDescriptorPS3[124] = {
+PROGMEM char usbHidReportDescriptorPS3[124+6] = {
     0x05, 0x01,                    // USAGE_PAGE (Generic Desktop)
     0x09, 0x04,                    // USAGE (Joystick)
     0xa1, 0x01,                    // COLLECTION (Application)
@@ -96,6 +96,11 @@ PROGMEM char usbHidReportDescriptorPS3[124] = {
 	0x09, 0x2b,                    //   USAGE (Unknown)
 	0x95, 0x0c,                    //   REPORT_COUNT (12)
     0x81, 0x02,                    //   INPUT (Data,Var,Abs)
+	//---
+	0x95, 0x23,                    //   REPORT_COUNT (35)
+	0x09, 0x01,					   //   USAGE(POINTER)
+	0x91, 0x02,					   //	OUTPUT (Data,Var,Abs)
+	//---
     0x0a, 0x21, 0x26,              //   UNKNOWN
     0xb1, 0x02,                    //   FEATURE (Data,Var,Abs)
     0xc0                           // END_COLLECTION

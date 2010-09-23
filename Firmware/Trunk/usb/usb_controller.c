@@ -69,6 +69,61 @@ static uchar usbMode = -1;
 
 #include "descriptors.c"
 
+/* ------------------------------------------------------------------------- */
+
+void sendDataUSB(uchar* data, unsigned int byteCount) {
+	int currentByte;
+	int currentCount;
+
+	currentByte = 0;
+
+	while(currentByte < byteCount) {
+		currentCount = byteCount - currentByte;
+
+		if(currentCount > 8)
+			currentCount = 8;
+
+		while(!usbInterruptIsReady())
+			usbPoll();
+
+		usbSetInterrupt(data + currentByte, currentCount*sizeof(uchar));
+		currentByte += currentCount;		
+	}
+}
+
+void sendDataUSB3(uchar* data, unsigned int byteCount) {
+	int currentByte;
+	int currentCount;
+
+	currentByte = 0;
+
+	while(currentByte < byteCount) {
+		currentCount = byteCount - currentByte;
+
+		if(currentCount > 8)
+			currentCount = 8;
+
+		while(!usbInterruptIsReady3())
+			usbPoll();
+
+		usbSetInterrupt3(data + currentByte, currentCount*sizeof(uchar));
+		currentByte += currentCount;
+	}
+}
+
+void setupUSB() {
+    usbDeviceDisconnect(); /* enforce re-enumeration, do this while interrupts are disabled! */
+    _delay_ms(300UL);/* fake USB disconnect for > 250 ms */
+    usbDeviceConnect();
+    usbInit();
+    sei();
+	usbPoll();
+}
+
+/* ------------------------------------------------------------------------- */
+
+#include "ps3.c"
+
 #if (E2END) > 0xffff /* we need long addressing */
 #   define e2addr_t           ulong
 #else
@@ -83,7 +138,8 @@ typedef union {
 static e2addr_t eepromOffset = -1;
 static uchar writeReportID = 0;
 static e2addr_t currentEEPROMAddress;
-//static uint debugCount = 0; //DEBUG
+static uint debugCount = 0; //DEBUG
+static uint debugLength = 0; //DEBUG
 
 usbMsgLen_t usbFunctionSetup(uchar receivedData[8]) {
 	usbRequest_t    *rq = (void *)receivedData;
@@ -100,8 +156,9 @@ usbMsgLen_t usbFunctionSetup(uchar receivedData[8]) {
 						 // set buffer data
 						data.array[0] = 0x21; // 0b00100001 0d33
 						data.array[1] = 0x26; // 0b00100110 0d38
+						data.array[2] = 0x01;
 
-						for(int i = 2; i < 8; i++)
+						for(int i = 3; i < 8; i++)
 							data.array[i] = 0;
 
 						usbMsgPtr = data.array;
@@ -109,7 +166,21 @@ usbMsgLen_t usbFunctionSetup(uchar receivedData[8]) {
 						return 8;
 					}
 				}
+				else if(reportType == HID_REPORT_TYPE_INPUT) {
+					resetPS3ReportBuffer();
+					usbMsgPtr = data.array;
+
+					return 16;
+				}
 	        }
+			/* DEBUG */
+			else if(rq->bRequest == USBRQ_HID_SET_REPORT) {
+				debugCount++;
+				eeprom_write_word((void*)24, debugCount);
+				debugLength = 0;
+
+				return USB_NO_MSG;
+			}
 	    }
 		break;
 
@@ -286,60 +357,19 @@ uchar usbFunctionWrite(uchar *receivedData, uchar len) {
 			return 1;
 		}
 	}
+	/* DEBUG */
+	else if(usbMode == USB_MODE_PS3) {
+		eeprom_write_block((void*)receivedData, (void*)(26 + debugLength), len);
+		debugLength += len;
+		eeprom_write_word((void*)25, debugLength);
+		
+		return debugLength == 35;
+	}
 
 	return -1;
 }
 
 /* ------------------------------------------------------------------------- */
-
-void sendDataUSB(uchar* data, unsigned int byteCount) {
-	int currentByte;
-	int currentCount;
-
-	currentByte = 0;
-
-	while(currentByte < byteCount) {
-		currentCount = byteCount - currentByte;
-
-		if(currentCount > 8)
-			currentCount = 8;
-
-		while(!usbInterruptIsReady())
-			usbPoll();
-
-		usbSetInterrupt(data + currentByte, currentCount*sizeof(uchar));
-		currentByte += currentCount;		
-	}
-}
-
-void sendDataUSB3(uchar* data, unsigned int byteCount) {
-	int currentByte;
-	int currentCount;
-
-	currentByte = 0;
-
-	while(currentByte < byteCount) {
-		currentCount = byteCount - currentByte;
-
-		if(currentCount > 8)
-			currentCount = 8;
-
-		while(!usbInterruptIsReady3())
-			usbPoll();
-
-		usbSetInterrupt3(data + currentByte, currentCount*sizeof(uchar));
-		currentByte += currentCount;
-	}
-}
-
-void setupUSB() {
-    usbDeviceDisconnect(); /* enforce re-enumeration, do this while interrupts are disabled! */
-    _delay_ms(300UL);/* fake USB disconnect for > 250 ms */
-    usbDeviceConnect();
-    usbInit();
-    sei();
-	usbPoll();
-}
 
 void disconnectUSB() {
     usbDeviceDisconnect(); /* enforce re-enumeration, do this while interrupts are disabled! */
@@ -347,7 +377,6 @@ void disconnectUSB() {
 }
 
 #include "programmer.c"
-#include "ps3.c"
 
 #if ATMEGA_NO == 168
 #include "mame.c"
