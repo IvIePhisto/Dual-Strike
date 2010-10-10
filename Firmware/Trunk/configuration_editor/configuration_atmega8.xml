@@ -16,7 +16,7 @@
   <help lang="de" path="configuration-help_de.html"/>
   
   <device>1</device>
-  <version>2</version>
+  <version>3</version>
   
   <page>
     <title>Defaults</title>
@@ -31,10 +31,17 @@
       <help lang="de">Der Arbeitsmodus der aktiviert wird, falls kein Button um den Arbeitsmodus zu ändern gedrückt wird.</help>
       
       <option id="PS3">
-        <title>PS3/PC Controller</title>
-        <help>The Dual Strike works as a PS3 and PC controller.</help>
-        <help lang="de">Das Dual Strike arbeitet als PS3 und PC Controller.</help>
+        <title>PS3 Controller</title>
+        <help>The Dual Strike works as a PS3 controller (not on PC).</help>
+        <help lang="de">Das Dual Strike arbeitet als PS3 Controller (nicht am PC).</help>
         <requires>WORK_MODE_PS3_ENABLED</requires>
+      </option>
+
+      <option id="PC">
+        <title>PC Controller</title>
+        <help>The Dual Strike works as a PC controller.</help>
+        <help lang="de">Das Dual Strike arbeitet als PC Controller.</help>
+        <requires>WORK_MODE_PC_ENABLED</requires>
       </option>
       
       <option id="PT">
@@ -47,9 +54,15 @@
     </choice>
     
     <boolean id="WORK_MODE_PS3_ENABLED" default="true">
-        <title>PS3/PC Controller</title>
-        <help>The Dual Strike works as a PS3 and PC controller.</help>
-        <help lang="de">Das Dual Strike arbeitet als PS3 und PC Controller.</help>
+        <title>PS3 Controller</title>
+        <help>The Dual Strike works as a PS3 controller (not on PC).</help>
+        <help lang="de">Das Dual Strike arbeitet als PS3 Controller (nicht am PC).</help>
+    </boolean>
+
+    <boolean id="WORK_MODE_PC_ENABLED" default="true">
+        <title>PC Controller</title>
+        <help>The Dual Strike works as a PC controller.</help>
+        <help lang="de">Das Dual Strike arbeitet als PC Controller.</help>
     </boolean>
     
     <boolean id="WORK_MODE_PT_ENABLED" default="true">

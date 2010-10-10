@@ -21,6 +21,11 @@ typedef struct {
 	uchar	analogue_buttons[12];
 } ps3report_t;
 
+typedef struct {
+	uchar	buttons[2];
+	uchar	hatswitch;
+} pcreport_t;
+
 #if ATMEGA_NO == 168
 typedef struct {
 	uchar reportID;
@@ -45,6 +50,7 @@ static uchar mameIdleRate = 125; // 500ms
 typedef union {
 	uchar array[132];
 	ps3report_t ps3report;
+	pcreport_t pcreport;
 #if ATMEGA_NO == 168
 	mame_reports_t mame_reports;
 #endif
@@ -61,10 +67,11 @@ static uchar usbMode = -1;
 
 #define USB_MODE_PROGRAMMER 0
 #define USB_MODE_PS3 1
+#define USB_MODE_PC	 2
 
 #if ATMEGA_NO == 168
-#define USB_MODE_MAME 2
-#define USB_MODE_XBOX 3
+#define USB_MODE_MAME 3
+#define USB_MODE_XBOX 4
 #endif
 
 #include "descriptors.c"
@@ -123,6 +130,7 @@ void setupUSB() {
 /* ------------------------------------------------------------------------- */
 
 #include "ps3.c"
+#include "pc.c"
 
 #if (E2END) > 0xffff /* we need long addressing */
 #   define e2addr_t           ulong
@@ -138,8 +146,10 @@ typedef union {
 static e2addr_t eepromOffset = -1;
 static uchar writeReportID = 0;
 static e2addr_t currentEEPROMAddress;
+/*
 static uint debugCount = 0; //DEBUG
 static uint debugLength = 0; //DEBUG
+*/
 
 usbMsgLen_t usbFunctionSetup(uchar receivedData[8]) {
 	usbRequest_t    *rq = (void *)receivedData;
@@ -156,9 +166,8 @@ usbMsgLen_t usbFunctionSetup(uchar receivedData[8]) {
 						 // set buffer data
 						data.array[0] = 0x21; // 0b00100001 0d33
 						data.array[1] = 0x26; // 0b00100110 0d38
-						data.array[2] = 0x01;
 
-						for(int i = 3; i < 8; i++)
+						for(int i = 2; i < 8; i++)
 							data.array[i] = 0;
 
 						usbMsgPtr = data.array;
@@ -173,7 +182,8 @@ usbMsgLen_t usbFunctionSetup(uchar receivedData[8]) {
 					return 16;
 				}
 	        }
-			/* DEBUG */
+			/*
+			// DEBUG
 			else if(rq->bRequest == USBRQ_HID_SET_REPORT) {
 				debugCount++;
 				eeprom_write_word((void*)24, debugCount);
@@ -181,6 +191,21 @@ usbMsgLen_t usbFunctionSetup(uchar receivedData[8]) {
 
 				return USB_NO_MSG;
 			}
+			*/
+	    }
+		break;
+
+	case USB_MODE_PC:
+	    if((rq->bmRequestType & USBRQ_TYPE_MASK) == USBRQ_TYPE_CLASS) {    // class request
+			// wValue: ReportType (highbyte), ReportID (lowbyte)
+	        if(rq->bRequest == USBRQ_HID_GET_REPORT) {
+				if(reportType == HID_REPORT_TYPE_INPUT) {
+					resetPCReportBuffer();
+					usbMsgPtr = data.array;
+
+					return 3;
+				}
+	        }
 	    }
 		break;
 
@@ -357,7 +382,8 @@ uchar usbFunctionWrite(uchar *receivedData, uchar len) {
 			return 1;
 		}
 	}
-	/* DEBUG */
+	/*
+	// DEBUG
 	else if(usbMode == USB_MODE_PS3) {
 		eeprom_write_block((void*)receivedData, (void*)(26 + debugLength), len);
 		debugLength += len;
@@ -365,6 +391,7 @@ uchar usbFunctionWrite(uchar *receivedData, uchar len) {
 		
 		return debugLength == 35;
 	}
+	*/
 
 	return -1;
 }

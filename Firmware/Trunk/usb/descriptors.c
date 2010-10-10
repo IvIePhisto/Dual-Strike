@@ -37,7 +37,7 @@ PROGMEM int  usbDescriptorStringDevicePS3[] = {
     USB_CFG_DEVICE_NAME, ' ', '(', 'P', 'S', '3', ')'
 };
 
-PROGMEM char usbHidReportDescriptorPS3[124+6] = {
+PROGMEM char usbHidReportDescriptorPS3[124/*+6*/] = {
     0x05, 0x01,                    // USAGE_PAGE (Generic Desktop)
     0x09, 0x04,                    // USAGE (Joystick)
     0xa1, 0x01,                    // COLLECTION (Application)
@@ -96,11 +96,13 @@ PROGMEM char usbHidReportDescriptorPS3[124+6] = {
 	0x09, 0x2b,                    //   USAGE (Unknown)
 	0x95, 0x0c,                    //   REPORT_COUNT (12)
     0x81, 0x02,                    //   INPUT (Data,Var,Abs)
+	/*
 	//---
 	0x95, 0x23,                    //   REPORT_COUNT (35)
 	0x09, 0x01,					   //   USAGE(POINTER)
 	0x91, 0x02,					   //	OUTPUT (Data,Var,Abs)
 	//---
+	*/
     0x0a, 0x21, 0x26,              //   UNKNOWN
     0xb1, 0x02,                    //   FEATURE (Data,Var,Abs)
     0xc0                           // END_COLLECTION
@@ -136,12 +138,84 @@ PROGMEM char usbDescriptorConfigurationPS3[] = {
     sizeof(usbHidReportDescriptorPS3), 0, /* total length of report descriptor */
     7,          				/* sizeof(usbDescrEndpoint) */
     USBDESCR_ENDPOINT,			/* descriptor type = endpoint */
+    0x82,						/* IN endpoint number 2 */
+    0x03,						/* attrib: Interrupt endpoint */
+    16, 0,						/* maximum packet size */
+    1 							/* interrupt poll interval in ms */
+};
+
+// PC
+
+PROGMEM int  usbDescriptorStringDevicePC[] = {
+    USB_STRING_DESCRIPTOR_HEADER(USB_CFG_DEVICE_NAME_LEN + 5),
+    USB_CFG_DEVICE_NAME, ' ', '(', 'P', 'C', ')'
+};
+
+PROGMEM char usbHidReportDescriptorPC[56] = {
+    0x05, 0x01,                    // USAGE_PAGE (Generic Desktop)
+    0x09, 0x05,                    // USAGE (Game Pad)
+    0xa1, 0x01,                    // COLLECTION (Application)
+    0x15, 0x00,                    //   LOGICAL_MINIMUM (0)
+    0x25, 0x01,                    //   LOGICAL_MAXIMUM (1)
+    0x35, 0x00,                    //   PHYSICAL_MINIMUM (0)
+    0x45, 0x01,                    //   PHYSICAL_MAXIMUM (1)
+    0x75, 0x01,                    //   REPORT_SIZE (1)
+    0x95, 0x0d,                    //   REPORT_COUNT (13)
+    0x05, 0x09,                    //   USAGE_PAGE (Button)
+    0x19, 0x01,                    //   USAGE_MINIMUM (Button 1)
+    0x29, 0x0d,                    //   USAGE_MAXIMUM (Button 13)
+    0x81, 0x02,                    //   INPUT (Data,Var,Abs)
+    0x05, 0x01,                    //   USAGE_PAGE (Generic Desktop)
+    0x09, 0x00,                    //   USAGE (Undefined)
+    0x95, 0x03,                    //   REPORT_COUNT (3)
+    0x81, 0x01,                    //   INPUT (Cnst,Ary,Abs)
+    0x25, 0x07,                    //   LOGICAL_MAXIMUM (7)
+    0x46, 0x3b, 0x01,              //   PHYSICAL_MAXIMUM (315)
+    0x75, 0x04,                    //   REPORT_SIZE (4)
+    0x95, 0x01,                    //   REPORT_COUNT (1)
+    0x65, 0x14,                    //   UNIT (Eng Rot:Angular Pos)
+    0x09, 0x39,                    //   USAGE (Hat switch)
+    0x81, 0x42,                    //   INPUT (Data,Var,Abs,Null)
+    0x09, 0x00,                    //   USAGE (Undefined)
+    0x95, 0x01,                    //   REPORT_COUNT (1)
+    0x81, 0x01,                    //   INPUT (Cnst,Ary,Abs)
+    0xc0                           // END_COLLECTION
+};
+
+PROGMEM char usbDescriptorConfigurationPC[] = {
+    /* HID USB configuration descriptor */
+    9,          				/* sizeof(usbDescriptorConfiguration): length of descriptor in bytes */
+    USBDESCR_CONFIG,   	 		/* descriptor type */
+    34, 0,      				/* total length of data returned (including inlined descriptors) */
+    1,          				/* number of interfaces in this configuration */
+    1,          				/* index of this configuration */
+    0,          				/* configuration name string index */
+    (char)USBATTR_BUSPOWER, 	/* attributes */
+    USB_CFG_MAX_BUS_POWER/2,	/* max USB current in 2mA units */
+/* interface descriptor follows inline: */
+    9,   			 	    	/* sizeof(usbDescrInterface): length of descriptor in bytes */
+    USBDESCR_INTERFACE,			/* descriptor type */
+    0,          				/* index of this interface */
+    0,							/* alternate setting for this interface */
+    1, 							/* endpoints excl 0: number of endpoint descriptors to follow */
+    3,							/* USB interface class: HID */
+    0,							/* USB interface subclass */
+    0,							/* USB interface protocol */
+    0,          				/* string index for interface */
+    9,          				/* sizeof(usbDescrHID): length of descriptor in bytes */
+    USBDESCR_HID,   			/* descriptor type: HID */
+    0x01, 0x01,					/* BCD representation of HID version */
+    0x00,       				/* target country code */
+    0x01,       				/* number of HID Report (or other HID class) Descriptor infos to follow */
+    0x22,       				/* descriptor type: report */
+    sizeof(usbHidReportDescriptorPC), 0, /* total length of report descriptor */
+    7,          				/* sizeof(usbDescrEndpoint) */
+    USBDESCR_ENDPOINT,			/* descriptor type = endpoint */
     0x81,						/* IN endpoint number 1 */
     0x03,						/* attrib: Interrupt endpoint */
     8, 0,						/* maximum packet size */
     1 							/* interrupt poll interval in ms */
 };
-
 
 // EEPROM PROGRAMMER
 
@@ -476,6 +550,43 @@ usbMsgLen_t usbFunctionDescriptor(struct usbRequest *rq) {
 	    case USBDESCR_HID_REPORT:
 			usbMsgPtr = (uchar*)usbHidReportDescriptorPS3;
 			len = sizeof(usbHidReportDescriptorPS3);
+			break;
+		}
+		break;
+
+	case USB_MODE_PC:
+	    switch(rq->wValue.bytes[1]) {
+	    case USBDESCR_DEVICE:
+			usbMsgPtr = (uchar *)(usbDescriptorDeviceDS);
+			len = sizeof(usbDescriptorDeviceDS);
+			break;
+
+	    case USBDESCR_STRING:
+			switch(rq->wValue.bytes[0]) {
+			case 1: // Vendor
+				usbMsgPtr = (uchar *)(usbDescriptorStringVendorDS);
+				len = sizeof(usbDescriptorStringVendorDS);
+				break;
+			case 2: // Device
+				usbMsgPtr = (uchar *)(usbDescriptorStringDevicePC);
+				len = sizeof(usbDescriptorStringDevicePC);
+				break;
+			}
+			break;
+
+	    case USBDESCR_CONFIG:
+			usbMsgPtr = (uchar*)usbDescriptorConfigurationPC;
+			len = sizeof(usbDescriptorConfigurationPC);
+			break;
+
+	    case USBDESCR_HID:
+			usbMsgPtr = (uchar *)(usbDescriptorConfigurationPC + 18);
+			len = usbDescriptorConfigurationPC[18];
+			break;
+
+	    case USBDESCR_HID_REPORT:
+			usbMsgPtr = (uchar*)usbHidReportDescriptorPC;
+			len = sizeof(usbHidReportDescriptorPC);
 			break;
 		}
 		break;

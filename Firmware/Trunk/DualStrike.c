@@ -45,10 +45,11 @@ Right = enabled
 
 #define WORKING_MODE_PT		0
 #define WORKING_MODE_PS3	1
+#define WORKING_MODE_PC		2
 
 #if ATMEGA_NO == 168
-#define WORKING_MODE_MAME	2
-#define WORKING_MODE_XBOX	3
+#define WORKING_MODE_MAME	3
+#define WORKING_MODE_XBOX	4
 #endif
 
 #define enableUsbLines()	S1_PORT |=  (1<<S1_PIN);
@@ -136,33 +137,6 @@ void configInit() {
 					CFG_SET_RIGHT_STICK(newConfig)
 				}
 			}
-
-			if(!Stick_LK) {
-				if(CFG_WORK_MODE_PS3_ENABLED && !Stick_Left) {
-					CFG_SET_DEF_WORK_MODE_PS3(newConfig)
-				}
-#if ATMEGA_NO == 168
-				else if(CFG_WORK_MODE_MAME_ENABLED && !Stick_Up) {
-					CFG_SET_DEF_WORK_MODE_MAME(newConfig)
-				}
-				else if(CFG_WORK_MODE_XBOX_ENABLED && !Stick_Right) {
-					CFG_SET_DEF_WORK_MODE_XBOX(newConfig)
-				}
-#endif
-				else if(CFG_WORK_MODE_PT_ENABLED && !Stick_Down) {
-					CFG_SET_DEF_WORK_MODE_PT(newConfig)
-				}
-			}
-			
-			if(!Stick_LP) {
-				if(!Stick_Left) {
-					CFG_DISABLE_HOME_EMU(newConfig)
-				}
-				
-				if(!Stick_Right) {
-					CFG_ENABLE_HOME_EMU(newConfig)
-				}
-			}	
 		}
 
 	}
@@ -174,6 +148,14 @@ int setModePS3() {
 	enableUsbLines();
 
 	return WORKING_MODE_PS3;
+}
+
+int setModePC() {
+	S3_PORT |= (1<<S3_PIN); // pin S3 is high
+	S4_PORT |= (1<<S4_PIN); // pin S4 is high
+	enableUsbLines();
+
+	return WORKING_MODE_PC;
 }
 
 #if ATMEGA_NO == 168
@@ -207,6 +189,8 @@ int setModePT() {
 int setModeDefault() {
 	if(CFG_DEF_WORK_MODE_PS3)
 		return setModePS3();
+	else if(CFG_DEF_WORK_MODE_PC)
+		return setModePC();
 #if ATMEGA_NO == 168
 	else if(CFG_DEF_WORK_MODE_MAME)
 		return setModeMAME();
@@ -281,6 +265,9 @@ int hardwareInit() {
 	if(CFG_WORK_MODE_PS3_ENABLED)
 		enabledWorkingModes++;
 
+	if(CFG_WORK_MODE_PC_ENABLED)
+		enabledWorkingModes++;
+
 #if ATMEGA_NO == 168
 	if(CFG_WORK_MODE_MAME_ENABLED)
 		enabledWorkingModes++;
@@ -301,6 +288,9 @@ int hardwareInit() {
 		|| !Stick_4P) {
 			if(!CFG_DEF_WORK_MODE_PS3 && CFG_WORK_MODE_PS3_ENABLED)
 				return setModePS3();
+
+			if(!CFG_DEF_WORK_MODE_PC && CFG_WORK_MODE_PC_ENABLED)
+				return setModePC();
 
 #if ATMEGA_NO == 168
 			if(!CFG_DEF_WORK_MODE_MAME && CFG_WORK_MODE_MAME_ENABLED)
@@ -328,7 +318,9 @@ int hardwareInit() {
 
 		if(!Stick_MP && CFG_WORK_MODE_PT_ENABLED)
 			return setModePT();
-		
+
+		if(!Stick_HK && CFG_WORK_MODE_PC_ENABLED)
+			return setModePC();		
 	}
 
 	return setModeDefault();
@@ -417,6 +409,10 @@ int main(void)
 
 	case WORKING_MODE_PS3:
 	  ps3_controller();
+	  break;
+
+	case WORKING_MODE_PC:
+	  pc_controller();
 	  break;
 
 #if ATMEGA_NO == 168

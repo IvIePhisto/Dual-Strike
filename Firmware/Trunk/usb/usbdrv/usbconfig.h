@@ -104,7 +104,7 @@ section at the end of this file).
 /* Define this to 1 if the device has its own power supply. Set it to 0 if the
  * device is powered from the USB bus.
  */
-#define USB_CFG_MAX_BUS_POWER           250
+#define USB_CFG_MAX_BUS_POWER           30
 /* Set this variable to the maximum USB bus power consumption of your device.
  * The value is in milliamperes. [It will be divided by two since USB
  * communicates power requirements in units of 2 mA.]
@@ -186,7 +186,7 @@ section at the end of this file).
  * you use obdev's free shared VID/PID pair. Be sure to read the rules in
  * USBID-License.txt!
  */
-#define USB_CFG_DEVICE_VERSION  0x00, 0x03
+#define USB_CFG_DEVICE_VERSION  0x01, 0x03
 /* Version number of the device: Minor number first, then major number.
  */
  
@@ -204,7 +204,7 @@ section at the end of this file).
  */
 //#define USB_CFG_DEVICE_NAME     	'P', 0x00,'L', 0x00,'A', 0x00,'Y', 0x00,'S', 0x00, 'T', 0x00,'A', 0x00,'T', 0x00,'I', 0x00,'O', 0x00, 'N', 0x00,'(', 0x00,'R', 0x00, ')', 0x00,'3', 0x00, ' ', 0x00, 'C', 0x00, 'o', 0x00,'n', 0x00,'t', 0x00, 'r', 0x00,'o', 0x00,'l', 0x00,'l', 0x00,'e', 0x00,  'r', 0x00, 
 //#define USB_CFG_DEVICE_NAME_LEN 52
-#define USB_CFG_DEVICE_NAME     'D', 'u', 'a', 'l', ' ', 'S', 't', 'r', 'i', 'k', 'e', ' ', 'V', '3', '.' , '0', '.', '0'
+#define USB_CFG_DEVICE_NAME     'D', 'u', 'a', 'l', ' ', 'S', 't', 'r', 'i', 'k', 'e', ' ', 'V', '3', '.' , '1', '.', '0'
 #define USB_CFG_DEVICE_NAME_LEN 18
 
 /* Same as above for the device name. If you don't want a device name, undefine
