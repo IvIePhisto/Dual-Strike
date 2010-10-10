@@ -1,6 +1,7 @@
 
 #define USB_CFG_FTDI_VENDOR_ID 0x03, 0x04
 
+
 // DUAL STRIKE
 
 PROGMEM char usbDescriptorDeviceDS[] = {    /* USB device descriptor */
@@ -550,6 +551,7 @@ usbMsgLen_t usbFunctionDescriptor(struct usbRequest *rq) {
 	    case USBDESCR_HID_REPORT:
 			usbMsgPtr = (uchar*)usbHidReportDescriptorPS3;
 			len = sizeof(usbHidReportDescriptorPS3);
+
 			break;
 		}
 		break;

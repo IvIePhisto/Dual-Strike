@@ -185,12 +185,13 @@ void readInputPS3() {
 
 /* ------------------------------------------------------------------------- */
 
-
-void ps3_controller() {
+void ps3_init_controller() {
 	usbMode = USB_MODE_PS3;
 	resetPS3ReportBuffer();
 	setupUSB();
-	//sendDataUSB(data.array, 16);
+}
+
+void ps3_controller() {
 	startSendRepeats = 20;
 
     while(1) { /* main event loop */

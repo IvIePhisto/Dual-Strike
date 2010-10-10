@@ -11,6 +11,7 @@
 #include "usbdrv/usbdrv.h"
 
 extern uint8_t config[2];
+extern uchar detected;
 
 /* ------------------------------------------------------------------------- */
 
@@ -171,6 +172,7 @@ usbMsgLen_t usbFunctionSetup(uchar receivedData[8]) {
 							data.array[i] = 0;
 
 						usbMsgPtr = data.array;
+						detected = 1;
 
 						return 8;
 					}
@@ -202,6 +204,7 @@ usbMsgLen_t usbFunctionSetup(uchar receivedData[8]) {
 				if(reportType == HID_REPORT_TYPE_INPUT) {
 					resetPCReportBuffer();
 					usbMsgPtr = data.array;
+					detected = 1;
 
 					return 3;
 				}
@@ -296,6 +299,8 @@ usbMsgLen_t usbFunctionSetup(uchar receivedData[8]) {
 
 				usbMsgPtr = data.array;
 				//eeprom_write_word((void*)E2END-1, ++debugCount); // DEBUG
+
+				detected = 1;
 
 				return 20;
 			}
@@ -399,8 +404,8 @@ uchar usbFunctionWrite(uchar *receivedData, uchar len) {
 /* ------------------------------------------------------------------------- */
 
 void disconnectUSB() {
-    usbDeviceDisconnect(); /* enforce re-enumeration, do this while interrupts are disabled! */
-    _delay_ms(300UL);/* fake USB disconnect for > 250 ms */
+    usbDeviceDisconnect(); // enforce re-enumeration, do this while interrupts are disabled!
+    _delay_ms(300UL); // fake USB disconnect for > 250 ms
 }
 
 #include "programmer.c"

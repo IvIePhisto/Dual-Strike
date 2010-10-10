@@ -97,12 +97,13 @@ void readInputPC() {
 
 /* ------------------------------------------------------------------------- */
 
-
-void pc_controller() {
+void pc_init_controller() {
 	usbMode = USB_MODE_PC;
 	resetPCReportBuffer();
 	setupUSB();
+}
 
+void pc_controller() {
     while(1) { /* main event loop */
 		usbPoll();
         readInputPC();

@@ -150,10 +150,13 @@ void readInputXBox() {
 		XBOX_BACK
 }
 
-void xbox_controller() {
+void xbox_init_controller() {
 	usbMode = USB_MODE_XBOX;
 	initDataXBox();
 	setupUSB();
+}
+
+void xbox_controller() {
 	startSendRepeats = 20;
 	//eeprom_write_word((void*)E2END-1, 0); // DEBUG
 
