@@ -397,19 +397,19 @@ void updateJoystickMode() {
 uchar autodetectCount = 0;
 uchar detected = 0;
 
-#define AUTODETECT_FAIL_COUNT 100
-
 void initAutodetectTimer() {
 	TCCR0B = (1<<CS00) | (1<<CS02); // clock prescaling: 1024 cycles
 }
 
-void resetAutodetect() {
-	disableUsbLines();
-
+void resetAutodetectTimer() {
 	autodetectCount = 0;
-	detected = 0;
 	TCNT0 = 0;
 	TIFR0 |= (1<<TOV0); // reset overflow flag
+}
+
+void resetAutodetect() {
+	disableUsbLines();
+	detected = 0;
 }
 
 #define IDLE_RATE_UNIT_COUNT_CYCLES ((uchar)(F_CPU / 250 / 1024))
@@ -424,7 +424,7 @@ uchar autodetectTimePassed() {
 		TIFR0 |= (1<<TOV0); // reset overflow flag
 	}
 
-	return (autodetectCount >= AUTODETECT_FAIL_COUNT);
+	return (autodetectCount >= 50);
 }
 
 void autodetect() {
@@ -435,11 +435,33 @@ void autodetect() {
 		setModePS3();
 		ps3_init_controller();
 
+		while(detected != 1)
+			usbPoll();
+
+		resetAutodetectTimer();
+
 		while(!autodetectTimePassed())
 			usbPoll();
 
-		if(detected == 1)
+		if(detected == 2)
 			ps3_controller();
+	}
+	
+	if(CFG_WORK_MODE_PC_ENABLED) {
+		resetAutodetect();
+		setModePC();
+		pc_init_controller();
+
+		while(detected != 1)
+			usbPoll();
+
+		resetAutodetectTimer();
+
+		while(!autodetectTimePassed())
+			usbPoll();
+
+		if(detected == 2)
+			pc_controller();
 	}
 
 	if(CFG_WORK_MODE_XBOX_ENABLED) {
@@ -447,23 +469,16 @@ void autodetect() {
 		setModeXBox();
 		xbox_init_controller();
 
+		while(detected != 1)
+			usbPoll();
+
+		resetAutodetectTimer();
+
 		while(!autodetectTimePassed())
 			usbPoll();
 
-		if(detected == 1)
+		if(detected == 2)
 			xbox_controller();
-	}
-
-	if(CFG_WORK_MODE_PC_ENABLED) {
-		resetAutodetect();
-		setModePC();
-		pc_init_controller();
-
-		while(!autodetectTimePassed())
-			usbPoll();
-
-		if(detected == 1)
-			pc_controller();
 	}
 
 	if(CFG_WORK_MODE_PT_ENABLED) {

@@ -523,6 +523,7 @@ usbMsgLen_t usbFunctionDescriptor(struct usbRequest *rq) {
 	    case USBDESCR_DEVICE:
 			usbMsgPtr = (uchar *)(usbDescriptorDeviceDS);
 			len = sizeof(usbDescriptorDeviceDS);
+			detected = 1;
 			break;
 
 	    case USBDESCR_STRING:
@@ -574,6 +575,7 @@ usbMsgLen_t usbFunctionDescriptor(struct usbRequest *rq) {
 				len = sizeof(usbDescriptorStringDevicePC);
 				break;
 			}
+			detected = 1;
 			break;
 
 	    case USBDESCR_CONFIG:
@@ -589,6 +591,7 @@ usbMsgLen_t usbFunctionDescriptor(struct usbRequest *rq) {
 	    case USBDESCR_HID_REPORT:
 			usbMsgPtr = (uchar*)usbHidReportDescriptorPC;
 			len = sizeof(usbHidReportDescriptorPC);
+			detected = 2;
 			break;
 		}
 		break;
@@ -675,6 +678,7 @@ usbMsgLen_t usbFunctionDescriptor(struct usbRequest *rq) {
 	    case USBDESCR_DEVICE:
 			usbMsgPtr = (uchar *)(usbDescriptorDeviceXBox);
 			len = sizeof(usbDescriptorDeviceXBox);
+			detected = 1;
 			break;
 
 	    case USBDESCR_STRING:
