@@ -417,13 +417,22 @@ uchar autodetectLimit = 0;
 uchar detected = 0;
 
 void initAutodetectTimer() {
+#if ATMEGA_NO == 168
 	TCCR0B = (1<<CS00) | (1<<CS02); // clock prescaling: 1024 cycles
+#else
+	TCCR0 = (1<<CS00) | (1<<CS02); // clock prescaling: 1024 cycles
+#endif
 }
 
 void resetAutodetectTimer() {
 	autodetectCount = 0;
+#if ATMEGA_NO == 168
 	TCNT0 = 0;
 	TIFR0 |= (1<<TOV0); // reset overflow flag
+#else
+	TCNT0 = 0;
+	TIFR |= (1<<TOV0); // reset overflow flag
+#endif
 }
 
 void resetAutodetect() {
@@ -436,11 +445,22 @@ void resetAutodetect() {
 #define IDLE_RATE_OVERLOW_CYCLES	(255 % IDLE_RATE_UNIT_COUNT_CYCLES)
 
 uchar autodetectTimePassed() {
-	if(TIFR0 & (1<<TOV0)) { // overflow
+	if(
+#if ATMEGA_NO == 168
+		TIFR0 & (1<<TOV0)
+#else
+		TIFR & (1<<TOV0)
+#endif
+) { // overflow
 		if(autodetectCount < 255)
 			autodetectCount++;
 
+#if ATMEGA_NO == 168
 		TIFR0 |= (1<<TOV0); // reset overflow flag
+#else
+		TIFR |= (1<<TOV0); // reset overflow flag
+#endif
+
 	}
 
 	return (autodetectCount >= autodetectLimit);
@@ -467,6 +487,8 @@ void autodetect() {
 			ps3_controller();
 	}
 
+
+#if ATMEGA_NO == 168
 	if(CFG_WORK_MODE_XBOX_ENABLED) {
 		resetAutodetect();
 		setModeXBox();
@@ -484,7 +506,7 @@ void autodetect() {
 		if(detected == 2)
 			xbox_controller();
 	}
-
+#endif
 	
 	if(CFG_WORK_MODE_PC_ENABLED) {
 		resetAutodetect();
