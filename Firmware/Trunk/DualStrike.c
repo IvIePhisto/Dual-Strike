@@ -2,6 +2,7 @@
 
 #include <avr/eeprom.h> /* EEPROM functions */
 #include <avr/pgmspace.h>   /* required by usbdrv.h */
+#include <util/delay.h>     /* for _delay_ms() */
 
 // README
 /* 
@@ -193,8 +194,6 @@ int setModeAutodetect() {
 
 
 int setModeDefault() {
-	return setModeAutodetect();
-	/*
 	if(CFG_DEF_WORK_MODE_PS3)
 		return setModePS3();
 	else if(CFG_DEF_WORK_MODE_PC)
@@ -207,7 +206,6 @@ int setModeDefault() {
 #endif
 	else
 		return setModePT();
-		*/
 }
 
 
@@ -287,8 +285,26 @@ int hardwareInit() {
 
 	if(CFG_WORK_MODE_PT_ENABLED)
 		enabledWorkingModes++;
+	
+	if(CFG_DEF_WORK_MODE_AUTODETECT || enabledWorkingModes > 2) {
+		if(!Stick_LK && CFG_WORK_MODE_PS3_ENABLED)
+			return setModePS3();
 
-	if(enabledWorkingModes == 2) {
+#if ATMEGA_NO == 168
+		if(!Stick_MK && CFG_WORK_MODE_MAME_ENABLED)
+			return setModeMAME();
+
+		if(!Stick_LP && CFG_WORK_MODE_XBOX_ENABLED)
+			return setModeXBox();
+#endif
+
+		if(!Stick_MP && CFG_WORK_MODE_PT_ENABLED)
+			return setModePT();
+
+		if(!Stick_HK && CFG_WORK_MODE_PC_ENABLED)
+			return setModePC();		
+	}
+	else if(enabledWorkingModes == 2) {
 		if(!Stick_LK
 		|| !Stick_MK
 		|| !Stick_LP
@@ -308,31 +324,13 @@ int hardwareInit() {
 			if(!CFG_DEF_WORK_MODE_XBOX && CFG_WORK_MODE_XBOX_ENABLED)
 				return setModeXBox();
 #endif	
-
-			if(!CFG_DEF_WORK_MODE_PT && CFG_WORK_MODE_PT_ENABLED)
-				return setModePT();
 		}
 	}
-	else if(enabledWorkingModes > 2) {
-		if(!Stick_LK && CFG_WORK_MODE_PS3_ENABLED)
-			return setModePS3();
 
-#if ATMEGA_NO == 168
-		if(!Stick_MK && CFG_WORK_MODE_MAME_ENABLED)
-			return setModeMAME();
-
-		if(!Stick_LP && CFG_WORK_MODE_XBOX_ENABLED)
-			return setModeXBox();
-#endif
-
-		if(!Stick_MP && CFG_WORK_MODE_PT_ENABLED)
-			return setModePT();
-
-		if(!Stick_HK && CFG_WORK_MODE_PC_ENABLED)
-			return setModePC();		
-	}
-
-	return setModeDefault();
+	if(CFG_DEF_WORK_MODE_AUTODETECT)
+		return setModeAutodetect();
+	else
+		return setModeDefault();
 }
 
 /* ------------------------------------------------------------------------- */
@@ -394,7 +392,23 @@ void updateJoystickMode() {
 
 /* ------------------------------------------------------------------------- */
 
+/* buffer for data */
+/*
+NOTE:
+As V-USB conforms to the USB low speed standard, the maximum packet size is 8 bytes for one call of usbSetInterrupt()!
+But it is possible to send longer reports by using
+---
+while(!usbInterruptIsReady()) usbPoll();
+---
+to wait until the data is sent, then you can send the next part like this:
+---
+usbSetInterrupt((uchar *)&data + 8, 1*sizeof(uchar));
+---
+*/
+uchar* data[132];
+
 uchar autodetectCount = 0;
+uchar autodetectLimit = 0;
 uchar detected = 0;
 
 void initAutodetectTimer() {
@@ -424,7 +438,7 @@ uchar autodetectTimePassed() {
 		TIFR0 |= (1<<TOV0); // reset overflow flag
 	}
 
-	return (autodetectCount >= 50);
+	return (autodetectCount >= autodetectLimit);
 }
 
 void autodetect() {
@@ -435,9 +449,10 @@ void autodetect() {
 		setModePS3();
 		ps3_init_controller();
 
-		while(detected != 1)
+		while(detected == 0)
 			usbPoll();
-
+		
+		autodetectLimit = 2;
 		resetAutodetectTimer();
 
 		while(!autodetectTimePassed())
@@ -446,32 +461,16 @@ void autodetect() {
 		if(detected == 2)
 			ps3_controller();
 	}
-	
-	if(CFG_WORK_MODE_PC_ENABLED) {
-		resetAutodetect();
-		setModePC();
-		pc_init_controller();
-
-		while(detected != 1)
-			usbPoll();
-
-		resetAutodetectTimer();
-
-		while(!autodetectTimePassed())
-			usbPoll();
-
-		if(detected == 2)
-			pc_controller();
-	}
 
 	if(CFG_WORK_MODE_XBOX_ENABLED) {
 		resetAutodetect();
 		setModeXBox();
 		xbox_init_controller();
 
-		while(detected != 1)
+		while(detected == 0)
 			usbPoll();
 
+		autodetectLimit = 1;
 		resetAutodetectTimer();
 
 		while(!autodetectTimePassed())
@@ -481,27 +480,35 @@ void autodetect() {
 			xbox_controller();
 	}
 
+	
+	if(CFG_WORK_MODE_PC_ENABLED) {
+		resetAutodetect();
+		setModePC();
+		pc_init_controller();
+
+		while(detected == 0) {
+			usbPoll();
+
+			if(usbIsConfigured())
+				detected = 1;
+		}
+
+		autodetectLimit = 3;
+		resetAutodetectTimer();
+
+		while(!autodetectTimePassed())
+			pc_test_controller();
+
+		if(detected == 2)
+			pc_controller();
+	}
+
 	if(CFG_WORK_MODE_PT_ENABLED) {
 		resetAutodetect();
 		setModePT();
 		pass_through();
 	}
 }
-
-/* buffer for data */
-/*
-NOTE:
-As V-USB conforms to the USB low speed standard, the maximum packet size is 8 bytes for one call of usbSetInterrupt()!
-But it is possible to send longer reports by using
----
-while(!usbInterruptIsReady()) usbPoll();
----
-to wait until the data is sent, then you can send the next part like this:
----
-usbSetInterrupt((uchar *)&data + 8, 1*sizeof(uchar));
----
-*/
-uchar* data[132];
 
 int main(void)
 {

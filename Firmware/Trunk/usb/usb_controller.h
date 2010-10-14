@@ -4,6 +4,7 @@
 void ps3_init_controller();
 void ps3_controller();
 void pc_init_controller();
+void pc_test_controller();
 void pc_controller();
 
 #if ATMEGA_NO == 168
@@ -14,6 +15,7 @@ void xbox_controller();
 
 void programmer_setup();
 void programmer_poll();
+unsigned char usbIsConfigured();
 
 void usbPoll();
 void disconnectUSB();

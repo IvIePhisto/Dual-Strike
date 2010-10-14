@@ -15,7 +15,7 @@
 #define CONFIG_VERSION (uint8_t)3
 #define CONFIG_BYTE_WIDTH 2
 #define CONFIG_EMPTY 0xFF
-#define CONFIG_DEF_1 0b0011100
+#define CONFIG_DEF_1 0b0011101
 #define CONFIG_DEF_2 0b00000
 
 #define CONFIG_SET_DEFAULTS(CONFIG)\
@@ -39,9 +39,10 @@ uint8_t config[CONFIG_BYTE_WIDTH + 2] = {CONFIG_EMPTY, CONFIG_EMPTY, CONFIG_EMPT
 #define CFG_EXTERN_DECLARATION extern uint8_t config[CONFIG_BYTE_WIDTH + 2];
   
 /* CONFIG TESTS: */
-#define CFG_DEF_WORK_MODE_PS3 (((config[0 + 2] >> 0) & 0b00000011)  == 0b00)
-#define CFG_DEF_WORK_MODE_PC (((config[0 + 2] >> 0) & 0b00000011)  == 0b01)
-#define CFG_DEF_WORK_MODE_PT (((config[0 + 2] >> 0) & 0b00000011)  == 0b10)
+#define CFG_DEF_WORK_MODE_AUTODETECT (((config[0 + 2] >> 0) & 0b00000011)  == 0b00)
+#define CFG_DEF_WORK_MODE_PS3 (((config[0 + 2] >> 0) & 0b00000011)  == 0b01)
+#define CFG_DEF_WORK_MODE_PC (((config[0 + 2] >> 0) & 0b00000011)  == 0b10)
+#define CFG_DEF_WORK_MODE_PT (((config[0 + 2] >> 0) & 0b00000011)  == 0b11)
 #define CFG_WORK_MODE_PS3_ENABLED (config[0 + 2] & (1<<2))
 #define CFG_WORK_MODE_PC_ENABLED (config[0 + 2] & (1<<3))
 #define CFG_WORK_MODE_PT_ENABLED (config[0 + 2] & (1<<4))
@@ -57,9 +58,10 @@ uint8_t config[CONFIG_BYTE_WIDTH + 2] = {CONFIG_EMPTY, CONFIG_EMPTY, CONFIG_EMPT
 #define CFG_X3_READ (((config[1 + 2] >> 2) & 0b00000111)  == 0b100)
 
 /* CONFIG SETTERS: */
-#define CFG_SET_DEF_WORK_MODE_PS3(CONFIG) CONFIG[0 + 2] &= ~(0b11 << 0);
-#define CFG_SET_DEF_WORK_MODE_PC(CONFIG) CONFIG[0 + 2] |= (0b01 << 0); CONFIG[0 + 2] &= ((0b01 << 0)| ~(0b10 << 0));
-#define CFG_SET_DEF_WORK_MODE_PT(CONFIG) CONFIG[0 + 2] |= (0b10 << 0); CONFIG[0 + 2] &= ((0b10 << 0)| ~(0b01 << 0));
+#define CFG_SET_DEF_WORK_MODE_AUTODETECT(CONFIG) CONFIG[0 + 2] &= ~(0b11 << 0);
+#define CFG_SET_DEF_WORK_MODE_PS3(CONFIG) CONFIG[0 + 2] |= (0b01 << 0); CONFIG[0 + 2] &= ((0b01 << 0)| ~(0b10 << 0));
+#define CFG_SET_DEF_WORK_MODE_PC(CONFIG) CONFIG[0 + 2] |= (0b10 << 0); CONFIG[0 + 2] &= ((0b10 << 0)| ~(0b01 << 0));
+#define CFG_SET_DEF_WORK_MODE_PT(CONFIG) CONFIG[0 + 2] |= (0b11 << 0);
 #define CFG_ENABLE_WORK_MODE_PS3_ENABLED(CONFIG) CONFIG[0 + 2] |= (1<<2);
 #define CFG_DISABLE_WORK_MODE_PS3_ENABLED(CONFIG) CONFIG[0 + 2] &= ~(1<<2);
 #define CFG_ENABLE_WORK_MODE_PC_ENABLED(CONFIG) CONFIG[0 + 2] |= (1<<3);

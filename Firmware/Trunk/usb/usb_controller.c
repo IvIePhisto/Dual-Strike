@@ -119,6 +119,10 @@ void sendDataUSB3(uchar* data, unsigned int byteCount) {
 	}
 }
 
+uchar usbIsConfigured() {
+	return (usbConfiguration == 1);
+}
+
 void setupUSB() {
     usbDeviceDisconnect(); /* enforce re-enumeration, do this while interrupts are disabled! */
     _delay_ms(300UL);/* fake USB disconnect for > 250 ms */
@@ -299,8 +303,6 @@ usbMsgLen_t usbFunctionSetup(uchar receivedData[8]) {
 				usbMsgPtr = data.array;
 				//eeprom_write_word((void*)E2END-1, ++debugCount); // DEBUG
 
-				detected = 2;
-
 				return 20;
 			}
 		}
@@ -320,6 +322,7 @@ usbMsgLen_t usbFunctionSetup(uchar receivedData[8]) {
 				-wLength: 16
 				*/
 				usbMsgPtr = &data.array[20];
+				detected = 2;
 
 				return 16;
 			}

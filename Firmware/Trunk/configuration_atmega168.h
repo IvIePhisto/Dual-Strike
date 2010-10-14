@@ -15,7 +15,7 @@
 #define CONFIG_VERSION (uint8_t)3
 #define CONFIG_BYTE_WIDTH 16
 #define CONFIG_EMPTY 0xFF
-#define CONFIG_DEF_1 0b1111000
+#define CONFIG_DEF_1 0b1111001
 #define CONFIG_DEF_2 0b0000001
 #define CONFIG_DEF_3 0b0001100
 #define CONFIG_DEF_4 0b0001101
@@ -67,11 +67,12 @@ uint8_t config[CONFIG_BYTE_WIDTH + 2] = {CONFIG_EMPTY, CONFIG_EMPTY, CONFIG_EMPT
 #define CFG_EXTERN_DECLARATION extern uint8_t config[CONFIG_BYTE_WIDTH + 2];
   
 /* CONFIG TESTS: */
-#define CFG_DEF_WORK_MODE_PS3 (((config[0 + 2] >> 0) & 0b00000111)  == 0b000)
-#define CFG_DEF_WORK_MODE_PC (((config[0 + 2] >> 0) & 0b00000111)  == 0b001)
-#define CFG_DEF_WORK_MODE_MAME (((config[0 + 2] >> 0) & 0b00000111)  == 0b010)
-#define CFG_DEF_WORK_MODE_XBOX (((config[0 + 2] >> 0) & 0b00000111)  == 0b011)
-#define CFG_DEF_WORK_MODE_PT (((config[0 + 2] >> 0) & 0b00000111)  == 0b100)
+#define CFG_DEF_WORK_MODE_AUTODETECT (((config[0 + 2] >> 0) & 0b00000111)  == 0b000)
+#define CFG_DEF_WORK_MODE_PS3 (((config[0 + 2] >> 0) & 0b00000111)  == 0b001)
+#define CFG_DEF_WORK_MODE_PC (((config[0 + 2] >> 0) & 0b00000111)  == 0b010)
+#define CFG_DEF_WORK_MODE_MAME (((config[0 + 2] >> 0) & 0b00000111)  == 0b011)
+#define CFG_DEF_WORK_MODE_XBOX (((config[0 + 2] >> 0) & 0b00000111)  == 0b100)
+#define CFG_DEF_WORK_MODE_PT (((config[0 + 2] >> 0) & 0b00000111)  == 0b101)
 #define CFG_WORK_MODE_PS3_ENABLED (config[0 + 2] & (1<<3))
 #define CFG_WORK_MODE_PC_ENABLED (config[0 + 2] & (1<<4))
 #define CFG_WORK_MODE_MAME_ENABLED (config[0 + 2] & (1<<5))
@@ -315,11 +316,12 @@ uint8_t config[CONFIG_BYTE_WIDTH + 2] = {CONFIG_EMPTY, CONFIG_EMPTY, CONFIG_EMPT
 #define CFG_MAME_BL4_4P_BUTTON6 (((config[15 + 2] >> 4) & 0b00000111)  == 0b110)
 
 /* CONFIG SETTERS: */
-#define CFG_SET_DEF_WORK_MODE_PS3(CONFIG) CONFIG[0 + 2] &= ~(0b111 << 0);
-#define CFG_SET_DEF_WORK_MODE_PC(CONFIG) CONFIG[0 + 2] |= (0b001 << 0); CONFIG[0 + 2] &= ((0b001 << 0)| ~(0b110 << 0));
-#define CFG_SET_DEF_WORK_MODE_MAME(CONFIG) CONFIG[0 + 2] |= (0b010 << 0); CONFIG[0 + 2] &= ((0b010 << 0)| ~(0b101 << 0));
-#define CFG_SET_DEF_WORK_MODE_XBOX(CONFIG) CONFIG[0 + 2] |= (0b011 << 0); CONFIG[0 + 2] &= ((0b011 << 0)| ~(0b100 << 0));
-#define CFG_SET_DEF_WORK_MODE_PT(CONFIG) CONFIG[0 + 2] |= (0b100 << 0); CONFIG[0 + 2] &= ((0b100 << 0)| ~(0b011 << 0));
+#define CFG_SET_DEF_WORK_MODE_AUTODETECT(CONFIG) CONFIG[0 + 2] &= ~(0b111 << 0);
+#define CFG_SET_DEF_WORK_MODE_PS3(CONFIG) CONFIG[0 + 2] |= (0b001 << 0); CONFIG[0 + 2] &= ((0b001 << 0)| ~(0b110 << 0));
+#define CFG_SET_DEF_WORK_MODE_PC(CONFIG) CONFIG[0 + 2] |= (0b010 << 0); CONFIG[0 + 2] &= ((0b010 << 0)| ~(0b101 << 0));
+#define CFG_SET_DEF_WORK_MODE_MAME(CONFIG) CONFIG[0 + 2] |= (0b011 << 0); CONFIG[0 + 2] &= ((0b011 << 0)| ~(0b100 << 0));
+#define CFG_SET_DEF_WORK_MODE_XBOX(CONFIG) CONFIG[0 + 2] |= (0b100 << 0); CONFIG[0 + 2] &= ((0b100 << 0)| ~(0b011 << 0));
+#define CFG_SET_DEF_WORK_MODE_PT(CONFIG) CONFIG[0 + 2] |= (0b101 << 0); CONFIG[0 + 2] &= ((0b101 << 0)| ~(0b010 << 0));
 #define CFG_ENABLE_WORK_MODE_PS3_ENABLED(CONFIG) CONFIG[0 + 2] |= (1<<3);
 #define CFG_DISABLE_WORK_MODE_PS3_ENABLED(CONFIG) CONFIG[0 + 2] &= ~(1<<3);
 #define CFG_ENABLE_WORK_MODE_PC_ENABLED(CONFIG) CONFIG[0 + 2] |= (1<<4);

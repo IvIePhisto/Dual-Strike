@@ -575,7 +575,6 @@ usbMsgLen_t usbFunctionDescriptor(struct usbRequest *rq) {
 				len = sizeof(usbDescriptorStringDevicePC);
 				break;
 			}
-			detected = 1;
 			break;
 
 	    case USBDESCR_CONFIG:
@@ -591,7 +590,7 @@ usbMsgLen_t usbFunctionDescriptor(struct usbRequest *rq) {
 	    case USBDESCR_HID_REPORT:
 			usbMsgPtr = (uchar*)usbHidReportDescriptorPC;
 			len = sizeof(usbHidReportDescriptorPC);
-			detected = 2;
+			detected = 1;
 			break;
 		}
 		break;

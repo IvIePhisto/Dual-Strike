@@ -29,7 +29,14 @@
       <title lang="de">Standard Arbeitsmodus</title>
       <help>The working mode which is activated on plugging in, if no button to change the working mode is pressed.</help>
       <help lang="de">Der Arbeitsmodus der aktiviert wird, falls kein Button um den Arbeitsmodus zu ändern gedrückt wird.</help>
-      
+            
+      <option id="AUTODETECT">
+        <title>Autodetection</title>
+        <help>The Dual Strike determines in which mode to work by itself.</help>
+        <help lang="de">Das Dual Strike bestimmt selbst, in welchem Modus es arbeitet.</help>
+        <requires>WORK_MODE_PS3_ENABLED</requires>
+      </option>
+	  
       <option id="PS3">
         <title>PS3 Controller</title>
         <help>The Dual Strike works as a PS3 controller (not on PC).</help>

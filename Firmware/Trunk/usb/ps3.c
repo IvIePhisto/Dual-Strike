@@ -192,7 +192,7 @@ void ps3_init_controller() {
 }
 
 void ps3_controller() {
-	startSendRepeats = 20;
+	startSendRepeats = 40;
 
     while(1) { /* main event loop */
 		usbPoll();
@@ -200,6 +200,6 @@ void ps3_controller() {
 		updateJoystickMode();
         readInputPS3();
 		//sendDataUSB(data.array, 16);
-		usbSetInterrupt3(data.array, 16);
+		usbSetInterrupt3(data.array, 4);
     }
 }

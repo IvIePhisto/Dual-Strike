@@ -103,6 +103,14 @@ void pc_init_controller() {
 	setupUSB();
 }
 
+void pc_test_controller() {
+	usbSetInterrupt(data.array, 3);
+	usbPoll();
+
+	if(usbInterruptIsReady())
+		detected = 2;
+}
+
 void pc_controller() {
     while(1) { /* main event loop */
 		usbPoll();
