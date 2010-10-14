@@ -123,8 +123,15 @@ void readInputXBox() {
 	if(!Stick_MP)
 		XBOX_Y
 
-	if(!Stick_HP)
-		XBOX_BLACK
+	if(!Stick_HP) {
+		if(CFG_EMU_4X && metaPressed) {
+			XBOX_LT
+			metaWasUsed = 1;
+		}
+		else
+			XBOX_BLACK
+	}
+		
 
 	if(!Stick_LK)
 		XBOX_A
@@ -132,10 +139,16 @@ void readInputXBox() {
 	if(!Stick_MK)
 		XBOX_B
 
-	if(!Stick_HK)
-		XBOX_WHITE
+	if(!Stick_HK) {
+		if(CFG_EMU_4X && metaPressed) {
+			XBOX_RT
+			metaWasUsed = 1;
+		}
+		else
+			XBOX_WHITE
+	}
 
-#ifdef EXTRA_BUTTONS					
+#ifdef EXTRA_BUTTONS
 	if(!Stick_4P)
 		XBOX_LT
 
@@ -143,7 +156,14 @@ void readInputXBox() {
 		XBOX_RT
 #endif
 
-	if(CFG_META_BUTTON_START) {
+	if(CFG_JOYSTICK_SWITCH_READ && !CFG_EMU_4X) {
+		if(!Stick_Start)
+			XBOX_START
+
+		if(!Stick_Select)
+			XBOX_BACK
+	}
+	else if(CFG_META_BUTTON_START) {
 		if(metaSendCount)
 			XBOX_START
 

@@ -105,42 +105,11 @@ void configInit() {
 		enableUsbLines();
 		programmer_setup();
 
-		while( Stick_Start
-		 	&& Stick_LP
-			&& Stick_MP
-			&& Stick_HP
-			&& Stick_LK
-			&& Stick_MK
-			&& Stick_HK
-#ifdef EXTRA_BUTTONS
-			&& Stick_4P
-			&& Stick_4K
-#endif
-)
+		while(Stick_Start)
 			programmer_poll();
 
 		disableUsbLines();
 		readConfig(newConfig);
-
-		while(Stick_Start) {
-			if(!Stick_MK) {
-				// revert to defaults
-				CONFIG_SET_DEFAULTS(newConfig)
-			}
-
-			if(Stick_LK && Stick_MK && Stick_LP && Stick_MP && Stick_HK) {
-				if(!Stick_Up) {
-					CFG_SET_DIGITAL_PAD(newConfig)
-				}
-				else if(!Stick_Left) {
-					CFG_SET_LEFT_STICK(newConfig)
-				}
-				else if(!Stick_Right) {
-					CFG_SET_RIGHT_STICK(newConfig)
-				}
-			}
-		}
-
 	}
 	
 	writeConfig(newConfig);
