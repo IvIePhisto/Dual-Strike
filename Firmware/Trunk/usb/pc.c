@@ -71,7 +71,7 @@ void readInputPC() {
 	if(!Stick_HK)
 		PC_HK
 
-#ifdef EXTRA_BUTTONS					
+#ifdef EXTRA_BUTTONS			
 	if(!Stick_4P)
 		PC_4P
 

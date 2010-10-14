@@ -9,7 +9,7 @@ void pass_through() {
 
     while(1) {
 	    if(CFG_JOYSTICK_SWITCH_EMU) {
-			updateStartState();
+			updateMetaState();
 			updateJoystickMode();
 
 	        if(CFG_LEFT_STICK) {
@@ -44,22 +44,43 @@ void pass_through() {
         }
 
 		if(CFG_EMU_4X) {
-			if(!Stick_Start && !Stick_4K) {
-				EXTRA_4K_PORT &= ~(1<<EXTRA_4K_PIN);
-				EXTRA_4K_DDR  |=  (1<<EXTRA_4K_PIN);
-			}
-			else {
-				EXTRA_4K_DDR  &= ~(1<<EXTRA_4K_PIN);
-				EXTRA_4K_PORT |=  (1<<EXTRA_4K_PIN);
-			}
+			if(CFG_META_BUTTON_START) {
+				if(!Stick_Start && !Stick_4K) {
+					EXTRA_4K_PORT &= ~(1<<EXTRA_4K_PIN);
+					EXTRA_4K_DDR  |=  (1<<EXTRA_4K_PIN);
+				}
+				else {
+					EXTRA_4K_DDR  &= ~(1<<EXTRA_4K_PIN);
+					EXTRA_4K_PORT |=  (1<<EXTRA_4K_PIN);
+				}
 
-			if(!Stick_Start && !Stick_4P) {
-				EXTRA_4P_PORT &= ~(1<<EXTRA_4P_PIN);
-				EXTRA_4P_DDR  |=  (1<<EXTRA_4P_PIN);
+				if(!Stick_Start && !Stick_4P) {
+					EXTRA_4P_PORT &= ~(1<<EXTRA_4P_PIN);
+					EXTRA_4P_DDR  |=  (1<<EXTRA_4P_PIN);
+				}
+				else {
+					EXTRA_4P_DDR  &= ~(1<<EXTRA_4P_PIN);
+					EXTRA_4P_PORT |=  (1<<EXTRA_4P_PIN);
+				}
 			}
 			else {
-				EXTRA_4P_DDR  &= ~(1<<EXTRA_4P_PIN);
-				EXTRA_4P_PORT |=  (1<<EXTRA_4P_PIN);
+				if(!Stick_Select && !Stick_4K) {
+					EXTRA_4K_PORT &= ~(1<<EXTRA_4K_PIN);
+					EXTRA_4K_DDR  |=  (1<<EXTRA_4K_PIN);
+				}
+				else {
+					EXTRA_4K_DDR  &= ~(1<<EXTRA_4K_PIN);
+					EXTRA_4K_PORT |=  (1<<EXTRA_4K_PIN);
+				}
+
+				if(!Stick_Select && !Stick_4P) {
+					EXTRA_4P_PORT &= ~(1<<EXTRA_4P_PIN);
+					EXTRA_4P_DDR  |=  (1<<EXTRA_4P_PIN);
+				}
+				else {
+					EXTRA_4P_DDR  &= ~(1<<EXTRA_4P_PIN);
+					EXTRA_4P_PORT |=  (1<<EXTRA_4P_PIN);
+				}
 			}
 		}
 

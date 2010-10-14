@@ -73,7 +73,7 @@ void resetDataXBox() {
 void readInputXBox() {
 	resetDataXBox();
 
-	if(CFG_JOYSTICK_SWITCH_READ || !startPressed) {
+	if(CFG_JOYSTICK_SWITCH_READ || !metaPressed) {
 		// Left Joystick Directions
 		if(CFG_LEFT_STICK) {
 			if (!Stick_Up)
@@ -143,11 +143,20 @@ void readInputXBox() {
 		XBOX_RT
 #endif
 
-	if(startSendCount)
-		XBOX_START
+	if(CFG_META_BUTTON_START) {
+		if(metaSendCount)
+			XBOX_START
 
-	if(!Stick_Select)
-		XBOX_BACK
+		if(!Stick_Select)
+			XBOX_BACK
+	}
+	else {
+		if(!Stick_Start)
+			XBOX_START
+
+		if(metaSendCount)
+			XBOX_BACK
+	}
 }
 
 void xbox_init_controller() {
@@ -157,12 +166,12 @@ void xbox_init_controller() {
 }
 
 void xbox_controller() {
-	startSendRepeats = 20;
+	metaSendRepeats = 20;
 	//eeprom_write_word((void*)E2END-1, 0); // DEBUG
 
     while(1) { /* main event loop */
 		usbPoll();
-		updateStartState();
+		updateMetaState();
 		updateJoystickMode();
         readInputXBox();
 		//sendDataUSB3(data.array, 20); // each packet is interpreted by XBox as whole report, works on Windows when max packet size is 8

@@ -334,28 +334,33 @@ int hardwareInit() {
 }
 
 /* ------------------------------------------------------------------------- */
-/* Here the meta-button functionality for Start is defined. */
+/* Here the meta-button functionality is defined. */
 
-uchar startPressed = 0;
-uchar startWasUsed = 0;
-uint startSendCount = 0;
-uint startSendRepeats = 0;
+uchar metaPressed = 0;
+uchar metaWasUsed = 0;
+uint metaSendCount = 0;
+uint metaSendRepeats = 0;
 
-void updateStartState() {
-	uchar lastStartPressed = startPressed;
-	startPressed = !Stick_Start;
-	uchar startReleased = lastStartPressed && !startPressed;
+void updateMetaState() {
+	uchar lastMetaPressed = metaPressed;
+	
+	if(CFG_META_BUTTON_START)
+		metaPressed = !Stick_Start;
+	else
+		metaPressed = !Stick_Select;
 
-	if(startWasUsed) {
-		startSendCount = 0;
+	uchar metaReleased = lastMetaPressed && !metaPressed;
 
-		if(startReleased)
-			startWasUsed = 0;
+	if(metaWasUsed) {
+		metaSendCount = 0;
+
+		if(metaReleased)
+			metaWasUsed = 0;
 	}
-	else if(startReleased)
-		startSendCount = startSendRepeats;
-    else if(startSendCount > 0)
-		 startSendCount--;
+	else if(metaReleased)
+		metaSendCount = metaSendRepeats;
+    else if(metaSendCount > 0)
+		 metaSendCount--;
 }
 
 /* ------------------------------------------------------------------------- */
@@ -373,18 +378,18 @@ void updateJoystickMode() {
         }
     }
 	else {
-		if(startPressed) {
+		if(metaPressed) {
 			if(!Stick_Up) {
 				CFG_SET_DIGITAL_PAD(config)
-				startWasUsed = 1;
+				metaWasUsed = 1;
 			}
 			else if(!Stick_Left) {
 				CFG_SET_LEFT_STICK(config)
-				startWasUsed = 1;
+				metaWasUsed = 1;
 			}
 			else if(!Stick_Right) {
 				CFG_SET_RIGHT_STICK(config)
-				startWasUsed = 1;
+				metaWasUsed = 1;
 			}
 		}
 	}
@@ -452,7 +457,7 @@ void autodetect() {
 		while(detected == 0)
 			usbPoll();
 		
-		autodetectLimit = 2;
+		autodetectLimit = 5;
 		resetAutodetectTimer();
 
 		while(!autodetectTimePassed())
@@ -493,7 +498,7 @@ void autodetect() {
 				detected = 1;
 		}
 
-		autodetectLimit = 3;
+		autodetectLimit = 10;
 		resetAutodetectTimer();
 
 		while(!autodetectTimePassed())

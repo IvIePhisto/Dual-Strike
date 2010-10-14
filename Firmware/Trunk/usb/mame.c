@@ -207,20 +207,20 @@ uchar hasIdlePeriodPassed() {
 }
 
 void setMAMEReportPlayer1() {
-	if(startPressed) {
+	if(metaPressed) {
 		if(!Stick_LK) {
 			MAME_REPORT_ENTER
-			startWasUsed = 1;
+			metaWasUsed = 1;
 		}
 
 		if(!Stick_MK) {
 			MAME_REPORT_ESCAPE	
-			startWasUsed = 1;
+			metaWasUsed = 1;
 		}
 
-		if(CFG_HOME_EMU && !Stick_Select) {
+		if(CFG_HOME_EMU && !Stick_Start && !Stick_Select) {
 			MAME_REPORT_P
-			startWasUsed = 1;
+			metaWasUsed = 1;
 		}
 	}
 	else {
@@ -260,11 +260,20 @@ void setMAMEReportPlayer1() {
 			MAME_SET_BUTTON(1, MAME_4P)
 #endif
 
-		if(startSendCount > 0) 
-			MAME_REPORT_1
+		if(CFG_META_BUTTON_START) {
+			if(metaSendCount > 0) 
+				MAME_REPORT_1
 
-		if(!Stick_Select)
-			MAME_REPORT_5
+			if(!Stick_Select)
+				MAME_REPORT_5
+		}
+		else {
+			if(!Stick_Start) 
+				MAME_REPORT_1
+
+			if(metaSendCount > 0)
+				MAME_REPORT_5
+		}
 
 		if(!Stick_Home)
 			MAME_REPORT_P
@@ -272,10 +281,10 @@ void setMAMEReportPlayer1() {
 }
 
 void setMAMEReportPlayer2() {
-	if(startPressed) {
-		if(CFG_HOME_EMU && !Stick_Select) {
+	if(metaPressed) {
+		if(CFG_HOME_EMU && !Stick_Start && !Stick_Select) {
 			MAME_REPORT_P
-			startWasUsed = 1;
+			metaWasUsed = 1;
 		}
 	}
 	else {
@@ -315,11 +324,20 @@ void setMAMEReportPlayer2() {
 			MAME_SET_BUTTON(2, MAME_4P)
 #endif
 
-		if(startSendCount > 0)
-			MAME_REPORT_2
+		if(CFG_META_BUTTON_START) {
+			if(metaSendCount > 0) 
+				MAME_REPORT_2
 
-		if(!Stick_Select)
-			MAME_REPORT_6
+			if(!Stick_Select)
+				MAME_REPORT_6
+		}
+		else {
+			if(!Stick_Start) 
+				MAME_REPORT_2
+
+			if(metaSendCount > 0)
+				MAME_REPORT_6
+		}
 
 		if(!Stick_Home)
 			MAME_REPORT_P
@@ -349,11 +367,20 @@ void setMAMEReportsControl() {
 	if(!Stick_MK)
 		MAME_REPORT_F3
 
-	if(startSendCount > 0)
-		MAME_REPORT_TAB
+	if(CFG_META_BUTTON_START) {
+		if(metaSendCount > 0)
+			MAME_REPORT_TAB
 
-	if(!Stick_Select)
-		MAME_REPORT_9
+		if(!Stick_Select)
+			MAME_REPORT_9
+	}
+	else {
+		if(!Stick_Start)
+			MAME_REPORT_TAB
+
+		if(metaSendCount > 0)
+			MAME_REPORT_9
+	}
 
 
 #ifdef EXTRA_BUTTONS		
@@ -474,7 +501,7 @@ void configureMAMEButtonMappings() {
 
 void sendMAMEReports() {	
 	resetMAMEReports();
-	updateStartState();
+	updateMetaState();
 	/*
 	joystick mode setting corresponds to the MAME mode, either set by
 	SPDT switch or on the fly switching:
@@ -484,10 +511,10 @@ void sendMAMEReports() {
 	*/
 	updateJoystickMode();
 
-	if(startPressed) {
+	if(metaPressed) {
 		/*if(!Stick_MP) {
 			configureMAMEButtonMappings();
-			startWasUsed = 1;
+			metaWasUsed = 1;
 			return;
 		}
 		else */
@@ -495,28 +522,28 @@ void sendMAMEReports() {
 			if(!Stick_Up) {
 				buttonMapping = buttonMapping1;
 				currentButtonMappingNo = 1;
-				startWasUsed = 1;
+				metaWasUsed = 1;
 			}
 			else if(!Stick_Right) {
 				buttonMapping = buttonMapping2;
 				currentButtonMappingNo = 2;
-				startWasUsed = 1;
+				metaWasUsed = 1;
 			}
 			else if(!Stick_Down) {
 				buttonMapping = buttonMapping3;
 				currentButtonMappingNo = 3;
-				startWasUsed = 1;
+				metaWasUsed = 1;
 			}
 			else if(!Stick_Left) {
 				buttonMapping = buttonMapping4;
 				currentButtonMappingNo = 4;
-				startWasUsed = 1;
+				metaWasUsed = 1;
 			}
 		}
 	}
 
 	if(CFG_DIGITAL_PAD) {
-		if(!startPressed)
+		if(!metaPressed)
 			setMAMEReportsControl();
 	}
 	else {
@@ -552,7 +579,7 @@ void mame_controller() {
 	initMAMEReports();
 	initMAMEButtonMappings();
 	initIdleTimer();
-	startSendRepeats = 5000;
+	metaSendRepeats = 5000;
 	CFG_SET_LEFT_STICK(config);
 
     while(1) { /* main event loop */

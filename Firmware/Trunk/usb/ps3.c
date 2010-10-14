@@ -56,7 +56,7 @@ void resetPS3ReportBuffer() {
 void readInputPS3() {
 	resetPS3ReportBuffer();
 
-	if(CFG_JOYSTICK_SWITCH_READ || !startPressed) {
+	if(CFG_JOYSTICK_SWITCH_READ || !metaPressed) {
 		// Left Joystick Directions
 		if(CFG_LEFT_STICK) {
 			if (!Stick_Up)
@@ -116,36 +116,36 @@ void readInputPS3() {
 		PS3_TRIANGLE
 
 	if(!Stick_HP) {
-		if(CFG_EMU_4X && startPressed) {
+		if(CFG_EMU_4X && metaPressed) {
 			PS3_L1
-			startWasUsed = 1;
+			metaWasUsed = 1;
 		}
 		else
 			PS3_R1
 	}
 
 	if(!Stick_LK) {
-		if(!CFG_X3_READ && startPressed) {
+		if(!CFG_X3_READ && metaPressed) {
 			PS3_L3
-			startWasUsed = 1;
+			metaWasUsed = 1;
 		}
 		else
 			PS3_CROSS
 	}
 
 	if(!Stick_MK) {
-		if(!CFG_X3_READ && startPressed) {
+		if(!CFG_X3_READ && metaPressed) {
 			PS3_R3
-			startWasUsed = 1;
+			metaWasUsed = 1;
 		}
 		else
 			PS3_CIRCLE
 	}
 
 	if(!Stick_HK) {
-		if(CFG_EMU_4X && startPressed) {
+		if(CFG_EMU_4X && metaPressed) {
 			PS3_L2
-			startWasUsed = 1;
+			metaWasUsed = 1;
 		}
 		else
 			PS3_R2
@@ -159,16 +159,25 @@ void readInputPS3() {
 		PS3_L2
 #endif
 
-	if(CFG_HOME_EMU && startPressed && !Stick_Select) {
+	if(CFG_HOME_EMU && !Stick_Start && !Stick_Select) {
 		PS3_PS
-		startWasUsed = 1;
+		metaWasUsed = 1;
 	}
 	else {
-		if(startSendCount > 0)
-			PS3_START
+		if(CFG_META_BUTTON_START) {
+			if(metaSendCount > 0)
+				PS3_START
 
-		if(!Stick_Select)
-			PS3_SELECT
+			if(!Stick_Select)
+				PS3_SELECT
+		}
+		else {
+			if(!Stick_Start)
+				PS3_START
+
+			if(metaSendCount > 0)
+				PS3_SELECT
+		}
 	}
 
 	if(CFG_X3_READ) {
@@ -192,14 +201,18 @@ void ps3_init_controller() {
 }
 
 void ps3_controller() {
-	startSendRepeats = 40;
+	metaSendRepeats = 40;
 
     while(1) { /* main event loop */
 		usbPoll();
-		updateStartState();
+		updateMetaState();
 		updateJoystickMode();
         readInputPS3();
 		//sendDataUSB(data.array, 16);
-		usbSetInterrupt3(data.array, 4);
+
+		while(!usbInterruptIsReady3())
+			usbPoll();
+
+		usbSetInterrupt3(data.array, 16);
     }
 }

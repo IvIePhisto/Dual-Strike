@@ -24,7 +24,7 @@
     <help>Configure the default settings of the Dual Strike.</help>
     <help lang="de">Konfiguration der Dual Strike Standardeinstellungen.</help>
     
-    <choice prefix="DEF_WORK_MODE_" default="PS3">
+    <choice prefix="DEF_WORK_MODE_" default="AUTODETECT">
       <title>Default Working Mode</title>
       <title lang="de">Standard Arbeitsmodus</title>
       <help>The working mode which is activated on plugging in, if no button to change the working mode is pressed.</help>
@@ -155,7 +155,21 @@
     <title>Hardware</title>
     <help>Settings related to the hardware.</help>
     <help lang="de">Einstellungen im Zusammenhang mit der Hardware.</help>
+    
+	<choice prefix="META_BUTTON_" default="START">
+      <title>Meta Button</title>
+      <help>Which button to use to activate special functions (like on-the-fly joystick mode switching).</help>
+      <help lang="de">Welcher Button verwendet werden soll, um spezielle Funktionen (wie on-the-fly Joystick Modus Umschaltung) zu aktivieren.</help>
+        
+      <option id="START">
+        <title>Start</title>
+      </option>
 
+      <option id="SELECT">
+        <title>Select</title>
+      </option>
+	</choice>
+	
     <boolean id="HOME_EMU" default="false">
       <title>Home Button Emulation</title>
       <help>Pressing the Select and Start buttons simultaneously is recognized as pressing the Home button.</help>
@@ -164,8 +178,8 @@
 
     <boolean id="EMU_4X" default="false">
       <title>4K/4P Emulation</title>
-      <help>Pressing the Start and HK buttons simultaneously is recognized as pressing 4K, pressing Start and HP simultaneously is recognized as 4P.</help>
-      <help lang="de">Gleichzeitiges Aktivieren der Start und HK Buttons wird als Drücken des 4K Buttons gewertet, gleichzeitiges Aktivieren von Start und HP wird als 4P gewertet.</help>
+      <help>Pressing the Meta (Start or Select) and HK buttons simultaneously is recognized as pressing 4K, pressing Meta and HP simultaneously is recognized as 4P.</help>
+      <help lang="de">Gleichzeitiges Aktivieren der Meta (Start oder Select) und HK Buttons wird als Drücken des 4K Buttons gewertet, gleichzeitiges Aktivieren von Meta und HP wird als 4P gewertet.</help>
     </boolean>
 
     <choice default="NO_EXTRA_PINS">
@@ -237,8 +251,8 @@ Damit funkionieren die entsprechenden Buttons mit Active-High Trigger PCBs.</hel
   <page>
     <title>MAME Button Layout 1</title>
     <title lang="de">MAME Button Anordnung 1</title>
-    <help>The MAME button layout number 1. It is selected in MAME mode by pressing Select, LK and joystick up.</help>
-    <help lang="de">Die MAME Button Anordnung Nummer 1. Sie wird im MAME Modus durch drücken von Select, LK und Joystick hoch aktiviert.</help>
+    <help>The MAME button layout number 1. It is selected in MAME mode by pressing Meta (Start or Select), LK and joystick up.</help>
+    <help lang="de">Die MAME Button Anordnung Nummer 1. Sie wird im MAME Modus durch drücken von Meta (Start oder Select), LK und Joystick hoch aktiviert.</help>
 
     <choice default="MAME_BL1_LK_BUTTON3">
       <title>LK</title>
@@ -508,8 +522,8 @@ Damit funkionieren die entsprechenden Buttons mit Active-High Trigger PCBs.</hel
   <page>
     <title>MAME Button Layout 2</title>
     <title lang="de">MAME Button Anordnung 2</title>
-    <help>The MAME button layout number 2. It is selected in MAME mode by pressing Select, LK and joystick right.</help>
-    <help lang="de">Die MAME Button Anordnung Nummer 2. Sie wird im MAME Modus durch drücken von Select, LK und Joystick rechts aktiviert.</help>
+    <help>The MAME button layout number 2. It is selected in MAME mode by pressing Meta (Start or Select), LK and joystick right.</help>
+    <help lang="de">Die MAME Button Anordnung Nummer 2. Sie wird im MAME Modus durch drücken von Meta (Start oder Select), LK und Joystick rechts aktiviert.</help>
 
     <choice default="MAME_BL2_LK_BUTTON4">
       <title>LK</title>
@@ -779,8 +793,8 @@ Damit funkionieren die entsprechenden Buttons mit Active-High Trigger PCBs.</hel
   <page>
     <title>MAME Button Layout 3</title>
     <title lang="de">MAME Button Anordnung 3</title>
-    <help>The MAME button layout number 3. It is selected in MAME mode by pressing Select, LK and joystick down.</help>
-    <help lang="de">Die MAME Button Anordnung Nummer 3. Sie wird im MAME Modus durch drücken von Select, LK und Joystick runter aktiviert.</help>
+    <help>The MAME button layout number 3. It is selected in MAME mode by pressing Meta (Start or Select), LK and joystick down.</help>
+    <help lang="de">Die MAME Button Anordnung Nummer 3. Sie wird im MAME Modus durch drücken von Meta (Start oder Select), LK und Joystick runter aktiviert.</help>
 
     <choice default="MAME_BL3_LK_BUTTON5">
       <title>LK</title>
@@ -1050,8 +1064,8 @@ Damit funkionieren die entsprechenden Buttons mit Active-High Trigger PCBs.</hel
   <page>
     <title>MAME Button Layout 4</title>
     <title lang="de">MAME Button Anordnung 4</title>
-    <help>The MAME button layout number 4. It is selected in MAME mode by pressing Select, LK and joystick left.</help>
-    <help lang="de">Die MAME Button Anordnung Nummer 4. Sie wird im MAME Modus durch drücken von Select, LK und Joystick links aktiviert.</help>
+    <help>The MAME button layout number 4. It is selected in MAME mode by pressing Meta (Start or Select), LK and joystick left.</help>
+    <help lang="de">Die MAME Button Anordnung Nummer 4. Sie wird im MAME Modus durch drücken von Meta (Start oder Select), LK und Joystick links aktiviert.</help>
 
     <choice default="MAME_BL4_LK_BUTTON4">
       <title>LK</title>
