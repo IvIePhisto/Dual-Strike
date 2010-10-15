@@ -34,7 +34,6 @@
         <title>Autodetection</title>
         <help>The Dual Strike determines in which mode to work by itself.</help>
         <help lang="de">Das Dual Strike bestimmt selbst, in welchem Modus es arbeitet.</help>
-        <requires>WORK_MODE_PS3_ENABLED</requires>
       </option>
 	  
       <option id="PS3">

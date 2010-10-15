@@ -501,6 +501,7 @@ void autodetect() {
 
 	if(CFG_WORK_MODE_PT_ENABLED) {
 		resetAutodetect();
+		_delay_ms(300);
 		setModePT();
 		pass_through();
 	}
