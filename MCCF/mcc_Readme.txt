@@ -34,6 +34,8 @@ the directory this file resides in.
 
 Version History
 ~~~~~~~~~~~~~~~
+1.1.1 - changed eepromProgrammerHID command to use current directory
+
 1.1.0 - added disabling of load/save controls if no connection to device
       - added "requires" constraint
       - added defaults loading for current tab

@@ -1,1 +1,1 @@
-start javaw -jar mcc-1.1.0.jar -e configuration_atmega8.xml
+start javaw -jar mcc-1.1.1.jar -e configuration_atmega8.xml

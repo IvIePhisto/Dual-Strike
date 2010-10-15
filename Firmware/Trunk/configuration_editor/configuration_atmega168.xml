@@ -152,8 +152,8 @@
   
   <page>
     <title>Hardware</title>
-    <help>Settings related to the hardware.</help>
-    <help lang="de">Einstellungen im Zusammenhang mit der Hardware.</help>
+    <help>Settings related to the hardware.&lt;br/>&lt;img src="buttons.png"/></help>
+    <help lang="de">Einstellungen im Zusammenhang mit der Hardware.&lt;br/>&lt;img src="buttons.png"/></help>
     
 	<choice prefix="META_BUTTON_" default="START">
       <title>Meta Button</title>
@@ -250,8 +250,8 @@ Damit funkionieren die entsprechenden Buttons mit Active-High Trigger PCBs.</hel
   <page>
     <title>MAME Button Layout 1</title>
     <title lang="de">MAME Button Anordnung 1</title>
-    <help>The MAME button layout number 1. It is selected in MAME mode by pressing Meta (Start or Select), LK and joystick up.</help>
-    <help lang="de">Die MAME Button Anordnung Nummer 1. Sie wird im MAME Modus durch drücken von Meta (Start oder Select), LK und Joystick hoch aktiviert.</help>
+    <help>The MAME button layout number 1. It is selected in MAME mode by pressing Meta (Start or Select), LK and joystick up.&lt;br/>&lt;img src="buttons.png"/></help>
+    <help lang="de">Die MAME Button Anordnung Nummer 1. Sie wird im MAME Modus durch drücken von Meta (Start oder Select), LK und Joystick hoch aktiviert.&lt;br/>&lt;img src="buttons.png"/></help>
 
     <choice default="MAME_BL1_LK_BUTTON3">
       <title>LK</title>
@@ -521,8 +521,8 @@ Damit funkionieren die entsprechenden Buttons mit Active-High Trigger PCBs.</hel
   <page>
     <title>MAME Button Layout 2</title>
     <title lang="de">MAME Button Anordnung 2</title>
-    <help>The MAME button layout number 2. It is selected in MAME mode by pressing Meta (Start or Select), LK and joystick right.</help>
-    <help lang="de">Die MAME Button Anordnung Nummer 2. Sie wird im MAME Modus durch drücken von Meta (Start oder Select), LK und Joystick rechts aktiviert.</help>
+    <help>The MAME button layout number 2. It is selected in MAME mode by pressing Meta (Start or Select), LK and joystick right.&lt;br/>&lt;img src="buttons.png"/></help>
+    <help lang="de">Die MAME Button Anordnung Nummer 2. Sie wird im MAME Modus durch drücken von Meta (Start oder Select), LK und Joystick rechts aktiviert.&lt;br/>&lt;img src="buttons.png"/></help>
 
     <choice default="MAME_BL2_LK_BUTTON4">
       <title>LK</title>
@@ -792,8 +792,8 @@ Damit funkionieren die entsprechenden Buttons mit Active-High Trigger PCBs.</hel
   <page>
     <title>MAME Button Layout 3</title>
     <title lang="de">MAME Button Anordnung 3</title>
-    <help>The MAME button layout number 3. It is selected in MAME mode by pressing Meta (Start or Select), LK and joystick down.</help>
-    <help lang="de">Die MAME Button Anordnung Nummer 3. Sie wird im MAME Modus durch drücken von Meta (Start oder Select), LK und Joystick runter aktiviert.</help>
+    <help>The MAME button layout number 3. It is selected in MAME mode by pressing Meta (Start or Select), LK and joystick down.&lt;br/>&lt;img src="buttons.png"/></help>
+    <help lang="de">Die MAME Button Anordnung Nummer 3. Sie wird im MAME Modus durch drücken von Meta (Start oder Select), LK und Joystick runter aktiviert.&lt;br/>&lt;img src="buttons.png"/></help>
 
     <choice default="MAME_BL3_LK_BUTTON5">
       <title>LK</title>
@@ -1063,8 +1063,8 @@ Damit funkionieren die entsprechenden Buttons mit Active-High Trigger PCBs.</hel
   <page>
     <title>MAME Button Layout 4</title>
     <title lang="de">MAME Button Anordnung 4</title>
-    <help>The MAME button layout number 4. It is selected in MAME mode by pressing Meta (Start or Select), LK and joystick left.</help>
-    <help lang="de">Die MAME Button Anordnung Nummer 4. Sie wird im MAME Modus durch drücken von Meta (Start oder Select), LK und Joystick links aktiviert.</help>
+    <help>The MAME button layout number 4. It is selected in MAME mode by pressing Meta (Start or Select), LK and joystick left.&lt;br/>&lt;img src="buttons.png"/></help>
+    <help lang="de">Die MAME Button Anordnung Nummer 4. Sie wird im MAME Modus durch drücken von Meta (Start oder Select), LK und Joystick links aktiviert.&lt;br/>&lt;img src="buttons.png"/></help>
 
     <choice default="MAME_BL4_LK_BUTTON4">
       <title>LK</title>

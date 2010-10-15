@@ -109,8 +109,8 @@
   
   <page>
     <title>Hardware</title>
-    <help>Settings related to the hardware.</help>
-    <help lang="de">Einstellungen im Zusammenhang mit der Hardware.</help>
+    <help>Settings related to the hardware.&lt;br/>&lt;img src="buttons.png"/></help>
+    <help lang="de">Einstellungen im Zusammenhang mit der Hardware.&lt;br/>&lt;img src="buttons.png"/></help>
 
 	<choice prefix="META_BUTTON_" default="START">
       <title>Meta Button</title>

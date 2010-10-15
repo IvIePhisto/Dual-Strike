@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.IOException;
 
 public class DeviceHelper {
-	private static final File executableFile = new File("eepromProgrammerHID" + (System.getProperty("os.name").contains("Windows")?".exe":""));
+	private static final File executableFile = new File("./eepromProgrammerHID" + (System.getProperty("os.name").contains("Windows")?".exe":""));
 		
 	private static ExecutionResult execute(boolean reset, String option, File targetFile) {
 		try {
