@@ -180,32 +180,19 @@ int setModeDefault() {
 
 // README
 /*
-Startup Behaviour
-================
-If a button or joystick direction is pressed, when the Dual Strike controller
-is activated (if the machine it is plugged in is turned on or the controller gets
-plugged into the machine), then special functions are activated:
+By pressing a button or joystick direction while the Dual Strike gets activated, it can be set into the different modes:
 
-If the Select button is pressed, then configuration mode is entered (see below).
-
-If the Start button is pressed, then firmware update mode is entered (see below).
-
-If only one working mode is enabled, then this is activated.
-If two working modes are enabled and one of the buttons LK, MK, LP, MP, HP and 4P is
-pressed, then the non-default mode is activated.
-If more than two working modes are enabled,:
--the button LK is pressed and the PS3 mode is enabled, then the PS3 mode is activated.
--the button MK is pressed and the MAME mode is enabled, then the MAME mode is activated.
--the button LP is pressed and the XBox mode is enabled, then the XBox mode is activated.
--the button MP is pressed and the pass-through mode is enabled, then the pass-through mode is activated.
-Otherwise the default working mode is activated.
-
-If the joystick is moved to the up direction, the joystick is acting as a digital pad
-when in Dual Strike working mode (default).
-If the joystick is moved to the left direction, the joystick is acting as a left analogue
-stick when in Dual Strike working mode.
-If the joystick is moved to the right direction, the joystick is acting as a right analogue
-stick when in Dual Strike working mode.
+    * If the Select button is pressed, then configuration mode is entered.
+    * If the Start button is pressed, then firmware update mode is entered.
+    * The working modes can be activated as follows:
+          o If only one working mode is enabled, then this working mode will be activated in any case.
+          o If two working modes are enabled and one of the buttons LK, MK, LP, MP, HP and 4P is pressed, then the non-default mode is activated.
+          o If more than two working modes are enabled,:
+                + the button LK is pressed and the PS3 mode is enabled, then the PS3 mode is activated.
+                + the button MK is pressed and the MAME mode is enabled, then the MAME mode is activated.
+                + the button HK is pressed and the PC mode is enabled, then the PC mode is activated.
+                + the button LP is pressed and the XBox mode is enabled, then the XBox mode is activated.
+                + the button MP is pressed and the pass-through mode is enabled, then the pass-through mode is activated.
 */
 int hardwareInit() {
 	DDRC	= 0b00000000;	// PINC inputs
