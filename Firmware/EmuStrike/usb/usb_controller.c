@@ -1,6 +1,6 @@
 #include "usb_controller.h"
 
-#include "../DualStrike.h"
+#include "../EmuStrike.h"
 
 #include <avr/io.h>
 #include <avr/interrupt.h>  /* for sei() */
@@ -9,8 +9,6 @@
 
 #include <avr/pgmspace.h>   /* required by usbdrv.h */
 #include "usbdrv/usbdrv.h"
-
-extern uint8_t config[2];
 
 /* ------------------------------------------------------------------------- */
 

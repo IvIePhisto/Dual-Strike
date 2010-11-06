@@ -94,6 +94,12 @@
 #define Stick_Select	(PINC & (1<<1))
 #define Stick_Start		(PINC & (1<<0))
 
+#define S1_PORT	PORTD
+#define S1_PIN	0
+
+#define S2_PORT	PORTD
+#define S2_PIN	3
+
 #define S3_PIN			4
 #define S3_PORT			PORTD
 #define S3_DDR			DDRD
