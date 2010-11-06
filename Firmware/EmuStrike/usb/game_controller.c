@@ -23,6 +23,7 @@ void readInputGame() {
 	y_1 = Stick_Left;
 	y_2 = Stick_Right;
 
+	/*
 	if((x_1 != last_x_1) || (x_2 != last_x_2)) {
 		if(x_2 != last_x_1) {
 
@@ -46,16 +47,35 @@ void readInputGame() {
 				trackballY = -1;
 		}
 	}
+	*/
+
+	if(!Stick_MK) {
+		if(trackballY < 127)
+			trackballY++;
+	}
+	else if(!Stick_MP) {
+		if(trackballY > -126)
+			trackballY--;
+	}
+
+	if(!Stick_LP) {
+		if(trackballX < 127)
+			trackballX++;
+	}
+	else if(!Stick_LK) {
+		if(trackballX > -126)
+			trackballX--;
+	}
 }
 
 void updateReportGame() {
 	data.game_report.trackball_x = trackballX;
-	//data.game_report.trackball_y = trackballY;
+	data.game_report.trackball_y = trackballY;
 }
 
 void resetReportGame() {
-	data.game_report.trackball_x =
-	data.game_report.trackball_y = 0;
+	trackballX =
+	trackballY = 0;
 }
 
 /* ------------------------------------------------------------------------- */
@@ -76,6 +96,6 @@ void game_controller() {
         readInputGame();
 		updateReportGame();
 		usbSetInterrupt(data.array, 2);
-		//resetReportGame();
+		resetReportGame();
     }
 }
