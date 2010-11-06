@@ -171,8 +171,9 @@ section at the end of this file).
  * own Vendor ID, define it here. Otherwise you use one of obdev's free shared
  * VID/PID pairs. Be sure to read USBID-License.txt for rules!
  */
-#define  USB_CFG_DEVICE_ID		0xdf, 0x05
+#define  USB_CFG_DEVICE_ID		0xe8, 0x03
 // obdev's free shared HID Input Device ID: 0xdf, 0x05
+// VOTI's lab PID: 0xe8, 0x03
 
 /* This is the ID of the product, low byte first. It is interpreted in the
  * scope of the vendor ID. If you have registered your own VID with usb.org
@@ -196,8 +197,8 @@ section at the end of this file).
  * obdev's free shared VID/PID pair. See the file USBID-License.txt for
  * details.
  */
-#define USB_CFG_DEVICE_NAME     'A', 'r', 'c', 'a', 'd', 'e', ' ', 'S', 't', 'r', 'i', 'k', 'e', ' ', ' ', 'V', '1', '.' , '0', '.', '0'
-#define USB_CFG_DEVICE_NAME_LEN 21
+#define USB_CFG_DEVICE_NAME     'E', 'm', 'u', ' ', 'S', 't', 'r', 'i', 'k', 'e', ' ', ' ', 'V', '1', '.' , '0', '.', '0'
+#define USB_CFG_DEVICE_NAME_LEN 18
 
 /* Same as above for the device name. If you don't want a device name, undefine
  * the macros. See the file USBID-License.txt before you assign a name if you
