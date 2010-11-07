@@ -13,8 +13,8 @@
 /* ------------------------------------------------------------------------- */
 
 typedef struct {
-	uchar	trackball_y;
-	uchar	trackball_x;
+	char	trackballY;
+	char	trackballX;
 } game_controller_report_t;
 
 typedef union {

@@ -36,6 +36,18 @@ int hardwareInit() {
 	DDRD	= 0b00001001;  // PIND inputs, except S1 and S2
 	PORTD	= 0b11100000;  // PORTD with pull-ups except S1, S2, D+, D- and S3
 
+	if(!Stick_Select) {
+		while(Stick_Start) {
+			enableUsbLines();
+			programmer_setup();
+
+			while(Stick_Start)
+				programmer_poll();
+
+			disableUsbLines();
+		}
+	}
+
 	if(!Stick_LK
 	|| !Stick_MK
 	|| !Stick_LP
@@ -64,8 +76,7 @@ usbSetInterrupt((uchar *)&data + 8, 1*sizeof(uchar));
 */
 unsigned char* data[132];
 
-int main(void)
-{
+int main(void) {
 	switch(hardwareInit()) {
 	case WORKING_MODE_PT:
 	  pass_through();
