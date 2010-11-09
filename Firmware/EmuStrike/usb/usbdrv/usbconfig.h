@@ -165,13 +165,14 @@ section at the end of this file).
 /* -------------------------- Device Description --------------------------- */
 
 
-#define  USB_CFG_VENDOR_ID       0xc0, 0x16
+#define  USB_CFG_VENDOR_ID       0x03, 0x04
 // obdev's free shared Vendor ID: 0xc0, 0x16
+// FTDI: 0x03, 0x04
 /* USB vendor ID for the device, low byte first. If you have registered your
  * own Vendor ID, define it here. Otherwise you use one of obdev's free shared
  * VID/PID pairs. Be sure to read USBID-License.txt for rules!
  */
-#define  USB_CFG_DEVICE_ID		0xe8, 0x03
+#define  USB_CFG_DEVICE_ID		 0x30, 0x8E
 // obdev's free shared HID Input Device ID: 0xdf, 0x05
 // VOTI's lab PID: 0xe8, 0x03
 

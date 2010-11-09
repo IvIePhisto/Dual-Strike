@@ -11,13 +11,15 @@ unsigned char x_2 = 0;
 unsigned char y_1 = 0;
 unsigned char y_2 = 0;
 
-char maxX = 0;
-char minX = 0;
-char maxY = 0;
-char minY = 0;
+void resetInputKeyboard() {
+	data.game_report.keys[0] =
+	data.game_report.keys[1] =
+	data.game_report.keys[2] = 0;
+}
 
-void resetInputGame() {
-	data.game_report.trackballX = 0;
+void resetInputTrackball() {
+	data.game_report.trackballButtons =
+	data.game_report.trackballX =
 	data.game_report.trackballY = 0;
 }
 
@@ -66,7 +68,7 @@ void readRotaryValues() {
 	}
 }
 
-void readInputGame() {
+void readInputGameTrackball() {
 	unsigned char timerCounter = 0;
 
 	resetRotaryValues();
@@ -95,15 +97,21 @@ void readInputGame() {
 		readRotaryValues();
 	}
 
-	if(maxX < data.game_report.trackballX)
-		maxX = data.game_report.trackballX;
-	else if(minX > data.game_report.trackballX)
-		minX = data.game_report.trackballX;
+	if(!Stick_Start)
+		data.game_report.keys[0] |= (1<<7);
 
-	if(maxY < data.game_report.trackballY)
-		maxY = data.game_report.trackballY;
-	else if(minY > data.game_report.trackballY)
-		minY = data.game_report.trackballY;
+	if(!Stick_Select)
+		data.game_report.keys[1] |= (1<<0);
+}
+
+void readInputGameKeyboard() {
+	resetInputKeyboard();
+
+	if(!Stick_Start)
+		data.game_report.keys[0] |= (1<<7);
+
+	if(!Stick_Select)
+		data.game_report.keys[1] |= (1<<0);
 }
 
 /* ------------------------------------------------------------------------- */
@@ -112,6 +120,8 @@ void game_controller() {
 	usbMode = USB_MODE_GAME;
 	setupUSB();
 	usbPoll();
+	data.game_report.keyboardReportID = 1;
+	data.game_report.trackballReportID = 2;
 
 #define TIMER_PRESCALING_1 (1<<CS00)
 #define TIMER_PRESCALING_8 (1<<CS01)
@@ -127,33 +137,23 @@ void game_controller() {
 #else
 	TCCR0 = TIMER_BITMASK;
 #endif
-	minX = eeprom_read_byte((void*)E2END-3);
-	maxX = eeprom_read_byte((void*)E2END-2);
-	minY = eeprom_read_byte((void*)E2END-1);
-	maxY = eeprom_read_byte((void*)E2END-0);
 
     while(1) { /* main event loop */
-		usbPoll();
+		readInputGameKeyboard();
+		readInputGameTrackball();
+		usbSetInterrupt(&data.game_report.keyboardReportID, 4);
 
-		if(usbInterruptIsReady()) {
-			usbSetInterrupt(data.array, 2);
-			resetInputGame();
+		while(!usbInterruptIsReady()) {
+			usbPoll();
+			readInputGameTrackball();
 		}
-		
-		readInputGame();
 
-		if(!Stick_Select) {
-			if(eeprom_read_byte((void*)E2END-3) != minX)
-				eeprom_write_byte((void*)E2END-3, minX);
+		usbSetInterrupt(&data.game_report.trackballReportID, 4);
+		resetInputTrackball();
 
-			if(eeprom_read_byte((void*)E2END-2) != maxX)
-				eeprom_write_byte((void*)E2END-2, maxX);
-
-			if(eeprom_read_byte((void*)E2END-1) != minY)
-				eeprom_write_byte((void*)E2END-1, minY);
-			
-			if(eeprom_read_byte((void*)E2END-0) != maxY)
-				eeprom_write_byte((void*)E2END-0, maxY);
+		while(!usbInterruptIsReady()) {
+			usbPoll();
+			readInputGameTrackball();
 		}
     }
 }

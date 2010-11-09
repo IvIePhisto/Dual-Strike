@@ -13,6 +13,10 @@
 /* ------------------------------------------------------------------------- */
 
 typedef struct {
+	unsigned char keyboardReportID;
+	unsigned char keys[3];
+	unsigned char trackballReportID;
+	unsigned char trackballButtons;
 	char	trackballY;
 	char	trackballX;
 } game_controller_report_t;
