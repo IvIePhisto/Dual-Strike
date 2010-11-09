@@ -97,12 +97,21 @@ public class ConfigurationEditor implements HyperlinkListener {
 
 	static ConfigurationEditor newInstance(File configurationDefinitionFile, final Locale language) throws IOException, ConfigurationDefException {
 		ConfigurationEditor ce;
+		String useScreenMenuBarBackup;
 		
+		useScreenMenuBarBackup = System.getProperty("com.apple.macos.useScreenMenuBar");
+		System.setProperty("com.apple.macos.useScreenMenuBar", "true");
+
 		if(configurationDefinitionFile == null)
 			configurationDefinitionFile = DEFAULT_CONFIGURATION_DEFINITION_FILE;
 		
 		ce = new ConfigurationEditor(configurationDefinitionFile, language);
 		
+		if(useScreenMenuBarBackup == null)
+			System.clearProperty("com.apple.macos.useScreenMenuBar");
+		else
+			System.setProperty("com.apple.macos.useScreenMenuBar", useScreenMenuBarBackup);
+
 		return ce;
 	}
 
@@ -248,7 +257,7 @@ public class ConfigurationEditor implements HyperlinkListener {
 		actionListenerHandler.registerActionListener("loadFile", fileHandler.createLoadFileActionListener());
 		actionListenerHandler.registerActionListener("saveFile", fileHandler.createSaveFileActionListener());
 		actionListenerHandler.registerActionListener("saveAsFile", fileHandler.createSaveAsFileActionListener());
-		actionListenerHandler.registerActionListener("forgetFile", fileHandler.createForgetFileActionListener());
+		actionListenerHandler.registerActionListener("closeFile", fileHandler.createCloseFileActionListener());
 		actionListenerHandler.registerActionListener("exit", new ExitActionListener(this));
 		actionListenerHandler.registerActionListener("save", new SaveActionListener(this));
 		actionListenerHandler.registerActionListener("load", new LoadActionListener(this));
@@ -319,13 +328,6 @@ public class ConfigurationEditor implements HyperlinkListener {
 		menuBar = new JMenuBar();
 		menu = new JMenu(MessageHelper.get(this, "fileMenuName"));
 		
-		menuItem = new JMenuItem(MessageHelper.get(this, "forgetFileMenuItemName"));
-		menuItem.setToolTipText(MessageHelper.get(this, "forgetFileHelp"));
-		menuItem.setIcon(IconHandler.getIcon("forgetFile", null, 16, null));
-		menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F,  Event.CTRL_MASK));
-		menu.add(menuItem);
-		actionListenerHandler.registerAction(menuItem, "forgetFile");
-
 		menuItem = new JMenuItem(MessageHelper.get(this, "loadFileMenuItemName"));
 		menuItem.setToolTipText(MessageHelper.get(this, "loadFileHelp"));
 		menuItem.setIcon(IconHandler.getIcon("loadFile", null, 16, null));
@@ -334,6 +336,16 @@ public class ConfigurationEditor implements HyperlinkListener {
 		actionListenerHandler.registerAction(menuItem, "loadFile");
 
 		menu.addSeparator();
+
+		menuItem = new JMenuItem(MessageHelper.get(this, "closeFileMenuItemName"));
+		menuItem.setToolTipText(MessageHelper.get(this, "closeFileHelp"));
+		menuItem.setIcon(IconHandler.getIcon("closeFile", null, 16, null));
+		menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W,  Event.CTRL_MASK));
+		menu.add(menuItem);
+		actionListenerHandler.registerAction(menuItem, "closeFile");
+
+		menu.addSeparator();
+		
 		menuItem = new JMenuItem(MessageHelper.get(this, "saveFileMenuItemName"));
 		menuItem.setToolTipText(MessageHelper.get(this, "saveFileHelp"));
 		menuItem.setIcon(IconHandler.getIcon("saveFile", null, 16, null));
@@ -348,6 +360,7 @@ public class ConfigurationEditor implements HyperlinkListener {
 		actionListenerHandler.registerAction(menuItem, "saveAsFile");
 		
 		menu.addSeparator();
+		
 		menuItem = new JMenuItem(MessageHelper.get(this, "exitMenuItemName"));
 		menuItem.setToolTipText(MessageHelper.get(this, "exitHelp"));
 		menuItem.setIcon(IconHandler.getIcon("exit", null, 16, null));
@@ -411,7 +424,6 @@ public class ConfigurationEditor implements HyperlinkListener {
 		JButton button;
 		
 		toolBar = new JToolBar();
-		//toolBar.setLayout(new BoxLayout(toolBar, BoxLayout.X_AXIS));
 		
 		button = new JButton();
 		button.setToolTipText(MessageHelper.get(this, "loadHelp"));
@@ -548,6 +560,7 @@ public class ConfigurationEditor implements HyperlinkListener {
 
 	private JComponent createSettingComponent(final Object settingObject, final PageModel pageModel) {
 		JPanel settingPanel;
+		JPanel settingContentPanel;
 		JComponent selectorComponent;
 		JLabel title;
 		String helpString;
@@ -580,22 +593,31 @@ public class ConfigurationEditor implements HyperlinkListener {
 		else {
 			throw new Error(String.format("Unexpected class %s of setting object.", settingObject.getClass().getCanonicalName()));
 		}
-
-		settingPanel.add(title, BorderLayout.PAGE_START);
 		
-		if(helpString == null) {
-			settingPanel.add(selectorComponent, BorderLayout.LINE_START);
+		settingContentPanel = new JPanel();
+
+		if(helpString == null) {			
+			settingContentPanel.setLayout(new BoxLayout(settingContentPanel, BoxLayout.LINE_AXIS));
+			title.setAlignmentY(Component.TOP_ALIGNMENT);
+			title.setAlignmentX(Component.LEFT_ALIGNMENT);
+			selectorComponent.setAlignmentY(Component.TOP_ALIGNMENT);
+			selectorComponent.setAlignmentX(Component.LEFT_ALIGNMENT);
+			settingContentPanel.add(title);
+			settingContentPanel.add(selectorComponent);
 		}
 		else {
 			JEditorPane help;
 
+			settingContentPanel.setLayout(new BoxLayout(settingContentPanel, BoxLayout.PAGE_AXIS));
+			settingContentPanel.add(title);
 			help = createHTMLPane(helpString);
 			help.setFont(DESCRIPTION_FONT);
 			help.setMargin(new Insets(0, 0, 0, 0));
 			help.setBackground(settingPanel.getBackground());
-			settingPanel.add(help, BorderLayout.CENTER);
+			settingContentPanel.add(help);
 			settingPanel.add(selectorComponent, BorderLayout.LINE_END);
 		}
+		settingPanel.add(settingContentPanel, BorderLayout.CENTER);
 		
 		if(imageLabel != null) {
 			imageLabel.setAlignmentX(Component.LEFT_ALIGNMENT);

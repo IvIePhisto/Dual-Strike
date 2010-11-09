@@ -51,8 +51,8 @@ public class FileHandler {
 		return new LoadFileActionListener(this);
 	}
 	
-	public ActionListener createForgetFileActionListener() {
-		return new ForgetFileActionListener(this);
+	public ActionListener createCloseFileActionListener() {
+		return new CloseFileActionListener(this);
 	}
 
 	public ActionListener createSaveFileActionListener() {

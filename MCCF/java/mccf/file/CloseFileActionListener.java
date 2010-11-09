@@ -4,10 +4,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 
-public class ForgetFileActionListener implements ActionListener {
+public class CloseFileActionListener implements ActionListener {
 	private final FileHandler fileHandler;
 	
-	ForgetFileActionListener(final FileHandler fileHandler) {
+	CloseFileActionListener(final FileHandler fileHandler) {
 		this.fileHandler = fileHandler;
 	}
 
