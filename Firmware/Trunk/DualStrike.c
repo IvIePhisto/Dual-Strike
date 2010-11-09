@@ -10,38 +10,6 @@ Configuration Mode
 ==================
 In the configuration mode the behaviour of the Dual Strike can be changed. 
 While plugging in the USB Cable just press Select. Leave it by pressing Start. 
-When first entering configuration mode, it is in USB configuration mode, which 
-means it is ready to be updated from a PC.
-
-If you want to change the configuration without a PC first press one of the 
-action buttons (any other than Start, Select and Home). Then pressing entering 
-the following button-joystick combinations changes the configuration:
-
-Dual Strike default stick mode:
--------------------------------
-Up    = digital pad only (precedence over Left and Right) [default]
-Left  = left analogue stick only
-Right = right analogue stick only
-Down  = activate digital pad additionallly to left or right analogue stick
-
-Default Working Mode:
----------------------
-Button: LK
-Left  = Dual Strike PS3 [default]
-Up    = Dual Strike MAME
-Right = Dual Strike XBox1
-Down  = pass-through
-
-revert to defaults:
--------------------
-Button: MK
-
-Start+Select=Home:
-------------------
-Button: LP
-Left  = disabled [default]
-Right = enabled
-		
 */
 
 #define WORKING_MODE_PT		0

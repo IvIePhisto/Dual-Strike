@@ -1,4 +1,4 @@
-﻿                             Dual Strike v1.0
+﻿								  Dual Strike
                                        
                          Copyright 2009 Jochen Zurborg
                                        

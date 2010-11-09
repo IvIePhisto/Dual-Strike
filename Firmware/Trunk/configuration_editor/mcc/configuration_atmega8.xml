@@ -16,7 +16,7 @@
   <help lang="de" path="configuration-help_de.html"/>
   
   <device>1</device>
-  <version>3</version>
+  <version>4</version>
   
   <page>
     <title>Defaults</title>
@@ -77,6 +77,15 @@
         <help>The pass-through data connections are routed to the USB data connections on the Dual Strike PCB.</help>
         <help lang="de">Die Durschleif-Datenanschlüsse werden auf die USB Datenanschlüsse des Dual Strike PCB geleitet.</help>
     </boolean>
+
+    <boolean id="ON_THE_FLY_JOYSTICK_MODE_SWITCHING" default="false">
+        <title>On-the-fly Joystick Mode Switching</title>
+        <title lang="de">On-the-fly Joystick-Modus Umschaltung</title>
+        <help>The joystick mode can be changed on-the-fly pressing Meta (Start or Select) and a joystick direction, if the joystick mode switch functionality is not activated.
+		Disable to prevent unwanted switching to other joystick modes.</help>
+        <help lang="de">Der Joystick-Modus kann während des Betriebs durch drücken von Meta (Start oder Select) und einer Joystick-Richtung geändert werden, wenn die Joystick-Modus-Schalter Funktion nicht aktiviert ist.
+		Deaktiviere diese Option um ungewolltes Ändern des Joystick-Modus zu verhindern.</help>
+    </boolean>
     
     <choice default="DIGITAL_PAD">
       <title>Default Joystick Mode</title>
@@ -115,7 +124,7 @@
 	<choice prefix="META_BUTTON_" default="START">
       <title>Meta Button</title>
       <help>Which button to use to activate special functions (like on-the-fly joystick mode switching).</help>
-      <help lang="de">Welcher Button verwendet werden soll, um spezielle Funktionen (wie on-the-fly Joystick Modus Umschaltung) zu aktivieren.</help>
+      <help lang="de">Welcher Button verwendet werden soll, um spezielle Funktionen (wie on-the-fly Joystick-Modus Umschaltung) zu aktivieren.</help>
         
       <option id="START">
         <title>Start</title>
