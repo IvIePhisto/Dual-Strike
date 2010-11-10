@@ -91,6 +91,7 @@ public class ConfigurationEditor implements HyperlinkListener {
 	private static final Font TITLE_FONT = new Font(Font.SANS_SERIF, Font.BOLD, FONT_SIZE); 
 	private static final Border BOTTOM_SPACER_BORDER = new EmptyBorder(0, 0, 10, 0);
 	private static final Color MILK_GLASS = new Color(255, 255, 255, 150);
+	private static final String USE_SCREEN_MENU_BAR_PROPERTY_NAME = "apple.laf.useScreenMenuBar";
 	
 	public static final Font DESCRIPTION_FONT = new Font(Font.SANS_SERIF, Font.PLAIN, FONT_SIZE); 
 	
@@ -99,8 +100,8 @@ public class ConfigurationEditor implements HyperlinkListener {
 		ConfigurationEditor ce;
 		String useScreenMenuBarBackup;
 		
-		useScreenMenuBarBackup = System.getProperty("com.apple.macos.useScreenMenuBar");
-		System.setProperty("com.apple.macos.useScreenMenuBar", "true");
+		useScreenMenuBarBackup = System.getProperty(USE_SCREEN_MENU_BAR_PROPERTY_NAME);
+		System.setProperty(USE_SCREEN_MENU_BAR_PROPERTY_NAME, "true");
 
 		if(configurationDefinitionFile == null)
 			configurationDefinitionFile = DEFAULT_CONFIGURATION_DEFINITION_FILE;
@@ -108,9 +109,9 @@ public class ConfigurationEditor implements HyperlinkListener {
 		ce = new ConfigurationEditor(configurationDefinitionFile, language);
 		
 		if(useScreenMenuBarBackup == null)
-			System.clearProperty("com.apple.macos.useScreenMenuBar");
+			System.clearProperty(USE_SCREEN_MENU_BAR_PROPERTY_NAME);
 		else
-			System.setProperty("com.apple.macos.useScreenMenuBar", useScreenMenuBarBackup);
+			System.setProperty(USE_SCREEN_MENU_BAR_PROPERTY_NAME, useScreenMenuBarBackup);
 
 		return ce;
 	}
@@ -542,7 +543,6 @@ public class ConfigurationEditor implements HyperlinkListener {
 		tabHelpLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
 		tabHelpLabel.setAlignmentY(Component.TOP_ALIGNMENT);
 		panel.add(tabHelpLabel);
-		//tabs.putClientProperty(JEditorPane.HONOR_DISPLAY_PROPERTIES, true);
 
 		for(Object setting: page.getChoiceOrBoolean()) {
 			JComponent settingComponent;
@@ -561,20 +561,21 @@ public class ConfigurationEditor implements HyperlinkListener {
 	private JComponent createSettingComponent(final Object settingObject, final PageModel pageModel) {
 		JPanel settingPanel;
 		JPanel settingContentPanel;
+		JPanel textPanel;
 		JComponent selectorComponent;
 		JLabel title;
 		String helpString;
 		JLabel imageLabel;
 
 		settingPanel = new JPanel(new BorderLayout(10, 5));
-		settingPanel.setBorder(BOTTOM_SPACER_BORDER);
+		//settingPanel.setBorder(BOTTOM_SPACER_BORDER);
 		settingPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
 		settingPanel.setAlignmentY(Component.TOP_ALIGNMENT);
-		
+		settingPanel.setBorder(BorderFactory.createBevelBorder(1));
+
 		if(settingObject instanceof BooleanSetting) {
 			BooleanSetting setting;
 
-			
 			setting = (BooleanSetting)settingObject;
 			title = createLabel(setting.getTitle(), TITLE_FONT);
 			helpString = getLocalizedInfo(setting.getHelp(), true);
@@ -594,36 +595,42 @@ public class ConfigurationEditor implements HyperlinkListener {
 			throw new Error(String.format("Unexpected class %s of setting object.", settingObject.getClass().getCanonicalName()));
 		}
 		
-		settingContentPanel = new JPanel();
+		title.setAlignmentY(Component.TOP_ALIGNMENT);
+		title.setAlignmentX(Component.LEFT_ALIGNMENT);
+		selectorComponent.setAlignmentY(Component.TOP_ALIGNMENT);
+		selectorComponent.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-		if(helpString == null) {			
-			settingContentPanel.setLayout(new BoxLayout(settingContentPanel, BoxLayout.LINE_AXIS));
-			title.setAlignmentY(Component.TOP_ALIGNMENT);
-			title.setAlignmentX(Component.LEFT_ALIGNMENT);
-			selectorComponent.setAlignmentY(Component.TOP_ALIGNMENT);
-			selectorComponent.setAlignmentX(Component.LEFT_ALIGNMENT);
-			settingContentPanel.add(title);
-			settingContentPanel.add(selectorComponent);
-		}
+		settingContentPanel = new JPanel(new BorderLayout(10, 5));
+		settingContentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
+		settingContentPanel.add(selectorComponent, BorderLayout.LINE_END);
+		textPanel = new JPanel(new BorderLayout(10, 5));
+			
+
+		if(helpString == null) {
+			textPanel.add(title, BorderLayout.CENTER);
+		}		
 		else {
 			JEditorPane help;
-
-			settingContentPanel.setLayout(new BoxLayout(settingContentPanel, BoxLayout.PAGE_AXIS));
-			settingContentPanel.add(title);
+			
+			textPanel.add(title, BorderLayout.PAGE_START);
 			help = createHTMLPane(helpString);
 			help.setFont(DESCRIPTION_FONT);
 			help.setMargin(new Insets(0, 0, 0, 0));
 			help.setBackground(settingPanel.getBackground());
-			settingContentPanel.add(help);
-			settingPanel.add(selectorComponent, BorderLayout.LINE_END);
+			help.setAlignmentY(Component.TOP_ALIGNMENT);
+			help.setAlignmentX(Component.LEFT_ALIGNMENT);
+			textPanel.add(help, BorderLayout.CENTER);
+			settingContentPanel.add(selectorComponent, BorderLayout.LINE_END);
 		}
-		settingPanel.add(settingContentPanel, BorderLayout.CENTER);
 		
 		if(imageLabel != null) {
 			imageLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
 			imageLabel.setAlignmentY(Component.TOP_ALIGNMENT);
-			settingPanel.add(imageLabel, BorderLayout.LINE_START);
+			textPanel.add(imageLabel, BorderLayout.LINE_START);
 		}
+		
+		settingContentPanel.add(textPanel, BorderLayout.CENTER);
+		settingPanel.add(settingContentPanel);
 		
 		return settingPanel;
 	}
