@@ -34,6 +34,9 @@ the directory this file resides in.
 
 Version History
 ~~~~~~~~~~~~~~~
+1.2.0 - added connection help message
+      - small UI design changes
+
 1.1.1 - changed eepromProgrammerHID command to use current directory
 
 1.1.0 - added disabling of load/save controls if no connection to device

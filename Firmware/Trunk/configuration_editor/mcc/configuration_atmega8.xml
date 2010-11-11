@@ -2,9 +2,7 @@
 <?xml-stylesheet href="configuration2html.xsl" type="text/xsl"?>
 <configuration
   xmlns="urn:strike-devices:configuration"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="urn:strike-devices:configuration java/mccf/configuration-def.xsd"
-  def-lang-version="1"
+  def-lang-version="2"
   lang="en"
   prefix="CFG_"
   icon-path="configuration.png"
@@ -17,6 +15,9 @@
   
   <device>1</device>
   <version>4</version>
+  
+  <connectionHelp>Connect the Dual Strike to the PC while pressing Select.</connectionHelp>
+  <connectionHelp lang="de">Verbinde das Dual Strike mit dem PC während Select gedrückt wird.</connectionHelp>
   
   <page>
     <title>Defaults</title>

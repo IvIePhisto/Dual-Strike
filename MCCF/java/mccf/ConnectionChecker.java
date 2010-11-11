@@ -3,19 +3,18 @@ package mccf;
 import java.util.List;
 
 import javax.swing.JComponent;
-import javax.swing.JLabel;
 
 import mccf.device.DeviceHelper;
 
 
 public class ConnectionChecker {
 	private static final long CHECKING_INTERVAL = 1000L;
-	private final JLabel connectedLabel;
-	private final JLabel disconnectedLabel;
+	private final JComponent connectedLabel;
+	private final JComponent disconnectedLabel;
 	private final List<JComponent> dependingComponents;
 	private boolean enabled = true;
 	
-	ConnectionChecker(final JLabel connectedLabel, final JLabel disconnectedLabel, final List<JComponent> dependingComponents) {
+	ConnectionChecker(final JComponent connectedLabel, final JComponent disconnectedLabel, final List<JComponent> dependingComponents) {
 		this.connectedLabel = connectedLabel;
 		this.disconnectedLabel = disconnectedLabel;
 		this.dependingComponents = dependingComponents;

@@ -483,27 +483,37 @@ public class ConfigurationEditor implements HyperlinkListener {
 	private JComponent createStatusPanel() {
 		JPanel statusPanel;
 		JLabel connectedLabel;
+		JLabel connectionHelp;
+		JPanel disconnectedPanel;
 		JLabel disconnectedLabel;
 		JPanel connectionStatusPanel;
 		String connectedMessage;
 		String disconnectedMessage;
 		
-		statusPanel = new JPanel();
-		statusPanel.setLayout(new BorderLayout());
 		connectedMessage = MessageHelper.get(this, "connected");
 		connectedLabel = new JLabel(IconHandler.getIcon("connected", connectedMessage, 16, null));
 		connectedLabel.setVisible(false);
 		connectedLabel.setToolTipText(connectedMessage);
+
 		disconnectedMessage = MessageHelper.get(this, "disconnected");
 		disconnectedLabel = new JLabel(IconHandler.getIcon("disconnected", disconnectedMessage, 16, null));
 		disconnectedLabel.setToolTipText(disconnectedMessage);
+		connectionHelp = new JLabel(getLocalizedInfo(configuration.getConnectionHelp(), true));
+		disconnectedPanel = new JPanel();
+		disconnectedPanel.add(connectionHelp);
+		disconnectedPanel.add(disconnectedLabel);
+		
 		connectionStatusPanel = new JPanel();
 		connectionStatusPanel.add(connectedLabel);
-		connectionStatusPanel.add(disconnectedLabel);
-		connectionChecker = new ConnectionChecker(connectedLabel, disconnectedLabel, connectionDependingComponents);
+		connectionStatusPanel.add(disconnectedPanel);
+		
+		connectionChecker = new ConnectionChecker(connectedLabel, disconnectedPanel, connectionDependingComponents);
 		statusLabel = new JLabel(" ", JLabel.LEFT);
 		statusLabel.setBorder(BorderFactory.createEmptyBorder(1, 4, 1, 4));
 		statusLabel.setFont(DESCRIPTION_FONT);
+		
+		statusPanel = new JPanel();
+		statusPanel.setLayout(new BorderLayout());
 		statusPanel.add(statusLabel, BorderLayout.CENTER);
 		statusPanel.add(connectionStatusPanel, BorderLayout.LINE_END);
 		

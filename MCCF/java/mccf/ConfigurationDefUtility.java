@@ -9,8 +9,11 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
+import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.stream.XMLEventReader;
+import javax.xml.stream.XMLStreamException;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
@@ -18,6 +21,7 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stax.StAXSource;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
@@ -36,6 +40,13 @@ public class ConfigurationDefUtility {
 	private final static String ANNOTATED_CONFIGURATION_DEF_SCHEMA_NAME = "annotated-configuration-def.xsd";
 	private final static SchemaFactory SCHEMA_FACTORY = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
 	private final static TransformerFactory TRANSFORMER_FACTORY = TransformerFactory.newInstance();
+	private final static DocumentBuilderFactory DOCUMENT_BUILDER_FACTORY = DocumentBuilderFactory.newInstance();
+	
+	static {		
+		DOCUMENT_BUILDER_FACTORY.setNamespaceAware(true);
+		DOCUMENT_BUILDER_FACTORY.setXIncludeAware(true);
+	}
+	
 	public final static Schema CONFIGURATION_DEF_SCHEMA = createConfigurationDefSchema();
 	public final static Schema ANNOTATED_CONFIGURATION_DEF_SCHEMA = createAnnotatedConfigurationDefSchema();
 	
@@ -59,16 +70,20 @@ public class ConfigurationDefUtility {
 	
 	public static Document annotateConfiguration(final URL url) throws IOException, ConfigurationDefException {
 		try {
+			DocumentBuilder documentBuilder;
 			Source configurationSource;
 			Validator configurationValidator;
 			Result annotatedConfigurationResult;
 			Document annotatedConfigurationDocument;
 			Transformer annotateConfigurationTransformer;
+			XMLEventReader eventReader;
 			
-			configurationSource = new StreamSource(url.toExternalForm());
+			eventReader = new ConfigurationDefEventReader(url.toExternalForm());
+			configurationSource = new StAXSource(eventReader);
 			configurationValidator = CONFIGURATION_DEF_SCHEMA.newValidator();
 			configurationValidator.validate(configurationSource);
-			annotatedConfigurationDocument = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
+			documentBuilder = DOCUMENT_BUILDER_FACTORY.newDocumentBuilder();
+			annotatedConfigurationDocument = documentBuilder.newDocument();
 			annotatedConfigurationResult = new DOMResult(annotatedConfigurationDocument);
 			annotateConfigurationTransformer = createAnnotateConfigurationDefTransformer();
 			annotateConfigurationTransformer.transform(configurationSource, annotatedConfigurationResult);
@@ -80,6 +95,9 @@ public class ConfigurationDefUtility {
 		}
 		catch(TransformerException e) {
 			throw new Error(e);
+		}
+		catch(XMLStreamException e) {
+			throw new ConfigurationDefException(url.toExternalForm(), e, Locale.getDefault());
 		}
 		catch(SAXException e) {
 			throw new ConfigurationDefException(url.toExternalForm(), e, Locale.getDefault());

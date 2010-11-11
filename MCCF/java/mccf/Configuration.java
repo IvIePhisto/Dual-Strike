@@ -17,8 +17,8 @@ import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stax.StAXSource;
 import javax.xml.transform.stream.StreamResult;
-import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 
 import org.w3c.dom.Document;
@@ -186,7 +186,7 @@ public class Configuration {
 			Transformer annotateConfigurationTransformer;
 			Schema configurationSchema;
 	
-			fileSource = new StreamSource(configurationURL.toExternalForm());
+			fileSource = new StAXSource(new ConfigurationDefEventReader(configurationURL.toExternalForm()));
 			fileResult = new StreamResult(destinationPath);
 			configurationSchema = ConfigurationDefUtility.createConfigurationDefSchema();
 			configurationSchema.newValidator().validate(fileSource);

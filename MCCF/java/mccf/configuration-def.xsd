@@ -4,14 +4,13 @@
 
   <xs:complexType name="Configuration">
     <xs:sequence>
+      <xs:element name="device" type="c:Field"/>
+      <xs:element name="version" type="c:Field"/>
       <xs:group ref="c:Infos"/>
-      <xs:sequence>
-        <xs:element name="device" type="c:Field"/>
-        <xs:element name="version" type="c:Field"/>
-        <xs:element name="page" type="c:Page" maxOccurs="unbounded"/>
-      </xs:sequence>      
+      <xs:element name="connectionHelp" maxOccurs="unbounded" type="c:Info"/>
+      <xs:element name="page" type="c:Page" maxOccurs="unbounded"/>
     </xs:sequence>
-    <xs:attribute name="def-lang-version" fixed="1" use="required" type="xs:int"/>
+    <xs:attribute name="def-lang-version" fixed="2" use="required" type="xs:int"/>
     <xs:attribute name="lang" type="xs:language" use="required"/>
     <xs:attribute name="prefix" type="xs:ID" use="required"/>
     <xs:attribute name="icon-path" type="c:RelativePath"/>
