@@ -12,7 +12,6 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
@@ -76,12 +75,13 @@ public class ConfigurationDefUtility {
 			Result annotatedConfigurationResult;
 			Document annotatedConfigurationDocument;
 			Transformer annotateConfigurationTransformer;
-			XMLEventReader eventReader;
+			ConfigurationDefEventReader eventReader;
 			
 			eventReader = new ConfigurationDefEventReader(url.toExternalForm());
 			configurationSource = new StAXSource(eventReader);
 			configurationValidator = CONFIGURATION_DEF_SCHEMA.newValidator();
 			configurationValidator.validate(configurationSource);
+			eventReader.reset();
 			documentBuilder = DOCUMENT_BUILDER_FACTORY.newDocumentBuilder();
 			annotatedConfigurationDocument = documentBuilder.newDocument();
 			annotatedConfigurationResult = new DOMResult(annotatedConfigurationDocument);

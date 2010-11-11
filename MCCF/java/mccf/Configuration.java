@@ -185,11 +185,14 @@ public class Configuration {
 			Result fileResult;
 			Transformer annotateConfigurationTransformer;
 			Schema configurationSchema;
+			ConfigurationDefEventReader eventReader;
 	
-			fileSource = new StAXSource(new ConfigurationDefEventReader(configurationURL.toExternalForm()));
+			eventReader = new ConfigurationDefEventReader(configurationURL.toExternalForm());
+			fileSource = new StAXSource(eventReader);
 			fileResult = new StreamResult(destinationPath);
 			configurationSchema = ConfigurationDefUtility.createConfigurationDefSchema();
 			configurationSchema.newValidator().validate(fileSource);
+			eventReader.reset();
 			annotateConfigurationTransformer = ConfigurationDefUtility.createAnnotateConfigurationDefTransformer();
 			
 			if(onlyAnnotate) {

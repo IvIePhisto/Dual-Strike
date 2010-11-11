@@ -91,27 +91,22 @@ public class ConfigurationEditor implements HyperlinkListener {
 	private static final Font TITLE_FONT = new Font(Font.SANS_SERIF, Font.BOLD, FONT_SIZE); 
 	private static final Border BOTTOM_SPACER_BORDER = new EmptyBorder(0, 0, 10, 0);
 	private static final Color MILK_GLASS = new Color(255, 255, 255, 150);
-	private static final String USE_SCREEN_MENU_BAR_PROPERTY_NAME = "apple.laf.useScreenMenuBar";
+	private static final String MACOSX_USE_SCREEN_MENU_BAR_PROPERTY_NAME = "apple.laf.useScreenMenuBar";
+	private static final String MACOSX_BRUSH_METAL_LOOK_PROPERTY_NAME = "apple.awt.brushMetalLook";
 	
 	public static final Font DESCRIPTION_FONT = new Font(Font.SANS_SERIF, Font.PLAIN, FONT_SIZE); 
 	
 
 	static ConfigurationEditor newInstance(File configurationDefinitionFile, final Locale language) throws IOException, ConfigurationDefException {
 		ConfigurationEditor ce;
-		String useScreenMenuBarBackup;
 		
-		useScreenMenuBarBackup = System.getProperty(USE_SCREEN_MENU_BAR_PROPERTY_NAME);
-		System.setProperty(USE_SCREEN_MENU_BAR_PROPERTY_NAME, "true");
+		System.setProperty(MACOSX_USE_SCREEN_MENU_BAR_PROPERTY_NAME, "true");
+		System.setProperty(MACOSX_BRUSH_METAL_LOOK_PROPERTY_NAME, "true");
 
 		if(configurationDefinitionFile == null)
 			configurationDefinitionFile = DEFAULT_CONFIGURATION_DEFINITION_FILE;
 		
 		ce = new ConfigurationEditor(configurationDefinitionFile, language);
-		
-		if(useScreenMenuBarBackup == null)
-			System.clearProperty(USE_SCREEN_MENU_BAR_PROPERTY_NAME);
-		else
-			System.setProperty(USE_SCREEN_MENU_BAR_PROPERTY_NAME, useScreenMenuBarBackup);
 
 		return ce;
 	}

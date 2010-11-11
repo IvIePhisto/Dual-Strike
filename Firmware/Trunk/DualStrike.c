@@ -401,7 +401,7 @@ void autodetect() {
 		while(detected == 0)
 			usbPoll();
 		
-		autodetectLimit = 5;
+		autodetectLimit = 15;
 		resetAutodetectTimer();
 
 		while(!autodetectTimePassed())
@@ -421,7 +421,7 @@ void autodetect() {
 		while(detected == 0)
 			usbPoll();
 
-		autodetectLimit = 1;
+		autodetectLimit = 5;
 		resetAutodetectTimer();
 
 		while(!autodetectTimePassed())
@@ -444,7 +444,7 @@ void autodetect() {
 				detected = 1;
 		}
 
-		autodetectLimit = 10;
+		autodetectLimit = 15;
 		resetAutodetectTimer();
 
 		while(!autodetectTimePassed())
