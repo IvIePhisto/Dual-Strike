@@ -148,7 +148,7 @@ void (*player2Buttons[6])() = {mamePlayer2Button1, mamePlayer2Button2, mamePlaye
 
 #define MAME_SET_BUTTON(playerNo, buttonID) { if(buttonMapping[buttonID] >= 0) (*player##playerNo##Buttons[buttonMapping[buttonID]])(); }
 
-// one HID idle rate unit is 4ms, 
+// one HID idle rate unit is 4ms
 #define IDLE_RATE_UNIT_COUNT_CYCLES ((uchar)(F_CPU / 250 / 1024))
 #define IDLE_RATE_OVERLOW_COUNT		(255 / IDLE_RATE_UNIT_COUNT_CYCLES)
 #define IDLE_RATE_OVERLOW_CYCLES	(255 % IDLE_RATE_UNIT_COUNT_CYCLES)

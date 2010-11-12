@@ -29,21 +29,6 @@ While plugging in the USB Cable just press Select. Leave it by pressing Start.
 // declares config and config_EEPROM
 CFG_DECLARATION
 
-void readConfig(uint8_t newConfig[CONFIG_BYTE_WIDTH + 2]) {
-	 // read config from EEPROM
-	eeprom_read_block(config, config_EEPROM, CONFIG_BYTE_WIDTH + 2);
-
-	if(config[0] != CONFIG_DEVICE || config[1] != CONFIG_VERSION) {
-		/* if EEPROM does not conform to current version and device set to default config */
-        CONFIG_SET_DEFAULTS(newConfig)
-	}
-	else {
-		for(int i = 0; i < (CONFIG_BYTE_WIDTH + 2); i++)
-			newConfig[i] = config[i];
-	}
-}
-
-/*
 uchar configsDiffer(uint8_t newConfig0[CONFIG_BYTE_WIDTH + 2]) {
 	for(int i = 0; i < (CONFIG_BYTE_WIDTH + 2); i++)
 		if(config[i] != newConfig0[i])
@@ -61,7 +46,21 @@ void writeConfig(uint8_t newConfig[CONFIG_BYTE_WIDTH + 2]) {
 			config[i] = newConfig[i];
 	}
 }
-*/
+
+void readConfig(uint8_t newConfig[CONFIG_BYTE_WIDTH + 2]) {
+	 // read config from EEPROM
+	eeprom_read_block(config, config_EEPROM, CONFIG_BYTE_WIDTH + 2);
+
+	if(config[0] != CONFIG_DEVICE || config[1] != CONFIG_VERSION) {
+		/* if EEPROM does not conform to current version and device set to default config */
+        CONFIG_SET_DEFAULTS(newConfig)
+		writeConfig(newConfig);
+	}
+	else {
+		for(int i = 0; i < (CONFIG_BYTE_WIDTH + 2); i++)
+			newConfig[i] = config[i];
+	}
+}
 
 void configInit() {
 	uint8_t newConfig[CONFIG_BYTE_WIDTH + 2];
@@ -80,8 +79,6 @@ void configInit() {
 		disableUsbLines();
 		readConfig(newConfig);
 	}
-	
-	//writeConfig(newConfig);
 }
 
 int setModePS3() {
@@ -367,10 +364,6 @@ void resetAutodetect() {
 	detected = 0;
 }
 
-#define IDLE_RATE_UNIT_COUNT_CYCLES ((uchar)(F_CPU / 250 / 1024))
-#define IDLE_RATE_OVERLOW_COUNT		(255 / IDLE_RATE_UNIT_COUNT_CYCLES)
-#define IDLE_RATE_OVERLOW_CYCLES	(255 % IDLE_RATE_UNIT_COUNT_CYCLES)
-
 uchar autodetectTimePassed() {
 	if(
 #if ATMEGA_NO == 168
@@ -447,7 +440,7 @@ void autodetect() {
 				detected = 1;
 		}
 
-		autodetectLimit = 15;
+		autodetectLimit = 50;
 		resetAutodetectTimer();
 
 		while(!autodetectTimePassed())

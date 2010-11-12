@@ -208,11 +208,9 @@ void ps3_controller() {
 		updateMetaState();
 		updateJoystickMode();
         readInputPS3();
-		//sendDataUSB(data.array, 16);
+		usbSetInterrupt3(data.array, 16);
 
 		while(!usbInterruptIsReady3())
 			usbPoll();
-
-		usbSetInterrupt3(data.array, 16);
     }
 }
