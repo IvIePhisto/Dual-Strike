@@ -562,8 +562,6 @@ void sendMAMEReports() {
 		sendDataUSB((void*)&data.mame_reports.consumer, 2);
 }
 
-
-
 void mame_controller() {
 	usbMode = USB_MODE_MAME;
 

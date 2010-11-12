@@ -62,8 +62,19 @@
       </option>
     </choice>
   </page>
-  
-  <?mcc:include assets/configuration_hardware.xml?>
+
+  <page>
+    <?mcc:include assets/configuration_hardware_start.xml?>
+    <boolean id="ON_THE_FLY_JOYSTICK_MODE_SWITCHING" default="false">
+          <title>On-the-fly Joystick/MAME Mode Switching</title>
+          <title lang="de">On-the-fly Joystick-/MAME-Modus Umschaltung</title>
+          <help>The joystick respectively MAME mode can be changed on-the-fly pressing Meta (Start or Select) and a joystick direction, if the joystick mode switch functionality is not activated.
+      Disable to prevent unwanted switching to other joystick/MAME modes.</help>
+          <help lang="de">Der Joystick- bzw. MAME-Modus kann während des Betriebs durch drücken von Meta (Start oder Select) und einer Joystick-Richtung geändert werden, wenn die Joystick-Modus-Schalter Funktion nicht aktiviert ist.
+      Deaktiviere diese Option um ungewolltes Ändern des Joystick-/MAME-Modus zu verhindern.</help>
+    </boolean>
+    <?mcc:include assets/configuration_hardware_end.xml?>
+  </page>
   
   <page>
     <title>MAME Button Layout 1</title>

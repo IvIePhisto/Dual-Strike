@@ -22,6 +22,6 @@ Contents
 The files within this archive are the source code of the Dual Strike and its SMD
 design as an AVR Studio project.
 
-For more information like the changelog and behaviour see
-"firmware_update/readme.txt".
+For more information visit:
+<https://docs.google.com/View?docid=0AV5ukYTEiJk3ZGRmNGpjOG5fOGdremduZnZo>
 
