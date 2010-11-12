@@ -46,12 +46,12 @@ uint8_t config[CONFIG_BYTE_WIDTH + 2] = {CONFIG_EMPTY, CONFIG_EMPTY, CONFIG_EMPT
 #define CFG_WORK_MODE_PS3_ENABLED (config[0 + 2] & (1<<2))
 #define CFG_WORK_MODE_PC_ENABLED (config[0 + 2] & (1<<3))
 #define CFG_WORK_MODE_PT_ENABLED (config[0 + 2] & (1<<4))
-#define CFG_ON_THE_FLY_JOYSTICK_MODE_SWITCHING (config[0 + 2] & (1<<5))
-#define CFG_DIGITAL_PAD ((((config[0 + 2] >> 6) & 0b00000001)  == 0b0) && (((config[1 + 2] >> 0) & 0b00000001)  == 0b0))
-#define CFG_LEFT_STICK ((((config[0 + 2] >> 6) & 0b00000001)  == 0b1) && (((config[1 + 2] >> 0) & 0b00000001)  == 0b0))
-#define CFG_RIGHT_STICK ((((config[0 + 2] >> 6) & 0b00000001)  == 0b0) && (((config[1 + 2] >> 0) & 0b00000001)  == 0b1))
-#define CFG_META_BUTTON_START (((config[1 + 2] >> 1) & 0b00000001)  == 0b0)
-#define CFG_META_BUTTON_SELECT (((config[1 + 2] >> 1) & 0b00000001)  == 0b1)
+#define CFG_META_BUTTON_START (((config[0 + 2] >> 5) & 0b00000001)  == 0b0)
+#define CFG_META_BUTTON_SELECT (((config[0 + 2] >> 5) & 0b00000001)  == 0b1)
+#define CFG_ON_THE_FLY_JOYSTICK_MODE_SWITCHING (config[0 + 2] & (1<<6))
+#define CFG_DIGITAL_PAD (((config[1 + 2] >> 0) & 0b00000011)  == 0b00)
+#define CFG_LEFT_STICK (((config[1 + 2] >> 0) & 0b00000011)  == 0b01)
+#define CFG_RIGHT_STICK (((config[1 + 2] >> 0) & 0b00000011)  == 0b10)
 #define CFG_HOME_EMU (config[1 + 2] & (1<<2))
 #define CFG_EMU_4X (config[1 + 2] & (1<<3))
 #define CFG_NO_EXTRA_PINS (((config[1 + 2] >> 4) & 0b00000111)  == 0b000)
@@ -71,13 +71,13 @@ uint8_t config[CONFIG_BYTE_WIDTH + 2] = {CONFIG_EMPTY, CONFIG_EMPTY, CONFIG_EMPT
 #define CFG_DISABLE_WORK_MODE_PC_ENABLED(CONFIG) CONFIG[0 + 2] &= ~(1<<3);
 #define CFG_ENABLE_WORK_MODE_PT_ENABLED(CONFIG) CONFIG[0 + 2] |= (1<<4);
 #define CFG_DISABLE_WORK_MODE_PT_ENABLED(CONFIG) CONFIG[0 + 2] &= ~(1<<4);
-#define CFG_ENABLE_ON_THE_FLY_JOYSTICK_MODE_SWITCHING(CONFIG) CONFIG[0 + 2] |= (1<<5);
-#define CFG_DISABLE_ON_THE_FLY_JOYSTICK_MODE_SWITCHING(CONFIG) CONFIG[0 + 2] &= ~(1<<5);
-#define CFG_SET_DIGITAL_PAD(CONFIG) CONFIG[0 + 2] &= ~(0b1 << 6); CONFIG[1 + 2] &= ~(0b1 << 0);
-#define CFG_SET_LEFT_STICK(CONFIG) CONFIG[0 + 2] |= (0b1 << 6); CONFIG[1 + 2] &= ~(0b1 << 0);
-#define CFG_SET_RIGHT_STICK(CONFIG) CONFIG[0 + 2] &= ~(0b1 << 6); CONFIG[1 + 2] |= (0b1 << 0);
-#define CFG_SET_META_BUTTON_START(CONFIG) CONFIG[1 + 2] &= ~(0b1 << 1);
-#define CFG_SET_META_BUTTON_SELECT(CONFIG) CONFIG[1 + 2] |= (0b1 << 1);
+#define CFG_SET_META_BUTTON_START(CONFIG) CONFIG[0 + 2] &= ~(0b1 << 5);
+#define CFG_SET_META_BUTTON_SELECT(CONFIG) CONFIG[0 + 2] |= (0b1 << 5);
+#define CFG_ENABLE_ON_THE_FLY_JOYSTICK_MODE_SWITCHING(CONFIG) CONFIG[0 + 2] |= (1<<6);
+#define CFG_DISABLE_ON_THE_FLY_JOYSTICK_MODE_SWITCHING(CONFIG) CONFIG[0 + 2] &= ~(1<<6);
+#define CFG_SET_DIGITAL_PAD(CONFIG) CONFIG[1 + 2] &= ~(0b11 << 0);
+#define CFG_SET_LEFT_STICK(CONFIG) CONFIG[1 + 2] |= (0b01 << 0); CONFIG[1 + 2] &= ((0b01 << 0)| ~(0b10 << 0));
+#define CFG_SET_RIGHT_STICK(CONFIG) CONFIG[1 + 2] |= (0b10 << 0); CONFIG[1 + 2] &= ((0b10 << 0)| ~(0b01 << 0));
 #define CFG_ENABLE_HOME_EMU(CONFIG) CONFIG[1 + 2] |= (1<<2);
 #define CFG_DISABLE_HOME_EMU(CONFIG) CONFIG[1 + 2] &= ~(1<<2);
 #define CFG_ENABLE_EMU_4X(CONFIG) CONFIG[1 + 2] |= (1<<3);

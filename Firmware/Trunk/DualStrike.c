@@ -43,7 +43,7 @@ void readConfig(uint8_t newConfig[CONFIG_BYTE_WIDTH + 2]) {
 	}
 }
 
-
+/*
 uchar configsDiffer(uint8_t newConfig0[CONFIG_BYTE_WIDTH + 2]) {
 	for(int i = 0; i < (CONFIG_BYTE_WIDTH + 2); i++)
 		if(config[i] != newConfig0[i])
@@ -54,13 +54,14 @@ uchar configsDiffer(uint8_t newConfig0[CONFIG_BYTE_WIDTH + 2]) {
 
 void writeConfig(uint8_t newConfig[CONFIG_BYTE_WIDTH + 2]) {
 	if(configsDiffer(newConfig)) {
-		/* if newConfig was changed update configuration */
+		// if newConfig was changed update configuration
 		eeprom_write_block(newConfig, config_EEPROM, CONFIG_BYTE_WIDTH + 2);
 
 		for(int i = 0; i < (CONFIG_BYTE_WIDTH + 2); i++)
 			config[i] = newConfig[i];
 	}
 }
+*/
 
 void configInit() {
 	uint8_t newConfig[CONFIG_BYTE_WIDTH + 2];
@@ -80,7 +81,7 @@ void configInit() {
 		readConfig(newConfig);
 	}
 	
-	writeConfig(newConfig);
+	//writeConfig(newConfig);
 }
 
 int setModePS3() {
@@ -302,18 +303,20 @@ void updateJoystickMode() {
         }
     }
 	else {
-		if(metaPressed) {
-			if(!Stick_Up) {
-				CFG_SET_DIGITAL_PAD(config)
-				metaWasUsed = 1;
-			}
-			else if(!Stick_Left) {
-				CFG_SET_LEFT_STICK(config)
-				metaWasUsed = 1;
-			}
-			else if(!Stick_Right) {
-				CFG_SET_RIGHT_STICK(config)
-				metaWasUsed = 1;
+		if(CFG_ON_THE_FLY_JOYSTICK_MODE_SWITCHING) {
+			if(metaPressed) {
+				if(!Stick_Up) {
+					CFG_SET_DIGITAL_PAD(config)
+					metaWasUsed = 1;
+				}
+				else if(!Stick_Left) {
+					CFG_SET_LEFT_STICK(config)
+					metaWasUsed = 1;
+				}
+				else if(!Stick_Right) {
+					CFG_SET_RIGHT_STICK(config)
+					metaWasUsed = 1;
+				}
 			}
 		}
 	}
@@ -462,8 +465,7 @@ void autodetect() {
 	}
 }
 
-int main(void)
-{
+int main(void) {
 	switch(hardwareInit()) {
 	case WORKING_MODE_AUTO:
 	  autodetect();

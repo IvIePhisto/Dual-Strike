@@ -56,7 +56,7 @@ class ConfigurationDefEventReader extends EventReaderDelegate {
 			event = includingEventReader.nextEvent();
 			
 			if(event == null) {
-				includingEventReader = null;
+				closeIncludingEventReader();
 				event = updateNextEvent();
 			}
 		}
@@ -100,9 +100,23 @@ class ConfigurationDefEventReader extends EventReaderDelegate {
 		return nextEvent;
 	}
 	
+	private void closeIncludingEventReader() throws XMLStreamException {
+		if(includingEventReader != null) {
+			includingEventReader.close();
+			includingEventReader = null;
+		}
+	}
+
 	void reset() throws XMLStreamException {
-		includingEventReader = null;
+		closeIncludingEventReader();
 		nextEvent = null;
 		setParent(createEventReader(url));
+	}
+
+	@Override
+	public void close() throws XMLStreamException {
+		closeIncludingEventReader();
+		nextEvent = null;
+		super.close();
 	}
 }

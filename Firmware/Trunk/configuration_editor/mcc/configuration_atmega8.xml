@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?xml-stylesheet href="configuration2html.xsl" type="text/xsl"?>
 <configuration
   xmlns="urn:strike-devices:configuration"
   def-lang-version="2"
@@ -13,8 +12,16 @@
   
   <title>Dual Strike Configuration (ATmega8)</title>
   <title lang="de">Dual Strike Konfiguration (ATmega8)</title>
-  <help path="assets/configuration-help.html"/>
-  <help lang="de" path="assets/configuration-help_de.html"/>
   
-  <?mcc:include assets/configuration_common.xml?>
+  <?mcc:include assets/configuration_start.xml?>
+  
+  <page>
+    <?mcc:include assets/configuration_modes_start.xml?>
+    <choice prefix="DEF_WORK_MODE_" default="AUTODETECT">
+      <?mcc:include assets/configuration_modes_common_default_wms.xml?>
+    </choice>
+    <?mcc:include assets/configuration_modes_common_wms.xml?>
+  </page>
+  
+  <?mcc:include assets/configuration_hardware.xml?>
 </configuration>
