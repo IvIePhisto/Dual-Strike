@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration xmlns="urn:strike-devices:configuration">
-  <title>Defaults</title>
-  <title lang="de">Standards</title>
-  <help>Configure the default settings of the Dual Strike.</help>
-  <help lang="de">Konfiguration der Dual Strike Standardeinstellungen.</help>
+  <title>Working Modes</title>
+  <title lang="de">Arbeitsmodi</title>
+  <help>Configuration of the working modes of the Dual Strike.</help>
+  <help lang="de">Konfiguration der Arbeitsmodi des Dual Strike.</help>
 </configuration>

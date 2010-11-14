@@ -440,7 +440,7 @@ void autodetect() {
 				detected = 1;
 		}
 
-		autodetectLimit = 50;
+		autodetectLimit = 80;
 		resetAutodetectTimer();
 
 		while(!autodetectTimePassed())

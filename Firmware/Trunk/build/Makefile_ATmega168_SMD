@@ -1,10 +1,10 @@
 ###############################################################################
-# Makefile for Dual Strike Firmware (SMD)
+# Makefile for Dual Strike Firmware ATmega168 (SMD)
 ###############################################################################
 
 ## General Flags
 PROJECT = DualStrike
-ATMEGA_NO = 8
+ATMEGA_NO = 168
 MCU = atmega$(ATMEGA_NO)
 TARGET = DualStrike.elf
 CC = avr-gcc
@@ -44,7 +44,7 @@ OBJECTS = DualStrike.o pass-through.o usb_controller.o usbdrv.o usbdrvasm.o
 LINKONLYOBJECTS = 
 
 ## Build
-all: $(TARGET) dual_strike_firmware_smd.hex dual_strike_firmware_smd.eep size
+all: $(TARGET) dual_strike_firmware_atmega168_smd.hex dual_strike_firmware_atmega168_smd.eep size
 
 ## Compile
 DualStrike.o: ../DualStrike.c
