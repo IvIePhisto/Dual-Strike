@@ -1,5 +1,6 @@
 package mccf;
 
+import java.awt.SplashScreen;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -88,10 +89,19 @@ public class Configuration {
 			}
 	
 			mode = Mode.newInstance(args, currentIndex);
+
+			if(mode != Mode.EDIT) {
+				SplashScreen splash;
+				
+				splash = SplashScreen.getSplashScreen();
+				
+				if(splash != null)
+					splash.close();
+			}
 			
 			if(mode == null)
 				showMessage(MessageHelper.get(Configuration.class, "argSyntax", language), language, true);
-	
+			
 			switch(mode) {
 			case HELP:
 				String message;

@@ -43,6 +43,7 @@
             <manifest>
                 <attribute name="Sealed" value="true"/>
                 <attribute name="Main-Class" value="${pack.jar.class}"/>
+                <attribute name="SplashScreen-Image" value="splash.png"/>
             </manifest>
           <fileset dir="${src.dir}">
               <include name="**/*"/>

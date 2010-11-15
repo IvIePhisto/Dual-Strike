@@ -19,7 +19,3 @@ ATmega8 based Dual Strikes in the directory this file is residing in. To
 load and save the configuration to the Dual Strike you first have to 
 enter the configuration mode by pressing Select on plugging in. By 
 pressing Start the configuration mode is left. 
-
-
-
-

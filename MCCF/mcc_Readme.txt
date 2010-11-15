@@ -37,6 +37,7 @@ Version History
 1.2.0 - added connection help message
       - small UI design changes
       - added support for imports using the processing instruction mcc:include
+      - added splash screen for JAR file execution
 
 1.1.1 - changed eepromProgrammerHID command to use current directory
 
