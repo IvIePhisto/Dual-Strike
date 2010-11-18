@@ -150,7 +150,7 @@
             <xsl:value-of select="0"/>
           </xsl:otherwise>
         </xsl:choose>
-      </xsl:variable>
+      </xsl:variable>      
       <xsl:attribute name="byte-no">
         <xsl:value-of select="floor($previous-bits div 7)"/>
       </xsl:attribute>
@@ -184,7 +184,7 @@
   
   <xsl:template match="c:boolean" mode="calculate-previous-bits">
     <xsl:choose>
-      <xsl:when test="count(preceding::c:*[local-name() = 'choice' or local-name() = 'boolean'][1]) = 1">
+      <xsl:when test="preceding::c:*[local-name() = 'choice' or local-name() = 'boolean'][1]">
         <xsl:variable name="rest-sum">
             <xsl:apply-templates select="preceding::c:*[local-name() = 'choice' or local-name() = 'boolean'][1]" mode="calculate-previous-bits"/>
         </xsl:variable>

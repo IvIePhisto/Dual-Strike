@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?><configuration xmlns="urn:strike-devices:configuration" xmlns:xi="http://www.w3.org/2001/XInclude" byte-width="1" icon-path="assets/configuration.png" prefix="CFG_" lang="en" def-lang-version="2">
+  
+  <device>3</device>
+  <version>1</version>
+  
+  <title>Emu Strike Configuration</title>
+  <title lang="de">Emu Strike Konfiguration</title>
+  
+  <help path="assets/configuration-help.html"/>
+  <help path="assets/configuration-help_de.html" lang="de"/>
+  
+  <connectionHelp>Connect the Dual Strike to the PC while pressing Select.</connectionHelp>
+  <connectionHelp lang="de">Verbinde das Dual Strike mit dem PC während Select gedrückt wird.</connectionHelp>
+
+  <page>
+    <title>Pointer</title>
+    <title lang="de">Zeigegerät</title>
+    <help>Settings for a pointing device with a rotary encoder like trackballs and mice.</help>
+    <help lang="de">Einstellungen für ein Zeigergerät mit Rotary Encoder wie Trackballs und Mäuse.</help>
+
+    <boolean byte-no="0" bit-no="0" id="POINTER_ENABLED" default="false"><!--1-->
+      <title>Pointer Mode</title>
+      <title lang="de">Zeigegerät Modus</title>
+      <help>Use the pins UP, DOWN, LEFT und RIGHT for a pointing device.</help>
+      <help lang="de">Benutze die Anschlüsse UP, DOWN, LEFT und RIGHT für ein Zeigergerät.</help>
+    </boolean>
+
+    <boolean byte-no="0" bit-no="1" id="POINTER_BUTTONS_ENABLED" default="false"><!--1-->
+      <title>Buttons</title>
+      <title lang="de">Tasten</title>
+      <help>Use the pins LP, LK and S4 for the buttons of a pointing device.</help>
+      <help lang="de">Benutze die Anschlüsse LP, LK und S4 für die Tasten eines Zeigergeräts.</help>
+    </boolean>
+  </page>
+  
+</configuration>
