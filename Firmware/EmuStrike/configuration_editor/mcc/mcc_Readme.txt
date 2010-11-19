@@ -39,6 +39,7 @@ Version History
       - added support for imports using the processing instruction mcc:include
       - added splash screen for JAR file execution
       - fixed small error in configuration annotation stylesheet
+      - fixed requires constraint for options disabled by default
 
 1.1.1 - changed eepromProgrammerHID command to use current directory
 

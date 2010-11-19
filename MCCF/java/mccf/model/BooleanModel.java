@@ -104,7 +104,7 @@ public class BooleanModel extends SettingModel implements ActionListener {
 	}
 
 	synchronized void requiringSettingIsInactive() {
-		if(activeRequiringSettings != 0) {
+		if(activeRequiringSettings > 0) {
 			activeRequiringSettings--;
 			
 			if(activeRequiringSettings == 0)

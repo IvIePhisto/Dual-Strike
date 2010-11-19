@@ -258,6 +258,7 @@ public abstract class ChoiceModel extends SettingModel {
 	}
 	
 	synchronized void requiringSettingIsActive(final int requiredOption) {
+		System.out.println(activeRequiringSettings[requiredOption]);
 		if(activeRequiringSettings[requiredOption] == 0) {
 			setCurrentOption(requiredOption);
 			
@@ -270,12 +271,14 @@ public abstract class ChoiceModel extends SettingModel {
 	}
 
 	synchronized void requiringSettingIsInactive(final int requiredOption) {
-		activeRequiringSettings[requiredOption] = activeRequiringSettings[requiredOption] -1;
-		
-		if(activeRequiringSettings[requiredOption] == 0)
-			for(int i = 0; i < option2ID.length; i++)
-				if(i != requiredOption)
-					setEnabled(i);
+		if(activeRequiringSettings[requiredOption] > 0) {
+			activeRequiringSettings[requiredOption] = activeRequiringSettings[requiredOption] -1;
+			
+			if(activeRequiringSettings[requiredOption] == 0)
+				for(int i = 0; i < option2ID.length; i++)
+					if(i != requiredOption)
+						setEnabled(i);
+		}
 	}
 	
 	synchronized void notifyRequiringSettings(final int requiredOption, final boolean active) {

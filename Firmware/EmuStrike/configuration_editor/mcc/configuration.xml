@@ -25,26 +25,69 @@
     <help>Settings for a pointing device with a rotary encoder like trackballs and mice.</help>
     <help lang="de">Einstellungen für ein Zeigergerät mit Rotary Encoder wie Trackballs und Mäuse.</help>
 
-    <boolean id="POINTER_ENABLED" default="false">
+    <choice default="POINTER_DISABLED">
       <title>Pointer Mode</title>
       <title lang="de">Zeigegerät Modus</title>
       <help>Use the pins UP, DOWN, LEFT und RIGHT for a pointing device.</help>
       <help lang="de">Benutze die Anschlüsse UP, DOWN, LEFT und RIGHT für ein Zeigergerät.</help>
-    </boolean>
+      
+      <option id="POINTER_ENABLED">
+        <title>enabled</title>
+        <title lang="de">aktiviert</title>
+      </option>
+      <option id="POINTER_DISABLED">
+        <title>disabled</title>
+        <title lang="de">deaktiviert</title>
+      </option>
+    </choice>
 
-    <boolean id="POINTER_BUTTONS_ENABLED" default="false">
+    <choice default="POINTER_BUTTONS_DISABLED">
       <title>Buttons</title>
       <title lang="de">Tasten</title>
       <help>Use the pins LP, LK and S4 for the buttons of a pointing device.</help>
       <help lang="de">Benutze die Anschlüsse LP, LK und S4 für die Tasten eines Zeigergeräts.</help>
-    </boolean>
+      
+      <option id="POINTER_BUTTONS_ENABLED">
+        <title>enabled</title>
+        <title lang="de">aktiviert</title>
+        <requires>LK_NOTHING</requires>
+      </option>
+      <option id="POINTER_BUTTONS_DISABLED">
+        <title>disabled</title>
+        <title lang="de">deaktiviert</title>
+      </option>
+    </choice>
   </page>
-  <!-- 
+  
   <page>
     <title>Keyboard Mapping</title>
-    <title lang="en">Tastaturbelegung</title>
+    <title lang="de">Tastaturbelegung</title>
     <help>The mapping of pins to keyboard keys.</help>
-    <help>Die Belegung von Anschlüssen zu Tastatur-Tasten.</help>
+    <help lang="de">Die Belegung von Anschlüssen zu Tastatur-Tasten.</help>
+    
+    <choice default="LK_NOTHING">
+      <title>LK</title>
+      <option id="LK_NOTHING">
+        <title>Nothing</title>
+        <title lang="de">Nichts</title>
+      </option>
+      <option id="LK_A">
+        <title>A</title>
+      </option>
+      <option id="LK_ENTER">
+        <title>Enter</title>
+      </option>
+      <option id="LK_ESCAPE">
+        <title>ESC</title>
+      </option>
+      <option id="LK_SPACE">
+        <title>Space</title>
+        <title lang="de">Leerzeichen</title>
+      </option>
+      <option id="LK_CTRL">
+        <title>CTRL</title>
+        <title lang="de">STRG</title>
+      </option>
+    </choice>
   </page>
-  -->
 </configuration>
