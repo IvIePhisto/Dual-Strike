@@ -73,10 +73,13 @@ import mccf.definition.Info;
 import mccf.definition.Option;
 import mccf.definition.Page;
 import mccf.definition.PathInfo;
+import mccf.definition.ValueDomain;
+import mccf.definition.ValueSetting;
 import mccf.file.FileHandler;
 import mccf.icons.IconHandler;
 import mccf.model.ConfigurationModel;
 import mccf.model.PageModel;
+import mccf.model.ValueDomainModel;
 
 
 public class ConfigurationEditor implements HyperlinkListener {
@@ -91,8 +94,10 @@ public class ConfigurationEditor implements HyperlinkListener {
 	private static final Font TITLE_FONT = new Font(Font.SANS_SERIF, Font.BOLD, FONT_SIZE); 
 	private static final Border BOTTOM_SPACER_BORDER = new EmptyBorder(0, 0, 10, 0);
 	private static final Color MILK_GLASS = new Color(255, 255, 255, 150);
+	/*
 	private static final String MACOSX_USE_SCREEN_MENU_BAR_PROPERTY_NAME = "apple.laf.useScreenMenuBar";
 	private static final String MACOSX_BRUSH_METAL_LOOK_PROPERTY_NAME = "apple.awt.brushMetalLook";
+	*/
 	
 	public static final Font DESCRIPTION_FONT = new Font(Font.SANS_SERIF, Font.PLAIN, FONT_SIZE); 
 	
@@ -100,8 +105,10 @@ public class ConfigurationEditor implements HyperlinkListener {
 	static ConfigurationEditor newInstance(File configurationDefinitionFile, final Locale language) throws IOException, ConfigurationDefException {
 		ConfigurationEditor ce;
 		
+		/*
 		System.setProperty(MACOSX_USE_SCREEN_MENU_BAR_PROPERTY_NAME, "true");
 		System.setProperty(MACOSX_BRUSH_METAL_LOOK_PROPERTY_NAME, "true");
+		*/
 
 		if(configurationDefinitionFile == null)
 			configurationDefinitionFile = DEFAULT_CONFIGURATION_DEFINITION_FILE;
@@ -237,6 +244,10 @@ public class ConfigurationEditor implements HyperlinkListener {
 		defaultLanguage = new Locale(configuration.getLang());
 		fileHandler = new FileHandler(this);
 		model = new ConfigurationModel(fileHandler, configuration);
+		
+		for(ValueDomain valueDomain: configuration.getValueDomain())
+			new ValueDomainModel(model, valueDomain);
+		
 		mainTitle = getLocalizedInfo(configuration.getTitle(), false);
 		JFrame.setDefaultLookAndFeelDecorated(true);
 		window = new JFrame(mainTitle);
@@ -549,7 +560,7 @@ public class ConfigurationEditor implements HyperlinkListener {
 		tabHelpLabel.setAlignmentY(Component.TOP_ALIGNMENT);
 		panel.add(tabHelpLabel);
 
-		for(Object setting: page.getChoiceOrBoolean()) {
+		for(Object setting: page.getChoiceOrBooleanOrValue()) {
 			JComponent settingComponent;
 			
 			settingComponent = createSettingComponent(setting, pageModel);
@@ -591,6 +602,15 @@ public class ConfigurationEditor implements HyperlinkListener {
 			ChoiceSetting setting;
 			
 			setting = (ChoiceSetting)settingObject;
+			title = createLabel(setting.getTitle(), TITLE_FONT);
+			helpString = getLocalizedInfo(setting.getHelp(), true);
+			selectorComponent = createSettingComponent(setting, pageModel);
+			imageLabel = createImageLabel(setting.getImage());
+		}
+		else if(settingObject instanceof ValueSetting) {
+			ValueSetting setting;
+			
+			setting = (ValueSetting)settingObject;
 			title = createLabel(setting.getTitle(), TITLE_FONT);
 			helpString = getLocalizedInfo(setting.getHelp(), true);
 			selectorComponent = createSettingComponent(setting, pageModel);
@@ -672,6 +692,11 @@ public class ConfigurationEditor implements HyperlinkListener {
 			return createOptionRadioButtons(c, defaultOption.getId(), pageModel);
 		else
 			return createOptionComboBox(c, defaultOption.getId(), pageModel);
+	}
+	
+	private JComponent createSettingComponent(final ValueSetting v, final PageModel pageModel) {
+		//TODO
+		return null;
 	}
 	
 	private JComponent createOptionComboBox(final ChoiceSetting choiceSetting, final String defaultOptionID, final PageModel pageModel) {

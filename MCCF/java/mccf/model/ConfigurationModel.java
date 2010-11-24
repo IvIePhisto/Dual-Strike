@@ -20,6 +20,7 @@ public class ConfigurationModel {
 	private final byte version;
 	private final Map<String, SettingModel> settingsByID = new HashMap<String, SettingModel>();
 	private final Set<SettingModel> settingsSet = new HashSet<SettingModel>();
+	private final Map<String, ValueDomainModel> valueDomains = new HashMap<String, ValueDomainModel>();
 	
 	public ConfigurationModel(final FileHandler fileHandler, final Configuration configuration) {
 		this.fileHandler = fileHandler;
@@ -90,6 +91,10 @@ public class ConfigurationModel {
 
 	synchronized SettingModel getSetting(final String id) {
 		return settingsByID.get(id);
+	}
+	
+	synchronized void registerValueDomain(final String id, final ValueDomainModel valueDomain) {
+		valueDomains.put(id, valueDomain);
 	}
 	
 	public synchronized void initConstraints() {

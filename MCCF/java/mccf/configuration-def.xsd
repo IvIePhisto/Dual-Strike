@@ -9,6 +9,7 @@
       <xs:group ref="c:Infos"/>
       <xs:element name="connectionHelp" maxOccurs="unbounded" type="c:Info"/>
       <xs:element name="page" type="c:Page" maxOccurs="unbounded"/>
+      <xs:element name="valueDomain" maxOccurs="unbounded" type="c:ValueDomain"/>
     </xs:sequence>
     <xs:attribute name="def-lang-version" fixed="2" use="required" type="xs:int"/>
     <xs:attribute name="lang" type="xs:language" use="required"/>
@@ -51,6 +52,7 @@
       <xs:choice maxOccurs="unbounded">
         <xs:element name="choice" type="c:ChoiceSetting"/>
         <xs:element name="boolean" type="c:BooleanSetting"/>
+        <xs:element name="value" type="c:ValueSetting"/>
       </xs:choice>
     </xs:sequence>
   </xs:complexType>
@@ -79,6 +81,23 @@
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
+  
+  <xs:complexType name="ValueSetting">
+    <xs:complexContent>
+      <xs:extension base="c:Setting">
+        <xs:sequence>
+          <xs:element name="image" type="c:DescriptionImage" minOccurs="0"/>
+        </xs:sequence>
+        <xs:attribute name="domain" type="xs:IDREF" use="required">
+          <xs:annotation><xs:documentation>
+            The element referenced must be of the "ValueDomain" type.
+          </xs:documentation></xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  
+  
 
   <xs:complexType name="Option">
     <xs:complexContent>
@@ -133,4 +152,47 @@
       <xs:pattern value="\w(/|\w|\.|\d| |-|_)*"/>
     </xs:restriction>
   </xs:simpleType>
+  
+  <xs:complexType name="Requires">
+    <xs:annotation><xs:documentation>
+      An element of this kind imposes two constraints on the configuration:
+        -The containing option can only be activated if the referred
+         setting is set, i.e. in case of a boolean it is enabled and
+         in case of an option it is the current selection of its
+         containing choice.
+        -If the containing option is the current selection of its
+         containing choice, the referred setting is set fix, i.e.
+         in case of a boolean it is not disengageable and in case of an
+         option the other options of its containing choice are not
+         selectable.
+         
+      To prevent cascading changes and clashing requirements, the
+      following cases must not occur (which the application has to check):
+        -A choice A contains an option which is being required by a
+         choice B (A may be equal to B) and an option of A requires a
+         setting.
+        -In one choice for a pair of options A and B, A is required
+         by a choice C, B is required by a choice D and C and D are
+         different choices.
+      
+      The attribute "requiredValue" must not only be used if the ID reference
+      in the content refers to a element of the type "Value".
+    </xs:documentation></xs:annotation>
+    <xs:simpleContent>
+      <xs:extension base="xs:IDREF">
+        <xs:attribute name="requiredValue" type="xs:int"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+  
+  <xs:complexType name="ValueDomain">
+    <xs:sequence>
+      <xs:element name="entry" type="c:ValueDomainEntry" maxOccurs="unbounded"/>
+    </xs:sequence>
+    <xs:attribute name="id" type="c:SettingID"/>
+  </xs:complexType>
+  
+  <xs:complexType name="ValueDomainEntry">
+    <xs:group ref="c:Infos"/>
+  </xs:complexType>
 </xs:schema>
