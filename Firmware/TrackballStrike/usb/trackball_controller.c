@@ -35,26 +35,26 @@ void readRotaryValues() {
 
 	if((x_1 != last_x_1) || (x_2 != last_x_2)) {
 		if(x_2 != last_x_1) {
-			if(data.trackball_report.trackballX > -127) {
-				data.trackball_report.trackballX--;
+			if(data.trackball_report.trackballX < 127) {
+				data.trackball_report.trackballX++;
 			}
 		}
 		else {
-			if(data.trackball_report.trackballX < 127) {
-				data.trackball_report.trackballX++;
+			if(data.trackball_report.trackballX > -127) {
+				data.trackball_report.trackballX--;
 			}
 		}
 	}
 
 	if((y_1 != last_y_1) || (y_2 != last_y_2)) {
 		if(y_2 != last_y_1) {
-			if(data.trackball_report.trackballY < 127) {
-				data.trackball_report.trackballY++;
+			if(data.trackball_report.trackballY > -127) {
+				data.trackball_report.trackballY--;
 			}
 		}
 		else {
-			if(data.trackball_report.trackballY > -127) {
-				data.trackball_report.trackballY--;
+			if(data.trackball_report.trackballY < 127) {
+				data.trackball_report.trackballY++;
 			}
 		}
 	}
