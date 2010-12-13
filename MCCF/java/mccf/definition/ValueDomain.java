@@ -15,23 +15,24 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlID;
-import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 
 /**
- * <p>Java class for Setting complex type.
+ * <p>Java class for ValueDomain complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="Setting">
+ * &lt;complexType name="ValueDomain">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;group ref="{urn:strike-devices:configuration}Infos"/>
- *       &lt;attribute name="id" use="required" type="{urn:strike-devices:configuration}SettingID" />
+ *       &lt;sequence>
+ *         &lt;element name="entry" type="{urn:strike-devices:configuration}ValueDomainEntry" maxOccurs="255"/>
+ *       &lt;/sequence>
+ *       &lt;attribute name="id" type="{urn:strike-devices:configuration}SettingID" />
  *     &lt;/restriction>
  *   &lt;/complexContent>
  * &lt;/complexType>
@@ -40,81 +41,45 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "Setting", propOrder = {
-    "title",
-    "help"
+@XmlType(name = "ValueDomain", propOrder = {
+    "entry"
 })
-@XmlSeeAlso({
-    OriginalOption.class,
-    OriginalBooleanSetting.class,
-    OriginalValueSetting.class
-})
-public class Setting {
+public class ValueDomain {
 
     @XmlElement(required = true)
-    protected List<Info> title;
-    protected List<PathInfo> help;
-    @XmlAttribute(required = true)
+    protected List<ValueDomainEntry> entry;
+    @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
     protected String id;
 
     /**
-     * Gets the value of the title property.
+     * Gets the value of the entry property.
      * 
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the title property.
+     * This is why there is not a <CODE>set</CODE> method for the entry property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
-     *    getTitle().add(newItem);
+     *    getEntry().add(newItem);
      * </pre>
      * 
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link Info }
+     * {@link ValueDomainEntry }
      * 
      * 
      */
-    public List<Info> getTitle() {
-        if (title == null) {
-            title = new ArrayList<Info>();
+    public List<ValueDomainEntry> getEntry() {
+        if (entry == null) {
+            entry = new ArrayList<ValueDomainEntry>();
         }
-        return this.title;
-    }
-
-    /**
-     * Gets the value of the help property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the help property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getHelp().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link PathInfo }
-     * 
-     * 
-     */
-    public List<PathInfo> getHelp() {
-        if (help == null) {
-            help = new ArrayList<PathInfo>();
-        }
-        return this.help;
+        return this.entry;
     }
 
     /**

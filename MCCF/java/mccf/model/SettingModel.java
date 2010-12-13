@@ -6,10 +6,10 @@ public abstract class SettingModel {
 	private final int bitNo;
 	private final ConfigurationModel configuration;
 
-	protected SettingModel(final ConfigurationModel configuration, final int byteNo, final int bitNo) {
+	protected SettingModel(final ConfigurationModel configuration, final long byteNo, final long bitNo) {
 		this.configuration = configuration;
-		this.byteNo = byteNo;
-		this.bitNo = bitNo;
+		this.byteNo = (int)byteNo;
+		this.bitNo = (int)bitNo;
 	}
 
 	public final int getByteNo() {

@@ -7,9 +7,10 @@ import javax.swing.ButtonGroup;
 import javax.swing.JComboBox;
 import javax.swing.JRadioButton;
 
-import mccf.ChoiceListCellRenderer;
+import mccf.ItemDisablerListCellRenderer;
 import mccf.definition.BooleanSetting;
 import mccf.definition.ChoiceSetting;
+import mccf.definition.ValueSetting;
 
 public class PageModel  {
 	private final ConfigurationModel configuration;
@@ -19,7 +20,7 @@ public class PageModel  {
 		this.configuration = configuration;
 	}
 	
-	public synchronized void addChoice(final ChoiceSetting choiceSetting, final JComboBox comboBox, final ChoiceListCellRenderer listCellRenderer) {
+	public synchronized void addChoice(final ChoiceSetting choiceSetting, final JComboBox comboBox, final ItemDisablerListCellRenderer listCellRenderer) {
 		ComboBoxChoiceModel choiceModel;
 		
 		choiceModel = new ComboBoxChoiceModel(configuration, choiceSetting, comboBox, listCellRenderer);
@@ -38,6 +39,10 @@ public class PageModel  {
 		
 		booleanModel = new BooleanModel(configuration, booleanSetting, enableButton, disableButton);
 		settings.add(booleanModel);
+	}
+	
+	public synchronized void addValue(final ValueSetting valueSetting, final JComboBox comboBox, final ItemDisablerListCellRenderer listCellRenderer) {
+		//TODO
 	}
 	
 	public synchronized void loadDefaults() {

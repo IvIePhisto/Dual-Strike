@@ -8,18 +8,16 @@ import javax.swing.JComponent;
 import javax.swing.JList;
 import javax.swing.UIManager;
 
-public class ChoiceListCellRenderer extends DefaultListCellRenderer {
+public class ItemDisablerListCellRenderer extends DefaultListCellRenderer {
 	private static final long serialVersionUID = 1L;
 	private static final Color DISABLED_FOREGROUND = UIManager.getColor("Label.disabledForeground");
 	private final String[] helps;
 	private boolean[] itemDisabledStatus;
 	
-	ChoiceListCellRenderer(final String[] helps) {
+	ItemDisablerListCellRenderer(final String[] helps) {
 		this.helps = helps;
 		itemDisabledStatus = new boolean[helps.length];
 	}
-
-	
 	
 	public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
 		JComponent component;

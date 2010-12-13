@@ -21,7 +21,7 @@ public class BooleanModel extends SettingModel implements ActionListener {
 	private int activeRequiringSettings = 0;
 	
 	BooleanModel(final ConfigurationModel configuration, final BooleanSetting booleanSetting, final JRadioButton enableButton, final JRadioButton disableButton) {
-		super(configuration, (int)booleanSetting.getByteNo(), (int)booleanSetting.getBitNo());
+		super(configuration, booleanSetting.getByteNo(), booleanSetting.getBitNo());
 		defaultValue = booleanSetting.isDefault();
 		value = defaultValue;
 		this.enableButton = enableButton;

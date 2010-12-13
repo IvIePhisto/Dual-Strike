@@ -695,17 +695,20 @@ public class ConfigurationEditor implements HyperlinkListener {
 	}
 	
 	private JComponent createSettingComponent(final ValueSetting v, final PageModel pageModel) {
-		//TODO
-		return null;
-	}
-	
-	private JComponent createOptionComboBox(final ChoiceSetting choiceSetting, final String defaultOptionID, final PageModel pageModel) {
+		ValueDomain valueDomain;
+		List<Option> options;
+		final int listOptionCount;
+		
+		valueDomain = (ValueDomain)v.getDomain();
+		options = c.getOption();
+		listOptionCount = 3;
+		
 		List<String> titles;
 		List<String> helps;
 		final String[] helpsArray;
 		JComboBox comboBox;
 		int selectedIndex;
-		ChoiceListCellRenderer listCellRenderer;
+		ItemDisablerListCellRenderer listCellRenderer;
 		JPanel panel;
 		
 		titles = new LinkedList<String>();
@@ -738,8 +741,61 @@ public class ConfigurationEditor implements HyperlinkListener {
 		}
 		
 		helpsArray = helps.toArray(new String[]{});
-		listCellRenderer = new ChoiceListCellRenderer(helpsArray);
+		listCellRenderer = new ItemDisablerListCellRenderer(helpsArray);
 		comboBox = new JComboBox(titles.toArray());
+		comboBox.setEditable(true);
+		comboBox.setRenderer(listCellRenderer);
+		comboBox.setSelectedIndex(selectedIndex);
+		comboBox.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
+		pageModel.addChoice(choiceSetting, comboBox, listCellRenderer);
+		panel = new JPanel();
+		panel.add(comboBox);
+
+		return panel;
+	}
+	
+	private JComponent createOptionComboBox(final ChoiceSetting choiceSetting, final String defaultOptionID, final PageModel pageModel) {
+		List<String> titles;
+		List<String> helps;
+		final String[] helpsArray;
+		JComboBox comboBox;
+		int selectedIndex;
+		ItemDisablerListCellRenderer listCellRenderer;
+		JPanel panel;
+		
+		titles = new LinkedList<String>();
+		helps = new LinkedList<String>();
+		selectedIndex = -1;
+		
+		for(Option o: choiceSetting.getOption()) {
+			String help;
+			
+			help = getLocalizedInfo(o.getHelp(), false);
+
+			if(o.getId().equals(defaultOptionID)) {
+				String defaultPostfix;
+				
+				selectedIndex = titles.size();
+				defaultPostfix = MessageHelper.get(this, "default");
+				
+				if(help == null || help.equals(""))
+					help = defaultPostfix;
+				else
+					help += " " + defaultPostfix;
+			}
+
+			titles.add(getLocalizedInfo(o.getTitle(), true));
+			
+			if(help == null)
+				helps.add(null);
+			else
+				helps.add(convertTextToHTML(help, null));
+		}
+		
+		helpsArray = helps.toArray(new String[]{});
+		listCellRenderer = new ItemDisablerListCellRenderer(helpsArray);
+		comboBox = new JComboBox(titles.toArray());
+		comboBox.setEditable(true);
 		comboBox.setRenderer(listCellRenderer);
 		comboBox.setSelectedIndex(selectedIndex);
 		comboBox.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));

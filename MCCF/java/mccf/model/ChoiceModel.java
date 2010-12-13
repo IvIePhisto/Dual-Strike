@@ -33,7 +33,7 @@ public abstract class ChoiceModel extends SettingModel {
 	
 	@SuppressWarnings("unchecked")
 	ChoiceModel(final ConfigurationModel configuration, final ChoiceSetting choiceSetting) {
-		super(configuration, (int)choiceSetting.getByteNo(), (int)choiceSetting.getBitNo());
+		super(configuration, choiceSetting.getByteNo(), choiceSetting.getBitNo());
 		List<Option> options;
 		int defaultValue;
 		String defaultID;
@@ -132,81 +132,12 @@ public abstract class ChoiceModel extends SettingModel {
 	
 	@Override
 	synchronized void loadBytes(byte[] bytes) {
-		int currentByteDivider;
-		int nextByteDividerIndex;
-		int currentByte;
-		int option;
-		
-		nextByteDividerIndex = 0;
-		
-		if(byteDividers.length == 0)
-			currentByteDivider = Integer.MAX_VALUE;
-		else
-			currentByteDivider = byteDividers[nextByteDividerIndex++];
-		
-		currentByte = getByteNo();
-		option = 0;
-		
-		for(int currentBit = 0, currentBitInByte = getBitNo(); currentBit < bitWidth; currentBit++, currentBitInByte++) {
-			boolean bit;
-			
-			if(currentBit == currentByteDivider) {
-				currentByte++;
-
-				currentBitInByte = 0;
-				
-				if(nextByteDividerIndex < byteDividers.length)
-					currentByteDivider = byteDividers[nextByteDividerIndex++];
-				else
-					currentByteDivider = Integer.MAX_VALUE;
-			}
-			
-			bit = ConfigurationModel.getBit(bytes, currentByte, currentBitInByte);
-			
-			if(bit)
-				option += 1<<currentBit;
-		}
-		
-		setCurrentOption(option);
+		setCurrentOption(BytesUtility.loadIntBytes(bytes, byteDividers, getByteNo(), getBitNo(), bitWidth));
 	}
 
 	@Override
 	synchronized void saveBytes(byte[] bytes) {
-		int currentByteDivider;
-		int nextByteDividerIndex;
-		int currentByte;
-		boolean[] option;
-		
-		nextByteDividerIndex = 0;
-		
-		if(byteDividers.length == 0)
-			currentByteDivider = Integer.MAX_VALUE;
-		else
-			currentByteDivider = byteDividers[nextByteDividerIndex++];
-		
-		currentByte = getByteNo();
-		option = optionValues[currentOption];
-		
-		for(int currentBit = 0, currentBitInByte = getBitNo(); currentBit < bitWidth; currentBit++, currentBitInByte++) {
-			int optionIndex;
-						
-			if(currentBit == currentByteDivider) {
-				currentByte++;
-				
-				currentBitInByte = 0;
-				
-				if(nextByteDividerIndex < byteDividers.length)
-					currentByteDivider = byteDividers[nextByteDividerIndex++];
-				else
-					currentByteDivider = Integer.MAX_VALUE;
-			}
-
-			optionIndex = bitWidth - currentBit - 1;
-			
-			if(option[optionIndex])
-				bytes[currentByte] |= 1 << currentBitInByte;
-
-		}
+		BytesUtility.saveBytes(currentOption, bytes, byteDividers, getByteNo(), getBitNo(), bitWidth);
 	}
 	
 	@Override

@@ -27,6 +27,7 @@ public class ConfigurationModel {
 		this.byteWidth = (int)configuration.getByteWidth();
 		this.device = configuration.getDevice();
 		this.version = configuration.getVersion();
+		// TODO load value domains
 	}
 
 	public int getByteWidth() {

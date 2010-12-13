@@ -18,26 +18,30 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for ChoiceSetting complex type.
+ * <p>Java class for ValueSetting complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="ChoiceSetting">
+ * &lt;complexType name="ValueSetting">
  *   &lt;complexContent>
- *     &lt;extension base="{urn:strike-devices:configuration}ChoiceSetting">
+ *     &lt;extension base="{urn:strike-devices:configuration}ValueSetting">
  *       &lt;redefine>
- *         &lt;complexType name="ChoiceSetting">
+ *         &lt;complexType name="ValueSetting">
  *           &lt;complexContent>
- *             &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *             &lt;extension base="{urn:strike-devices:configuration}Setting">
  *               &lt;sequence>
- *                 &lt;group ref="{urn:strike-devices:configuration}Infos"/>
  *                 &lt;element name="image" type="{urn:strike-devices:configuration}DescriptionImage" minOccurs="0"/>
- *                 &lt;element name="option" type="{urn:strike-devices:configuration}Option" maxOccurs="unbounded"/>
  *               &lt;/sequence>
- *               &lt;attribute name="default" use="required" type="{http://www.w3.org/2001/XMLSchema}IDREF" />
- *               &lt;attribute name="prefix" type="{urn:strike-devices:configuration}SettingID" />
- *             &lt;/restriction>
+ *               &lt;attribute name="domain" use="required" type="{http://www.w3.org/2001/XMLSchema}IDREF" />
+ *               &lt;attribute name="default" use="required">
+ *                 &lt;simpleType>
+ *                   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}unsignedInt">
+ *                     &lt;maxInclusive value="255"/>
+ *                   &lt;/restriction>
+ *                 &lt;/simpleType>
+ *               &lt;/attribute>
+ *             &lt;/extension>
  *           &lt;/complexContent>
  *         &lt;/complexType>
  *       &lt;/redefine>
@@ -56,9 +60,9 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "ChoiceSetting")
-public class ChoiceSetting
-    extends OriginalChoiceSetting
+@XmlType(name = "ValueSetting")
+public class ValueSetting
+    extends OriginalValueSetting
 {
 
     @XmlAttribute(name = "bit-width", required = true)

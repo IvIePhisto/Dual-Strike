@@ -93,6 +93,16 @@
             The element referenced must be of the "ValueDomain" type.
           </xs:documentation></xs:annotation>
         </xs:attribute>
+        <xs:attribute name="default" use="required">
+          <xs:annotation><xs:documentation>
+            This value must be greater or equal 0 and less than the number of entries in the referenced domain.
+          </xs:documentation></xs:annotation>
+          <xs:simpleType>
+            <xs:restriction base="xs:unsignedInt">
+              <xs:maxInclusive value="255"/>
+            </xs:restriction>
+          </xs:simpleType>
+        </xs:attribute>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -187,12 +197,12 @@
   
   <xs:complexType name="ValueDomain">
     <xs:sequence>
-      <xs:element name="entry" type="c:ValueDomainEntry" maxOccurs="unbounded"/>
+      <xs:element name="entry" type="c:ValueDomainEntry" maxOccurs="255"/>
     </xs:sequence>
     <xs:attribute name="id" type="c:SettingID"/>
   </xs:complexType>
   
   <xs:complexType name="ValueDomainEntry">
-    <xs:group ref="c:Infos"/>
+    <xs:group ref="c:Infos" minOccurs="0"/>
   </xs:complexType>
 </xs:schema>

@@ -49,6 +49,20 @@
         </xs:extension>
       </xs:complexContent>
     </xs:complexType>
+
+    <xs:complexType name="ValueSetting">
+      <xs:complexContent>
+        <xs:extension base="c:ValueSetting">
+          <xs:attributeGroup ref="c:Position"/>
+          <xs:attribute name="bit-width" type="xs:unsignedInt"  form="unqualified" use="required"/>
+          <xs:attribute name="byte-dividers" form="unqualified">
+            <xs:simpleType>
+              <xs:list itemType="xs:unsignedInt"/>
+            </xs:simpleType>
+          </xs:attribute>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
   </xs:redefine>  
   
   <xs:attributeGroup name="Position">

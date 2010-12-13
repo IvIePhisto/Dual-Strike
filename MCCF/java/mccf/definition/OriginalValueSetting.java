@@ -11,23 +11,32 @@ package mccf.definition;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlIDREF;
+import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for BooleanSetting complex type.
+ * <p>Java class for ValueSetting complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="BooleanSetting">
+ * &lt;complexType name="ValueSetting">
  *   &lt;complexContent>
  *     &lt;extension base="{urn:strike-devices:configuration}Setting">
  *       &lt;sequence>
  *         &lt;element name="image" type="{urn:strike-devices:configuration}DescriptionImage" minOccurs="0"/>
  *       &lt;/sequence>
- *       &lt;attribute name="default" type="{http://www.w3.org/2001/XMLSchema}boolean" />
+ *       &lt;attribute name="domain" use="required" type="{http://www.w3.org/2001/XMLSchema}IDREF" />
+ *       &lt;attribute name="default" use="required">
+ *         &lt;simpleType>
+ *           &lt;restriction base="{http://www.w3.org/2001/XMLSchema}unsignedInt">
+ *             &lt;maxInclusive value="255"/>
+ *           &lt;/restriction>
+ *         &lt;/simpleType>
+ *       &lt;/attribute>
  *     &lt;/extension>
  *   &lt;/complexContent>
  * &lt;/complexType>
@@ -40,15 +49,19 @@ import javax.xml.bind.annotation.XmlType;
     "image"
 })
 @XmlSeeAlso({
-    BooleanSetting.class
+    ValueSetting.class
 })
-public class OriginalBooleanSetting
+public class OriginalValueSetting
     extends Setting
 {
 
     protected DescriptionImage image;
-    @XmlAttribute(name = "default")
-    protected Boolean _default;
+    @XmlAttribute(required = true)
+    @XmlIDREF
+    @XmlSchemaType(name = "IDREF")
+    protected Object domain;
+    @XmlAttribute(name = "default", required = true)
+    protected long _default;
 
     /**
      * Gets the value of the image property.
@@ -75,26 +88,42 @@ public class OriginalBooleanSetting
     }
 
     /**
-     * Gets the value of the default property.
+     * Gets the value of the domain property.
      * 
      * @return
      *     possible object is
-     *     {@link Boolean }
+     *     {@link Object }
      *     
      */
-    public Boolean isDefault() {
+    public Object getDomain() {
+        return domain;
+    }
+
+    /**
+     * Sets the value of the domain property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Object }
+     *     
+     */
+    public void setDomain(Object value) {
+        this.domain = value;
+    }
+
+    /**
+     * Gets the value of the default property.
+     * 
+     */
+    public long getDefault() {
         return _default;
     }
 
     /**
      * Sets the value of the default property.
      * 
-     * @param value
-     *     allowed object is
-     *     {@link Boolean }
-     *     
      */
-    public void setDefault(Boolean value) {
+    public void setDefault(long value) {
         this._default = value;
     }
 
