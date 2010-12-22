@@ -3,11 +3,6 @@ package mccf.model;
 import java.util.List;
 import java.util.Vector;
 
-import javax.swing.ButtonGroup;
-import javax.swing.JComboBox;
-import javax.swing.JRadioButton;
-
-import mccf.ItemDisablerListCellRenderer;
 import mccf.definition.BooleanSetting;
 import mccf.definition.ChoiceSetting;
 import mccf.definition.ValueSetting;
@@ -20,43 +15,34 @@ public class PageModel  {
 		this.configuration = configuration;
 	}
 	
-	public synchronized void addChoice(final ChoiceSetting choiceSetting, final JComboBox comboBox, final ItemDisablerListCellRenderer listCellRenderer) {
-		ComboBoxChoiceModel choiceModel;
-		
-		choiceModel = new ComboBoxChoiceModel(configuration, choiceSetting, comboBox, listCellRenderer);
-		settings.add(choiceModel);
-	}
-	
-	public synchronized void addChoice(final ChoiceSetting choiceSetting, final ButtonGroup buttons) {
-		RadioButtonsChoiceModel choiceModel;
-		
-		choiceModel = new RadioButtonsChoiceModel(configuration, choiceSetting, buttons);
-		settings.add(choiceModel);
+	public List<SettingModel> getSettings() {
+		return settings;
 	}
 
-	public synchronized void addBoolean(final BooleanSetting booleanSetting, final JRadioButton enableButton, final JRadioButton disableButton) {
+	public synchronized ChoiceModel createChoice(final ChoiceSetting choiceSetting) {
+		ChoiceModel choiceModel;
+		
+		choiceModel = new ChoiceModel(configuration, choiceSetting);
+		settings.add(choiceModel);
+		
+		return choiceModel;
+	}
+
+	public synchronized BooleanModel createBoolean(final BooleanSetting booleanSetting) {
 		BooleanModel booleanModel;
 		
-		booleanModel = new BooleanModel(configuration, booleanSetting, enableButton, disableButton);
+		booleanModel = new BooleanModel(configuration, booleanSetting);
 		settings.add(booleanModel);
+		
+		return booleanModel;
 	}
 	
-	public synchronized void addValue(final ValueSetting valueSetting, final JComboBox comboBox, final ItemDisablerListCellRenderer listCellRenderer) {
+	public synchronized void addValue(final ValueSetting valueSetting) {
 		//TODO
 	}
 	
 	public synchronized void loadDefaults() {
 		for(SettingModel setting: settings)
 			setting.loadDefaults();
-	}
-	
-	public synchronized void loadBytes(final byte[] bytes) throws ByteLoadingException {
-		for(SettingModel setting: settings)
-			setting.loadBytes(bytes);
-	}
-	
-	public synchronized void saveBytes(final byte[] bytes) {
-		for(SettingModel setting: settings)
-			setting.saveBytes(bytes);
 	}
 }

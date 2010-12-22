@@ -32,7 +32,7 @@ public class ValueDomainModel {
 			helps[i] = new LinkedList<PathInfo>(entry.getHelp());
 		}
 		
-		configuration.registerValueDomain(id, this);
+		//TODO configuration.registerValueDomain(id, this);
 	}
 	
 	public int getEntryCount() {

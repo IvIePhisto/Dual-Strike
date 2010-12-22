@@ -20,10 +20,10 @@ public class SaveFileActionListener implements ActionListener {
 	public void actionPerformed(final ActionEvent event) {
 		File file;
 		
-		fileHandler.getController().makeWindowInactive();
+		fileHandler.getView().makeWindowInactive();
 
 		if(alwaysAsk || !fileHandler.isFileActive()) {
-			if(fileHandler.getFileChooser().showSaveDialog(fileHandler.getController().getWindow()) == JFileChooser.APPROVE_OPTION) {
+			if(fileHandler.getFileChooser().showSaveDialog(fileHandler.getView().getWindow()) == JFileChooser.APPROVE_OPTION) {
 				file = fileHandler.getFileChooser().getSelectedFile();
 				
 				fileHandler.save(file);
@@ -32,6 +32,6 @@ public class SaveFileActionListener implements ActionListener {
 		else
 			fileHandler.save();
 	
-		fileHandler.getController().makeWindowActive();
+		fileHandler.getView().makeWindowActive();
 	}
 }

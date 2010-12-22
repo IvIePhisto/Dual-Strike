@@ -7,21 +7,22 @@ import java.io.IOException;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 
-import mccf.ConfigurationEditor;
 import mccf.HexFilesUtility;
 import mccf.MessageHelper;
-import mccf.model.ByteLoadingException;
+import mccf.views.ByteLoadingException;
+import mccf.views.ByteView;
+import mccf.views.swing.ConfigurationFrameView;
 
 
 public class FileHandler {
 	private static final String DEFAULT_EXTENSION = "mcc";
 	private File file;
-	private final ConfigurationEditor controller;
+	private final ConfigurationFrameView view;
 	private final JFileChooser fileChooser;
 	private boolean modelChanged;
 	
-	public FileHandler(final ConfigurationEditor controller) {
-		this.controller = controller;
+	public FileHandler(final ConfigurationFrameView view) {
+		this.view = view;
 		fileChooser = new JFileChooser();
 		fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 		fileChooser.setMultiSelectionEnabled(false);
@@ -65,7 +66,7 @@ public class FileHandler {
 	
 	public synchronized void setModelChanged() {
 		if(file != null && !modelChanged) {
-			controller.setWindowTitleAmendment(file.getAbsolutePath() + "*");
+			view.setWindowTitleAmendment(file.getAbsolutePath() + "*");
 			modelChanged = true;
 		}
 	}
@@ -74,8 +75,8 @@ public class FileHandler {
 		return modelChanged;
 	}
 
-	ConfigurationEditor getController() {
-		return controller;
+	ConfigurationFrameView getView() {
+		return view;
 	}
 
 	JFileChooser getFileChooser() {
@@ -88,27 +89,27 @@ public class FileHandler {
 
 	synchronized void load(final File file) {
 		if(!file.exists()) {
-			controller.showErrorDialog(MessageHelper.get(this, "fileMissingErrorTitle"), MessageHelper.get(this, "fileMissingErrorMessage", file));
-			controller.setStatusLabelText(MessageHelper.get(this, "loadFileErrorStatus"));
+			view.showErrorDialog(MessageHelper.get(this, "fileMissingErrorTitle"), MessageHelper.get(this, "fileMissingErrorMessage", file));
+			view.setStatusLabelText(MessageHelper.get(this, "loadFileErrorStatus"));
 		}
 		else {
 			try {
 				byte[] data;
 				
 				data = HexFilesUtility.readSimpleHexFile(file);
-				controller.getModel().loadBytes(data);
+				ByteView.loadBytes(view.getModel(), data);
 				this.file = file;
-				controller.setWindowTitleAmendment(file.getAbsolutePath());
-				controller.setStatusLabelText(MessageHelper.get(this, "fileLoadedStatus"));
+				view.setWindowTitleAmendment(file.getAbsolutePath());
+				view.setStatusLabelText(MessageHelper.get(this, "fileLoadedStatus"));
 				modelChanged = false;
 			}
 			catch(IOException e) {
-				controller.showErrorDialog(MessageHelper.get(this, "fileLoadingErrorTitle"), MessageHelper.get(this, "fileLoadingErrorMessage", file, e.getLocalizedMessage()));
-				controller.setStatusLabelText(MessageHelper.get(this, "loadFileErrorStatus"));
+				view.showErrorDialog(MessageHelper.get(this, "fileLoadingErrorTitle"), MessageHelper.get(this, "fileLoadingErrorMessage", file, e.getLocalizedMessage()));
+				view.setStatusLabelText(MessageHelper.get(this, "loadFileErrorStatus"));
 			}
 			catch(ByteLoadingException e) {
-				e.showErrorDialog(controller);
-				controller.setStatusLabelText(MessageHelper.get(this, "loadFileErrorStatus"));
+				view.showErrorDialog(e.getTitle(), e.getLocalizedMessage());
+				view.setStatusLabelText(MessageHelper.get(this, "loadFileErrorStatus"));
 			}
 		}
 	}
@@ -116,8 +117,8 @@ public class FileHandler {
 	synchronized void forget() {
 		if(file != null) {
 			file = null;
-			controller.setWindowTitleAmendment(null);
-			controller.setStatusLabelText(MessageHelper.get(this, "fileForgottenStatus"));
+			view.setWindowTitleAmendment(null);
+			view.setStatusLabelText(MessageHelper.get(this, "fileForgottenStatus"));
 			modelChanged = false;
 		}
 	}
@@ -144,15 +145,15 @@ public class FileHandler {
 			byte[] data;
 			
 			file = addFileExtension(file);			
-			data = controller.getModel().saveBytes();
+			data = ByteView.saveBytes(view.getModel());
 			HexFilesUtility.saveSimpleHexFile(file, data);
-			controller.setWindowTitleAmendment(file.getAbsolutePath());
-			controller.setStatusLabelText(MessageHelper.get(this, "fileSavedStatus"));
+			view.setWindowTitleAmendment(file.getAbsolutePath());
+			view.setStatusLabelText(MessageHelper.get(this, "fileSavedStatus"));
 			modelChanged = false;
 		}
 		catch(IOException e) {
-			controller.showErrorDialog(MessageHelper.get(this, "fileSavingErrorTitle"), MessageHelper.get(this, "fileSavingErrorMessage", file, e.getLocalizedMessage()));
-			controller.setStatusLabelText(MessageHelper.get(this, "saveFileErrorStatus"));
+			view.showErrorDialog(MessageHelper.get(this, "fileSavingErrorTitle"), MessageHelper.get(this, "fileSavingErrorMessage", file, e.getLocalizedMessage()));
+			view.setStatusLabelText(MessageHelper.get(this, "saveFileErrorStatus"));
 		}
 	}
 

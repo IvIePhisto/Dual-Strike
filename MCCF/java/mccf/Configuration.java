@@ -155,7 +155,7 @@ public class Configuration {
 			showMessage(MessageHelper.get(Configuration.class, "configurationDefinitionNotFound", language, configurationDefinitionFile), language, true);
 
 		try {
-			ConfigurationEditor.newInstance(configurationDefinitionFile, language);
+			ConfigurationEditor.startSwingEditor(configurationDefinitionFile, language);
 		}
 		catch(ConfigurationDefException e) {
 			showMessage(e.getLocalizedMessage(), language, true);
@@ -180,11 +180,20 @@ public class Configuration {
 			}
 		}
 		else
-			configurationDefinitionFile = ConfigurationEditor.createFileURL(configurationPath);
+			configurationDefinitionFile = createFileURL(configurationPath);
 		
 		return configurationDefinitionFile;
 	}
 	
+	private static URL createFileURL(String path) throws Error {
+		try {
+			return new File(path).toURI().toURL();
+		}
+		catch(MalformedURLException e) {
+			throw new Error(e);
+		}
+	}
+
 	private static void transform(final String configurationPath, final String destinationPath, final boolean onlyAnnotate, final Locale language) {
 		URL configurationURL;
 

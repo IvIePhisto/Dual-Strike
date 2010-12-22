@@ -18,14 +18,14 @@ public class LoadFileActionListener implements ActionListener {
 	public void actionPerformed(final ActionEvent event) {
 		File file;
 		
-		fileHandler.getController().makeWindowInactive();
+		fileHandler.getView().makeWindowInactive();
 
-		if(fileHandler.getFileChooser().showOpenDialog(fileHandler.getController().getWindow()) == JFileChooser.APPROVE_OPTION) {
+		if(fileHandler.getFileChooser().showOpenDialog(fileHandler.getView().getWindow()) == JFileChooser.APPROVE_OPTION) {
 			file = fileHandler.getFileChooser().getSelectedFile();
 			
 			fileHandler.load(file);
 		}
 	
-		fileHandler.getController().makeWindowActive();
+		fileHandler.getView().makeWindowActive();
 	}
 }

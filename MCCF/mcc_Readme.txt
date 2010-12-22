@@ -34,6 +34,9 @@ the directory this file resides in.
 
 Version History
 ~~~~~~~~~~~~~~~
+1.3.0 - added "value" setting type
+      - major refactorings
+
 1.2.0 - added connection help message
       - small UI design changes
       - added support for imports using the processing instruction mcc:include

@@ -12,10 +12,9 @@ import mccf.definition.Option;
 import mccf.definition.Setting;
 
 
-public abstract class ChoiceModel extends SettingModel {
+public class ChoiceModel extends SettingModel {
 	private final int[] byteDividers;
 	private final int bitWidth;
-	private final boolean[][] optionValues;
 	private final int defaultValue;
 	private int currentOption;
 	private int optionCount;
@@ -32,7 +31,7 @@ public abstract class ChoiceModel extends SettingModel {
 	private final int[] enabledRequiredSettings;
 	
 	@SuppressWarnings("unchecked")
-	ChoiceModel(final ConfigurationModel configuration, final ChoiceSetting choiceSetting) {
+	public ChoiceModel(final ConfigurationModel configuration, final ChoiceSetting choiceSetting) {
 		super(configuration, choiceSetting.getByteNo(), choiceSetting.getBitNo());
 		List<Option> options;
 		int defaultValue;
@@ -48,7 +47,6 @@ public abstract class ChoiceModel extends SettingModel {
 		
 		options = choiceSetting.getOption();
 		optionCount = options.size();
-		optionValues = new boolean[optionCount][bitWidth];
 		option2ID = new String[optionCount];
 		requirements = new String[optionCount][];
 		requiredSettingsByOption = new List[optionCount];
@@ -62,14 +60,12 @@ public abstract class ChoiceModel extends SettingModel {
 		defaultID = ((Option)choiceSetting.getDefault()).getId();
 		
 		for(int i = 0; i < optionCount; i++) {
-			String bitPattern;
 			Option option;
 			String id;
 			List<JAXBElement<Object>> requirementsList;
 			int j;
 			
 			option = options.get(i);
-			bitPattern = option.getBitPattern();
 			id = option.getId();
 			option2ID[i] = id;
 			id2Option.put(id, i);
@@ -93,28 +89,28 @@ public abstract class ChoiceModel extends SettingModel {
 				setting = (Setting)requirement.getValue();
 				requirements[i][j++] = setting.getId();
 			}
-			
-			for(j = 0; j < bitWidth; j++) {
-				if(bitPattern.charAt(j) == '1')
-					optionValues[i][j] = true;
-				else
-					optionValues[i][j] = false;
-			}
 		}
 
 		currentOption = defaultValue;			
 		this.defaultValue = defaultValue;
 	}
 
-	synchronized void setCurrentOption(final int currentOption) throws IndexOutOfBoundsException {
-		if(currentOption < 0 || currentOption >= optionValues.length)
-			throw new IndexOutOfBoundsException();
-		
-		notifyRequiringSettings(this.currentOption, false);
-		notifyRequiredSettings(this.currentOption, false);
-		notifyRequiringSettings(currentOption, true);
-		notifyRequiredSettings(currentOption, true);
-		this.currentOption = currentOption;
+	public int[] getByteDividers() {
+		return byteDividers;
+	}
+
+	public int getBitWidth() {
+		return bitWidth;
+	}
+
+	public synchronized void setCurrentOption(final int currentOption) throws IndexOutOfBoundsException {
+		if(currentOption != this.currentOption) {
+			if(currentOption < 0 || currentOption >= optionCount)
+				throw new IndexOutOfBoundsException();
+			
+			this.currentOption = currentOption;
+			changed();
+		}
 	}
 
 	public synchronized final int getCurrentOption() {
@@ -131,17 +127,7 @@ public abstract class ChoiceModel extends SettingModel {
 	}
 	
 	@Override
-	synchronized void loadBytes(byte[] bytes) {
-		setCurrentOption(BytesUtility.loadIntBytes(bytes, byteDividers, getByteNo(), getBitNo(), bitWidth));
-	}
-
-	@Override
-	synchronized void saveBytes(byte[] bytes) {
-		BytesUtility.saveBytes(currentOption, bytes, byteDividers, getByteNo(), getBitNo(), bitWidth);
-	}
-	
-	@Override
-	synchronized void addRequiredBy(final String source, final String target) {
+	synchronized void addRequiredBy(final String source, final String target, final int value) {
 		ChoiceModel requiringChoice;
 		int requiredOption;
 		
@@ -168,7 +154,7 @@ public abstract class ChoiceModel extends SettingModel {
 				SettingModel requiredSetting;
 			
 				requiredSetting = getConfiguration().getSetting(requiredSettingID);
-				requiredSetting.addRequiredBy(requiringOptionID, requiredSettingID);
+				requiredSetting.addRequiredBy(requiringOptionID, requiredSettingID, -1);
 				requiredSettingsByOption[requiringOption].add(requiredSetting);
 				
 				if(requiredSetting instanceof ChoiceModel) {
@@ -260,6 +246,7 @@ public abstract class ChoiceModel extends SettingModel {
 			setting = requiredSettings.get(i);
 			
 			if(setting instanceof BooleanModel) {
+				/*TODO
 				BooleanModel booleanModel;
 				
 				booleanModel = (BooleanModel)setting;
@@ -268,6 +255,7 @@ public abstract class ChoiceModel extends SettingModel {
 					booleanModel.requiringSettingIsActive();
 				else
 					booleanModel.requiringSettingIsInactive();
+				*/
 			}
 			else if(setting instanceof ChoiceModel) {
 				ChoiceModel choiceModel;
@@ -287,9 +275,18 @@ public abstract class ChoiceModel extends SettingModel {
 		}
 	}
 	
-	abstract void setEnabled(int option);
-	abstract void setDisabled(int option);
-	abstract boolean isDisabled(int option);
+	public void setEnabled(int option) {
+		//TODO
+	}
+	
+	public void setDisabled(int option) {
+		//TODO
+	}
+	
+	public boolean isDisabled(int option) {
+		//TODO
+		return false;
+	}
 	
 	Integer getOption(final String id) {
 		return id2Option.get(id);
