@@ -94,4 +94,9 @@ If the directory this file is residing in is the current directory and the
 directory of a JDK is in the environment variable "JAVA_HOME", under windows
 the command to compile the model classes from the annotated configuration XML
 Schema is:
+
+-on Windows:
 "%JAVA_HOME%\bin\xjc" -d java -p mccf.definition java\mccf\annotated-configuration-def.xsd
+
+-on POSIX-compliant OS:
+xjc -d java -p mccf.definition java/mccf/annotated-configuration-def.xsd

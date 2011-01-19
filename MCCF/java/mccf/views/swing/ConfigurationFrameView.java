@@ -50,10 +50,9 @@ import mccf.definition.ChoiceSetting;
 import mccf.definition.Configuration;
 import mccf.definition.DescriptionImage;
 import mccf.definition.Info;
-import mccf.definition.Option;
+import mccf.definition.IntegerSetting;
 import mccf.definition.Page;
 import mccf.definition.PathInfo;
-import mccf.definition.ValueSetting;
 import mccf.file.FileHandler;
 import mccf.icons.IconHandler;
 import mccf.model.ConfigurationModel;
@@ -428,7 +427,7 @@ public class ConfigurationFrameView implements HyperlinkListener {
 		tabHelpLabel.setAlignmentY(Component.TOP_ALIGNMENT);
 		panel.add(tabHelpLabel);
 
-		for(Object setting: page.getChoiceOrBooleanOrValue()) {
+		for(Object setting: page.getChoiceOrBooleanOrInteger()) {
 			JComponent settingComponent;
 			
 			settingComponent = createSettingComponent(setting, pageModel);
@@ -472,7 +471,7 @@ public class ConfigurationFrameView implements HyperlinkListener {
 			setting = (ChoiceSetting)settingObject;
 			title = createLabel(setting.getTitle(), SwingViewUtility.TITLE_FONT);
 			helpString = extractLocalizedInfo(setting.getHelp(), true);
-			defaultOptionID = ((Option)setting.getDefault()).getId();
+			defaultOptionID = setting.getDefault();
 			
 			if(setting.getOption().size() <= 3)
 				selectorComponent = ChoiceRadioButtonsView.createPanel(this, setting, defaultOptionID, pageModel);
@@ -481,10 +480,10 @@ public class ConfigurationFrameView implements HyperlinkListener {
 			
 			imageLabel = createImageLabel(setting.getImage());
 		}
-		else if(settingObject instanceof ValueSetting) {
-			ValueSetting setting;
+		else if(settingObject instanceof IntegerSetting) {
+			IntegerSetting setting;
 			
-			setting = (ValueSetting)settingObject;
+			setting = (IntegerSetting)settingObject;
 			title = createLabel(setting.getTitle(), SwingViewUtility.TITLE_FONT);
 			helpString = extractLocalizedInfo(setting.getHelp(), true);
 			selectorComponent = createSettingComponent(setting, pageModel);

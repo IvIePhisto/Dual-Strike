@@ -11,57 +11,61 @@ package mccf.definition;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for PathInfo complex type.
+ * <p>Java class for Reference complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="PathInfo">
- *   &lt;simpleContent>
- *     &lt;extension base="&lt;urn:strike-devices:configuration>Info">
- *       &lt;attribute name="path" type="{urn:strike-devices:configuration}RelativePath" />
- *     &lt;/extension>
- *   &lt;/simpleContent>
+ * &lt;complexType name="Reference">
+ *   &lt;complexContent>
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *       &lt;attribute name="ref" use="required" type="{urn:strike-devices:configuration}SettingID" />
+ *     &lt;/restriction>
+ *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
  * 
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "PathInfo")
-public class PathInfo
-    extends Info
-{
+@XmlType(name = "Reference")
+@XmlSeeAlso({
+    IntegerReference.class,
+    BooleanReference.class,
+    ChoiceReference.class
+})
+public abstract class Reference {
 
-    @XmlAttribute
-    protected String path;
+    @XmlAttribute(required = true)
+    protected String ref;
 
     /**
-     * Gets the value of the path property.
+     * Gets the value of the ref property.
      * 
      * @return
      *     possible object is
      *     {@link String }
      *     
      */
-    public String getPath() {
-        return path;
+    public String getRef() {
+        return ref;
     }
 
     /**
-     * Sets the value of the path property.
+     * Sets the value of the ref property.
      * 
      * @param value
      *     allowed object is
      *     {@link String }
      *     
      */
-    public void setPath(String value) {
-        this.path = value;
+    public void setRef(String value) {
+        this.ref = value;
     }
 
 }

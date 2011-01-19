@@ -5,11 +5,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
-import javax.xml.bind.JAXBElement;
-
 import mccf.definition.ChoiceSetting;
 import mccf.definition.Option;
-import mccf.definition.Setting;
+import mccf.definition.OptionRequires;
 
 
 public class ChoiceModel extends SettingModel {
@@ -57,12 +55,12 @@ public class ChoiceModel extends SettingModel {
 		enabledRequiredSettings = new int[optionCount];
 		id2Option = new HashMap<String, Integer>(optionCount, 1);
 		defaultValue = 0;
-		defaultID = ((Option)choiceSetting.getDefault()).getId();
+		defaultID = choiceSetting.getDefault();
 		
 		for(int i = 0; i < optionCount; i++) {
 			Option option;
 			String id;
-			List<JAXBElement<Object>> requirementsList;
+			List<OptionRequires> requirementsList;
 			int j;
 			
 			option = options.get(i);
@@ -83,11 +81,8 @@ public class ChoiceModel extends SettingModel {
 			requiringOptions[i] = new Vector<Integer>();
 			j = 0;
 			
-			for(JAXBElement<Object> requirement: requirementsList) {
-				Setting setting;
-				
-				setting = (Setting)requirement.getValue();
-				requirements[i][j++] = setting.getId();
+			for(OptionRequires requirement: requirementsList) {
+				//TODO
 			}
 		}
 
@@ -288,7 +283,14 @@ public class ChoiceModel extends SettingModel {
 		return false;
 	}
 	
-	Integer getOption(final String id) {
-		return id2Option.get(id);
+	public int getOption(final String id) {
+		Integer option;
+		
+		option = id2Option.get(id);
+		
+		if(option == null)
+			option = -1;
+		
+		return option;
 	}
 }

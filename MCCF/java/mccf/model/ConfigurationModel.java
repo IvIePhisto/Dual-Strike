@@ -8,6 +8,7 @@ import java.util.Set;
 import java.util.Vector;
 
 import mccf.definition.Configuration;
+import mccf.definition.IntegerDomain;
 
 
 public class ConfigurationModel {
@@ -16,13 +17,20 @@ public class ConfigurationModel {
 	private final byte device;
 	private final byte version;
 	private final Map<String, SettingModel> settingsByID = new HashMap<String, SettingModel>();
+	private final Map<String, IntegerDomainModel> valueDomainsByID = new HashMap<String, IntegerDomainModel>();
 	private final Set<SettingModel> settingsSet = new HashSet<SettingModel>();
 	
 	public ConfigurationModel(final Configuration configuration) {
 		this.byteWidth = (int)configuration.getByteWidth();
 		this.device = configuration.getDevice();
 		this.version = configuration.getVersion();
-		// TODO load value domains
+		
+		for(IntegerDomain valueDomain: configuration.getIntegerDomain()) {
+			IntegerDomainModel valueDomainModel;
+			
+			valueDomainModel = new IntegerDomainModel(valueDomain);
+			valueDomainsByID.put(valueDomain.getId(), valueDomainModel);
+		}
 	}
 
 	public byte getDevice() {
@@ -58,6 +66,10 @@ public class ConfigurationModel {
 	synchronized void registerSetting(final String id, final SettingModel setting) {
 		settingsByID.put(id, setting);
 		settingsSet.add(setting);
+	}
+
+	public synchronized IntegerDomainModel getValueDomain(final String id) {
+		return  valueDomainsByID.get(id);
 	}
 
 	public synchronized SettingModel getSetting(final String id) {

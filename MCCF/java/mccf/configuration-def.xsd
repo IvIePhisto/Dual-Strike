@@ -1,6 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:strike-devices:configuration" xmlns:c="urn:strike-devices:configuration" elementFormDefault="qualified">
-  <xs:element name="configuration" type="c:Configuration"/>
+  <xs:element name="configuration" type="c:Configuration">
+    <xs:key name="id_key">
+      <xs:selector xpath=".//*"/>
+      <xs:field xpath="@id"/>
+    </xs:key>
+    <xs:unique name="id_unique">
+      <xs:selector xpath=".//*"/>
+      <xs:field xpath="@id"/>
+    </xs:unique>
+    <xs:unique name="prefix_unique">
+      <xs:selector xpath=".//*"/>
+      <xs:field xpath="@prefix"/>
+    </xs:unique>
+    <xs:keyref name="ref" refer="c:id_key">
+      <xs:selector xpath=".//*"/>
+      <xs:field xpath="@ref"/>
+    </xs:keyref>
+    <xs:keyref name="domain" refer="c:id_key">
+      <xs:selector xpath=".//c:integer"/>
+      <xs:field xpath="@domain"/>
+    </xs:keyref>
+    <xs:keyref name="default_ref" refer="c:id_key">
+      <xs:selector xpath=".//c:choice"/>
+      <xs:field xpath="@default"/>
+    </xs:keyref>
+  </xs:element>
 
   <xs:complexType name="Configuration">
     <xs:sequence>
@@ -9,11 +34,11 @@
       <xs:group ref="c:Infos"/>
       <xs:element name="connectionHelp" maxOccurs="unbounded" type="c:Info"/>
       <xs:element name="page" type="c:Page" maxOccurs="unbounded"/>
-      <xs:element name="valueDomain" maxOccurs="unbounded" type="c:ValueDomain"/>
+      <xs:element name="integerDomain" maxOccurs="unbounded" type="c:IntegerDomain"/>
     </xs:sequence>
     <xs:attribute name="def-lang-version" fixed="2" use="required" type="xs:int"/>
     <xs:attribute name="lang" type="xs:language" use="required"/>
-    <xs:attribute name="prefix" type="xs:ID" use="required"/>
+    <xs:attribute name="prefix" type="c:SettingID" use="required"/>
     <xs:attribute name="icon-path" type="c:RelativePath"/>
   </xs:complexType>
   
@@ -52,7 +77,7 @@
       <xs:choice maxOccurs="unbounded">
         <xs:element name="choice" type="c:ChoiceSetting"/>
         <xs:element name="boolean" type="c:BooleanSetting"/>
-        <xs:element name="value" type="c:ValueSetting"/>
+        <xs:element name="integer" type="c:IntegerSetting"/>
       </xs:choice>
     </xs:sequence>
   </xs:complexType>
@@ -63,7 +88,7 @@
       <xs:element name="image" type="c:DescriptionImage" minOccurs="0"/>
       <xs:element name="option" type="c:Option" maxOccurs="unbounded"/>
     </xs:sequence>
-    <xs:attribute name="default" type="xs:IDREF" use="required">
+    <xs:attribute name="default" type="c:SettingID" use="required">
       <xs:annotation><xs:documentation>
         This attribute has to refer to a option of the containing choice.
       </xs:documentation></xs:annotation>
@@ -71,26 +96,38 @@
     <xs:attribute name="prefix" type="c:SettingID"/>
   </xs:complexType>
 
+  <xs:complexType name="Option">
+    <xs:complexContent>
+      <xs:extension base="c:Setting">
+        <xs:sequence>
+          <xs:element name="requires" type="c:OptionRequires" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>      
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
   <xs:complexType name="BooleanSetting">
     <xs:complexContent>
       <xs:extension base="c:Setting">
         <xs:sequence>
           <xs:element name="image" type="c:DescriptionImage" minOccurs="0"/>
+          <xs:element name="requires" type="c:BooleanRequires" minOccurs="0" maxOccurs="unbounded"/>
         </xs:sequence>
         <xs:attribute name="default" type="xs:boolean"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
   
-  <xs:complexType name="ValueSetting">
+  <xs:complexType name="IntegerSetting">
     <xs:complexContent>
       <xs:extension base="c:Setting">
         <xs:sequence>
           <xs:element name="image" type="c:DescriptionImage" minOccurs="0"/>
+          <xs:element name="requires" type="c:IntegerRequires" minOccurs="0" maxOccurs="unbounded"/>
         </xs:sequence>
-        <xs:attribute name="domain" type="xs:IDREF" use="required">
+        <xs:attribute name="domain" type="c:SettingID" use="required">
           <xs:annotation><xs:documentation>
-            The element referenced must be of the "ValueDomain" type.
+            The element referenced must be of the "IntegerDomain" type.
           </xs:documentation></xs:annotation>
         </xs:attribute>
         <xs:attribute name="default" use="required">
@@ -106,48 +143,14 @@
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
-  
-  
 
-  <xs:complexType name="Option">
-    <xs:complexContent>
-      <xs:extension base="c:Setting">
-        <xs:sequence>
-          <xs:element name="requires" type="xs:IDREF" minOccurs="0" maxOccurs="unbounded">
-            <xs:annotation><xs:documentation>
-              An element of this kind imposes two constraints on the configuration:
-                -The containing option can only be activated if the referred
-                 setting is set, i.e. in case of a boolean it is enabled and
-                 in case of an option it is the current selection of its
-                 containing choice.
-                -If the containing option is the current selection of its
-                 containing choice, the referred setting is set fix, i.e.
-                 in case of a boolean it is not disengageable and in case of an
-                 option the other options of its containing choice are not
-                 selectable.
-                 
-              To prevent cascading changes and clashing requirements, the
-              following cases must not occur (which the application has to check):
-                -A choice A contains an option which is being required by a
-                 choice B (A may be equal to B) and an option of A requires a
-                 setting.
-                -In one choice for a pair of options A and B, A is required
-                 by a choice C, B is required by a choice D and C and D are
-                 different choices.
-            </xs:documentation></xs:annotation>
-          </xs:element>
-        </xs:sequence>      
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-
-  <xs:complexType name="Setting" >
+  <xs:complexType name="Setting" abstract="true">
     <xs:group ref="c:Infos"/>
     <xs:attribute name="id" type="c:SettingID" use="required"/>
   </xs:complexType>
     
   <xs:simpleType name="SettingID">
-    <xs:restriction base="xs:ID">
+    <xs:restriction base="xs:string">
       <xs:pattern value="(\p{Lu}|_|\d)+"/>
     </xs:restriction>
   </xs:simpleType>
@@ -163,46 +166,92 @@
     </xs:restriction>
   </xs:simpleType>
   
-  <xs:complexType name="Requires">
+  <xs:complexType name="Reference" abstract="true">
+    <xs:attribute name="ref" type="c:SettingID" use="required"/>
+  </xs:complexType>
+  
+  <xs:complexType name="BooleanReference">
+    <xs:complexContent>
+      <xs:extension base="c:Reference">
+        <xs:attribute name="value" type="xs:boolean" use="required"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  
+  <xs:complexType name="ChoiceReference">
+    <xs:complexContent>
+      <xs:extension base="c:Reference">
+        <xs:attribute name="option" type="xs:int" use="required"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="IntegerReference">
+    <xs:complexContent>
+      <xs:extension base="c:Reference">
+        <xs:attribute name="value" type="xs:int" use="required"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  
+  <xs:group name="References">
+    <xs:choice>
+      <xs:element name="boolean" type="c:BooleanReference"/>
+      <xs:element name="choice" type="c:ChoiceReference"/>
+      <xs:element name="integer" type="c:IntegerReference"/>
+    </xs:choice>
+  </xs:group>
+
+  <xs:complexType name="Requires" abstract="true">
     <xs:annotation><xs:documentation>
       An element of this kind imposes two constraints on the configuration:
         -The containing option can only be activated if the referred
-         setting is set, i.e. in case of a boolean it is enabled and
-         in case of an option it is the current selection of its
-         containing choice.
+         setting is set.
         -If the containing option is the current selection of its
-         containing choice, the referred setting is set fix, i.e.
-         in case of a boolean it is not disengageable and in case of an
-         option the other options of its containing choice are not
-         selectable.
+         containing choice, the referred setting is set fix, e.g. all other
+         settings are deactivated.
          
       To prevent cascading changes and clashing requirements, the
       following cases must not occur (which the application has to check):
-        -A choice A contains an option which is being required by a
-         choice B (A may be equal to B) and an option of A requires a
-         setting.
-        -In one choice for a pair of options A and B, A is required
-         by a choice C, B is required by a choice D and C and D are
-         different choices.
-      
-      The attribute "requiredValue" must not only be used if the ID reference
-      in the content refers to a element of the type "Value".
+        -A setting A is being required by a setting B (A may be equal to B)
+         and A requires a setting different from B.
+        -For a pair of settings A and B, A is required
+         by a setting C, B is required by a setting D and C and D are
+         different settings.
     </xs:documentation></xs:annotation>
-    <xs:simpleContent>
-      <xs:extension base="xs:IDREF">
-        <xs:attribute name="requiredValue" type="xs:int"/>
-      </xs:extension>
-    </xs:simpleContent>
+    <xs:group ref="c:References"/>
   </xs:complexType>
   
-  <xs:complexType name="ValueDomain">
+  <xs:complexType name="OptionRequires">
+    <xs:complexContent>
+      <xs:extension base="c:Requires"/>
+    </xs:complexContent>
+  </xs:complexType>
+  
+  <xs:complexType name="BooleanRequires">
+    <xs:complexContent>
+      <xs:extension base="c:Requires">
+        <xs:attribute name="value" type="xs:boolean" use="required"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="IntegerRequires">
+    <xs:complexContent>
+      <xs:extension base="c:Requires">
+        <xs:attribute name="value" type="xs:int" use="required"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  
+  <xs:complexType name="IntegerDomain">
     <xs:sequence>
-      <xs:element name="entry" type="c:ValueDomainEntry" maxOccurs="255"/>
+      <xs:element name="entry" type="c:IntegerDomainEntry" maxOccurs="255"/>
     </xs:sequence>
     <xs:attribute name="id" type="c:SettingID"/>
   </xs:complexType>
   
-  <xs:complexType name="ValueDomainEntry">
+  <xs:complexType name="IntegerDomainEntry">
     <xs:group ref="c:Infos" minOccurs="0"/>
   </xs:complexType>
 </xs:schema>

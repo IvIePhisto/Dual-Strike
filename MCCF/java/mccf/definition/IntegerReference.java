@@ -15,53 +15,45 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for PathInfo complex type.
+ * <p>Java class for IntegerReference complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="PathInfo">
- *   &lt;simpleContent>
- *     &lt;extension base="&lt;urn:strike-devices:configuration>Info">
- *       &lt;attribute name="path" type="{urn:strike-devices:configuration}RelativePath" />
+ * &lt;complexType name="IntegerReference">
+ *   &lt;complexContent>
+ *     &lt;extension base="{urn:strike-devices:configuration}Reference">
+ *       &lt;attribute name="value" use="required" type="{http://www.w3.org/2001/XMLSchema}int" />
  *     &lt;/extension>
- *   &lt;/simpleContent>
+ *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
  * 
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "PathInfo")
-public class PathInfo
-    extends Info
+@XmlType(name = "IntegerReference")
+public class IntegerReference
+    extends Reference
 {
 
-    @XmlAttribute
-    protected String path;
+    @XmlAttribute(required = true)
+    protected int value;
 
     /**
-     * Gets the value of the path property.
+     * Gets the value of the value property.
      * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
      */
-    public String getPath() {
-        return path;
+    public int getValue() {
+        return value;
     }
 
     /**
-     * Sets the value of the path property.
+     * Sets the value of the value property.
      * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
      */
-    public void setPath(String value) {
-        this.path = value;
+    public void setValue(int value) {
+        this.value = value;
     }
 
 }

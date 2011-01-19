@@ -1,63 +1,36 @@
 package mccf.model;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.JComboBox;
-
-import mccf.definition.ValueSetting;
-import mccf.views.swing.ItemDisablerListCellRenderer;
+import mccf.definition.IntegerSetting;
 
 
-public class ValueModel extends SettingModel implements ActionListener {
+public class IntegerModel extends SettingModel {
+	private final IntegerDomainModel valueDomain;
 	private final int[] byteDividers;
 	private final int bitWidth;
 	private final int defaultValue;
-	private int currentValue;
+	private int value;
 
-	ValueModel(final ConfigurationModel configuration, final ValueSetting valueSetting) {
-		super(configuration, valueSetting.getByteNo(), valueSetting.getBitNo());
+	IntegerModel(final ConfigurationModel configuration, final IntegerSetting integerSetting) {
+		super(configuration, integerSetting.getByteNo(), integerSetting.getBitNo());
 		
 		int i;
 		
-		defaultValue = (int)valueSetting.getDefault();
-		bitWidth = (int)valueSetting.getBitWidth();
+		defaultValue = (int)integerSetting.getDefault();
+		value = defaultValue;
+		bitWidth = (int)integerSetting.getBitWidth();
 		
 		i = 0;
-		byteDividers = new int[valueSetting.getByteDividers().size()];
+		byteDividers = new int[integerSetting.getByteDividers().size()];
 		
-		for(Long byteDivider: valueSetting.getByteDividers())
+		for(Long byteDivider: integerSetting.getByteDividers())
 			byteDividers[i++] = byteDivider.intValue();
-	}
-	
-	@Override
-	public synchronized void actionPerformed(ActionEvent e) {
-		int selectedIndex;
 		
-		selectedIndex = comboBox.getSelectedIndex();
-
-		if(listCellRenderer.isItemDisabled(selectedIndex)) {
-			comboBox.setSelectedIndex(currentValue);
-		}
-		else {
-			if(selectedIndex != currentValue) {
-				setCurrentValue(selectedIndex);
-				getConfiguration().getFileHandler().setModelChanged();
-			}
-		}
-	}
-
-	public synchronized void setCurrentValue(final int currentValue) throws IndexOutOfBoundsException {
-		if(this.currentValue != currentValue) {
-			this.currentValue = currentValue;
-			comboBox.setSelectedIndex(currentValue);
-			getConfiguration().getFileHandler().setModelChanged();
-		}
+		valueDomain = configuration.getValueDomain(integerSetting.getDomain());
 	}
 
 	@Override
 	void loadDefaults() {
-		setCurrentValue(defaultValue);
+		setValue(defaultValue);
 	}
 
 
@@ -104,5 +77,35 @@ public class ValueModel extends SettingModel implements ActionListener {
 	void addRequiredBy(String source, String requirement, final int value) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	public IntegerDomainModel getValueDomain() {
+		return valueDomain;
+	}
+
+	public int getValue() {
+		return value;
+	}
+
+	public void setValue(int value) {
+		if(value < 0 || value > valueDomain.getEntryCount())
+			throw new Error(String.format("Value %d is out of range, must be greater than 0 and less than or equal %d.", value, valueDomain.getEntryCount()));
+		
+		if(this.value != value) {
+			this.value = value;
+			changed();
+		}
+	}
+
+	public int[] getByteDividers() {
+		return byteDividers;
+	}
+
+	public int getBitWidth() {
+		return bitWidth;
+	}
+
+	public int getDefaultValue() {
+		return defaultValue;
 	}
 }

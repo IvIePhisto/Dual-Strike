@@ -5,7 +5,7 @@ import java.util.Vector;
 
 import mccf.definition.BooleanSetting;
 import mccf.definition.ChoiceSetting;
-import mccf.definition.ValueSetting;
+import mccf.definition.IntegerSetting;
 
 public class PageModel  {
 	private final ConfigurationModel configuration;
@@ -37,8 +37,13 @@ public class PageModel  {
 		return booleanModel;
 	}
 	
-	public synchronized void addValue(final ValueSetting valueSetting) {
-		//TODO
+	public synchronized IntegerModel createValue(final IntegerSetting integerSetting) {
+		IntegerModel valueModel;
+		
+		valueModel = new IntegerModel(configuration, integerSetting);
+		settings.add(valueModel);
+		
+		return valueModel;
 	}
 	
 	public synchronized void loadDefaults() {

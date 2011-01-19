@@ -50,9 +50,9 @@
       </xs:complexContent>
     </xs:complexType>
 
-    <xs:complexType name="ValueSetting">
+    <xs:complexType name="IntegerSetting">
       <xs:complexContent>
-        <xs:extension base="c:ValueSetting">
+        <xs:extension base="c:IntegerSetting">
           <xs:attributeGroup ref="c:Position"/>
           <xs:attribute name="bit-width" type="xs:unsignedInt"  form="unqualified" use="required"/>
           <xs:attribute name="byte-dividers" form="unqualified">

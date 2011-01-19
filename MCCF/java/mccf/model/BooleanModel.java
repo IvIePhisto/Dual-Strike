@@ -6,14 +6,12 @@ import mccf.definition.BooleanSetting;
 public class BooleanModel extends SettingModel {
 	private final boolean defaultValue;
 	private boolean value;
-	private final String id;
 	
 	BooleanModel(final ConfigurationModel configuration, final BooleanSetting booleanSetting) {
 		super(configuration, booleanSetting.getByteNo(), booleanSetting.getBitNo());
 		defaultValue = booleanSetting.isDefault();
 		value = defaultValue;
-		this.id = booleanSetting.getId();
-		configuration.registerSetting(id, this);
+		configuration.registerSetting(booleanSetting.getId(), this);
 	}
 
 	public synchronized boolean getValue() {
