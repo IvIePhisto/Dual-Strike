@@ -1,0 +1,76 @@
+body {
+  padding: 0;
+  margin: 0;
+}
+
+a img {
+  border: none;
+}
+
+h1, h2, h3, h4, h5, h6, h7 {
+  font-family: BladeRunnerMovieFontRegular;
+}
+
+#header {
+  font-family: BladeRunnerMovieFontRegular;
+  color: white;
+  background: rgb(0,50,150);
+  font-size: 300%;
+  padding: 0.2em;
+  border-radius: 0 0 0.5em 0;
+  moz-border-radius: 0 0 0.5em 0;
+  text-align: center;
+}
+
+#navigation {
+  list-style-type: none;
+  font-family: BladeRunnerMovieFontRegular;
+  background: rgb(0,50,150);
+  float: left;
+  padding: 0.5em;
+  margin: 0;
+  border-radius: 0 0 1.5em 0;
+  moz-border-radius: 0 0 1.5em 0;
+}
+
+#navigation a {
+  text-decoration: none;
+  color: inherit;
+}
+
+#navigation ul {
+  list-style-type: disc;
+}
+
+.nav-item {
+  color: rgb(0,50,150);
+  background: white;
+  border-radius: 1em 0;
+  moz-border-radius: 1em 0;
+  padding: 0.2em 0.5em;
+  margin-bottom: 0.5em;
+}
+
+.nav-current {
+  color: black;
+}
+
+#content {
+  float: left;
+  padding: 1em 2em;
+  vertical-align: bottom;
+}
+
+#footer {
+  clear: both;
+  text-align: left;
+  font-size: 80%;
+  color: gray;
+  padding: 1em;
+}
+
+.warning {
+	border: medium red solid;
+	color: red;
+	padding: 0.5em;
+}
