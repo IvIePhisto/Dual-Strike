@@ -18,7 +18,7 @@ h1, h2, h3, h4, h5, h6, h7 {
   font-size: 300%;
   padding: 0.2em;
   border-radius: 0 0 0.5em 0;
-  moz-border-radius: 0 0 0.5em 0;
+  -moz-border-radius: 0 0 0.5em 0;
   text-align: center;
 }
 
@@ -30,7 +30,7 @@ h1, h2, h3, h4, h5, h6, h7 {
   padding: 0.5em;
   margin: 0;
   border-radius: 0 0 1.5em 0;
-  moz-border-radius: 0 0 1.5em 0;
+  -moz-border-radius: 0 0 1.5em 0;
 }
 
 #navigation a {
@@ -46,7 +46,7 @@ h1, h2, h3, h4, h5, h6, h7 {
   color: rgb(0,50,150);
   background: white;
   border-radius: 1em 0;
-  moz-border-radius: 1em 0;
+  -moz-border-radius: 1em 0;
   padding: 0.2em 0.5em;
   margin-bottom: 0.5em;
 }
