@@ -8,11 +8,16 @@ import mccf.model.IntegerModel;
 public class IntegerReferenceModel extends ReferenceModel<IntegerModel> {
 	private final int value;
 
-	IntegerReferenceModel(final ConfigurationModel configuration, final IntegerReference reference) {
+	public IntegerReferenceModel(final ConfigurationModel configuration, final IntegerReference reference) {
 		super(configuration, reference.getRef(), IntegerModel.class);
 		this.value = reference.getValue();
 	}
 	
+	public IntegerReferenceModel(final ConfigurationModel configuration, final IntegerModel referencedSetting, final int value) {
+		super(configuration, referencedSetting.getID(), referencedSetting);
+		this.value = value;
+	}
+
 	public int getValue() {
 		return value;
 	}

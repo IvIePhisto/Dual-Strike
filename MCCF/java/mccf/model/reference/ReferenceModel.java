@@ -16,6 +16,13 @@ public abstract class ReferenceModel<SettingType extends SettingModel> {
 		this.settingClass = settingClass;
 	}
 	
+	ReferenceModel(final ConfigurationModel configuration, final String id, final SettingType referencedSetting) {
+		this.configuration = configuration;
+		this.id = id;
+		this.referencedSetting = referencedSetting;
+		settingClass = referencedSetting.getClass();
+	}
+	
 	ConfigurationModel getConfiguration() {
 		return configuration;
 	}

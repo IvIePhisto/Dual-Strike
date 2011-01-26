@@ -9,6 +9,7 @@ public class IntegerModel extends SettingModel {
 	private final int bitWidth;
 	private final int defaultValue;
 	private int value;
+	private final String id;
 
 	IntegerModel(final ConfigurationModel configuration, final IntegerSetting integerSetting) {
 		super(configuration, integerSetting.getByteNo(), integerSetting.getBitNo());
@@ -18,6 +19,7 @@ public class IntegerModel extends SettingModel {
 		defaultValue = (int)integerSetting.getDefault();
 		value = defaultValue;
 		bitWidth = (int)integerSetting.getBitWidth();
+		id = integerSetting.getId();
 		
 		i = 0;
 		byteDividers = new int[integerSetting.getByteDividers().size()];
@@ -107,5 +109,9 @@ public class IntegerModel extends SettingModel {
 
 	public int getDefaultValue() {
 		return defaultValue;
+	}
+
+	public String getID() {
+		return id;
 	}
 }
