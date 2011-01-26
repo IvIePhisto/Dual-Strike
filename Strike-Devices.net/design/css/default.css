@@ -1,5 +1,5 @@
 body {
-  padding: 0;
+  padding: 1em;
   margin: 0;
 }
 
@@ -17,8 +17,8 @@ h1, h2, h3, h4, h5, h6, h7 {
   background: rgb(0,50,150);
   font-size: 300%;
   padding: 0.2em;
-  border-radius: 0 0 0.5em 0;
-  -moz-border-radius: 0 0 0.5em 0;
+  border-radius: 0.5em 0 0.5em 0;
+  -moz-border-radius: 0.5em 0 0.5em 0;
   text-align: center;
 }
 
@@ -27,7 +27,8 @@ h1, h2, h3, h4, h5, h6, h7 {
   font-family: BladeRunnerMovieFontRegular;
   background: rgb(0,50,150);
   float: left;
-  padding: 0.5em;
+  width: 15em;
+  padding: 0 0.5em;
   margin: 0;
   border-radius: 0 0 1.5em 0;
   -moz-border-radius: 0 0 1.5em 0;
@@ -56,7 +57,7 @@ h1, h2, h3, h4, h5, h6, h7 {
 }
 
 #content {
-  float: left;
+  margin-left: 16em;
   padding: 1em 2em;
   vertical-align: bottom;
 }
