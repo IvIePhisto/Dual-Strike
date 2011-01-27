@@ -7,40 +7,82 @@ a img {
   border: none;
 }
 
+/*
+Color Scheme Designer 3: http://colorschemedesigner.com/#3s31Jw0w0w0w0
+*/
+
 a:link {
-  color: rgb(225,147,0);
+  color: #FF5900;
 }
 
 a:visited {
-  color: rgb(169,125,42);
+  color: #A63A00;
 }
 
-h1, h2, h3, h4, h5, h6, h7 {
+h1, h2, h3, h4, h5, h6, h7,
+#header, #navigation, .nav-item {
   font-family: BladeRunnerMovieFontRegular;
+}
+
+#header, #navigation, #content, .nav-item {
+  border: solid #63ADD0;
 }
 
 #header {
-  font-family: BladeRunnerMovieFontRegular;
+  -moz-box-shadow: 0.1em 0.1em 0.1em #235D79;
+  -webkit-box-shadow: 0.1em 0.1em 0.1em #235D79;
+  box-shadow: 0.1em 0.1em 0.1em #235D79;
+  /* For IE 8 */
+  -ms-filter: "progid:DXImageTransform.Microsoft.Shadow(Strength=4, Direction=135, Color='#235D79')";
+  /* For IE 5.5 - 7 */
+  filter: progid:DXImageTransform.Microsoft.Shadow(Strength=4, Direction=135, Color='#235D79');
+}
+
+#navigation, #content {
+  -moz-box-shadow: 0.3em 0.3em 0.3em #235D79;
+  -webkit-box-shadow: 0.3em 0.3em 0.3em #235D79;
+  box-shadow: 0.3em 0.3em 0.3em #235D79;
+  /* For IE 8 */
+  -ms-filter: "progid:DXImageTransform.Microsoft.Shadow(Strength=4, Direction=135, Color='#235D79')";
+  /* For IE 5.5 - 7 */
+  filter: progid:DXImageTransform.Microsoft.Shadow(Strength=4, Direction=135, Color='#235D79');
+}
+
+#header, #navigation{
+  background: #034769;
+}
+
+#content, .nav-item {
+  background: white;
+}
+
+.nav-item, #footer {
+  color: #034769;
+}
+
+#content, #navigation {
+  border-width: 0.3em;
+  border-radius: 1.5em 0.6em;
+  -moz-border-radius: 1.5em 0.6em;
+  padding: 0.5em;
+}
+
+#header {
   color: white;
-  background: rgb(0,50,150);
   font-size: 300%;
   padding: 0.2em;
-  margin: 0;
-  border-radius: 0.5em 0 0.5em 0;
-  -moz-border-radius: 0.5em 0 0.5em 0;
+  margin: 0 0 0.2em;
+  border-width: 0.1em;
+  border-radius: 0.5em 0.2em;
+  -moz-border-radius: 0.5em 0.2em;
   text-align: center;
 }
 
 #navigation {
   list-style-type: none;
-  font-family: BladeRunnerMovieFontRegular;
-  background: rgb(0,50,150);
   float: left;
   width: 15em;
-  padding: 0 0.5em;
   margin: 0;
-  border-radius: 0 0 1.5em 0;
-  -moz-border-radius: 0 0 1.5em 0;
 }
 
 #navigation a {
@@ -53,10 +95,8 @@ h1, h2, h3, h4, h5, h6, h7 {
 }
 
 .nav-item {
-  color: rgb(0,50,150);
-  background: white;
-  border-radius: 1em 0;
-  -moz-border-radius: 1em 0;
+  border-radius: 0.75em 0.3em;
+  -moz-border-radius: 0.75em 0.3em;
   padding: 0.2em 1em;
   margin-bottom: 0.5em;
 }
@@ -65,17 +105,14 @@ h1, h2, h3, h4, h5, h6, h7 {
   color: black;
 }
 
-#content {
-  margin-left: 16em;
-  padding: 1em 2em;
-  vertical-align: bottom;
+#content-container {
+  margin-left: 17em;
 }
 
 #footer {
   clear: both;
   text-align: left;
   font-size: 80%;
-  color: gray;
   padding: 1em 0;
 }
 
