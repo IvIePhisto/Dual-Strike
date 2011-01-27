@@ -1,3 +1,30 @@
+/* cookie handling */
+
+function createCookie(name, value, days) {
+	if (days) {
+		var date = new Date();
+		date.setTime(date.getTime()+(days*24*60*60*1000));
+		var expires = "; expires="+date.toGMTString();
+	}
+	else var expires = "";
+	document.cookie = name+"="+value+expires+"; path=/";
+}
+
+function readCookie(name) {
+	var nameEQ = name + "=";
+	var ca = document.cookie.split(';');
+	for(var i=0;i < ca.length;i++) {
+		var c = ca[i];
+		while (c.charAt(0)==' ') c = c.substring(1,c.length);
+		if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+	}
+	return null;
+}
+
+function eraseCookie(name) {
+	createCookie(name,"",-1);
+}
+
 /* mobile/normal version switcher */
 
 var viewportWidth = $(window).width();
@@ -18,6 +45,7 @@ function switch2mobile() {
   $("#navigation").show();
   $("#switch2mobile").hide();
   $("#switch2normal").show();
+  createCookie("mobile", "true", 7);
 }
 
 function switch2normal() {
@@ -27,11 +55,19 @@ function switch2normal() {
   $("#stylesheet_mobile").removeAttr("rel");
   $("#switch2normal").hide();
   $("#switch2mobile").show();
+  createCookie("mobile", "false", 7);
 }
 
 /* initialization on document load */
-$(document).ready(function() {
-  $("#javascript-warning").remove();
+
+function initMobileSwitcher() {
+  var mobile = readCookie("mobile");
+  
+  if(mobile == null)
+    mobile = screen.width <= 480;
+  else
+    mobile = mobile == "true";
+
   $("#stylesheet_mobile").removeAttr("media");
   $("#footer").prepend(
     '<a id="switch2mobile" href="#body" class="version_switcher" style="display:none">switch to mobile version</span>' +
@@ -40,10 +76,14 @@ $(document).ready(function() {
   $("#switch2mobile").click(switch2mobile);
   $("#switch2normal").click(switch2normal);
   
-  if(screen.width <= 480)
+  if(mobile)
     switch2mobile();
   else
     switch2normal();
+}
 
+$(document).ready(function() {
+  $("#javascript-warning").remove();
+  initMobileSwitcher();
 });
 
