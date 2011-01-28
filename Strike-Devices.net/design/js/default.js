@@ -89,17 +89,19 @@ function initMobileSwitcher() {
     set2normal();
 }
 
-function showNavItem() {
- $(this).children(".nav-inactive").slideDown();
-}
+function toggleNavItem(navItem) {
+ $(this).parent().children(".nav-inactive").slideToggle();
 
-function hideNavItem(navItem) {
- $(this).children(".nav-inactive").slideUp();
+ if($(this).html() == "+")
+   $(this).html("-");
+ else
+   $(this).html("+");
 }
 
 $(document).ready(function() {
   $("#javascript-warning").remove();
-  $(".nav-item").hover(showNavItem, hideNavItem);
+  $(".nav-item").has(".nav-inactive").prepend("<a href='javascript:;' class='nav-expander'>+</a>")
+  $(".nav-expander").click(toggleNavItem);
   initMobileSwitcher();
 });
 
