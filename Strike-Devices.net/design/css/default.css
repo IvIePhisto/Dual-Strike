@@ -58,6 +58,15 @@ h1, h2, h3, h4, h5, h6, h7,
   color: #034769;
 }
 
+#header {
+  border-width: 0.1em;
+  border-radius: 0.5em 0.2em;
+  -moz-border-radius: 0.5em 0.2em;
+  behavior: url(js/PIE.htc);
+  padding: 0.2em;
+  margin: 0 0 0.4em;
+}
+
 #content, #navigation {
   border-width: 0.3em;
   border-radius: 1.5em 0.6em;
@@ -66,15 +75,32 @@ h1, h2, h3, h4, h5, h6, h7,
   padding: 0.5em;
 }
 
+.nav-item-main {
+  border-radius: 0.75em 0.3em;
+  -moz-border-radius: 0.75em 0.3em;
+  behavior: url(js/PIE.htc);
+  padding: 0.2em 1em !important;
+  margin: 0 0 0.2em !important;
+}
+
+.nav-sub {
+  padding: 0 0 0 inherit;
+  margin: 0 0 0 1em;
+}
+
+.nav-item {
+  border: none;
+  margin: 0 0 0.2em;
+  padding: 0;
+}
+
+.nav-inactive {
+  display: none;
+}
+
 #header {
   color: white;
   font-size: 300%;
-  padding: 0.2em;
-  margin: 0 0 0.4em;
-  border-width: 0.1em;
-  border-radius: 0.5em 0.2em;
-  -moz-border-radius: 0.5em 0.2em;
-  behavior: url(js/PIE.htc);
   text-align: center;
 }
 
@@ -94,13 +120,6 @@ h1, h2, h3, h4, h5, h6, h7,
   list-style-type: disc;
 }
 
-.nav-item {
-  border-radius: 0.75em 0.3em;
-  -moz-border-radius: 0.75em 0.3em;
-  behavior: url(js/PIE.htc);
-  padding: 0.2em 1em;
-  margin-bottom: 0.5em;
-}
 
 .nav-current {
   color: black;

@@ -89,8 +89,17 @@ function initMobileSwitcher() {
     set2normal();
 }
 
+function showNavItem() {
+ $(this).children(".nav-inactive").slideDown();
+}
+
+function hideNavItem(navItem) {
+ $(this).children(".nav-inactive").slideUp();
+}
+
 $(document).ready(function() {
   $("#javascript-warning").remove();
+  $(".nav-item").hover(showNavItem, hideNavItem);
   initMobileSwitcher();
 });
 
