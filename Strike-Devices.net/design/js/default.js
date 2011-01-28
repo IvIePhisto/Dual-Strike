@@ -36,7 +36,7 @@ function initViewportWidth() {
     viewportWidth = null;
 }
 
-function switch2mobile() {
+function set2mobile() {
   if(viewportWidth != null)
     $("#viewport").attr("content", "width=device-width");
     
@@ -45,29 +45,36 @@ function switch2mobile() {
   $("#navigation").show();
   $("#switch2mobile").hide();
   $("#switch2normal").show();
-  createCookie("mobile", "true", 7);
 }
 
-function switch2normal() {
+function set2normal() {
   if(viewportWidth != null)
     $("#viewport").attr("content", "width=" + viewportWidth);
     
   $("#stylesheet_mobile").removeAttr("rel");
   $("#switch2normal").hide();
   $("#switch2mobile").show();
-  createCookie("mobile", "false", 7);
+}
+
+function switch2mobile() {
+  createCookie("mobile", "true", 1);
+  window.location.reload();
+}
+
+function switch2normal() {
+  createCookie("mobile", "false", 1);
+  window.location.reload();
 }
 
 /* initialization on document load */
+var mobile = readCookie("mobile");
+
+if(mobile == null)
+  mobile = screen.width <= 480;
+else
+  mobile = mobile == "true";
 
 function initMobileSwitcher() {
-  var mobile = readCookie("mobile");
-  
-  if(mobile == null)
-    mobile = screen.width <= 480;
-  else
-    mobile = mobile == "true";
-
   $("#stylesheet_mobile").removeAttr("media");
   $("#footer").prepend(
     '<a id="switch2mobile" href="#body" class="version_switcher" style="display:none">switch to mobile version</a>' +
@@ -77,9 +84,9 @@ function initMobileSwitcher() {
   $("#switch2normal").click(switch2normal);
   
   if(mobile)
-    switch2mobile();
+    set2mobile();
   else
-    switch2normal();
+    set2normal();
 }
 
 $(document).ready(function() {
