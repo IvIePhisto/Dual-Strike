@@ -32,20 +32,18 @@ h1, h2, h3, h4, h5, h6, h7,
   -moz-box-shadow: 0.1em 0.1em 0.1em #235D79;
   -webkit-box-shadow: 0.1em 0.1em 0.1em #235D79;
   box-shadow: 0.1em 0.1em 0.1em #235D79;
-  /* For IE 8 */
-  -ms-filter: "progid:DXImageTransform.Microsoft.Shadow(Strength=4, Direction=135, Color='#235D79')";
-  /* For IE 5.5 - 7 */
-  filter: progid:DXImageTransform.Microsoft.Shadow(Strength=4, Direction=135, Color='#235D79');
+  behavior: url(js/PIE.htc);
 }
 
 #navigation, #content {
   -moz-box-shadow: 0.3em 0.3em 0.3em #235D79;
   -webkit-box-shadow: 0.3em 0.3em 0.3em #235D79;
   box-shadow: 0.3em 0.3em 0.3em #235D79;
+  behavior: url(js/PIE.htc);
   /* For IE 8 */
-  -ms-filter: "progid:DXImageTransform.Microsoft.Shadow(Strength=4, Direction=135, Color='#235D79')";
+  /*-ms-filter: "progid:DXImageTransform.Microsoft.Shadow(Strength=4, Direction=135, Color='#235D79')";*/
   /* For IE 5.5 - 7 */
-  filter: progid:DXImageTransform.Microsoft.Shadow(Strength=4, Direction=135, Color='#235D79');
+  /* #filter: progid:DXImageTransform.Microsoft.Shadow(Strength=4, Direction=135, Color='#235D79');*/
 }
 
 #header, #navigation{
@@ -64,6 +62,7 @@ h1, h2, h3, h4, h5, h6, h7,
   border-width: 0.3em;
   border-radius: 1.5em 0.6em;
   -moz-border-radius: 1.5em 0.6em;
+  behavior: url(js/PIE.htc);
   padding: 0.5em;
 }
 
@@ -71,10 +70,11 @@ h1, h2, h3, h4, h5, h6, h7,
   color: white;
   font-size: 300%;
   padding: 0.2em;
-  margin: 0 0 0.2em;
+  margin: 0 0 0.4em;
   border-width: 0.1em;
   border-radius: 0.5em 0.2em;
   -moz-border-radius: 0.5em 0.2em;
+  behavior: url(js/PIE.htc);
   text-align: center;
 }
 
@@ -82,7 +82,7 @@ h1, h2, h3, h4, h5, h6, h7,
   list-style-type: none;
   float: left;
   width: 15em;
-  margin: 0;
+  margin: 0 0 1.2em;
 }
 
 #navigation a {
@@ -97,6 +97,7 @@ h1, h2, h3, h4, h5, h6, h7,
 .nav-item {
   border-radius: 0.75em 0.3em;
   -moz-border-radius: 0.75em 0.3em;
+  behavior: url(js/PIE.htc);
   padding: 0.2em 1em;
   margin-bottom: 0.5em;
 }
@@ -106,12 +107,11 @@ h1, h2, h3, h4, h5, h6, h7,
 }
 
 #content-container {
-  margin-left: 17em;
+  margin-left: 18em;
 }
 
 #footer {
   clear: both;
-  text-align: left;
   font-size: 80%;
   padding: 1em 0;
 }

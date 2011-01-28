@@ -70,8 +70,8 @@ function initMobileSwitcher() {
 
   $("#stylesheet_mobile").removeAttr("media");
   $("#footer").prepend(
-    '<a id="switch2mobile" href="#body" class="version_switcher" style="display:none">switch to mobile version</span>' +
-    '<a id="switch2normal" href="#body" class="version_switcher" style="display:none">switch to normal version</span>'
+    '<a id="switch2mobile" href="#body" class="version_switcher" style="display:none">switch to mobile version</a>' +
+    '<a id="switch2normal" href="#body" class="version_switcher" style="display:none">switch to normal version</a>'
   );
   $("#switch2mobile").click(switch2mobile);
   $("#switch2normal").click(switch2normal);
