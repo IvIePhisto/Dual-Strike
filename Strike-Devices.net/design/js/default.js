@@ -28,6 +28,14 @@ function eraseCookie(name) {
 /* mobile/normal version switcher */
 
 var viewportWidth = $(window).width();
+var viewportHeight = $(window).height();
+
+function orientationChange() {
+  var temp = viewportWidth;
+  viewportWidth = viewportHeight;
+  viewportHeight = temp;
+}
+
 
 function initViewportWidth() {
   var deviceWidth = $(window).width();
@@ -58,12 +66,10 @@ function set2normal() {
 
 function switch2mobile() {
   createCookie("mobile", "true", 1);
-  window.location.reload();
 }
 
 function switch2normal() {
   createCookie("mobile", "false", 1);
-  window.location.reload();
 }
 
 /* initialization on document load */
@@ -77,8 +83,8 @@ else
 function initMobileSwitcher() {
   $("#stylesheet_mobile").removeAttr("media");
   $("#footer").prepend(
-    '<a id="switch2mobile" href="#body" class="version_switcher" style="display:none">switch to mobile version</a>' +
-    '<a id="switch2normal" href="#body" class="version_switcher" style="display:none">switch to normal version</a>'
+    '<a id="switch2mobile" href="" class="version_switcher" style="display:none">switch to mobile version</a>' +
+    '<a id="switch2normal" href="" class="version_switcher" style="display:none">switch to normal version</a>'
   );
   $("#switch2mobile").click(switch2mobile);
   $("#switch2normal").click(switch2normal);
@@ -89,8 +95,8 @@ function initMobileSwitcher() {
     set2normal();
 }
 
-function toggleNavItem(navItem) {
- $(this).parent().children(".nav-inactive").slideToggle();
+function toggleNavItem() {
+ $(this).parent().children(".nav-inactive").slideToggle("fast");
 
  if($(this).html() == "+")
    $(this).html("-");
@@ -98,10 +104,31 @@ function toggleNavItem(navItem) {
    $(this).html("+");
 }
 
+function setTouched() {
+  $(this).removeClass("untouched");
+  $(this).addClass("touched");
+}
+
+function setUntouched() {
+  $(this).removeClass("touched");
+  $(this).addClass("untouched");
+}
+
 $(document).ready(function() {
   $("#javascript-warning").remove();
   $(".nav-item").has(".nav-inactive").prepend("<a href='javascript:;' class='nav-expander'>+</a>")
-  $(".nav-expander").click(toggleNavItem);
   initMobileSwitcher();
+  window.scrollTo(0, 1);
+      
+  var navExpanders = $(".nav-expander");
+  navExpanders.click(toggleNavItem);
+  navExpanders.bind("touchstart", setTouched);
+  navExpanders.bind("touchend", setUntouched);
+  navExpanders.bind("touchcancel", setUntouched);
+  
+  var navLabels = $(".nav-label");
+  navLabels.bind("touchstart", setTouched);
+  navLabels.bind("touchend", setUntouched);
+  navLabels.bind("touchcancel", setUntouched);
 });
 
