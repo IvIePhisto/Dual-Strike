@@ -1,0 +1,17 @@
+body {
+  word-wrap: break-word;
+}
+
+#navigation-container {
+  float: none;
+  width: auto;
+}
+
+.nav-expander {
+  font-size: 150%;
+}
+
+#content-container {
+  margin-left: 0;
+}
+
