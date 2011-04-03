@@ -578,7 +578,6 @@ void mame_controller() {
 	initMAMEButtonMappings();
 	initIdleTimer();
 	metaSendRepeats = 5000;
-	CFG_SET_LEFT_STICK(config);
 
     while(1) { /* main event loop */
         sendMAMEReports();
