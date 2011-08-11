@@ -226,12 +226,14 @@ void setMAMEReportPlayer1() {
 	else {
 		if (!Stick_Up)
 			MAME_REPORT_UP
-		else if (!Stick_Down)
+		
+		if (!Stick_Down)
 			MAME_REPORT_DOWN
 
 		if (!Stick_Left)
 			MAME_REPORT_LEFT
-		else if (!Stick_Right)
+		
+		if (!Stick_Right)
 			MAME_REPORT_RIGHT
 
 		if(!Stick_LK)
@@ -290,12 +292,14 @@ void setMAMEReportPlayer2() {
 	else {
 		if (!Stick_Up)
 			MAME_REPORT_R
-		else if (!Stick_Down)
+		
+		if (!Stick_Down)
 			MAME_REPORT_F
 
 		if (!Stick_Left)
 			MAME_REPORT_D
-		else if (!Stick_Right)
+		
+		if (!Stick_Right)
 			MAME_REPORT_G
 
 		if(!Stick_LK)
@@ -347,12 +351,14 @@ void setMAMEReportPlayer2() {
 void setMAMEReportsControl() {
 	if (!Stick_Up)
 		MAME_REPORT_UP
-	else if (!Stick_Down)
+	
+	if (!Stick_Down)
 		MAME_REPORT_DOWN
 
 	if (!Stick_Left)
 		MAME_REPORT_LEFT
-	else if (!Stick_Right)
+	
+	if (!Stick_Right)
 		MAME_REPORT_RIGHT
 
 	if(!Stick_LP)

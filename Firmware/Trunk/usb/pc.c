@@ -31,7 +31,7 @@ void resetPCReportBuffer() {
 void readInputPC() {
 	resetPCReportBuffer();
 
-	if (!Stick_Up) {
+	if (!Stick_Up && Stick_Down) {
 		if (!Stick_Left)
 			PC_UP_LEFT
 		else if (!Stick_Right)
@@ -39,7 +39,7 @@ void readInputPC() {
 		else
 			PC_UP
 	}
-	else if (!Stick_Down) {
+	else if (!Stick_Down && Stick_Up) {
 		if (!Stick_Left)
 			PC_DOWN_LEFT
 		else if (!Stick_Right)
@@ -47,9 +47,9 @@ void readInputPC() {
 		else
 			PC_DOWN
 	}
-	else if (!Stick_Left)
+	else if (!Stick_Left && Stick_Right)
 		PC_LEFT
-	else if (!Stick_Right)
+	else if (!Stick_Right && Stick_Left)
 		PC_RIGHT
 
 	// Buttons

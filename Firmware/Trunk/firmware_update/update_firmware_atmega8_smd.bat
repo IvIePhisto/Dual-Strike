@@ -1,3 +1,3 @@
 @ECHO OFF
-bootloadHID.exe -r "dual_strike_firmware_atmega8_smd_V3.2.0.hex"
+bootloadHID.exe -r "dual_strike_firmware_atmega8_smd_V3.2.1.hex"
 Pause

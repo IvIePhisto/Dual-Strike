@@ -78,12 +78,14 @@ void readInputXBox() {
 		if(CFG_LEFT_STICK) {
 			if (!Stick_Up)
 				XBOX_LS_UP
-			else if (!Stick_Down)
+			
+			if (!Stick_Down)
 				XBOX_LS_DOWN
 
 			if (!Stick_Left)
 				XBOX_LS_LEFT
-			else if (!Stick_Right)
+			
+			if (!Stick_Right)
 				XBOX_LS_RIGHT
 		}
 
@@ -91,27 +93,29 @@ void readInputXBox() {
 		if(CFG_RIGHT_STICK) {
 			if (!Stick_Up)
 				XBOX_RS_UP
-			else if (!Stick_Down)
+			
+			if (!Stick_Down)
 				XBOX_RS_DOWN
 		
 			if (!Stick_Left)
 				XBOX_RS_LEFT
-			else if (!Stick_Right)
+			
+			if (!Stick_Right)
 				XBOX_RS_RIGHT
 		}
 
 		// Digital Pad Directions
 		if(CFG_DIGITAL_PAD) {
-			if (!Stick_Up) {
+			if (!Stick_Up)
 				XBOX_DPAD_UP
-			}
-			else if (!Stick_Down) {
+			
+			if (!Stick_Down)
 				XBOX_DPAD_DOWN
-			}
 		
 			if (!Stick_Left)
 				XBOX_DPAD_LEFT
-			else if (!Stick_Right)
+			
+			if (!Stick_Right)
 				XBOX_DPAD_RIGHT
 		}
 	}

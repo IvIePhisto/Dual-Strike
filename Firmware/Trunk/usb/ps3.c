@@ -61,12 +61,14 @@ void readInputPS3() {
 		if(CFG_LEFT_STICK) {
 			if (!Stick_Up)
 				PS3_LS_UP
-			else if (!Stick_Down)
+			
+			if (!Stick_Down)
 				PS3_LS_DOWN
 
 			if (!Stick_Left)
 				PS3_LS_LEFT
-			else if (!Stick_Right)
+			
+			if (!Stick_Right)
 				PS3_LS_RIGHT
 		}
 
@@ -74,18 +76,20 @@ void readInputPS3() {
 		if(CFG_RIGHT_STICK) {
 			if (!Stick_Up)
 				PS3_RS_UP
-			else if (!Stick_Down)
+			
+			if (!Stick_Down)
 				PS3_RS_DOWN
 		
 			if (!Stick_Left)
 				PS3_RS_LEFT
-			else if (!Stick_Right)
+			
+			if (!Stick_Right)
 				PS3_RS_RIGHT
 		}
 
 		// Digital Pad Directions
 		if(CFG_DIGITAL_PAD) {
-			if (!Stick_Up) {
+			if (!Stick_Up && Stick_Down) {
 				if (!Stick_Left)
 					PS3_DPAD_UP_LEFT
 				else if (!Stick_Right)
@@ -93,7 +97,7 @@ void readInputPS3() {
 				else
 					PS3_DPAD_UP
 			}
-			else if (!Stick_Down) {
+			else if (!Stick_Down && Stick_Up) {
 				if (!Stick_Left)
 					PS3_DPAD_DOWN_LEFT
 				else if (!Stick_Right)
@@ -101,9 +105,9 @@ void readInputPS3() {
 				else
 					PS3_DPAD_DOWN
 			}
-			else if (!Stick_Left)
+			else if (!Stick_Left && Stick_Right)
 				PS3_DPAD_LEFT
-			else if (!Stick_Right)
+			else if (!Stick_Right && Stick_Left)
 				PS3_DPAD_RIGHT
 		}
 	}
