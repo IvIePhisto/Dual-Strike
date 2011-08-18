@@ -1,0 +1,78 @@
+body {
+  word-wrap: break-word;
+}
+
+a:link, a:visited {
+  text-decoration: none !important;
+  color: black;
+}
+
+p a:link:after, p a:visited:after {
+  content:" [" attr(href) "]";
+}
+
+a:focus, a:hover {
+  text-decoration: underline !important;
+}
+
+#header {
+  background: white;
+  box-shadow: none;
+  -moz-box-shadow: none;
+  -webkit-box-shadow: none;
+}
+
+#header * {
+  color: #034769 !important;
+}
+
+#container {
+  float: none;
+  padding: 0;
+  margin: 0 0 1.5em 0;
+}
+
+#content {
+  margin: 0;
+  padding: 0;
+}
+
+#site-title, #site-description {
+  margin-bottom: 0;
+}
+
+.menu,
+#respond,
+#searchform,
+.entry-utility,
+.edit-link,
+.reply,
+.comment-edit-link  {
+  display: none;
+}
+
+#primary, #secondary {
+  display: none;
+}
+
+#container {
+  float: none;
+  padding: 0%;
+  margin: 0 0 1.5em 0;
+}
+
+#content {
+  margin: 0;
+  border: none;
+  box-shadow: none;
+  -moz-box-shadow: none;
+  -webkit-box-shadow: none;
+}
+
+#footer {
+  border-top: 0.1em dashed #034769;
+  margin: auto;
+  padding: 1em 1em 0;
+  width: 80%;
+  text-align: center;
+}

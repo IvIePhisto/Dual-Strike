@@ -1,0 +1,447 @@
+/*
+Theme Name: Strike-Devices.net (modification of Twenty Ten)
+Theme URI: http://strike-devices.net/
+Description: A modification of the WordPress Twenty Ten theme for http://strike-devices.net/ using a flexible layout and supporting a mobile view.
+Author: Michael Pohl
+Version: 1.0
+Tags: two-columns, flexible-width, custom-header, custom-background, threaded-comments, sticky-post, translation-ready, microformats, rtl-language-support, editor-style
+*/
+
+/* BASIC DEFINITIONS */
+
+body {
+  padding: 1em;
+  margin: 0;
+  font-family: sans-serif;
+  -webkit-text-size-adjust: 100%; /* avoid WebKit screen dimension resizing */
+}
+
+a img {
+  border: none;
+}
+
+h1, h2, h3, h4, h5, h6, h7,
+#header, label, #searchsubmit {
+  font-family: BladeRunnerMovieFontRegular !important; /* has to be defined in previously loaded CSS */
+}
+
+.entry-meta a:hover,
+.entry-utility a:hover,
+.comment-meta a:hover,
+.edit-link a:hover,
+.reply a:hover,
+.logged-in-as a:hover,
+#content a:hover,
+#footer a:hover,
+#site-title a:hover,
+h1 a:hover,
+h2 a:hover,
+h3 a:hover,
+h4 a:hover,
+h5 a:hover,
+h6 a:hover,
+h7 a:hover,
+.inactive-version:hover,
+.entry-meta a:focus,
+.entry-utility a:focus,
+.comment-meta a:focus,
+.edit-link a:focus,
+.reply a:focus,
+.logged-in-as a:focus,
+#content a:focus,
+#footer a:focus,
+#site-title a:focus,
+h1 a:focus,
+h2 a:focus,
+h3 a:focus,
+h4 a:focus,
+h5 a:focus,
+h6 a:focus,
+h7 a:focus,
+.inactive-version:focus {
+  text-decoration: underline;
+}
+
+.entry-meta a,
+.entry-utility a,
+.comment-meta a,
+.edit-link a,
+.reply a,
+.logged-in-as a,
+#header .menu a:hover,
+#footer a,
+#primary a,
+#secondary a,
+#header a,
+#content a,
+h1 a, h2 a, h3 a, h4 a, h5 a, h6 a, h7 a {
+  text-decoration: none;
+}
+
+/* Text meant only for screen readers */
+.screen-reader-text {
+	position: absolute;
+	left: -9000px;
+    display: none;
+}
+
+/* COLORS */
+
+/* Color Scheme Designer 3 scheme: http://colorschemedesigner.com/#3s31Jw0w0w0w0 */
+
+#header, #primary, .menu .children {
+  background: #034769;
+}
+
+#content, .widget-container {
+  background: white;
+}
+
+#site-title a, #site-description {
+  color: white;
+}
+
+.menu a:link,
+.menu a:visited,
+.menu a.untouched:hover,
+.menu a.untouched:focus,
+.menu .current_page_item li a:link,
+.menu .current_page_item li a:visited {
+  background: white;
+  color: #034769;
+}
+
+.menu li.current_page_ancestor a.currentNav,
+.menu .current_page_item a {
+  background: #63ADD0;
+}
+
+.menu .current_page_item a {
+  color: white;
+}
+
+.menu a:hover,
+.menu a:focus,
+.menu a.touched:hover,
+.menu a.touched:focus,
+.menu .current_page_item li a:hover,
+.menu .current_page_item li a:focus,
+.menu .current_page_item li a.touched:hover {
+  background: #63ADD0;
+  color: white;
+}
+
+
+.entry-meta a:link, .entry-meta a:visited,
+.entry-utility a:link, .entry-utility a:visited,
+.comment-meta a:link, .comment-meta a:visited,
+.edit-link a:link, .edit-link a:visited,
+.reply a:link, .reply a:visited,
+.logged-in-as a:link, logged-in-as a:visited,
+.inactive-version,
+#footer a:link,
+#footer a:visited,
+#primary a:link,
+#primary a:visited,
+#primary a.untouched:hover,
+#primary a.untouched:focus,
+#secondary a:link,
+#secondary a:visited,
+#secondary a.untouched:hover,
+#secondary a.untouched:focus {
+  color: #034769;
+}
+
+#primary a:hover,
+#primary a:focus,
+#primary a.touched:hover,
+#primary a.touched:focus,
+#secondary a:hover,
+#secondary a:focus,
+#secondary a.touched:hover,
+#secondary a.touched:focus {
+  color: white;
+  background: #63ADD0;
+}
+
+a:link {
+  color: #FF5900;
+}
+
+a:visited {
+  color: #A63A00;
+}
+
+#searchform div {
+  background: #034769;
+  color: white;
+}
+
+#searchsubmit {
+  background: none;
+  color: white;
+}
+
+#searchsubmit:focus, #searchsubmit:hover {
+  color: #63ADD0;
+}
+
+#s, #s {
+  color: #63ADD0;
+}
+
+#s:focus, #s:hover {
+  color: white;
+  border-color: #63ADD0;
+  background: #63ADD0;
+}
+
+
+/* BORDERS */
+
+#searchform div {
+  border: 0.2em #034769 solid;
+  border-radius: 0.6em 0.2em;
+  -moz-border-radius: 0.6em 0.2em;
+}
+
+#s {
+  border-radius: 0.4em 0 0 0.1em;
+  -moz-border-radius: 0.4em 0 0 0.1em;
+}
+
+#s, #searchsubmit {
+  border: 0 none;
+}
+
+#searchsubmit {
+  border-radius: 0 0.1em 0.4em 0;
+  -moz-border-radius: 0 0.1em 0.4em 0;
+}
+
+.menu a, #header, #primary, #secondary, #content, .widget-container {
+  border: solid #63ADD0;
+  border-width: 0.3em;
+}
+
+.menu .children, #header, #primary, #secondary, #content {
+  border-radius: 1.5em 0.6em;
+  -moz-border-radius: 1.5em 0.6em;
+  
+  box-shadow: 5px 5px 5px #235D79;
+  -moz-box-shadow: 5px 5px 5px #235D79;
+  -webkit-box-shadow: 5px 5px 5px #235D79;
+}
+
+.menu a, .widget-container {
+  border-radius: 1em 0.4em;
+  -moz-border-radius: 1em 0.4em;
+}
+
+.menu .children {
+  border-top-width: 0;
+  border-radius: 0 0 1em 0.4em;
+  -moz-border-radius: 0 0 1em 0.4em;
+}
+
+.menu .children ul {
+  border: none;
+  box-shadow: none;
+  -moz-box-shadow: none;
+  -webkit-box-shadow: none;
+}
+
+#primary a, #secondary a {
+  border-radius: 0.6em 0.2em;
+  -moz-border-radius: 0.6em 0.2em;
+}
+
+
+/* DIMENSIONS AND POSITIONING */
+
+#header {
+  padding: 1em 1em 0.6em;
+  margin: 0 0 1.5em;
+}
+
+#site-title {
+  float: left;
+  margin: 0 0.1em 0.3em 0;
+  padding: 0;
+  font-size: 300%;
+}
+
+#site-description {
+  float: right;
+  margin: 0 0 1em 0.3em;
+  padding: 0;
+}
+
+#branding img {
+  float: right;
+  margin: 0 0 1em 0.3em;
+}
+
+#access {
+  clear: both;
+  float: left;
+}
+
+.menu ul {
+  margin: 0;
+  padding: 0;
+}
+
+.menu ul li {
+  float: left;
+  margin: 0;
+  padding: 0;
+}
+
+.menu ul li ul {
+  display: block;
+  position: relative;
+  z-index: 0;
+}
+
+.menu ul li ul li {
+  display: block;
+  float: none;
+}
+
+.menu ul li ul li ul,
+.menu ul li ul li ul li {
+  display: inline-block;
+}
+
+.menu a {
+  display: inline-block; 
+  width: auto;
+  padding: 0.2em 0.4em;
+  margin: 0 0.4em 0.4em 0.4em;
+}
+
+.menu button {
+  display: inline-block;
+  width: 2.5em;
+  margin-right: 0.4em;
+  margin-left: -0.2em;
+}
+
+#primary, #secondary {
+  padding: 0.5em 0.5em 0;
+  margin: 0 0 1.5em 0;
+  width: 15em;
+  float: right;
+}
+
+#primary ul, #secondary ul {
+  padding: 0;
+  margin: 0;
+}
+
+#primary ul ul li, #secondary ul ul li {
+  padding: 0;
+  margin: 0 0 0 1em;
+}
+
+#secondary {
+  clear: right;
+}
+
+#primary h3, #secondary h3 {
+  font-size: inherit;
+  margin: 0;
+  padding: 0.2em 0;
+}
+
+#container {
+  width: 100%;
+  margin: 0 -20em 1.5em 0;
+  padding: 0;
+  float: left;
+}
+
+#content {
+  padding: 1em;
+  margin: 0 18em 0 0;
+}
+
+#container.one-column, #container.single-attachment {
+  margin-right: 0;
+}
+
+#footer {
+  clear: both;
+  padding: 0.2em 0;
+  font-size: 80%;
+  text-align: center;
+}
+
+.nocomments, #site-info, #site-generator {
+  display: none;
+}
+
+.widget-container {
+  padding: 0.4em;  
+  margin: 0 0 0.5em;
+}
+
+#s, #searchsubmit {
+  margin: 0;
+  padding: 0.1em 0.2em;
+  font-size: 100%;
+}
+
+#s {
+  width: 7.3em;
+  margin-right: 0.2em;
+  float: left;
+}
+
+#view-controls button {
+  font-size: 80%;
+}
+
+#respond input {
+  width: 100%;
+}
+
+#respond textarea {
+  width: 100%;
+}
+
+#respond .form-submit input {
+  width: auto;
+}
+
+.entry-meta,
+.entry-utility,
+.logged-in-as,
+.comment-meta,
+.reply {
+  font-size: 90%;
+}
+
+/* MISC */
+
+.menu ul, #primary ul, #secondary ul {
+  list-style-type: none;
+}
+
+#primary ul ul, #secondary ul ul {
+  list-style-type: disc;
+}
+
+.menu a, #primary a, #secondary a {
+  text-decoration: none;
+}
+
+#s:focus {
+  outline: none;
+}
+
+#searchsubmit, #view-controls button,
+#switch2normal.inactive-version, #switch2mobile.inactive-version {
+  cursor: pointer;
+}
