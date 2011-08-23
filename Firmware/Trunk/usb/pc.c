@@ -2,63 +2,111 @@ void resetPCReportBuffer() {
 	data.pcreport.buttons[0] =
 	data.pcreport.buttons[1] = 0;
 	data.pcreport.hatswitch  = 0b00001111;
+	data.pcreport.joystick_axes = 0b01010101;
 }
 
-#define PC_LK		{ data.ps3report.buttons[0] |= (1<<0); }
-#define PC_MK		{ data.ps3report.buttons[0] |= (1<<1); }
-#define PC_HK		{ data.ps3report.buttons[0] |= (1<<2); }
-#define PC_4K		{ data.ps3report.buttons[0] |= (1<<3); }
-#define PC_LP		{ data.ps3report.buttons[0] |= (1<<4); }
-#define PC_MP		{ data.ps3report.buttons[0] |= (1<<5); }
-#define PC_HP		{ data.ps3report.buttons[0] |= (1<<6); }
-#define PC_4P		{ data.ps3report.buttons[0] |= (1<<7); }
+#define PC_LK		{ data.pcreport.buttons[0] |= (1<<0); }
+#define PC_MK		{ data.pcreport.buttons[0] |= (1<<1); }
+#define PC_HK		{ data.pcreport.buttons[0] |= (1<<2); }
+#define PC_4K		{ data.pcreport.buttons[0] |= (1<<3); }
+#define PC_LP		{ data.pcreport.buttons[0] |= (1<<4); }
+#define PC_MP		{ data.pcreport.buttons[0] |= (1<<5); }
+#define PC_HP		{ data.pcreport.buttons[0] |= (1<<6); }
+#define PC_4P		{ data.pcreport.buttons[0] |= (1<<7); }
 
-#define PC_S3		{ data.ps3report.buttons[1] |= (1<<0); }
-#define PC_S4		{ data.ps3report.buttons[1] |= (1<<1); }
-#define PC_START	{ data.ps3report.buttons[1] |= (1<<2); }
-#define PC_SELECT	{ data.ps3report.buttons[1] |= (1<<3); }
-#define PC_HOME		{ data.ps3report.buttons[1] |= (1<<4); }
+#define PC_S3		{ data.pcreport.buttons[1] |= (1<<0); }
+#define PC_S4		{ data.pcreport.buttons[1] |= (1<<1); }
+#define PC_START	{ data.pcreport.buttons[1] |= (1<<2); }
+#define PC_SELECT	{ data.pcreport.buttons[1] |= (1<<3); }
+#define PC_HOME		{ data.pcreport.buttons[1] |= (1<<4); }
 
-#define PC_UP			{ data.ps3report.hatswitch = 0; }
-#define PC_UP_RIGHT		{ data.ps3report.hatswitch = 1; }
-#define PC_RIGHT		{ data.ps3report.hatswitch = 2; }
-#define PC_DOWN_RIGHT	{ data.ps3report.hatswitch = 3; }
-#define PC_DOWN			{ data.ps3report.hatswitch = 4; }
-#define PC_DOWN_LEFT	{ data.ps3report.hatswitch = 5; }
-#define PC_LEFT			{ data.ps3report.hatswitch = 6; }
-#define PC_UP_LEFT		{ data.ps3report.hatswitch = 7; }
+#define PC_DPAD_UP			{ data.pcreport.hatswitch = 0; }
+#define PC_DPAD_UP_RIGHT	{ data.pcreport.hatswitch = 1; }
+#define PC_DPAD_RIGHT		{ data.pcreport.hatswitch = 2; }
+#define PC_DPAD_DOWN_RIGHT	{ data.pcreport.hatswitch = 3; }
+#define PC_DPAD_DOWN		{ data.pcreport.hatswitch = 4; }
+#define PC_DPAD_DOWN_LEFT	{ data.pcreport.hatswitch = 5; }
+#define PC_DPAD_LEFT		{ data.pcreport.hatswitch = 6; }
+#define PC_DPAD_UP_LEFT		{ data.pcreport.hatswitch = 7; }
+
+#define PC_LS_LEFT	{ data.pcreport.joystick_axes &= 0b11111100; }
+#define PC_LS_RIGHT	{ data.pcreport.joystick_axes |= 0b00000010; data.pcreport.joystick_axes &= 0b11111110; }
+
+#define PC_LS_UP	{ data.pcreport.joystick_axes &= 0b11110011; }
+#define PC_LS_DOWN	{ data.pcreport.joystick_axes |= 0b00001000; data.pcreport.joystick_axes &= 0b11111011; }
+
+#define PC_RS_LEFT	{ data.pcreport.joystick_axes &= 0b11001111; }
+#define PC_RS_RIGHT	{ data.pcreport.joystick_axes |= 0b00100000; data.pcreport.joystick_axes &= 0b11101111; }
+
+#define PC_RS_UP	{ data.pcreport.joystick_axes &= 0b00111111; }
+#define PC_RS_DOWN	{ data.pcreport.joystick_axes |= 0b10000000; data.pcreport.joystick_axes &= 0b10111111; }
 
 void readInputPC() {
 	resetPCReportBuffer();
 	updateStickState();	
 
-	if(STICK_STATE_SIGNAL(stickState, STICK_STATE_UP)) {
-		if(STICK_STATE_SIGNAL(stickState, STICK_STATE_LEFT)) {
-			PC_UP_LEFT
+	if(CFG_JOYSTICK_SWITCH_READ || !metaPressed) {
+		// Left Joystick Directions
+		if(CFG_LEFT_STICK) {
+			if(STICK_STATE_SIGNAL(stickState, STICK_STATE_UP))
+				PC_LS_UP
+			
+			if(STICK_STATE_SIGNAL(stickState, STICK_STATE_DOWN))
+				PC_LS_DOWN
+
+			if(STICK_STATE_SIGNAL(stickState, STICK_STATE_LEFT))
+				PC_LS_LEFT
+			
+			if(STICK_STATE_SIGNAL(stickState, STICK_STATE_RIGHT))
+				PC_LS_RIGHT
 		}
-		else if(STICK_STATE_SIGNAL(stickState, STICK_STATE_RIGHT)) {
-			PC_UP_RIGHT
+
+		// Right Joystick Directions
+		if(CFG_RIGHT_STICK) {
+			if(STICK_STATE_SIGNAL(stickState, STICK_STATE_UP))
+				PC_RS_UP
+			
+			if(STICK_STATE_SIGNAL(stickState, STICK_STATE_DOWN))
+				PC_RS_DOWN
+		
+			if(STICK_STATE_SIGNAL(stickState, STICK_STATE_LEFT))
+				PC_RS_LEFT
+			
+			if(STICK_STATE_SIGNAL(stickState, STICK_STATE_RIGHT))
+				PC_RS_RIGHT
 		}
-		else {
-			PC_UP
+
+		// Digital Pad Directions
+		if(CFG_DIGITAL_PAD) {
+			if(STICK_STATE_SIGNAL(stickState, STICK_STATE_UP)) {
+				if(STICK_STATE_SIGNAL(stickState, STICK_STATE_LEFT)) {
+					PC_DPAD_UP_LEFT
+				}
+				else if(STICK_STATE_SIGNAL(stickState, STICK_STATE_RIGHT)) {
+					PC_DPAD_UP_RIGHT
+				}
+				else {
+					PC_DPAD_UP
+				}
+			}
+			else if(STICK_STATE_SIGNAL(stickState, STICK_STATE_DOWN)) {
+				if(STICK_STATE_SIGNAL(stickState, STICK_STATE_LEFT)) {
+					PC_DPAD_DOWN_LEFT
+				}
+				else if(STICK_STATE_SIGNAL(stickState, STICK_STATE_RIGHT)) {
+					PC_DPAD_DOWN_RIGHT
+				}
+				else {
+					PC_DPAD_DOWN
+				}
+			}
+			else if(STICK_STATE_SIGNAL(stickState, STICK_STATE_LEFT)) {
+				PC_DPAD_LEFT
+			}
+			else if(STICK_STATE_SIGNAL(stickState, STICK_STATE_RIGHT)) {
+				PC_DPAD_RIGHT
+			}
 		}
-	}
-	else if(STICK_STATE_SIGNAL(stickState, STICK_STATE_DOWN)) {
-		if(STICK_STATE_SIGNAL(stickState, STICK_STATE_LEFT)) {
-			PC_DOWN_LEFT
-		}
-		else if(STICK_STATE_SIGNAL(stickState, STICK_STATE_RIGHT)) {
-			PC_DOWN_RIGHT
-		}
-		else {
-			PC_DOWN
-		}
-	}
-	else if(STICK_STATE_SIGNAL(stickState, STICK_STATE_LEFT)) {
-		PC_LEFT
-	}
-	else if(STICK_STATE_SIGNAL(stickState, STICK_STATE_RIGHT)) {
-		PC_RIGHT
 	}
 
 	// Buttons
@@ -88,11 +136,13 @@ void readInputPC() {
 		PC_4K
 #endif
 
-	if(!Stick_S3)
-		PC_S3
+	if(CFG_X3_READ) {
+		if(!Stick_S3)
+			PC_S3
 
-	if(!Stick_S4)
-		PC_S4
+		if(!Stick_S4)
+			PC_S4
+	}
 
 	if(!Stick_Start)
 		PC_START
@@ -123,7 +173,9 @@ void pc_test_controller() {
 void pc_controller() {
     while(1) { /* main event loop */
 		usbPoll();
+		updateMetaState();
+		updateJoystickMode();
         readInputPC();
-		sendDataUSB(data.array, 3);
+		sendDataUSB(data.array, 4);
     }
 }

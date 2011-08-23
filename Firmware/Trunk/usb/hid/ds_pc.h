@@ -1,7 +1,7 @@
-// C:\Users\Michael\Desktop\HID Report Descriptor Tool\ds_pc.h
+// C:\Users\Michael\Desktop\test\ds_pc.h
 
 
-char ReportDescriptor[56] = {
+char ReportDescriptor[74] = {
     0x05, 0x01,                    // USAGE_PAGE (Generic Desktop)
     0x09, 0x05,                    // USAGE (Game Pad)
     0xa1, 0x01,                    // COLLECTION (Application)
@@ -26,9 +26,18 @@ char ReportDescriptor[56] = {
     0x65, 0x14,                    //   UNIT (Eng Rot:Angular Pos)
     0x09, 0x39,                    //   USAGE (Hat switch)
     0x81, 0x42,                    //   INPUT (Data,Var,Abs,Null)
-    0x09, 0x00,                    //   USAGE (Undefined)
     0x95, 0x01,                    //   REPORT_COUNT (1)
+    0x09, 0x00,                    //   USAGE (Undefined)
     0x81, 0x01,                    //   INPUT (Cnst,Ary,Abs)
+    0x45, 0x02,                    //   PHYSICAL_MAXIMUM (2)
+    0x25, 0x02,                    //   LOGICAL_MAXIMUM (2)
+    0x75, 0x02,                    //   REPORT_SIZE (2)
+    0x95, 0x04,                    //   REPORT_COUNT (4)
+    0x09, 0x30,                    //   USAGE (X)
+    0x09, 0x31,                    //   USAGE (Y)
+    0x09, 0x32,                    //   USAGE (Z)
+    0x09, 0x35,                    //   USAGE (Rz)
+    0x81, 0x02,                    //   INPUT (Data,Var,Abs)
     0xc0                           // END_COLLECTION
 };
 

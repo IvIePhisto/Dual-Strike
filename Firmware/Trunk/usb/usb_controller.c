@@ -25,6 +25,7 @@ typedef struct {
 typedef struct {
 	uchar	buttons[2];
 	uchar	hatswitch;
+	uchar	joystick_axes;
 } pcreport_t;
 
 #if ATMEGA_NO == 168
