@@ -59,56 +59,64 @@ void readInputPS3() {
 	if(CFG_JOYSTICK_SWITCH_READ || !metaPressed) {
 		// Left Joystick Directions
 		if(CFG_LEFT_STICK) {
-			if (!Stick_Up)
+			if(STICK_STATE_SIGNAL(stickState, STICK_STATE_UP))
 				PS3_LS_UP
 			
-			if (!Stick_Down)
+			if(STICK_STATE_SIGNAL(stickState, STICK_STATE_DOWN))
 				PS3_LS_DOWN
 
-			if (!Stick_Left)
+			if(STICK_STATE_SIGNAL(stickState, STICK_STATE_LEFT))
 				PS3_LS_LEFT
 			
-			if (!Stick_Right)
+			if(STICK_STATE_SIGNAL(stickState, STICK_STATE_RIGHT))
 				PS3_LS_RIGHT
 		}
 
 		// Right Joystick Directions
 		if(CFG_RIGHT_STICK) {
-			if (!Stick_Up)
+			if(STICK_STATE_SIGNAL(stickState, STICK_STATE_UP))
 				PS3_RS_UP
 			
-			if (!Stick_Down)
+			if(STICK_STATE_SIGNAL(stickState, STICK_STATE_DOWN))
 				PS3_RS_DOWN
 		
-			if (!Stick_Left)
+			if(STICK_STATE_SIGNAL(stickState, STICK_STATE_LEFT))
 				PS3_RS_LEFT
 			
-			if (!Stick_Right)
+			if(STICK_STATE_SIGNAL(stickState, STICK_STATE_RIGHT))
 				PS3_RS_RIGHT
 		}
 
 		// Digital Pad Directions
 		if(CFG_DIGITAL_PAD) {
-			if (!Stick_Up && Stick_Down) {
-				if (!Stick_Left)
+			if(STICK_STATE_SIGNAL(stickState, STICK_STATE_UP)) {
+				if(STICK_STATE_SIGNAL(stickState, STICK_STATE_LEFT)) {
 					PS3_DPAD_UP_LEFT
-				else if (!Stick_Right)
+				}
+				else if(STICK_STATE_SIGNAL(stickState, STICK_STATE_RIGHT)) {
 					PS3_DPAD_UP_RIGHT
-				else
+				}
+				else {
 					PS3_DPAD_UP
+				}
 			}
-			else if (!Stick_Down && Stick_Up) {
-				if (!Stick_Left)
+			else if(STICK_STATE_SIGNAL(stickState, STICK_STATE_DOWN)) {
+				if(STICK_STATE_SIGNAL(stickState, STICK_STATE_LEFT)) {
 					PS3_DPAD_DOWN_LEFT
-				else if (!Stick_Right)
+				}
+				else if(STICK_STATE_SIGNAL(stickState, STICK_STATE_RIGHT)) {
 					PS3_DPAD_DOWN_RIGHT
-				else
+				}
+				else {
 					PS3_DPAD_DOWN
+				}
 			}
-			else if (!Stick_Left && Stick_Right)
+			else if(STICK_STATE_SIGNAL(stickState, STICK_STATE_LEFT)) {
 				PS3_DPAD_LEFT
-			else if (!Stick_Right && Stick_Left)
+			}
+			else if(STICK_STATE_SIGNAL(stickState, STICK_STATE_RIGHT)) {
 				PS3_DPAD_RIGHT
+			}
 		}
 	}
 

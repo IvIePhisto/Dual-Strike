@@ -75,6 +75,80 @@ static uchar usbMode = -1;
 #define USB_MODE_XBOX 4
 #endif
 
+uint stickState = 0;
+uint stickStateOld = 0;
+
+#define STICK_STATE_LEFT 0
+#define STICK_STATE_RIGHT 1
+#define STICK_STATE_DOWN 2
+#define STICK_STATE_UP 3
+#define STICK_STATE_RAW(state, direction) (state & (1<<direction))
+#define STICK_STATE_SIGNAL(state, direction) (state & (1<<(direction+4)))
+#define STICK_STATE_SET_SIGNAL(direction) stickState |= 1<<(direction+4)
+
+void updateStickState() {
+	stickStateOld = stickState;
+	stickState = 0;
+
+	if(!Stick_Up)
+		stickState |= 1<<STICK_STATE_UP;
+
+	if(!Stick_Down)
+		stickState |= 1<<STICK_STATE_DOWN;
+
+	if(!Stick_Left)
+		stickState |= 1<<STICK_STATE_LEFT;
+
+	if(!Stick_Right)
+		stickState |= 1<<STICK_STATE_RIGHT;
+
+	if(STICK_STATE_RAW(stickState, STICK_STATE_UP) && STICK_STATE_RAW(stickState, STICK_STATE_DOWN)) {
+		if(STICK_STATE_RAW(stickStateOld, STICK_STATE_UP) && STICK_STATE_RAW(stickStateOld, STICK_STATE_DOWN)) {
+			if(STICK_STATE_SIGNAL(stickStateOld, STICK_STATE_UP)) {
+				STICK_STATE_SET_SIGNAL(STICK_STATE_UP);
+			}
+			else { // STICK_STATE_SIGNAL(stickStateOld, STICK_STATE_DOWN)
+				STICK_STATE_SET_SIGNAL(STICK_STATE_DOWN);
+			}
+		}
+		else if(STICK_STATE_RAW(stickStateOld, STICK_STATE_UP)) {
+			STICK_STATE_SET_SIGNAL(STICK_STATE_DOWN);
+		}
+		else if(STICK_STATE_RAW(stickStateOld, STICK_STATE_DOWN)) {
+			STICK_STATE_SET_SIGNAL(STICK_STATE_UP);
+		}
+	}
+	else if(STICK_STATE_RAW(stickState, STICK_STATE_UP)) {
+		STICK_STATE_SET_SIGNAL(STICK_STATE_UP);
+	}
+	else if(STICK_STATE_RAW(stickState, STICK_STATE_DOWN)) {
+		STICK_STATE_SET_SIGNAL(STICK_STATE_DOWN);
+	}
+
+	if(STICK_STATE_RAW(stickState, STICK_STATE_LEFT) && STICK_STATE_RAW(stickState, STICK_STATE_RIGHT)) {
+		if(STICK_STATE_RAW(stickStateOld, STICK_STATE_LEFT) && STICK_STATE_RAW(stickStateOld, STICK_STATE_RIGHT)) {
+			if(STICK_STATE_SIGNAL(stickStateOld, STICK_STATE_LEFT)) {
+				STICK_STATE_SET_SIGNAL(STICK_STATE_LEFT);
+			}
+			else { // STICK_STATE_SIGNAL(stickStateOld, STICK_STATE_RIGHT)
+				STICK_STATE_SET_SIGNAL(STICK_STATE_RIGHT);
+			}
+		}
+		else if(STICK_STATE_RAW(stickStateOld, STICK_STATE_LEFT)) {
+			STICK_STATE_SET_SIGNAL(STICK_STATE_RIGHT);
+		}
+		else if(STICK_STATE_RAW(stickStateOld, STICK_STATE_RIGHT)) {
+			STICK_STATE_SET_SIGNAL(STICK_STATE_LEFT);
+		}
+	}
+	else if(STICK_STATE_RAW(stickState, STICK_STATE_LEFT)) {
+		STICK_STATE_SET_SIGNAL(STICK_STATE_LEFT);
+	}
+	else if(STICK_STATE_RAW(stickState, STICK_STATE_RIGHT)) {
+		STICK_STATE_SET_SIGNAL(STICK_STATE_RIGHT);
+	}
+}
+
 #include "descriptors.c"
 
 /* ------------------------------------------------------------------------- */

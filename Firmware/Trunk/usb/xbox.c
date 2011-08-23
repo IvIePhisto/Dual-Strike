@@ -72,50 +72,51 @@ void resetDataXBox() {
 
 void readInputXBox() {
 	resetDataXBox();
+	updateStickState();	
 
 	if(CFG_JOYSTICK_SWITCH_READ || !metaPressed) {
 		// Left Joystick Directions
 		if(CFG_LEFT_STICK) {
-			if (!Stick_Up)
+			if(STICK_STATE_SIGNAL(stickState, STICK_STATE_UP))
 				XBOX_LS_UP
 			
-			if (!Stick_Down)
+			if(STICK_STATE_SIGNAL(stickState, STICK_STATE_DOWN))
 				XBOX_LS_DOWN
 
-			if (!Stick_Left)
+			if(STICK_STATE_SIGNAL(stickState, STICK_STATE_LEFT))
 				XBOX_LS_LEFT
 			
-			if (!Stick_Right)
+			if(STICK_STATE_SIGNAL(stickState, STICK_STATE_RIGHT))
 				XBOX_LS_RIGHT
 		}
 
 		// Right Joystick Directions
 		if(CFG_RIGHT_STICK) {
-			if (!Stick_Up)
+			if(STICK_STATE_SIGNAL(stickState, STICK_STATE_UP))
 				XBOX_RS_UP
 			
-			if (!Stick_Down)
+			if(STICK_STATE_SIGNAL(stickState, STICK_STATE_DOWN))
 				XBOX_RS_DOWN
 		
-			if (!Stick_Left)
+			if(STICK_STATE_SIGNAL(stickState, STICK_STATE_LEFT))
 				XBOX_RS_LEFT
 			
-			if (!Stick_Right)
+			if(STICK_STATE_SIGNAL(stickState, STICK_STATE_RIGHT))
 				XBOX_RS_RIGHT
 		}
 
 		// Digital Pad Directions
 		if(CFG_DIGITAL_PAD) {
-			if (!Stick_Up)
+			if(STICK_STATE_SIGNAL(stickState, STICK_STATE_UP))
 				XBOX_DPAD_UP
 			
-			if (!Stick_Down)
+			if(STICK_STATE_SIGNAL(stickState, STICK_STATE_DOWN))
 				XBOX_DPAD_DOWN
 		
-			if (!Stick_Left)
+			if(STICK_STATE_SIGNAL(stickState, STICK_STATE_LEFT))
 				XBOX_DPAD_LEFT
 			
-			if (!Stick_Right)
+			if(STICK_STATE_SIGNAL(stickState, STICK_STATE_RIGHT))
 				XBOX_DPAD_RIGHT
 		}
 	}

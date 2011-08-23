@@ -30,27 +30,36 @@ void resetPCReportBuffer() {
 
 void readInputPC() {
 	resetPCReportBuffer();
+	updateStickState();	
 
-	if (!Stick_Up && Stick_Down) {
-		if (!Stick_Left)
+	if(STICK_STATE_SIGNAL(stickState, STICK_STATE_UP)) {
+		if(STICK_STATE_SIGNAL(stickState, STICK_STATE_LEFT)) {
 			PC_UP_LEFT
-		else if (!Stick_Right)
+		}
+		else if(STICK_STATE_SIGNAL(stickState, STICK_STATE_RIGHT)) {
 			PC_UP_RIGHT
-		else
+		}
+		else {
 			PC_UP
+		}
 	}
-	else if (!Stick_Down && Stick_Up) {
-		if (!Stick_Left)
+	else if(STICK_STATE_SIGNAL(stickState, STICK_STATE_DOWN)) {
+		if(STICK_STATE_SIGNAL(stickState, STICK_STATE_LEFT)) {
 			PC_DOWN_LEFT
-		else if (!Stick_Right)
+		}
+		else if(STICK_STATE_SIGNAL(stickState, STICK_STATE_RIGHT)) {
 			PC_DOWN_RIGHT
-		else
+		}
+		else {
 			PC_DOWN
+		}
 	}
-	else if (!Stick_Left && Stick_Right)
+	else if(STICK_STATE_SIGNAL(stickState, STICK_STATE_LEFT)) {
 		PC_LEFT
-	else if (!Stick_Right && Stick_Left)
+	}
+	else if(STICK_STATE_SIGNAL(stickState, STICK_STATE_RIGHT)) {
 		PC_RIGHT
+	}
 
 	// Buttons
 	if(!Stick_LP)
