@@ -144,11 +144,26 @@ void readInputPC() {
 			PC_S4
 	}
 
-	if(!Stick_Start)
-		PC_START
+	if(CFG_HOME_EMU && !Stick_Start && !Stick_Select) {
+		PC_HOME
+		metaWasUsed = 1;
+	}
+	else {
+		if(CFG_META_BUTTON_START) {
+			if(metaSendCount > 0)
+				PC_START
 
-	if(!Stick_Select)
-		PC_SELECT
+			if(!Stick_Select)
+				PC_SELECT
+		}
+		else {
+			if(!Stick_Start)
+				PC_START
+
+			if(metaSendCount > 0)
+				PC_SELECT
+		}
+	}
 
 	if(!Stick_Home)
 		PC_HOME
