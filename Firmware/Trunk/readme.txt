@@ -23,5 +23,5 @@ The files within this archive are the source code of the Dual Strike and its SMD
 design as an AVR Studio project.
 
 For more information visit:
-<https://docs.google.com/View?docid=0AV5ukYTEiJk3ZGRmNGpjOG5fOGdremduZnZo>
+<http://docs.google.com/document/preview?id=1kSNxb2SLDZB-jQpl1ZHbVoksGS7_nDJKFOAMJo3S_tA>
 
