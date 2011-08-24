@@ -76,9 +76,8 @@ $(TARGET): $(OBJECTS)
 	avr-objdump -h -S $< > $@
 
 size: ${TARGET}
-	@echo
 	@avr-size -C --mcu=${MCU} ${TARGET}
-	@echo "Only 14336 bytes (87.5%%) are available on the device due to the bootloader!"
+	@echo Only 14336 bytes (87.5%%) are available on the device due to the bootloader!
 
 ## Clean target
 .PHONY: clean
