@@ -55,6 +55,7 @@ void resetPS3ReportBuffer() {
 
 void readInputPS3() {
 	resetPS3ReportBuffer();
+	updateStickState();	
 
 	if(CFG_JOYSTICK_SWITCH_READ || !metaPressed) {
 		// Left Joystick Directions
