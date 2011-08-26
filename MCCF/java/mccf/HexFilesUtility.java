@@ -100,7 +100,6 @@ public class HexFilesUtility {
 			Pattern pattern;
 			byte[] bytes;
 			int lineNo;
-			boolean eofReached;
 	
 			reader = new BufferedReader(new InputStreamReader(inputStream, ENCODING));
 			lineNo = 0;
