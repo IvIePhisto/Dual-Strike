@@ -87,23 +87,34 @@ void setupUSB() {
 #   define e2addr_t           uint
 #endif
 
+#if (FLASHEND) > 0xffff /* we need long addressing */
+#   define faddr_t           ulong
+#else
+#   define faddr_t           uint
+#endif
+
 typedef union {
     e2addr_t  l;
     uchar   c[sizeof(e2addr_t)];
 } e2address_t;
 
+typedef union {
+    faddr_t  l;
+    uchar   c[sizeof(faddr_t)];
+} flashAddress_t;
+
 static e2addr_t eepromOffset = -1;
+static e2addr_t currentE2Address;
+
+static faddr_t currentFlashAddress;
+
 static uchar writeReportID = 0;
-static e2addr_t currentEEPROMAddress;
-/*
-static uint debugCount = 0; //DEBUG
-static uint debugLength = 0; //DEBUG
-*/
+
 
 usbMsgLen_t usbFunctionSetup(uchar receivedData[8]) {
 	usbRequest_t    *rq = (void *)receivedData;
 	uchar reportID = rq->wValue.bytes[0];
-	uchar reportType = rq->wValue.bytes[1];
+	//uchar reportType = rq->wValue.bytes[1];
 
 	if((rq->bmRequestType & USBRQ_TYPE_MASK) == USBRQ_TYPE_CLASS) {
 	    if(rq->bRequest == USBRQ_HID_SET_REPORT){
@@ -133,11 +144,11 @@ usbMsgLen_t usbFunctionSetup(uchar receivedData[8]) {
 		        return 7;
 	        }
 			else if(reportID == EEPROM_READING_REPORT_ID) {
-				if(currentEEPROMAddress > E2END)
+				if(currentE2Address > E2END)
 					return -1;
 
 				size_t length = 128;		            
-				e2addr_t rest = E2END - currentEEPROMAddress + 1;
+				e2addr_t rest = E2END - currentE2Address + 1;
 
 				if(rest < 128)
 					length = rest;
@@ -146,7 +157,47 @@ usbMsgLen_t usbFunctionSetup(uchar receivedData[8]) {
 				data.array[1] = length;
 				data.array[2] = 0;
 				data.array[3] = 0;
-				eeprom_read_block(data.array + 4, (void*)currentEEPROMAddress, length);
+				eeprom_read_block(data.array + 4, (void*)currentE2Address, length);
+				usbMsgPtr = data.array;
+
+	            return 132;
+			}
+	        else if(reportID == FLASH_SIZE_QUERY_REPORT_ID) {
+				data.array[0] = FLASH_SIZE_QUERY_REPORT_ID;
+				data.array[1] = SPM_PAGESIZE & 0xff;
+				data.array[2] = SPM_PAGESIZE >> 8;
+				data.array[3] = ((long)FLASHEND + 1) & 0xff;
+				data.array[4] = (((long)FLASHEND + 1) >> 8) & 0xff;
+				data.array[5] = (((long)FLASHEND + 1) >> 16) & 0xff;
+				data.array[6] = (((long)FLASHEND + 1) >> 24) & 0xff;
+		        usbMsgPtr = data.array;
+
+		        return 7;
+	        }
+			else if(reportID == FLASH_READING_REPORT_ID) {
+				if(currentE2Address > FLASHEND)
+					return -1;
+
+				size_t length = 128;		            
+				faddr_t rest = FLASHEND - currentFlashAddress + 1;
+
+				if(rest < 128)
+					length = rest;
+
+				data.array[0] = FLASH_READING_REPORT_ID;
+				data.array[1] = length;
+				data.array[2] = 0;
+				data.array[3] = 0;
+
+				for(size_t i = 0; i < length; i++) {
+#if (FLASHEND) > 0xffff /* we need long addressing */
+					data.array[i+4] = pgm_read_byte_far((void*)currentFlashAddress);
+#else
+					data.array[i+4] = pgm_read_byte((void*)currentFlashAddress);
+#endif
+
+				}
+
 				usbMsgPtr = data.array;
 
 	            return 132;
@@ -161,6 +212,7 @@ static int remainingBytes;
 
 uchar usbFunctionWrite(uchar *receivedData, uchar len) {
 	e2address_t e2address;
+	flashAddress_t flashAddress;
 
 	if(writeReportID == EEPROM_PROGRAMMING_REPORT_ID) {
 		uchar   isLast;
@@ -177,7 +229,7 @@ uchar usbFunctionWrite(uchar *receivedData, uchar len) {
 	        len -= 5;
 	    }
 		else {
-		    e2address.l = currentEEPROMAddress;
+		    e2address.l = currentE2Address;
 		}
 
 
@@ -192,7 +244,7 @@ uchar usbFunctionWrite(uchar *receivedData, uchar len) {
 			eeprom_write_block(receivedData, (void*)e2address.l, len);
 	        //sei();
 			e2address.l += len;
-		    currentEEPROMAddress = e2address.l;
+		    currentE2Address = e2address.l;
 			remainingBytes -= len;
 		}
 
@@ -207,7 +259,20 @@ uchar usbFunctionWrite(uchar *receivedData, uchar len) {
         e2address.c[2] = 0;
 #endif
         e2address.c[3] = 0;
-		currentEEPROMAddress = e2address.l;
+		currentE2Address = e2address.l;
+
+		return 1;
+	}
+	else if(writeReportID == FLASH_SET_ADDRESS_REPORT_ID) {
+		flashAddress.c[0] = receivedData[1];
+		flashAddress.c[1] = receivedData[2];
+#if (FLASHEND) > 0xffff /* we need long addressing */
+        flashAddress.c[2] = receivedData[3];
+#else
+        flashAddress.c[2] = 0;
+#endif
+        flashAddress.c[3] = 0;
+		currentFlashAddress = flashAddress.l;
 
 		return 1;
 	}

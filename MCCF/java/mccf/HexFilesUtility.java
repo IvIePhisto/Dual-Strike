@@ -7,8 +7,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class HexFilesUtility {
 	private final static String ENCODING = "ascii";
@@ -30,7 +33,7 @@ public class HexFilesUtility {
 		}
 	}
 	
-	public static void writeI8HEXFile(final File outputFile, final byte[] data, byte maximumByteCount) throws IOException {
+	public static void writeI8HexFile(final File outputFile, final byte[] data, byte maximumByteCount) throws IOException {
 		PrintStream writer;
 				
 		if(maximumByteCount <= 0)
@@ -47,7 +50,7 @@ public class HexFilesUtility {
 				if(byteCount > maximumByteCount)
 					byteCount = maximumByteCount;
 
-				printI8HEXLine(writer, (byte)byteCount, address, IntelRecordType.DATA, data);
+				printI8HexLine(writer, (byte)byteCount, address, IntelRecordType.DATA, data);
 				
 				if(writer.checkError())
 					throw new IOException(String.format("An error occured while writing to file \"%s\".", outputFile.getAbsolutePath()));
@@ -55,14 +58,14 @@ public class HexFilesUtility {
 				address += byteCount;
 			}
 
-			printI8HEXLine(writer, (byte)0, 0, IntelRecordType.EOF, data);
+			printI8HexLine(writer, (byte)0, 0, IntelRecordType.EOF, data);
 		}
 		finally {
 			writer.close();
 		}
 	}
 	
-	private static void printI8HEXLine(PrintStream writer, byte byteCount, int address, IntelRecordType recordType, byte[] data) {
+	private static void printI8HexLine(PrintStream writer, byte byteCount, int address, IntelRecordType recordType, byte[] data) {
 		StringBuilder dataString;
 		byte checksum;
 		
@@ -86,6 +89,94 @@ public class HexFilesUtility {
 			
 		writer.printf(":%02X%04X%02X%s%02X\n", byteCount, address, recordType.getValue(), dataString, checksum);
 	}
+
+	public static byte[] readI8HexFile(final File file) throws IOException {
+		InputStream inputStream;
+
+		inputStream = new FileInputStream(file);
+		
+		try {
+			BufferedReader reader;
+			Pattern pattern;
+			byte[] bytes;
+			int lineNo;
+			boolean eofReached;
+	
+			reader = new BufferedReader(new InputStreamReader(inputStream, ENCODING));
+			lineNo = 0;
+			pattern = Pattern.compile("\\:" +
+					"([0123456789aAbBcCdDeEfF][0123456789aAbBcCdDeEfF])" +
+					"([0123456789aAbBcCdDeEfF][0123456789aAbBcCdDeEfF][0123456789aAbBcCdDeEfF][0123456789aAbBcCdDeEfF])" +
+					"([0123456789aAbBcCdDeEfF][0123456789aAbBcCdDeEfF])" +
+					"(([0123456789aAbBcCdDeEfF][0123456789aAbBcCdDeEfF])+)");
+			bytes = new byte[0];
+			
+			while(true) {
+				String line;
+				String dataWithChecksum;
+				Matcher matcher;
+				int byteCount;
+				int address;
+				byte recordType;
+				byte checksum;
+				int checkValue;
+				
+				line = reader.readLine();
+				lineNo++;
+				
+				if(line == null)
+					break;
+
+				matcher = pattern.matcher(line);
+				
+				if(!matcher.matches())
+					throw new IOException(String.format("Syntax error found in line %d of file \"%s\".", lineNo, file.getAbsolutePath()));
+				
+				byteCount = Integer.parseInt(matcher.group(1), 16);
+				address = Integer.parseInt(matcher.group(2), 16);
+				recordType = (byte)Integer.parseInt(matcher.group(3), 16);
+				dataWithChecksum = matcher.group(4);
+				checksum = (byte)Integer.parseInt(dataWithChecksum.substring(dataWithChecksum.length() - 2, dataWithChecksum.length()), 16);
+				
+				checkValue = byteCount;
+				checkValue += (byte)(address & 0xFF);
+				checkValue += (byte)((address >> 8) & 0xFF);
+				checkValue += recordType;
+				checkValue += checksum;
+
+				if(recordType == 0) { // data record
+					if(bytes.length < address + byteCount)
+						bytes = Arrays.copyOf(bytes, address + byteCount);
+	
+					for(int i = 0; i*2 < dataWithChecksum.length() - 2; i += 1) {
+						byte b;
+						
+						b = (byte)Integer.parseInt(dataWithChecksum.substring(i*2, i*2 + 2), 16);
+						bytes[address + i] = b;
+						checkValue += b;
+					}
+				}
+				else if(recordType == 1) { // EOF record
+					if(reader.readLine() != null)
+						throw new IOException(String.format("EOF record in line %d of file \"%s\" which is not the end of the file.", lineNo, file.getAbsolutePath()));						
+				}
+				else {
+					throw new IOException(String.format("Unsupported record type in line %d of file \"%s\".", lineNo, file.getAbsolutePath()));
+				}
+				
+				checkValue = checkValue & 0xFF;
+				
+				if(checkValue != 0)
+					throw new IOException(String.format("Checksum error in line %d of file \"%s\".", lineNo, file.getAbsolutePath()));
+			}
+			
+			return bytes;
+		}
+		finally {
+			inputStream.close();
+		}
+	}
+	
 	
 	public static byte[] readSimpleHexFile(final File file) throws IOException {
 		InputStream inputStream;
@@ -138,7 +229,7 @@ public class HexFilesUtility {
 		}
 	}
 	
-	public static void saveSimpleHexFile(final File outputFile, final byte[] data) throws IOException {
+	public static void writeSimpleHexFile(final File outputFile, final byte[] data) throws IOException {
 		PrintStream writer;
 		
 		writer = new PrintStream(outputFile, ENCODING);
@@ -147,7 +238,7 @@ public class HexFilesUtility {
 			for(int address = 0; address < data.length; address++) {
 				writer.printf("%02X ", data[address]);
 				
-				if(address + 1 % 8 == 0)
+				if((address + 1) % 8 == 0)
 					writer.print("\n");
 				
 				if(writer.checkError())
@@ -165,15 +256,22 @@ public class HexFilesUtility {
 			File output;
 			byte[] bytes;
 			
-			if(args.length != 2) {
-				System.err.println("args: <input plain HEX file> <output Intel 8bit HEX file>");
+			if(args.length < 3 || args.length > 4 || !args[0].matches("\\-plain2intel|\\-intel2plain")) {
+				System.err.println("args: (-plain2intel | -intel2plain) <input file> <output file> [size]");
 				System.exit(1);
 			}
 			
-			input = new File(args[0]);
-			output = new File(args[1]);
-			bytes = HexFilesUtility.readSimpleHexFile(input);
-			HexFilesUtility.writeI8HEXFile(output, bytes, (byte)-1);
+			input = new File(args[1]);
+			output = new File(args[2]);
+			
+			if(args[0].equals("-plain2intel")) {
+				bytes = HexFilesUtility.readSimpleHexFile(input);
+				HexFilesUtility.writeI8HexFile(output, bytes, (byte)-1);
+			}
+			else {
+				bytes = HexFilesUtility.readI8HexFile(input);
+				HexFilesUtility.writeSimpleHexFile(output, bytes);
+			}
 		}
 		catch(Throwable t) {
 			t.printStackTrace();

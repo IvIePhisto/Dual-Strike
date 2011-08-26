@@ -146,7 +146,7 @@ public class FileHandler {
 			
 			file = addFileExtension(file);			
 			data = ByteView.saveBytes(view.getModel());
-			HexFilesUtility.saveSimpleHexFile(file, data);
+			HexFilesUtility.writeSimpleHexFile(file, data);
 			view.setWindowTitleAmendment(file.getAbsolutePath());
 			view.setStatusLabelText(MessageHelper.get(this, "fileSavedStatus"));
 			modelChanged = false;

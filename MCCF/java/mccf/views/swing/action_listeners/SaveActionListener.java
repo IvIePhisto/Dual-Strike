@@ -27,7 +27,7 @@ public class SaveActionListener extends ExecActionListener {
 			bytes = ByteView.saveBytes(getModel());
 			file = File.createTempFile("configuration-saving-data", ".txt");
 			file.deleteOnExit();
-			HexFilesUtility.writeI8HEXFile(file, bytes, (byte)-1);
+			HexFilesUtility.writeI8HexFile(file, bytes, (byte)-1);
 			DeviceHelper.saveConfiguration(this, file);
 		}
 		catch(IOException e) {
