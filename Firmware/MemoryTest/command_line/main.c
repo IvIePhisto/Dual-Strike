@@ -20,8 +20,8 @@
 
 #define IDENT_VENDOR_NUM        0x16c0
 #define IDENT_VENDOR_STRING     "pohl-michael@gmx.biz"
-#define IDENT_PRODUCT_NUM       1503
-#define IDENT_PRODUCT_STRING    "HID EP"
+#define IDENT_PRODUCT_NUM       0x05df
+#define IDENT_PRODUCT_STRING    "MemoryTool"
 
 /* ------------------------------------------------------------------------- */
 
@@ -198,7 +198,7 @@ static int uploadEEPROMData(char *dataBuffer, int startAddr, int endAddr) {
 	err = 0;
 	printf("Dumping EEPROM data...\n");
 
-	if(readSizes(1, 0) != 0) {
+	if(readSizes(EEPROM_SIZE_QUERY_REPORT_ID, 0) != 0) {
 		if(dev != NULL)
 			usbCloseDevice(dev);
 
@@ -254,7 +254,7 @@ static int  dumpEEPROMData(char *dataBuffer, int dataBufferSize) {
 	printf("Dumping EEPROM data...\n");
 
 	if(pageSize == 0 && deviceSize == 0)
-		if(readSizes(1, 0) != 0) {
+		if(readSizes(EEPROM_SIZE_QUERY_REPORT_ID, 0) != 0) {
 			if(dev != NULL)
 				usbCloseDevice(dev);
 
@@ -280,7 +280,7 @@ static int  dumpEEPROMData(char *dataBuffer, int dataBufferSize) {
             goto errorOccurred;
         }
 
-		if((err = usbGetReport(dev, USB_HID_REPORT_TYPE_FEATURE, EEPROM_SET_ADDRESS_REPORT_ID, buffer.bytes, &len)) != 0) {		
+		if((err = usbGetReport(dev, USB_HID_REPORT_TYPE_FEATURE, EEPROM_READING_REPORT_ID, buffer.bytes, &len)) != 0) {		
             fprintf(stderr, "\nError receiving dumped EEPROM data: %s\n", usbErrorMessage(err));
             goto errorOccurred;
 		}
@@ -401,21 +401,24 @@ static int testArgs(int argc, char **argv) {
 	if(argc > 7)
 		return 1;
 
+		if(argc == 1)
+		return 0;
+
 	currentIndex = 1;		
-		
+	
 	while(currentIndex < argc) {
 		switch(currentIndex) {
 		case 1:
 			if(strcmp(argv[currentIndex], "-h") != 0
-			|| strcmp(argv[currentIndex], "--help") != 0
-			|| strcmp(argv[currentIndex], "-e") != 0
-			|| strcmp(argv[currentIndex], "-de") != 0
-			|| strcmp(argv[currentIndex], "-df") != 0)
+			&& strcmp(argv[currentIndex], "--help") != 0
+			&& strcmp(argv[currentIndex], "-e") != 0
+			&& strcmp(argv[currentIndex], "-de") != 0
+			&& strcmp(argv[currentIndex], "-df") != 0)
 				return 1;
 			break;
 		case 3:
 			if(strcmp(argv[currentIndex], "-de") != 0
-			|| strcmp(argv[currentIndex], "-df") != 0)
+			&& strcmp(argv[currentIndex], "-df") != 0)
 				return 1;
 			break;
 			
@@ -471,12 +474,12 @@ int main(int argc, char **argv) {
 		currentIndex += 2;
 	}
 	
-	if(argc == currentIndex + 2 && strcmp(argv[currentIndex], "-de") == 0) {
+	if(argc >= currentIndex + 2 && strcmp(argv[currentIndex], "-de") == 0) {
 		eepromDumpFile = argv[currentIndex + 1];
 		currentIndex += 2;
 	}
 
-	if(argc == currentIndex + 2 && strcmp(argv[currentIndex], "-df") == 0) {
+	if(argc >= currentIndex + 2 && strcmp(argv[currentIndex], "-df") == 0) {
 		flashDumpFile = argv[currentIndex + 1];
 		currentIndex += 2;
 	}
@@ -488,27 +491,26 @@ int main(int argc, char **argv) {
 		printf("EEPROM dump file: \"%s\"\n", eepromDumpFile);
 
 	if(flashDumpFile != NULL)
-		printf("Flash dump file: \"%s\"\n", eepromDumpFile);
+		printf("Flash dump file: \"%s\"\n", flashDumpFile);
 		
     if((err = usbOpenDevice(&dev, IDENT_VENDOR_NUM, IDENT_VENDOR_STRING, IDENT_PRODUCT_NUM, IDENT_PRODUCT_STRING, 1)) != 0){
-		fprintf(stderr, "Error opening HID EEPROM Programmer device: %s\n", usbErrorMessage(err));
+		fprintf(stderr, "Error opening MemoryTool device: %s\n", usbErrorMessage(err));
 		return 2;
 	}
 	else if(argc == 1) {
-		int returnValue;
-		
-		returnValue = 1;
-		
-		if(readSizes(1, 0) == 0) {
-			returnValue = 0;
-			printf("EEPROM programming available.\n");
-		}
+		printf("EEPROM Sizes\n");
+		printf("------------\n");
+		readSizes(EEPROM_SIZE_QUERY_REPORT_ID, 0);			
+		printf("\n");
+		printf("Flash Sizes\n");
+		printf("-----------\n");
+		readSizes(FLASH_SIZE_QUERY_REPORT_ID, 0);
 		
 		if(dev != NULL)
 			usbCloseDevice(dev);
 
-		printf("Use argument \"-h\" or \"--help\" for usage information.\n");
-		return returnValue;
+		printf("\nUse argument \"-h\" or \"--help\" for usage information.\n");
+		return 0;
 	}
 	
 	if(eepromFile != NULL) {
@@ -540,7 +542,7 @@ int main(int argc, char **argv) {
 			return 10;
 	}
 
-	if(eepromDumpFile != NULL) {
+	if(flashDumpFile != NULL) {
 		memset(dataBuffer, -1, sizeof(dataBuffer));
 		endAddress = dumpFlashData(dataBuffer, sizeof(dataBuffer));
 		

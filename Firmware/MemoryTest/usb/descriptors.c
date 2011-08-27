@@ -1,25 +1,3 @@
-// DUAL STRIKE
-
-PROGMEM char usbDescriptorDeviceDS[] = {    /* USB device descriptor */
-    18,         /* sizeof(usbDescriptorDevice): length of descriptor in bytes */
-    USBDESCR_DEVICE,        /* descriptor type */
-    0x10, 0x01,             /* USB version supported */
-    USB_CFG_DEVICE_CLASS,
-    USB_CFG_DEVICE_SUBCLASS,
-    0,                      /* protocol */
-    8,                      /* max packet size */
-    /* the following two casts affect the first byte of the constant only, but
-     * that's sufficient to avoid a warning with the default values.
-     */
-    (char)USB_CFG_VENDOR_ID,/* 2 bytes */
-    (char)USB_CFG_DEVICE_ID,/* 2 bytes */
-    USB_CFG_DEVICE_VERSION, /* 2 bytes */
-    1,          /* manufacturer string index */
-    2,          /* product string index */
-    0,          /* serial number string index */
-    1,          /* number of configurations */
-};
-
 PROGMEM char usbDescriptorConfiguration[] = {};
 
 
@@ -48,8 +26,8 @@ PROGMEM int  usbDescriptorStringVendorMT[] = {
 };
 
 PROGMEM int  usbDescriptorStringDeviceMT[] = {
-    USB_STRING_DESCRIPTOR_HEADER(11),
-    'M', 'e', 'm', 'o', 'r', 'y', ' ', 'T', 'e', 's', 't'
+    USB_STRING_DESCRIPTOR_HEADER(10),
+    'M', 'e', 'm', 'o', 'r', 'y', 'T', 'o', 'o', 'l'
 };
 
 #define EEPROM_SIZE_QUERY_REPORT_ID 1

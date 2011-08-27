@@ -30,7 +30,7 @@ ARCH_COMPILE=
 ARCH_LINK=		
 
 OBJ=		main.o usbcalls.o
-PROGRAM=	memoryTest$(EXE_SUFFIX)
+PROGRAM=	memoryTool$(EXE_SUFFIX)
 
 all: $(PROGRAM)
 

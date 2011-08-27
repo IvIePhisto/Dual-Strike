@@ -40,7 +40,7 @@ int main(void) {
 	enableUsbLines();
 	programmer_setup();
 
-	while(Stick_Start)
+	while(1)
 		programmer_poll();
 
     return 0;

@@ -129,6 +129,11 @@ usbMsgLen_t usbFunctionSetup(uchar receivedData[8]) {
 
 	            return USB_NO_MSG; // use usbFunctionWrite()
 			}
+			else if(reportID == FLASH_SET_ADDRESS_REPORT_ID) {
+				writeReportID = FLASH_SET_ADDRESS_REPORT_ID;
+
+	            return USB_NO_MSG; // use usbFunctionWrite()
+			}
 	    }
 		else if(rq->bRequest == USBRQ_HID_GET_REPORT) {
 	        if(reportID == EEPROM_SIZE_QUERY_REPORT_ID) {
@@ -175,10 +180,10 @@ usbMsgLen_t usbFunctionSetup(uchar receivedData[8]) {
 		        return 7;
 	        }
 			else if(reportID == FLASH_READING_REPORT_ID) {
-				if(currentE2Address > FLASHEND)
+				if(currentFlashAddress > FLASHEND)
 					return -1;
 
-				size_t length = 128;		            
+				faddr_t length = 128;		            
 				faddr_t rest = FLASHEND - currentFlashAddress + 1;
 
 				if(rest < 128)
@@ -189,11 +194,13 @@ usbMsgLen_t usbFunctionSetup(uchar receivedData[8]) {
 				data.array[2] = 0;
 				data.array[3] = 0;
 
-				for(size_t i = 0; i < length; i++) {
-#if (FLASHEND) > 0xffff /* we need long addressing */
-					data.array[i+4] = pgm_read_byte_far((void*)currentFlashAddress);
+				for(faddr_t i = 0; i < length; i++) {
+					faddr_t address = currentFlashAddress + i;
+
+#if (FLASHEND) > 0xffff /* we need long addressing */					
+					data.array[i+4] = pgm_read_byte_far((void*)(address));
 #else
-					data.array[i+4] = pgm_read_byte((void*)currentFlashAddress);
+					data.array[i+4] = pgm_read_byte((void*)(address));
 #endif
 
 				}
