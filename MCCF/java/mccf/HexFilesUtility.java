@@ -19,6 +19,7 @@ public class HexFilesUtility {
 	
 	private static enum IntelRecordType {
 		DATA,
+		EXTENTED_LINEAR_ADDRESS,
 		EOF;
 		
 		byte getValue() {
@@ -27,6 +28,8 @@ public class HexFilesUtility {
 				return 0;
 			case EOF:
 				return 1;
+			case EXTENTED_LINEAR_ADDRESS:
+				return 4;
 			default:
 				throw new RuntimeException();
 			}
@@ -100,6 +103,7 @@ public class HexFilesUtility {
 			Pattern pattern;
 			byte[] bytes;
 			int lineNo;
+			int baseAddress;
 	
 			reader = new BufferedReader(new InputStreamReader(inputStream, ENCODING));
 			lineNo = 0;
@@ -109,6 +113,7 @@ public class HexFilesUtility {
 					"([0123456789aAbBcCdDeEfF][0123456789aAbBcCdDeEfF])" +
 					"(([0123456789aAbBcCdDeEfF][0123456789aAbBcCdDeEfF])+)");
 			bytes = new byte[0];
+			baseAddress = 0;
 			
 			while(true) {
 				String line;
@@ -145,13 +150,13 @@ public class HexFilesUtility {
 
 				if(recordType == 0) { // data record
 					if(bytes.length < address + byteCount)
-						bytes = Arrays.copyOf(bytes, address + byteCount);
+						bytes = Arrays.copyOf(bytes, baseAddress + address + byteCount);
 	
 					for(int i = 0; i*2 < dataWithChecksum.length() - 2; i += 1) {
 						byte b;
 						
 						b = (byte)Integer.parseInt(dataWithChecksum.substring(i*2, i*2 + 2), 16);
-						bytes[address + i] = b;
+						bytes[baseAddress + address + i] = b;
 						checkValue += b;
 					}
 				}
@@ -159,8 +164,19 @@ public class HexFilesUtility {
 					if(reader.readLine() != null)
 						throw new IOException(String.format("EOF record in line %d of file \"%s\" which is not the end of the file.", lineNo, file.getAbsolutePath()));						
 				}
+				else if(recordType == 3) { // start segment address record
+					for(int i = 0; i*2 < dataWithChecksum.length() - 2; i += 1) {
+						byte b;
+						
+						b = (byte)Integer.parseInt(dataWithChecksum.substring(i*2, i*2 + 2), 16);
+						checkValue += b;
+					}
+				}
+				else if(recordType == 4) { // extented linear address record
+					baseAddress = Integer.parseInt(dataWithChecksum.substring(0, 2), 16)<<16;	
+				}
 				else {
-					throw new IOException(String.format("Unsupported record type in line %d of file \"%s\".", lineNo, file.getAbsolutePath()));
+					throw new IOException(String.format("Unsupported record type %d in line %d of file \"%s\".", recordType, lineNo, file.getAbsolutePath()));
 				}
 				
 				checkValue = checkValue & 0xFF;

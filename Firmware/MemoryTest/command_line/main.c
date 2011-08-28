@@ -374,7 +374,7 @@ int writePlainHEX(char* plainHexFile, char* dataBuffer, int endAddress) {
 		if(address > 0 && (address % 8 == 0))
 			fprintf(output, "\n");
 
-		fprintf(output, "%02x ", dataBuffer[address] & 0xFF);
+		fprintf(output, "%02X ", dataBuffer[address] & 0xFF);
 	}
 	
     fflush(output);
@@ -383,25 +383,95 @@ int writePlainHEX(char* plainHexFile, char* dataBuffer, int endAddress) {
 	return 0;
 }
 
+static int  parseHexByte(FILE *fp) {
+	int hexPairPosition = 0;
+	char hexPair[3];
+	char c = EOF;
+	
+    for(c = getc(fp); c != EOF && hexPairPosition < 2; c = getc(fp)) {
+		if(c != ' ' && c != '\n' && c != '\r' && c != '\t') {
+			hexPair[hexPairPosition] = c;
+			hexPairPosition++;
+		}
+    }
+	
+	if(c == EOF)
+		return -1;
+		
+	hexPair[hexPairPosition] = 0;
+
+    return strtol(hexPair, NULL, 16);
+}
+
+int comparePlainHEXFiles(char* compareFileA, char* compareFileB) {
+	FILE* fileA = fopen(compareFileA, "r");
+	FILE* fileB = fopen(compareFileB, "r");
+	int address = 0;
+	int mismatchFound = 0;
+
+	if(fileA == NULL) {
+        fprintf(stderr, "Error opening file \"%s\" for comparison: %s\n", compareFileA, strerror(errno));
+        return 1;
+	}
+
+	if(fileB == NULL) {
+        fprintf(stderr, "Error opening file \"%s\" for comparison: %s\n", compareFileB, strerror(errno));
+        return 1;
+	}
+	
+	while(1) {
+		int valueA = parseHexByte(fileA);
+		int valueB = parseHexByte(fileB);
+		
+		if(valueA == -1 && valueB != -1) {
+			fprintf(stdout, "The first file ends at address %04X.\n", address - 1);
+			break;
+		}
+		else if(valueA != -1 && valueB == -1) {
+			fprintf(stdout, "The second file ends at address %04X.\n", address - 1);
+			break;
+		}
+		else if(valueA == -1 && valueB == -1) {
+			break;
+		}
+		else if(valueA != valueB) {
+			if(!mismatchFound) {
+				mismatchFound = 1;
+				fprintf(stdout, "Mismatches (<address>: <value A> <value B>):\n");			
+			}
+			
+			fprintf(stdout, "%04X: %02X %02X\n", address, valueA, valueB);			
+		}
+		
+		address++;
+	}
+	
+	fclose(fileA);
+	fclose(fileB);
+	
+	return 0;
+}
+
 /* ------------------------------------------------------------------------- */
 
 static void printUsage(char *pname)
 {
-    fprintf(stderr,	"usage: %s ([-h|--help] | [-e <intel-hexfile>] [-de <plain-hexfile>] [-df <plain-hexfile>])\n", pname);
+    fprintf(stderr,	"usage: %s ([-h|--help] | [-e <intel-hexfile>] [-de <plain-hexfile>] [-df <plain-hexfile>] [-c <plain-hexfile> <plain-hexfile>])\n", pname);
 	fprintf(stderr,	" \"-h\" or \"--help\" prints this message.\n");
 	fprintf(stderr,	" \"-e <intel-hexfile>\" specifies a file to write to the EEPROM.\n");
 	fprintf(stderr,	" \"-de <plain-hexfile>\" specifies a file to dump the EEPROM to.\n");
 	fprintf(stderr,	" \"-df <plain-hexfile>\" specifies a file to dump the flash to.\n");
-	fprintf(stderr,	"At least one of the arguments not including \"-r\" must be used.\nIf no argument is given device availability is tested.\n");
+	fprintf(stderr,	" \"-c <plain-hexfile> <plain-hexfile>\" compares the given files.\n");
+	fprintf(stderr,	"At least one of the arguments must be used.\nIf no argument is given device availability is tested.\n");
 }
 
 static int testArgs(int argc, char **argv) {
 	int currentIndex;
 	
-	if(argc > 7)
+	if(argc > 10)
 		return 1;
 
-		if(argc == 1)
+	if(argc == 1)
 		return 0;
 
 	currentIndex = 1;		
@@ -413,24 +483,32 @@ static int testArgs(int argc, char **argv) {
 			&& strcmp(argv[currentIndex], "--help") != 0
 			&& strcmp(argv[currentIndex], "-e") != 0
 			&& strcmp(argv[currentIndex], "-de") != 0
-			&& strcmp(argv[currentIndex], "-df") != 0)
+			&& strcmp(argv[currentIndex], "-df") != 0
+			&& strcmp(argv[currentIndex], "-c") != 0)
 				return 1;
 			break;
 		case 3:
 			if(strcmp(argv[currentIndex], "-de") != 0
-			&& strcmp(argv[currentIndex], "-df") != 0)
+			&& strcmp(argv[currentIndex], "-df") != 0
+			&& strcmp(argv[currentIndex], "-c") != 0)
 				return 1;
 			break;
 			
 		case 5:
-			if(strcmp(argv[currentIndex], "-df") != 0)
+			if(strcmp(argv[currentIndex], "-df") != 0
+			&& strcmp(argv[currentIndex], "-c") != 0)
 				return 1;
 			break;
 			
+		case 7:
+			if(strcmp(argv[currentIndex], "-df") != 0)
+				return 1;
+			break;
+
 		default:
 			return 1;
 		}
-		
+
 		if(strcmp(argv[currentIndex], "-h") == 0
 		|| strcmp(argv[currentIndex], "--help") == 0) {
 			if(argc == 2)
@@ -444,8 +522,11 @@ static int testArgs(int argc, char **argv) {
 		|| strcmp(argv[currentIndex], "-df") == 0)
 			currentIndex += 2;
 
+		if(currentIndex < argc && strcmp(argv[currentIndex], "-c") == 0)
+			currentIndex += 3;
+		
 		if(currentIndex == argc)
-			return 0;	
+			return 0;
 	}
 	
 	return 1;
@@ -456,6 +537,8 @@ int main(int argc, char **argv) {
 	char *eepromFile = NULL;
 	char *eepromDumpFile = NULL;
 	char *flashDumpFile = NULL;
+	char *compareFileA = NULL;
+	char *compareFileB = NULL;
 
     if(testArgs(argc, argv)) {
         printUsage(argv[0]);
@@ -483,6 +566,12 @@ int main(int argc, char **argv) {
 		flashDumpFile = argv[currentIndex + 1];
 		currentIndex += 2;
 	}
+
+	if(argc >= currentIndex + 3 && strcmp(argv[currentIndex], "-c") == 0) {
+		compareFileA = argv[currentIndex + 1];
+		compareFileB = argv[currentIndex + 2];
+		currentIndex += 3;
+	}
 	
 	if(eepromFile != NULL)
 		printf("EEPROM file: \"%s\"\n", eepromFile);
@@ -492,8 +581,11 @@ int main(int argc, char **argv) {
 
 	if(flashDumpFile != NULL)
 		printf("Flash dump file: \"%s\"\n", flashDumpFile);
+
+	if(compareFileA != NULL)
+		printf("Compare files: \"%s\", \"%s\"\n", compareFileA, compareFileB);
 		
-    if((err = usbOpenDevice(&dev, IDENT_VENDOR_NUM, IDENT_VENDOR_STRING, IDENT_PRODUCT_NUM, IDENT_PRODUCT_STRING, 1)) != 0){
+    if((argc == 1 || eepromFile != NULL || eepromDumpFile != NULL || flashDumpFile != NULL) && ((err = usbOpenDevice(&dev, IDENT_VENDOR_NUM, IDENT_VENDOR_STRING, IDENT_PRODUCT_NUM, IDENT_PRODUCT_STRING, 1)) != 0)) {
 		fprintf(stderr, "Error opening MemoryTool device: %s\n", usbErrorMessage(err));
 		return 2;
 	}
@@ -519,14 +611,14 @@ int main(int argc, char **argv) {
 		memset(dataBuffer, -1, sizeof(dataBuffer));
 
 		if(parseIntelHex(eepromFile, dataBuffer, &startAddress, &endAddress))
-			return 6;
+			return 5;
 
 		if(startAddress >= endAddress) {
 			fprintf(stderr, "No data in EEPROM input file.\n");
-			return 7;
+			return 5;
 		}
 		else if(uploadEEPROMData(dataBuffer, startAddress, endAddress))
-			return 8;
+			return 5;
 	}
 	
 	if(eepromDumpFile != NULL) {
@@ -535,11 +627,11 @@ int main(int argc, char **argv) {
 		
 		if(endAddress == 0) {
 			fprintf(stderr, "Error dumping EEPROM data.\n");
-			return 9;
+			return 6;
 		}
 		
 		if(writePlainHEX(eepromDumpFile, dataBuffer, endAddress))
-			return 10;
+			return 7;
 	}
 
 	if(flashDumpFile != NULL) {
@@ -548,10 +640,15 @@ int main(int argc, char **argv) {
 		
 		if(endAddress == 0) {
 			fprintf(stderr, "Error dumping flash data.\n");
-			return 9;
+			return 8;
 		}
 		
 		if(writePlainHEX(flashDumpFile, dataBuffer, endAddress))
+			return 9;
+	}
+
+	if(compareFileA != NULL) {
+		if(comparePlainHEXFiles(compareFileA, compareFileB))
 			return 10;
 	}
 	

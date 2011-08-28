@@ -25,13 +25,14 @@ Differences to bootloadHID
 
 Return Codes
 ~~~~~~~~~~~~
-0: Completed Successfully
-1: Wrong Arguments
-2: Open Device Error
-3: Open EEPROM File Error
-4: Empty EEPROM File
-5: EEPROM Programming Error
-6: EEPROM Dumping Error
-7: Writing EEPROM Dump File Error
-8: Flash Dumping Error
-9: Writing Flash Dump File Error
+ 0: Completed Successfully
+ 1: Wrong Arguments
+ 2: Open Device Error
+ 3: Open EEPROM File Error
+ 4: Empty EEPROM File
+ 5: EEPROM Programming Error
+ 6: EEPROM Dumping Error
+ 7: Writing EEPROM Dump File Error
+ 8: Flash Dumping Error
+ 9: Writing Flash Dump File Error
+10: Reading Compare File Error
