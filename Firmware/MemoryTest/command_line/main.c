@@ -424,11 +424,11 @@ int comparePlainHEXFiles(char* compareFileA, char* compareFileB) {
 		int valueB = parseHexByte(fileB);
 		
 		if(valueA == -1 && valueB != -1) {
-			fprintf(stdout, "The first file ends at address %04X.\n", address - 1);
+			fprintf(stdout, "The first file ends at address 0x%04X.\n", address - 1);
 			break;
 		}
 		else if(valueA != -1 && valueB == -1) {
-			fprintf(stdout, "The second file ends at address %04X.\n", address - 1);
+			fprintf(stdout, "The second file ends at address 0x%04X.\n", address - 1);
 			break;
 		}
 		else if(valueA == -1 && valueB == -1) {
@@ -437,7 +437,7 @@ int comparePlainHEXFiles(char* compareFileA, char* compareFileB) {
 		else if(valueA != valueB) {
 			if(!mismatchFound) {
 				mismatchFound = 1;
-				fprintf(stdout, "Mismatches (<address>: <value A> <value B>):\n");			
+				fprintf(stdout, "Mismatches (HEX values in format: \"<address>: <value A> <value B>\"):\n");			
 			}
 			
 			fprintf(stdout, "%04X: %02X %02X\n", address, valueA, valueB);			
