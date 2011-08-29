@@ -437,10 +437,10 @@ int comparePlainHEXFiles(char* compareFileA, char* compareFileB) {
 		else if(valueA != valueB) {
 			if(!mismatchFound) {
 				mismatchFound = 1;
-				fprintf(stdout, "Mismatches (HEX values in format: \"<address>: <value A> <value B>\"):\n");			
+				fprintf(stdout, "Mismatches (<address>: <value A> <value B>):\n");			
 			}
 			
-			fprintf(stdout, "%04X: %02X %02X\n", address, valueA, valueB);			
+			fprintf(stdout, "  %d: 0x%02X 0x%02X\n", address, valueA, valueB);			
 		}
 		
 		address++;
