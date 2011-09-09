@@ -186,6 +186,8 @@ void pc_test_controller() {
 }
 
 void pc_controller() {
+	metaSendRepeats = 40;
+
     while(1) { /* main event loop */
 		usbPoll();
 		updateMetaState();
