@@ -1,5 +1,5 @@
 ###############################################################################
-# Makefile for Dual Strike Firmware (ATmega168)
+# Makefile for Dual Strike Firmware ATmega168 (SMD)
 ###############################################################################
 
 ## General Flags
@@ -16,7 +16,7 @@ COMMON = -mmcu=$(MCU)
 
 ## Compile options common for all C compilation units.
 CFLAGS = $(COMMON)
-CFLAGS += -Wall -std=c99 -DATMEGA_NO=$(ATMEGA_NO) -DF_CPU=12000000UL -Os -fsigned-char
+CFLAGS += -Wall -std=c99 -DATMEGA_NO=$(ATMEGA_NO) -DF_CPU=12000000UL -DSMD=1 -DDUAL_STRIKE_SMD=1 -Os -fsigned-char
 CFLAGS += -MD -MP -MT $(*F).o -MF dep/$(@F).d 
 
 ## Assembly specific flags
@@ -26,7 +26,7 @@ ASMFLAGS += -x assembler-with-cpp -Wa,-gdwarf2
 
 ## Linker flags
 LDFLAGS = $(COMMON)
-LDFLAGS += 
+LDFLAGS += -Wl,-section-start=.bootloader=0x3800
 
 
 ## Intel Hex file production flags
@@ -44,7 +44,7 @@ OBJECTS = DualStrike.o pass-through.o usb_controller.o usbdrv.o usbdrvasm.o
 LINKONLYOBJECTS = 
 
 ## Build
-all: $(TARGET) dual_strike_firmware_atmega168.hex dual_strike_firmware_atmega168.eep size
+all: $(TARGET) dual_strike_firmware_atmega168_smd.hex dual_strike_firmware_atmega168_smd.eep size
 
 ## Compile
 DualStrike.o: ../DualStrike.c
@@ -77,7 +77,7 @@ $(TARGET): $(OBJECTS)
 
 size: ${TARGET}
 	@avr-size -C --mcu=${MCU} ${TARGET}
-	@echo "Only 14336 bytes (87.5%) are available on the device due to the bootloader!"
+	@echo Only 14336 bytes (87.5%%) are available on the device due to the bootloader!
 
 ## Clean target
 .PHONY: clean

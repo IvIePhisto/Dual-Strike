@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration xmlns="urn:strike-devices:configuration">
+  <help path="assets/configuration-help.html"/>
+  <help lang="de" path="assets/configuration-help_de.html"/>
+  
+  <connectionHelp>Connect the Dual Strike to the PC while pressing Select.</connectionHelp>
+  <connectionHelp lang="de">Verbinde das Dual Strike mit dem PC während Select gedrückt wird.</connectionHelp>
+</configuration>
