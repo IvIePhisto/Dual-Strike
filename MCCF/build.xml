@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project default="pack" name="Microcontroller Configuration Framework">
+    <!--ANT 1.7 is required                                        -->
+  	<property file="build.properties"/>
+    <property file="local.build.properties"/>
+	
+  <target name="javac" description="Compile Java source files.">
+  	<mkdir dir="${javac.dest.dir}"/>
+    <javac target="1.6" srcdir="${src.dir}" optimize="true" destdir="${javac.dest.dir}" debug="${javac.debug}"/>
+  </target>
+
+  <target name="javac.clean" description="Delete generated Java binary files.">
+    <delete dir="${javac.dest.dir}"/>
+  </target>
+  
+  <target name="javac.recompile" depends="javac.clean, javac" description="Recompile all Java source files."/>
+
+  <target name="javadoc" depends="javadoc.clean" description="Create API documentation with JavaDoc.">
+    <javadoc destdir="${javadoc.dir}" sourcepath="${src.dir}" packagenames="mccf" overview="${src.dir}/overview.html" doctitle="${project.name}" windowtitle="${project.name}" classpath="${javadoc.toolbox.classpath}">
+      <link href="http://java.sun.com/javase/6/docs/api/"/>
+    </javadoc>
+    <copy todir="${javadoc.dir}">
+      <fileset dir="${src.dir}">
+        <include name="**/*"/>
+        <exclude name="**/*.class"/>
+        <exclude name="**/*.java"/>
+        <exclude name="**/*.html"/>
+      </fileset>
+    </copy>
+  </target>
+
+  <target name="javadoc.clean" description="Delete API documentation.">
+    <delete dir="${javadoc.dir}" includeemptydirs="true"/>
+  </target>
+
+    <target name="pack.init" description="Create common JAR package.">
+        <mkdir dir="${pack.dir}"/>
+    </target>
+
+  <target name="pack.jar" depends="javac.clean, javac, pack.init" description="Create the JAR package.">
+        <delete file="${pack.dir}/${project.name.short}-${project.version}.jar"/>
+        <jar destfile="${pack.dir}/${project.name.short}-${project.version}.jar" filesonly="true">
+            <manifest>
+                <attribute name="Sealed" value="true"/>
+                <attribute name="Main-Class" value="${pack.jar.class}"/>
+                <attribute name="SplashScreen-Image" value="splash.png"/>
+            </manifest>
+          <fileset dir="${src.dir}">
+              <include name="**/*"/>
+              <exclude name="**/*.class"/>
+              <exclude name="**/*.java"/>
+              <exclude name="**/*.html"/>
+          </fileset>
+            <fileset dir="${javac.dest.dir}">
+                <include name="**/*"/>
+            </fileset>
+        </jar>
+  </target>
+    
+  <target name="pack.zip.src" depends="pack.init" description="Create ZIP file containing source files.">
+    <delete file="${pack.dir}/${project.name.short}-${project.version}-src.zip"/>
+    <zip destfile="${pack.dir}/${project.name.short}-${project.version}-src.zip">
+      <zipfileset dir=".">
+        <include name=".*"/>
+        <include name=".**/*"/>
+        <include name="*.*"/>
+        <exclude name="local.build.properties"/>
+      </zipfileset>
+      <zipfileset dir="${src.dir}" prefix="${src.dir}">
+        <include name="**/*"/>
+        <exclude name="**/*.class"/>
+      </zipfileset>
+    </zip>
+  </target>
+
+  <target name="pack.zip.api" depends="javadoc, pack.init" description="Create ZIP file containing API documentation.">
+    <delete file="${pack.dir}/${project.name.short}-${project.version}-api.zip"/>
+    <zip destfile="${pack.dir}/${project.name.short}-${project.version}-api.zip">
+      <fileset dir="${javadoc.dir}"/>
+    </zip>
+  </target>
+
+  <target name="pack" depends="pack.jar, pack.zip.src, pack.zip.api" description="Create JAR file and ZIP files containing sources and API documentation."/>
+
+  <target name="pack.clean" depends="javac.clean" description="Delete generated JAR and ZIP files.">
+    <delete dir="${pack.dir}/"/>
+  </target>
+  	
+  <target name="build" depends="javac, javadoc" description="Compile files and generate API documentation."/>
+  <target name="build.clean" depends="javac.clean, javadoc.clean" description="Delete compilation output and API documentation."/>
+	
+  <target name="clean" description="Delete all generated files.">
+    <delete dir="${build.dir}"/>
+  </target>
+	
+	<target name="dist" depends="pack.jar">
+		<delete file="${pack.dir}/${project.name.short}-${project.version}-example.zip"/>
+	  <zip destfile="${pack.dir}/${project.name.short}-${project.version}-example.zip">
+	  	<fileset dir=".">
+  	  	<include name="arcadestick.jpg"/>
+        <include name="configuration-*.html"/>
+        <include name="configuration.*"/>
+        <include name="dualstrike.png"/>
+        <include name="Readme.txt"/>
+        <include name="mcc_Readme.txt"/>
+        <include name="eepromProgrammerHID.exe"/>
+        <include name="HID_Programmer/**/*"/>
+  		</fileset>
+	  	<fileset dir="${pack.dir}">
+	  	  <filename name="${project.name.short}-${project.version}.jar"/>
+	  	</fileset>
+	  </zip>
+	</target>
+</project>

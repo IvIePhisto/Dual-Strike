@@ -1,0 +1,233 @@
+/*
+ * STRIKE-DEVICES.NET Design
+ * =========================
+ * Copyright 2011 by Michael Pohl
+ */
+
+/* BASIC DEFINITIONS */
+
+body {
+  padding: 1em;
+  margin: 0;
+  -webkit-text-size-adjust: 100%; /* avoid WebKit screen dimension resizing */
+}
+
+a img {
+  border: none;
+}
+
+a:link {
+  color: #FF5900;
+}
+
+a:visited {
+  color: #A63A00;
+}
+
+h1, h2, h3, h4, h5, h6, h7,
+#header, #navigation, .nav-item {
+  font-family: BladeRunnerMovieFontRegular; /* has to be defined in previously loaded CSS */
+}
+
+
+/* COLORS */
+
+/* Color Scheme Designer 3 scheme: http://colorschemedesigner.com/#3s31Jw0w0w0w0 */
+
+#header, #navigation {
+  background: #034769;
+}
+
+#content, .nav-item-main {
+  background: white;
+}
+
+.nav-item, #footer {
+  color: #034769;
+}
+
+.nav-label:hover, #navigation a.nav-expander:hover, #navigation a.touched:hover {
+  color: white;
+  background: #3CA0D0;
+}
+
+#navigation a {
+  color: inherit;
+}
+
+.untouched, #navigation a.untouched:hover {
+  color: inherit !important;
+  background: none !important;
+}
+
+.nav-current {
+  color: black !important;
+  background: none !important;
+}
+
+.version_switcher {
+  float: right;
+  color: inherit !important;
+}
+
+
+/* BORDERS */
+
+#header, #navigation, #content, .nav-item-main {
+  border: solid #63ADD0;
+  border-width: 0.3em;
+}
+
+#header, #navigation, #content {
+  border-radius: 1.5em 0.6em;
+  -moz-border-radius: 1.5em 0.6em;
+  
+  box-shadow: 5px 5px 5px #235D79;
+  -moz-box-shadow: 5px 5px 5px #235D79;
+  -webkit-box-shadow: 5px 5px 5px #235D79;
+/*
+IE missing CSS3 feature emulation CSS3PIE <http://css3pie.com/>.
+In every CSS rule with wanted features:
+  behavior: url(js/css3pie-1.0beta3.htc);
+*/
+  behavior: url(js/css3pie-1.0beta3.htc);
+/*
+IE missing box-shadow workaround:
+not supported:
+  box-shadow: 5px 5px 5px #235D79;
+  list-style-type: disc;
+workaround:
+  filter:progid:DXImageTransform.Microsoft.Shadow(color=#235D79,direction=90,strength=5);
+*/
+}
+
+.nav-item-main {
+  border-radius: 1em 0.4em;
+  -moz-border-radius: 1em 0.4em;
+  behavior: url(js/css3pie-1.0beta3.htc); /* CSS3PIE */
+}
+
+.nav-label {
+  border-radius: 0.6em 0.2em;
+  -moz-border-radius: 0.6em 0.2em;
+  /* CSS3PIE not working because of dynamic displayed content. */
+}
+
+.nav-expander {
+  border-radius: 0.2em 0.2em;
+  -moz-border-radius: 0.2em 0.2em;
+  /* CSS3PIE not working because of dynamic displayed content. */
+}
+
+
+/* DIMENSIONS AND POSITIONING */
+
+#header {
+  padding: 1em;
+  margin: 0 0 1.5em;
+}
+
+#content, #navigation {
+  padding: 0.5em 0.5em 0;
+}
+
+#navigation-container {
+  float: left;
+  width: 15em;
+}
+
+#navigation {
+  margin: 0;
+}
+
+#navigation-container, #content-container {
+  margin-bottom: 1.5em;
+}
+
+#content-container {
+  margin-left: 16.5em;
+}
+
+#footer {
+  clear: both;
+  font-size: 80%;
+  padding: 0.2em 0;
+}
+
+.nav-item-main {
+  padding: 0.2em !important;  
+  margin: 0 0 0.5em !important;
+}
+
+#navigation ul {
+  padding: 0;
+  margin: 0 0 0 0.6em;
+}
+
+#navigation ul li {
+  padding-left: 0.8em;
+}
+
+
+.nav-item {
+  margin: 0 0 0.2em;
+  padding: 0;
+}
+
+.nav-label {
+  padding: 0.2em 0.4em;
+}
+
+.nav-expander {
+  float: right;
+  height: 1em;
+  width: 1em;
+  line-height: 1em;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.nav-inactive {
+  display: none;
+}
+
+#main-title {
+  color: white;
+  font-size: 300%;
+  text-align: center;
+}
+
+.version_switcher {
+  float: right;
+}
+
+
+/* MISC */
+
+
+#navigation {
+  list-style-type: none;
+}
+
+#navigation a {
+  text-decoration: none;
+}
+
+#navigation ul li {
+/*
+Fix for IE list item float content bug.
+wanted:
+  list-style-type: disc;
+fix:
+  list-style-type: none;
+  background: transparent url(../images/nav-bullet.png) no-repeat left 0.5em;
+*/
+  list-style-type: none;
+  background: transparent url(../images/nav-bullet.png) no-repeat left 0.5em;
+}
+
+.warning {
+  border: medium red solid;
+  color: red;
+  padding: 0.5em;
+}

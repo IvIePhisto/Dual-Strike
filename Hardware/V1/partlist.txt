@@ -1,0 +1,29 @@
+Partlist
+
+Exported from 4066_1_dual_strike_v0_2.sch at 22.04.2010 16:10:15
+
+EAGLE Version 5.4.0 Copyright (c) 1988-2009 CadSoft
+
+Part     Value          Device          Package               Library  Sheet
+
+C2       47uF           CPOL-EUE2-5     E2-5                  rcl      1
+C3       100nF          C-EU025-025X050 C025-025X050          rcl      1
+C4       27pF           C-EU025-025X050 C025-025X050          rcl      1
+C5       27pF           C-EU025-025X050 C025-025X050          rcl      1
+D1       3.6V           ZENER-DIODEZD-5 ZDIO-5                diode    1
+D2       3.6V           ZENER-DIODEZD-5 ZDIO-5                diode    1
+IC1      ATMEGA8-PU     ATMEGA8-PU      DIL28-3               atmega8  1
+IC2      4066N          4066N           DIL14                 40xx     1
+JP1                     M04SCREW        SCREWTERMINAL-3.5MM-4 SparkFun 1
+JP2                     M023.5MM        SCREWTERMINAL-3.5MM-2 SparkFun 1
+JP3                     M04SCREW        SCREWTERMINAL-3.5MM-4 SparkFun 1
+JP4                     M023.5MM        SCREWTERMINAL-3.5MM-2 SparkFun 1
+JP5                     M04SCREW        SCREWTERMINAL-3.5MM-4 SparkFun 1
+JP6                     M023.5MM        SCREWTERMINAL-3.5MM-2 SparkFun 1
+JP7                     M023.5MM        SCREWTERMINAL-3.5MM-2 SparkFun 1
+Q1       12 Mhz         CRYSTALHC49S    HC49/S                crystal  1
+R4       68             R-EU_0204/2V    0204V                 rcl      1
+R5       68             R-EU_0204/2V    0204V                 rcl      1
+R6       1.5K           R-EU_0204/2V    0204V                 rcl      1
+USB                     USB-B           327560-2              -Connec  1
+XBOX360                 MA10-2          MA10-2                con-lstb 1

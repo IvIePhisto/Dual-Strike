@@ -1,0 +1,15 @@
+<html>
+<h1>Microcontroller Configuration Editor</h1>
+<p><b>Version:</b> {0}.{1}.{2}</p>
+<p><b>Autor:</b> Michael Pohl<br/>
+<i>E-Mail:</i> <a href="mailto:pohl-michael@gmx.biz">pohl-michael@gmx.biz</a><br/>
+<i>Homepage:</i> <a href="http://pohl-michael.gmxhome.de">http://pohl-michael.gmxhome.de</a></p>
+<p>Dieses Programm erlaubt die Konfiguration von entsprechend programmierten Mikrocontroller-Geräten über USB.
+Es generiert die Benutzerschnittstelle basierend auf einer Konfigurationsdefinition in einem XML Format, welches zu dem angeschlossenen Gerät passen muß.
+Es verwendet eine modifizierte Version des <a href="http://www.obdev.at/products/vusb/bootloadhid.html">BootloadHID</a> Kommandozeilen-Programms von Objective Development.</p>
+<p>Dank geht an:
+<ul>
+<li>meine Frau für ihre Geduld und Liebe</li>
+<li>Jochen Zurborg für seine Ideen, Hilfe und seine tollen Geräte</li>
+</ul></p>
+</html>

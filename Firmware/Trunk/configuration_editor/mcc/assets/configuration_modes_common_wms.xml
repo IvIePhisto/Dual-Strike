@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration xmlns="urn:strike-devices:configuration">
+  <boolean id="WORK_MODE_PS3_ENABLED" default="true">
+      <title>PS3 Controller</title>
+      <help>The Dual Strike works as a PS3 controller (not on PC).</help>
+      <help lang="de">Das Dual Strike arbeitet als PS3 Controller (nicht am PC).</help>
+  </boolean>
+
+  <boolean id="WORK_MODE_PC_ENABLED" default="true">
+      <title>PC Controller</title>
+      <help>The Dual Strike works as a PC controller.</help>
+      <help lang="de">Das Dual Strike arbeitet als PC Controller.</help>
+  </boolean>
+  
+  <boolean id="WORK_MODE_PT_ENABLED" default="true">
+      <title>Pass-Through (XBox360 or other)</title>
+      <title lang="de">Durchschleifen (XBox360 oder andere)</title>
+      <help>The pass-through data connections are routed to the USB data connections on the Dual Strike PCB.</help>
+      <help lang="de">Die Durschleif-Datenanschlüsse werden auf die USB Datenanschlüsse des Dual Strike PCB geleitet.</help>
+  </boolean>
+</configuration>

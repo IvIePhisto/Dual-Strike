@@ -1,0 +1,1103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet href="configuration2html.xsl" type="text/xsl"?>
+<configuration
+  xmlns="urn:strike-devices:configuration"
+  def-lang-version="2"
+  lang="en"
+  prefix="CFG_"
+  icon-path="assets/configuration.png">
+  
+  <device>2</device>
+  <version>4</version>
+
+  <title>Dual Strike Configuration (ATmega168)</title>
+  <title lang="de">Dual Strike Konfiguration (ATmega168)</title>
+  <help path="assets/configuration-help.html"/>
+  <help lang="de" path="assets/configuration-help_de.html"/>
+  
+  <?mcc:include assets/configuration_common.xml?>
+  
+  <page>
+    <title>MAME Button Layout 1</title>
+    <title lang="de">MAME Button Anordnung 1</title>
+    <help>The MAME button layout number 1. It is selected in MAME mode by pressing Meta (Start or Select), LK and joystick up.&lt;br/>&lt;img src="assets/buttons.png"/></help>
+    <help lang="de">Die MAME Button Anordnung Nummer 1. Sie wird im MAME Modus durch drücken von Meta (Start oder Select), LK und Joystick hoch aktiviert.&lt;br/>&lt;img src="assets/buttons.png"/></help>
+
+    <choice default="MAME_BL1_LK_BUTTON3">
+      <title>LK</title>
+        
+      <option id="MAME_BL1_LK_NOTHING">
+        <title>Nothing</title>
+        <title lang="de">Nichts</title>
+      </option>
+      
+      <option id="MAME_BL1_LK_BUTTON1">
+        <title>Button 1</title>
+      </option>
+
+      <option id="MAME_BL1_LK_BUTTON2">
+        <title>Button 2</title>
+      </option>
+
+      <option id="MAME_BL1_LK_BUTTON3">
+        <title>Button 3</title>
+      </option>
+	  
+      <option id="MAME_BL1_LK_BUTTON4">
+        <title>Button 4</title>
+      </option>
+
+      <option id="MAME_BL1_LK_BUTTON5">
+        <title>Button 5</title>
+      </option>
+
+      <option id="MAME_BL1_LK_BUTTON6">
+        <title>Button 6</title>
+      </option>
+    </choice>
+
+    <choice default="MAME_BL1_MK_BUTTON4">
+      <title>MK</title>
+        
+      <option id="MAME_BL1_MK_NOTHING">
+        <title>Nothing</title>
+        <title lang="de">Nichts</title>
+      </option>
+      
+      <option id="MAME_BL1_MK_BUTTON1">
+        <title>Button 1</title>
+      </option>
+
+      <option id="MAME_BL1_MK_BUTTON2">
+        <title>Button 2</title>
+      </option>
+
+      <option id="MAME_BL1_MK_BUTTON3">
+        <title>Button 3</title>
+      </option>
+	  
+      <option id="MAME_BL1_MK_BUTTON4">
+        <title>Button 4</title>
+      </option>
+
+      <option id="MAME_BL1_MK_BUTTON5">
+        <title>Button 5</title>
+      </option>
+
+      <option id="MAME_BL1_MK_BUTTON6">
+        <title>Button 6</title>
+      </option>
+    </choice>
+	
+    <choice default="MAME_BL1_HK_BUTTON6">
+      <title>HK</title>
+        
+      <option id="MAME_BL1_HK_NOTHING">
+        <title>Nothing</title>
+        <title lang="de">Nichts</title>
+      </option>
+      
+      <option id="MAME_BL1_HK_BUTTON1">
+        <title>Button 1</title>
+      </option>
+
+      <option id="MAME_BL1_HK_BUTTON2">
+        <title>Button 2</title>
+      </option>
+
+      <option id="MAME_BL1_HK_BUTTON3">
+        <title>Button 3</title>
+      </option>
+	  
+      <option id="MAME_BL1_HK_BUTTON4">
+        <title>Button 4</title>
+      </option>
+
+      <option id="MAME_BL1_HK_BUTTON5">
+        <title>Button 5</title>
+      </option>
+
+      <option id="MAME_BL1_HK_BUTTON6">
+        <title>Button 6</title>
+      </option>
+    </choice>
+
+    <choice default="MAME_BL1_4K_NOTHING">
+      <title>4K</title>
+        
+      <option id="MAME_BL1_4K_NOTHING">
+        <title>Nothing</title>
+        <title lang="de">Nichts</title>
+      </option>
+      
+      <option id="MAME_BL1_4K_BUTTON1">
+        <title>Button 1</title>
+      </option>
+
+      <option id="MAME_BL1_4K_BUTTON2">
+        <title>Button 2</title>
+      </option>
+
+      <option id="MAME_BL1_4K_BUTTON3">
+        <title>Button 3</title>
+      </option>
+	  
+      <option id="MAME_BL1_4K_BUTTON4">
+        <title>Button 4</title>
+      </option>
+
+      <option id="MAME_BL1_4K_BUTTON5">
+        <title>Button 5</title>
+      </option>
+
+      <option id="MAME_BL1_4K_BUTTON6">
+        <title>Button 6</title>
+      </option>
+    </choice>
+
+    <choice default="MAME_BL1_LP_BUTTON1">
+      <title>LP</title>
+        
+      <option id="MAME_BL1_LP_NOTHING">
+        <title>Nothing</title>
+        <title lang="de">Nichts</title>
+      </option>
+      
+      <option id="MAME_BL1_LP_BUTTON1">
+        <title>Button 1</title>
+      </option>
+
+      <option id="MAME_BL1_LP_BUTTON2">
+        <title>Button 2</title>
+      </option>
+
+      <option id="MAME_BL1_LP_BUTTON3">
+        <title>Button 3</title>
+      </option>
+	  
+      <option id="MAME_BL1_LP_BUTTON4">
+        <title>Button 4</title>
+      </option>
+
+      <option id="MAME_BL1_LP_BUTTON5">
+        <title>Button 5</title>
+      </option>
+
+      <option id="MAME_BL1_LP_BUTTON6">
+        <title>Button 6</title>
+      </option>
+    </choice>
+
+    <choice default="MAME_BL1_MP_BUTTON2">
+      <title>MP</title>
+        
+      <option id="MAME_BL1_MP_NOTHING">
+        <title>Nothing</title>
+        <title lang="de">Nichts</title>
+      </option>
+      
+      <option id="MAME_BL1_MP_BUTTON1">
+        <title>Button 1</title>
+      </option>
+
+      <option id="MAME_BL1_MP_BUTTON2">
+        <title>Button 2</title>
+      </option>
+
+      <option id="MAME_BL1_MP_BUTTON3">
+        <title>Button 3</title>
+      </option>
+	  
+      <option id="MAME_BL1_MP_BUTTON4">
+        <title>Button 4</title>
+      </option>
+
+      <option id="MAME_BL1_MP_BUTTON5">
+        <title>Button 5</title>
+      </option>
+
+      <option id="MAME_BL1_MP_BUTTON6">
+        <title>Button 6</title>
+      </option>
+    </choice>
+	
+    <choice default="MAME_BL1_HP_BUTTON5">
+      <title>HP</title>
+        
+      <option id="MAME_BL1_HP_NOTHING">
+        <title>Nothing</title>
+        <title lang="de">Nichts</title>
+      </option>
+      
+      <option id="MAME_BL1_HP_BUTTON1">
+        <title>Button 1</title>
+      </option>
+
+      <option id="MAME_BL1_HP_BUTTON2">
+        <title>Button 2</title>
+      </option>
+
+      <option id="MAME_BL1_HP_BUTTON3">
+        <title>Button 3</title>
+      </option>
+	  
+      <option id="MAME_BL1_HP_BUTTON4">
+        <title>Button 4</title>
+      </option>
+
+      <option id="MAME_BL1_HP_BUTTON5">
+        <title>Button 5</title>
+      </option>
+
+      <option id="MAME_BL1_HP_BUTTON6">
+        <title>Button 6</title>
+      </option>
+    </choice>
+
+    <choice default="MAME_BL1_4P_NOTHING">
+      <title>4P</title>
+        
+      <option id="MAME_BL1_4P_NOTHING">
+        <title>Nothing</title>
+        <title lang="de">Nichts</title>
+      </option>
+      
+      <option id="MAME_BL1_4P_BUTTON1">
+        <title>Button 1</title>
+      </option>
+
+      <option id="MAME_BL1_4P_BUTTON2">
+        <title>Button 2</title>
+      </option>
+
+      <option id="MAME_BL1_4P_BUTTON3">
+        <title>Button 3</title>
+      </option>
+	  
+      <option id="MAME_BL1_4P_BUTTON4">
+        <title>Button 4</title>
+      </option>
+
+      <option id="MAME_BL1_4P_BUTTON5">
+        <title>Button 5</title>
+      </option>
+
+      <option id="MAME_BL1_4P_BUTTON6">
+        <title>Button 6</title>
+      </option>
+    </choice>
+  </page>
+
+  <page>
+    <title>MAME Button Layout 2</title>
+    <title lang="de">MAME Button Anordnung 2</title>
+    <help>The MAME button layout number 2. It is selected in MAME mode by pressing Meta (Start or Select), LK and joystick right.&lt;br/>&lt;img src="assets/buttons.png"/></help>
+    <help lang="de">Die MAME Button Anordnung Nummer 2. Sie wird im MAME Modus durch drücken von Meta (Start oder Select), LK und Joystick rechts aktiviert.&lt;br/>&lt;img src="assets/buttons.png"/></help>
+
+    <choice default="MAME_BL2_LK_BUTTON4">
+      <title>LK</title>
+        
+      <option id="MAME_BL2_LK_NOTHING">
+        <title>Nothing</title>
+        <title lang="de">Nichts</title>
+      </option>
+      
+      <option id="MAME_BL2_LK_BUTTON1">
+        <title>Button 1</title>
+      </option>
+
+      <option id="MAME_BL2_LK_BUTTON2">
+        <title>Button 2</title>
+      </option>
+
+      <option id="MAME_BL2_LK_BUTTON3">
+        <title>Button 3</title>
+      </option>
+	  
+      <option id="MAME_BL2_LK_BUTTON4">
+        <title>Button 4</title>
+      </option>
+
+      <option id="MAME_BL2_LK_BUTTON5">
+        <title>Button 5</title>
+      </option>
+
+      <option id="MAME_BL2_LK_BUTTON6">
+        <title>Button 6</title>
+      </option>
+    </choice>
+
+    <choice default="MAME_BL2_MK_BUTTON5">
+      <title>MK</title>
+        
+      <option id="MAME_BL2_MK_NOTHING">
+        <title>Nothing</title>
+        <title lang="de">Nichts</title>
+      </option>
+      
+      <option id="MAME_BL2_MK_BUTTON1">
+        <title>Button 1</title>
+      </option>
+
+      <option id="MAME_BL2_MK_BUTTON2">
+        <title>Button 2</title>
+      </option>
+
+      <option id="MAME_BL2_MK_BUTTON3">
+        <title>Button 3</title>
+      </option>
+	  
+      <option id="MAME_BL2_MK_BUTTON4">
+        <title>Button 4</title>
+      </option>
+
+      <option id="MAME_BL2_MK_BUTTON5">
+        <title>Button 5</title>
+      </option>
+
+      <option id="MAME_BL2_MK_BUTTON6">
+        <title>Button 6</title>
+      </option>
+    </choice>
+	
+    <choice default="MAME_BL2_HK_BUTTON6">
+      <title>HK</title>
+        
+      <option id="MAME_BL2_HK_NOTHING">
+        <title>Nothing</title>
+        <title lang="de">Nichts</title>
+      </option>
+      
+      <option id="MAME_BL2_HK_BUTTON1">
+        <title>Button 1</title>
+      </option>
+
+      <option id="MAME_BL2_HK_BUTTON2">
+        <title>Button 2</title>
+      </option>
+
+      <option id="MAME_BL2_HK_BUTTON3">
+        <title>Button 3</title>
+      </option>
+	  
+      <option id="MAME_BL2_HK_BUTTON4">
+        <title>Button 4</title>
+      </option>
+
+      <option id="MAME_BL2_HK_BUTTON5">
+        <title>Button 5</title>
+      </option>
+
+      <option id="MAME_BL2_HK_BUTTON6">
+        <title>Button 6</title>
+      </option>
+    </choice>
+
+    <choice default="MAME_BL2_4K_NOTHING">
+      <title>4K</title>
+        
+      <option id="MAME_BL2_4K_NOTHING">
+        <title>Nothing</title>
+        <title lang="de">Nichts</title>
+      </option>
+      
+      <option id="MAME_BL2_4K_BUTTON1">
+        <title>Button 1</title>
+      </option>
+
+      <option id="MAME_BL2_4K_BUTTON2">
+        <title>Button 2</title>
+      </option>
+
+      <option id="MAME_BL2_4K_BUTTON3">
+        <title>Button 3</title>
+      </option>
+	  
+      <option id="MAME_BL2_4K_BUTTON4">
+        <title>Button 4</title>
+      </option>
+
+      <option id="MAME_BL2_4K_BUTTON5">
+        <title>Button 5</title>
+      </option>
+
+      <option id="MAME_BL2_4K_BUTTON6">
+        <title>Button 6</title>
+      </option>
+    </choice>
+
+    <choice default="MAME_BL2_LP_BUTTON1">
+      <title>LP</title>
+        
+      <option id="MAME_BL2_LP_NOTHING">
+        <title>Nothing</title>
+        <title lang="de">Nichts</title>
+      </option>
+      
+      <option id="MAME_BL2_LP_BUTTON1">
+        <title>Button 1</title>
+      </option>
+
+      <option id="MAME_BL2_LP_BUTTON2">
+        <title>Button 2</title>
+      </option>
+
+      <option id="MAME_BL2_LP_BUTTON3">
+        <title>Button 3</title>
+      </option>
+	  
+      <option id="MAME_BL2_LP_BUTTON4">
+        <title>Button 4</title>
+      </option>
+
+      <option id="MAME_BL2_LP_BUTTON5">
+        <title>Button 5</title>
+      </option>
+
+      <option id="MAME_BL2_LP_BUTTON6">
+        <title>Button 6</title>
+      </option>
+    </choice>
+
+    <choice default="MAME_BL2_MP_BUTTON2">
+      <title>MP</title>
+        
+      <option id="MAME_BL2_MP_NOTHING">
+        <title>Nothing</title>
+        <title lang="de">Nichts</title>
+      </option>
+      
+      <option id="MAME_BL2_MP_BUTTON1">
+        <title>Button 1</title>
+      </option>
+
+      <option id="MAME_BL2_MP_BUTTON2">
+        <title>Button 2</title>
+      </option>
+
+      <option id="MAME_BL2_MP_BUTTON3">
+        <title>Button 3</title>
+      </option>
+	  
+      <option id="MAME_BL2_MP_BUTTON4">
+        <title>Button 4</title>
+      </option>
+
+      <option id="MAME_BL2_MP_BUTTON5">
+        <title>Button 5</title>
+      </option>
+
+      <option id="MAME_BL2_MP_BUTTON6">
+        <title>Button 6</title>
+      </option>
+    </choice>
+	
+    <choice default="MAME_BL2_HP_BUTTON3">
+      <title>HP</title>
+        
+      <option id="MAME_BL2_HP_NOTHING">
+        <title>Nothing</title>
+        <title lang="de">Nichts</title>
+      </option>
+      
+      <option id="MAME_BL2_HP_BUTTON1">
+        <title>Button 1</title>
+      </option>
+
+      <option id="MAME_BL2_HP_BUTTON2">
+        <title>Button 2</title>
+      </option>
+
+      <option id="MAME_BL2_HP_BUTTON3">
+        <title>Button 3</title>
+      </option>
+	  
+      <option id="MAME_BL2_HP_BUTTON4">
+        <title>Button 4</title>
+      </option>
+
+      <option id="MAME_BL2_HP_BUTTON5">
+        <title>Button 5</title>
+      </option>
+
+      <option id="MAME_BL2_HP_BUTTON6">
+        <title>Button 6</title>
+      </option>
+    </choice>
+
+    <choice default="MAME_BL2_4P_NOTHING">
+      <title>4P</title>
+        
+      <option id="MAME_BL2_4P_NOTHING">
+        <title>Nothing</title>
+        <title lang="de">Nichts</title>
+      </option>
+      
+      <option id="MAME_BL2_4P_BUTTON1">
+        <title>Button 1</title>
+      </option>
+
+      <option id="MAME_BL2_4P_BUTTON2">
+        <title>Button 2</title>
+      </option>
+
+      <option id="MAME_BL2_4P_BUTTON3">
+        <title>Button 3</title>
+      </option>
+	  
+      <option id="MAME_BL2_4P_BUTTON4">
+        <title>Button 4</title>
+      </option>
+
+      <option id="MAME_BL2_4P_BUTTON5">
+        <title>Button 5</title>
+      </option>
+
+      <option id="MAME_BL2_4P_BUTTON6">
+        <title>Button 6</title>
+      </option>
+    </choice>
+  </page>
+
+  <page>
+    <title>MAME Button Layout 3</title>
+    <title lang="de">MAME Button Anordnung 3</title>
+    <help>The MAME button layout number 3. It is selected in MAME mode by pressing Meta (Start or Select), LK and joystick down.&lt;br/>&lt;img src="assets/buttons.png"/></help>
+    <help lang="de">Die MAME Button Anordnung Nummer 3. Sie wird im MAME Modus durch drücken von Meta (Start oder Select), LK und Joystick runter aktiviert.&lt;br/>&lt;img src="assets/buttons.png"/></help>
+
+    <choice default="MAME_BL3_LK_BUTTON5">
+      <title>LK</title>
+        
+      <option id="MAME_BL3_LK_NOTHING">
+        <title>Nothing</title>
+        <title lang="de">Nichts</title>
+      </option>
+      
+      <option id="MAME_BL3_LK_BUTTON1">
+        <title>Button 1</title>
+      </option>
+
+      <option id="MAME_BL3_LK_BUTTON2">
+        <title>Button 2</title>
+      </option>
+
+      <option id="MAME_BL3_LK_BUTTON3">
+        <title>Button 3</title>
+      </option>
+	  
+      <option id="MAME_BL3_LK_BUTTON4">
+        <title>Button 4</title>
+      </option>
+
+      <option id="MAME_BL3_LK_BUTTON5">
+        <title>Button 5</title>
+      </option>
+
+      <option id="MAME_BL3_LK_BUTTON6">
+        <title>Button 6</title>
+      </option>
+    </choice>
+
+    <choice default="MAME_BL3_MK_BUTTON6">
+      <title>MK</title>
+        
+      <option id="MAME_BL3_MK_NOTHING">
+        <title>Nothing</title>
+        <title lang="de">Nichts</title>
+      </option>
+      
+      <option id="MAME_BL3_MK_BUTTON1">
+        <title>Button 1</title>
+      </option>
+
+      <option id="MAME_BL3_MK_BUTTON2">
+        <title>Button 2</title>
+      </option>
+
+      <option id="MAME_BL3_MK_BUTTON3">
+        <title>Button 3</title>
+      </option>
+	  
+      <option id="MAME_BL3_MK_BUTTON4">
+        <title>Button 4</title>
+      </option>
+
+      <option id="MAME_BL3_MK_BUTTON5">
+        <title>Button 5</title>
+      </option>
+
+      <option id="MAME_BL3_MK_BUTTON6">
+        <title>Button 6</title>
+      </option>
+    </choice>
+	
+    <choice default="MAME_BL3_HK_NOTHING">
+      <title>HK</title>
+        
+      <option id="MAME_BL3_HK_NOTHING">
+        <title>Nothing</title>
+        <title lang="de">Nichts</title>
+      </option>
+      
+      <option id="MAME_BL3_HK_BUTTON1">
+        <title>Button 1</title>
+      </option>
+
+      <option id="MAME_BL3_HK_BUTTON2">
+        <title>Button 2</title>
+      </option>
+
+      <option id="MAME_BL3_HK_BUTTON3">
+        <title>Button 3</title>
+      </option>
+	  
+      <option id="MAME_BL3_HK_BUTTON4">
+        <title>Button 4</title>
+      </option>
+
+      <option id="MAME_BL3_HK_BUTTON5">
+        <title>Button 5</title>
+      </option>
+
+      <option id="MAME_BL3_HK_BUTTON6">
+        <title>Button 6</title>
+      </option>
+    </choice>
+
+    <choice default="MAME_BL3_4K_NOTHING">
+      <title>4K</title>
+        
+      <option id="MAME_BL3_4K_NOTHING">
+        <title>Nothing</title>
+        <title lang="de">Nichts</title>
+      </option>
+      
+      <option id="MAME_BL3_4K_BUTTON1">
+        <title>Button 1</title>
+      </option>
+
+      <option id="MAME_BL3_4K_BUTTON2">
+        <title>Button 2</title>
+      </option>
+
+      <option id="MAME_BL3_4K_BUTTON3">
+        <title>Button 3</title>
+      </option>
+	  
+      <option id="MAME_BL3_4K_BUTTON4">
+        <title>Button 4</title>
+      </option>
+
+      <option id="MAME_BL3_4K_BUTTON5">
+        <title>Button 5</title>
+      </option>
+
+      <option id="MAME_BL3_4K_BUTTON6">
+        <title>Button 6</title>
+      </option>
+    </choice>
+
+    <choice default="MAME_BL3_LP_BUTTON1">
+      <title>LP</title>
+        
+      <option id="MAME_BL3_LP_NOTHING">
+        <title>Nothing</title>
+        <title lang="de">Nichts</title>
+      </option>
+      
+      <option id="MAME_BL3_LP_BUTTON1">
+        <title>Button 1</title>
+      </option>
+
+      <option id="MAME_BL3_LP_BUTTON2">
+        <title>Button 2</title>
+      </option>
+
+      <option id="MAME_BL3_LP_BUTTON3">
+        <title>Button 3</title>
+      </option>
+	  
+      <option id="MAME_BL3_LP_BUTTON4">
+        <title>Button 4</title>
+      </option>
+
+      <option id="MAME_BL3_LP_BUTTON5">
+        <title>Button 5</title>
+      </option>
+
+      <option id="MAME_BL3_LP_BUTTON6">
+        <title>Button 6</title>
+      </option>
+    </choice>
+
+    <choice default="MAME_BL3_MP_BUTTON2">
+      <title>MP</title>
+        
+      <option id="MAME_BL3_MP_NOTHING">
+        <title>Nothing</title>
+        <title lang="de">Nichts</title>
+      </option>
+      
+      <option id="MAME_BL3_MP_BUTTON1">
+        <title>Button 1</title>
+      </option>
+
+      <option id="MAME_BL3_MP_BUTTON2">
+        <title>Button 2</title>
+      </option>
+
+      <option id="MAME_BL3_MP_BUTTON3">
+        <title>Button 3</title>
+      </option>
+	  
+      <option id="MAME_BL3_MP_BUTTON4">
+        <title>Button 4</title>
+      </option>
+
+      <option id="MAME_BL3_MP_BUTTON5">
+        <title>Button 5</title>
+      </option>
+
+      <option id="MAME_BL3_MP_BUTTON6">
+        <title>Button 6</title>
+      </option>
+    </choice>
+	
+    <choice default="MAME_BL3_HP_BUTTON3">
+      <title>HP</title>
+        
+      <option id="MAME_BL3_HP_NOTHING">
+        <title>Nothing</title>
+        <title lang="de">Nichts</title>
+      </option>
+      
+      <option id="MAME_BL3_HP_BUTTON1">
+        <title>Button 1</title>
+      </option>
+
+      <option id="MAME_BL3_HP_BUTTON2">
+        <title>Button 2</title>
+      </option>
+
+      <option id="MAME_BL3_HP_BUTTON3">
+        <title>Button 3</title>
+      </option>
+	  
+      <option id="MAME_BL3_HP_BUTTON4">
+        <title>Button 4</title>
+      </option>
+
+      <option id="MAME_BL3_HP_BUTTON5">
+        <title>Button 5</title>
+      </option>
+
+      <option id="MAME_BL3_HP_BUTTON6">
+        <title>Button 6</title>
+      </option>
+    </choice>
+
+    <choice default="MAME_BL3_4P_BUTTON4">
+      <title>4P</title>
+        
+      <option id="MAME_BL3_4P_NOTHING">
+        <title>Nothing</title>
+        <title lang="de">Nichts</title>
+      </option>
+      
+      <option id="MAME_BL3_4P_BUTTON1">
+        <title>Button 1</title>
+      </option>
+
+      <option id="MAME_BL3_4P_BUTTON2">
+        <title>Button 2</title>
+      </option>
+
+      <option id="MAME_BL3_4P_BUTTON3">
+        <title>Button 3</title>
+      </option>
+	  
+      <option id="MAME_BL3_4P_BUTTON4">
+        <title>Button 4</title>
+      </option>
+
+      <option id="MAME_BL3_4P_BUTTON5">
+        <title>Button 5</title>
+      </option>
+
+      <option id="MAME_BL3_4P_BUTTON6">
+        <title>Button 6</title>
+      </option>
+    </choice>
+  </page>
+
+  <page>
+    <title>MAME Button Layout 4</title>
+    <title lang="de">MAME Button Anordnung 4</title>
+    <help>The MAME button layout number 4. It is selected in MAME mode by pressing Meta (Start or Select), LK and joystick left.&lt;br/>&lt;img src="assets/buttons.png"/></help>
+    <help lang="de">Die MAME Button Anordnung Nummer 4. Sie wird im MAME Modus durch drücken von Meta (Start oder Select), LK und Joystick links aktiviert.&lt;br/>&lt;img src="assets/buttons.png"/></help>
+
+    <choice default="MAME_BL4_LK_BUTTON4">
+      <title>LK</title>
+        
+      <option id="MAME_BL4_LK_NOTHING">
+        <title>Nothing</title>
+        <title lang="de">Nichts</title>
+      </option>
+      
+      <option id="MAME_BL4_LK_BUTTON1">
+        <title>Button 1</title>
+      </option>
+
+      <option id="MAME_BL4_LK_BUTTON2">
+        <title>Button 2</title>
+      </option>
+
+      <option id="MAME_BL4_LK_BUTTON3">
+        <title>Button 3</title>
+      </option>
+	  
+      <option id="MAME_BL4_LK_BUTTON4">
+        <title>Button 4</title>
+      </option>
+
+      <option id="MAME_BL4_LK_BUTTON5">
+        <title>Button 5</title>
+      </option>
+
+      <option id="MAME_BL4_LK_BUTTON6">
+        <title>Button 6</title>
+      </option>
+    </choice>
+
+    <choice default="MAME_BL4_MK_BUTTON5">
+      <title>MK</title>
+        
+      <option id="MAME_BL4_MK_NOTHING">
+        <title>Nothing</title>
+        <title lang="de">Nichts</title>
+      </option>
+      
+      <option id="MAME_BL4_MK_BUTTON1">
+        <title>Button 1</title>
+      </option>
+
+      <option id="MAME_BL4_MK_BUTTON2">
+        <title>Button 2</title>
+      </option>
+
+      <option id="MAME_BL4_MK_BUTTON3">
+        <title>Button 3</title>
+      </option>
+	  
+      <option id="MAME_BL4_MK_BUTTON4">
+        <title>Button 4</title>
+      </option>
+
+      <option id="MAME_BL4_MK_BUTTON5">
+        <title>Button 5</title>
+      </option>
+
+      <option id="MAME_BL4_MK_BUTTON6">
+        <title>Button 6</title>
+      </option>
+    </choice>
+	
+    <choice default="MAME_BL4_HK_BUTTON6">
+      <title>HK</title>
+        
+      <option id="MAME_BL4_HK_NOTHING">
+        <title>Nothing</title>
+        <title lang="de">Nichts</title>
+      </option>
+      
+      <option id="MAME_BL4_HK_BUTTON1">
+        <title>Button 1</title>
+      </option>
+
+      <option id="MAME_BL4_HK_BUTTON2">
+        <title>Button 2</title>
+      </option>
+
+      <option id="MAME_BL4_HK_BUTTON3">
+        <title>Button 3</title>
+      </option>
+	  
+      <option id="MAME_BL4_HK_BUTTON4">
+        <title>Button 4</title>
+      </option>
+
+      <option id="MAME_BL4_HK_BUTTON5">
+        <title>Button 5</title>
+      </option>
+
+      <option id="MAME_BL4_HK_BUTTON6">
+        <title>Button 6</title>
+      </option>
+    </choice>
+
+    <choice default="MAME_BL4_4K_NOTHING">
+      <title>4K</title>
+        
+      <option id="MAME_BL4_4K_NOTHING">
+        <title>Nothing</title>
+        <title lang="de">Nichts</title>
+      </option>
+      
+      <option id="MAME_BL4_4K_BUTTON1">
+        <title>Button 1</title>
+      </option>
+
+      <option id="MAME_BL4_4K_BUTTON2">
+        <title>Button 2</title>
+      </option>
+
+      <option id="MAME_BL4_4K_BUTTON3">
+        <title>Button 3</title>
+      </option>
+	  
+      <option id="MAME_BL4_4K_BUTTON4">
+        <title>Button 4</title>
+      </option>
+
+      <option id="MAME_BL4_4K_BUTTON5">
+        <title>Button 5</title>
+      </option>
+
+      <option id="MAME_BL4_4K_BUTTON6">
+        <title>Button 6</title>
+      </option>
+    </choice>
+
+    <choice default="MAME_BL4_LP_BUTTON1">
+      <title>LP</title>
+        
+      <option id="MAME_BL4_LP_NOTHING">
+        <title>Nothing</title>
+        <title lang="de">Nichts</title>
+      </option>
+      
+      <option id="MAME_BL4_LP_BUTTON1">
+        <title>Button 1</title>
+      </option>
+
+      <option id="MAME_BL4_LP_BUTTON2">
+        <title>Button 2</title>
+      </option>
+
+      <option id="MAME_BL4_LP_BUTTON3">
+        <title>Button 3</title>
+      </option>
+	  
+      <option id="MAME_BL4_LP_BUTTON4">
+        <title>Button 4</title>
+      </option>
+
+      <option id="MAME_BL4_LP_BUTTON5">
+        <title>Button 5</title>
+      </option>
+
+      <option id="MAME_BL4_LP_BUTTON6">
+        <title>Button 6</title>
+      </option>
+    </choice>
+
+    <choice default="MAME_BL4_MP_BUTTON2">
+      <title>MP</title>
+        
+      <option id="MAME_BL4_MP_NOTHING">
+        <title>Nothing</title>
+        <title lang="de">Nichts</title>
+      </option>
+      
+      <option id="MAME_BL4_MP_BUTTON1">
+        <title>Button 1</title>
+      </option>
+
+      <option id="MAME_BL4_MP_BUTTON2">
+        <title>Button 2</title>
+      </option>
+
+      <option id="MAME_BL4_MP_BUTTON3">
+        <title>Button 3</title>
+      </option>
+	  
+      <option id="MAME_BL4_MP_BUTTON4">
+        <title>Button 4</title>
+      </option>
+
+      <option id="MAME_BL4_MP_BUTTON5">
+        <title>Button 5</title>
+      </option>
+
+      <option id="MAME_BL4_MP_BUTTON6">
+        <title>Button 6</title>
+      </option>
+    </choice>
+	
+    <choice default="MAME_BL4_HP_BUTTON3">
+      <title>HP</title>
+        
+      <option id="MAME_BL4_HP_NOTHING">
+        <title>Nothing</title>
+        <title lang="de">Nichts</title>
+      </option>
+      
+      <option id="MAME_BL4_HP_BUTTON1">
+        <title>Button 1</title>
+      </option>
+
+      <option id="MAME_BL4_HP_BUTTON2">
+        <title>Button 2</title>
+      </option>
+
+      <option id="MAME_BL4_HP_BUTTON3">
+        <title>Button 3</title>
+      </option>
+	  
+      <option id="MAME_BL4_HP_BUTTON4">
+        <title>Button 4</title>
+      </option>
+
+      <option id="MAME_BL4_HP_BUTTON5">
+        <title>Button 5</title>
+      </option>
+
+      <option id="MAME_BL4_HP_BUTTON6">
+        <title>Button 6</title>
+      </option>
+    </choice>
+
+    <choice default="MAME_BL4_4P_BUTTON4">
+      <title>4P</title>
+        
+      <option id="MAME_BL4_4P_NOTHING">
+        <title>Nothing</title>
+        <title lang="de">Nichts</title>
+      </option>
+      
+      <option id="MAME_BL4_4P_BUTTON1">
+        <title>Button 1</title>
+      </option>
+
+      <option id="MAME_BL4_4P_BUTTON2">
+        <title>Button 2</title>
+      </option>
+
+      <option id="MAME_BL4_4P_BUTTON3">
+        <title>Button 3</title>
+      </option>
+	  
+      <option id="MAME_BL4_4P_BUTTON4">
+        <title>Button 4</title>
+      </option>
+
+      <option id="MAME_BL4_4P_BUTTON5">
+        <title>Button 5</title>
+      </option>
+
+      <option id="MAME_BL4_4P_BUTTON6">
+        <title>Button 6</title>
+      </option>
+    </choice>
+  </page>
+</configuration>

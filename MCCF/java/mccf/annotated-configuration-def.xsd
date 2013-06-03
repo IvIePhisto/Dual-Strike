@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema
+  xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  xmlns:c="urn:strike-devices:configuration"
+  targetNamespace="urn:strike-devices:configuration"
+  elementFormDefault="qualified">
+  
+  <xs:redefine schemaLocation="configuration-def.xsd">
+    <xs:complexType name="Configuration">
+      <xs:complexContent>
+        <xs:extension base="c:Configuration">
+          <xs:attribute name="byte-width" type="xs:unsignedInt"  form="unqualified" use="required"/>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="Option">
+      <xs:complexContent>
+        <xs:extension base="c:Option">
+          <xs:attribute name="bit-pattern" form="unqualified" use="required">
+            <xs:simpleType>
+              <xs:restriction base="xs:string">
+                <xs:pattern value="(0|1)+"/>
+              </xs:restriction>
+            </xs:simpleType>
+          </xs:attribute>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="ChoiceSetting">
+      <xs:complexContent>
+        <xs:extension base="c:ChoiceSetting">
+          <xs:attributeGroup ref="c:Position"/>
+          <xs:attribute name="bit-width" type="xs:unsignedInt"  form="unqualified" use="required"/>
+          <xs:attribute name="byte-dividers" form="unqualified">
+            <xs:simpleType>
+              <xs:list itemType="xs:unsignedInt"/>
+            </xs:simpleType>
+          </xs:attribute>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="BooleanSetting">
+      <xs:complexContent>
+        <xs:extension base="c:BooleanSetting">
+          <xs:attributeGroup ref="c:Position"/>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="IntegerSetting">
+      <xs:complexContent>
+        <xs:extension base="c:IntegerSetting">
+          <xs:attributeGroup ref="c:Position"/>
+          <xs:attribute name="bit-width" type="xs:unsignedInt"  form="unqualified" use="required"/>
+          <xs:attribute name="byte-dividers" form="unqualified">
+            <xs:simpleType>
+              <xs:list itemType="xs:unsignedInt"/>
+            </xs:simpleType>
+          </xs:attribute>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:redefine>  
+  
+  <xs:attributeGroup name="Position">
+    <xs:attribute name="byte-no" type="xs:unsignedInt"  form="unqualified" use="required"/>
+    <xs:attribute name="bit-no" type="xs:unsignedInt"  form="unqualified" use="required"/>
+  </xs:attributeGroup>
+</xs:schema>

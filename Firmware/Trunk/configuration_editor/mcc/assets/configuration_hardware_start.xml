@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration xmlns="urn:strike-devices:configuration">
+  <title>Hardware</title>
+  <help>Settings related to the hardware.&lt;br/>&lt;img src="assets/buttons.png"/></help>
+  <help lang="de">Einstellungen im Zusammenhang mit der Hardware.&lt;br/>&lt;img src="assets/buttons.png"/></help>
+
+  <choice prefix="META_BUTTON_" default="START">
+    <title>Meta Button</title>
+    <help>Which button to use to activate special functions (like on-the-fly joystick mode switching).</help>
+    <help lang="de">Welcher Button verwendet werden soll, um spezielle Funktionen (wie on-the-fly Joystick-Modus Umschaltung) zu aktivieren.</help>
+      
+    <option id="START">
+      <title>Start</title>
+    </option>
+
+    <option id="SELECT">
+      <title>Select</title>
+    </option>
+  </choice>
+</configuration>
