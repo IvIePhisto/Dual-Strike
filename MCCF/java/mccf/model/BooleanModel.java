@@ -40,13 +40,11 @@ public class BooleanModel extends SettingModel {
 		return id;
 	}
 
-
 	@Override
-	synchronized void addRequiredBy(final String source, final String target, final int value) {
-		// TODO
-	}
-
-	@Override
-	void initConstraints() {
+	public int getNormalizedSetting() {
+		if(value)
+			return 1;
+		else
+			return 0;
 	}
 }

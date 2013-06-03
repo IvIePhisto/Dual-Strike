@@ -27,4 +27,41 @@ public class ChoiceReferenceModel extends ReferenceModel<ChoiceModel> {
 	public ChoiceReferenceModel asChoiceReference() {
 		return this;
 	}
+
+	@Override
+	public boolean isSet() {
+		return getSetting().getCurrentOption() == option;
+	}
+
+	@Override
+	public void enableState() {
+		getSetting().enable(option);
+	}
+
+	@Override
+	public void disableState() {
+		getSetting().disable(option);
+	}
+
+	@Override
+	public void enableOtherStates() {
+		ChoiceModel setting;
+		
+		setting = getSetting();
+		
+		for(int i = 0; i < setting.getOptionCount(); i++)
+			if(i != option)
+				setting.enable(i);
+	}
+
+	@Override
+	public void disableOtherStates() {
+		ChoiceModel setting;
+		
+		setting = getSetting();
+		
+		for(int i = 0; i < setting.getOptionCount(); i++)
+			if(i != option)
+				setting.disable(i);
+	}
 }

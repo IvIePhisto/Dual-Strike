@@ -26,4 +26,9 @@ public class BooleanReferenceModel extends ReferenceModel<BooleanModel> {
 	public BooleanReferenceModel asBooleanReference() {
 		return this;
 	}
+
+	@Override
+	public boolean isSet() {
+		return getSetting().getValue() == value;
+	}
 }

@@ -31,54 +31,8 @@ public class IntegerModel extends SettingModel {
 	}
 
 	@Override
-	void loadDefaults() {
+	public void loadDefaults() {
 		setValue(defaultValue);
-	}
-
-
-	@Override
-	void initConstraints() {
-		initRequirements();
-	}
-	
-	synchronized void initRequirements() {
-		/* TODO
-		for(int requiringOption = 0; requiringOption < requirements.length; requiringOption++) {
-			String[] requiredSettingIDs;
-			String requiringOptionID;
-			
-			requiredSettingIDs = requirements[requiringOption];
-			requiringOptionID = option2ID[requiringOption];
-			
-			for(String requiredSettingID: requiredSettingIDs) {
-				SettingModel requiredSetting;
-			
-				requiredSetting = getConfiguration().getSetting(requiredSettingID);
-				requiredSetting.addRequiredBy(requiringOptionID, requiredSettingID, -1);
-				requiredSettingsByOption[requiringOption].add(requiredSetting);
-				
-				if(requiredSetting instanceof ChoiceModel) {
-					ChoiceModel requiredChoice;
-					int requiredOption;
-					
-					requiredChoice = (ChoiceModel)requiredSetting;
-					requiredOption = requiredChoice.getOption(requiredSettingID);
-					requiredOptionsByOption[requiringOption].add(requiredOption);
-				}
-				else {
-					requiredOptionsByOption[requiringOption].add(-1);
-				}
-			}
-			
-			notifyRequiredSettings(requiringOption, currentOption == requiringOption);
-		}
-		*/
-	}
-	
-	@Override
-	void addRequiredBy(String source, String requirement, final int value) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	public IntegerDomainModel getValueDomain() {
@@ -113,5 +67,10 @@ public class IntegerModel extends SettingModel {
 
 	public String getID() {
 		return id;
+	}
+
+	@Override
+	public int getNormalizedSetting() {
+		return getValue();
 	}
 }

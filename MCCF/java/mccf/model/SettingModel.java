@@ -34,8 +34,7 @@ public abstract class SettingModel {
 	}
 	
 	abstract void loadDefaults();
-	abstract void initConstraints();
-	abstract void addRequiredBy(String source, String requirement, int value);
+	public abstract int getNormalizedSetting();	
 	
 	ConfigurationModel getConfiguration() {
 		return configuration;

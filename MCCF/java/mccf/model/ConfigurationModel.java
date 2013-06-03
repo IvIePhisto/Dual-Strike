@@ -75,9 +75,4 @@ public class ConfigurationModel {
 	public synchronized SettingModel getSetting(final String id) {
 		return settingsByID.get(id);
 	}
-	
-	public synchronized void initConstraints() {
-		for(SettingModel setting: settingsSet)
-			setting.initConstraints();
-	}
 }

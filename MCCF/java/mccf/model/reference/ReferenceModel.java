@@ -10,21 +10,17 @@ public abstract class ReferenceModel<SettingType extends SettingModel> {
 	private final Class<?> settingClass;
 	private SettingType referencedSetting = null;
 	
-	ReferenceModel(final ConfigurationModel configuration, final String id, final Class<?> settingClass) {
+	public ReferenceModel(final ConfigurationModel configuration, final String id, final Class<?> settingClass) {
 		this.configuration = configuration;
 		this.id = id;
 		this.settingClass = settingClass;
 	}
 	
-	ReferenceModel(final ConfigurationModel configuration, final String id, final SettingType referencedSetting) {
+	public ReferenceModel(final ConfigurationModel configuration, final String id, final SettingType referencedSetting) {
 		this.configuration = configuration;
 		this.id = id;
 		this.referencedSetting = referencedSetting;
 		settingClass = referencedSetting.getClass();
-	}
-	
-	ConfigurationModel getConfiguration() {
-		return configuration;
 	}
 
 	String getID() {
@@ -36,7 +32,7 @@ public abstract class ReferenceModel<SettingType extends SettingModel> {
 		if(referencedSetting == null) {
 			SettingModel referencedSetting;
 			
-			referencedSetting = getConfiguration().getSetting(getID());
+			referencedSetting = configuration.getSetting(getID());
 			
 			if(referencedSetting == null)
 				throw new NullPointerException();
@@ -60,4 +56,10 @@ public abstract class ReferenceModel<SettingType extends SettingModel> {
 	public IntegerReferenceModel asIntegerReference() throws UnsupportedOperationException {
 		throw new UnsupportedOperationException();
 	}
+	
+	public abstract boolean isSet();
+	public abstract void enableState();
+	public abstract void disableState();
+	public abstract void enableOtherStates();
+	public abstract void disableOtherStates();
 }
