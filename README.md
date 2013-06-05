@@ -6,7 +6,7 @@ the folder this file is residing in are licensed under the GNU Public License
 V3 if not otherwise stated, see license.txt for more details.
 
 
-Hardware Design Copyright 2009 Jochen Zurborg (http://www.zurborg.info)
+Hardware Design Copyright 2009 Jochen Zurborg (http://www.arcadeforge.de)
 
 Firmware Copyright 2009 Jochen Zurborg, 2010 Michael Pohl (http://pohl-michael.gmxhome.de)
 
